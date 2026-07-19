@@ -201,3 +201,97 @@ def test_natureza_percentual_aplica_dez_por_cento_e_nao_mil_por_cento(app_db, cl
         # e reduz Velocidade em 10%; depois o estilo Agressivo soma 10% ao Ataque.
         assert calculos["totais"]["ataque"] == 64
         assert calculos["totais"]["velocidade"] == 46
+
+
+def test_shiny_aplica_bonus_em_ataque_e_defesa_especiais_com_codigos_importados(
+    app_db, client_db
+) -> None:
+    """O catálogo real usa hífen, enquanto a regra antiga usa sublinhado."""
+    from sqlalchemy.orm import selectinload
+
+    from app.models.db import (
+        Atributo,
+        FormaPokemon,
+        FormaPokemonAtributo,
+        Natureza,
+        NaturezaModificador,
+        Personagem,
+        PokemonBonusAtributo,
+        PokemonStatus,
+    )
+    from app.services.pokemon_db_service import (
+        calcular_pokemon,
+        carregar_regras_pokemon_db,
+    )
+
+    _login_mestre(client_db)
+    jogador_id = app_db.config["TEST_IDS"]["personagem"]
+
+    # Reproduz exatamente os códigos gerados pelo slug durante a importação real.
+    with app_db.app_context():
+        ataque_especial = db.session.execute(
+            select(Atributo).where(Atributo.codigo == "ataque_especial")
+        ).scalar_one()
+        defesa_especial = db.session.execute(
+            select(Atributo).where(Atributo.codigo == "defesa_especial")
+        ).scalar_one()
+        ataque_especial.codigo = "ataque-especial"
+        defesa_especial.codigo = "defesa-especial"
+        db.session.commit()
+
+    pokemon_id = _criar_na_box(app_db, client_db, "Charmander")
+    resposta = client_db.post(
+        f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}?retorno=boxes",
+        data={
+            "retorno": "boxes",
+            "especie_nome": "Charmander",
+            "apelido": "Brasa",
+            "genero": "Ø",
+            "shiny": "1",
+            "natureza": "Dócil",
+            "status": "Nenhum",
+            "item_carregado": "",
+            "pv_atual": "80",
+            "bonus_pv": "0",
+            "bonus_ataque": "0",
+            "bonus_defesa": "0",
+            "bonus_ataque-especial": "0",
+            "bonus_defesa-especial": "0",
+            "bonus_velocidade": "0",
+            "golpe_nome": ["", "", "", ""],
+            "anotacoes": "",
+        },
+    )
+    assert resposta.status_code == 302
+
+    with app_db.app_context():
+        personagem = db.session.execute(
+            select(Personagem)
+            .where(Personagem.id == uuid.UUID(jogador_id))
+            .options(
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.forma_pokemon)
+                .selectinload(FormaPokemon.atributos_base)
+                .selectinload(FormaPokemonAtributo.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.natureza)
+                .selectinload(Natureza.modificadores)
+                .selectinload(NaturezaModificador.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.bonus_atributos)
+                .selectinload(PokemonBonusAtributo.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.status_ativos)
+                .selectinload(PokemonStatus.status),
+            )
+        ).scalar_one()
+        pokemon = next(item for item in personagem.pokemons if str(item.id) == pokemon_id)
+        regras = carregar_regras_pokemon_db(personagem.campanha_id)
+        calculos = calcular_pokemon(pokemon, personagem, regras)
+
+        # Charmander possui bases 6 e 5. Por ser Shiny, ambas recebem +1.
+        assert calculos["bases"]["ataque_especial"] == 7
+        assert calculos["bases"]["defesa_especial"] == 6
+        # As aliases com hífen alimentam a tela gerada pelos atributos do banco.
+        assert calculos["bases"]["ataque-especial"] == 7
+        assert calculos["bases"]["defesa-especial"] == 6

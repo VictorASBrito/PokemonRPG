@@ -29,6 +29,21 @@ from app.models.db import (
 from app.services.importacao.utils import booleano, data_hora, inteiro, slug, uuid_legado
 
 
+def _normalizar_mapa_atributos(valor: Any) -> dict[str, Any]:
+    if not isinstance(valor, dict):
+        return {}
+    return {str(codigo).replace("_", "-"): numero for codigo, numero in valor.items()}
+
+
+def _normalizar_estilos_combate(valor: Any) -> dict[str, Any]:
+    if not isinstance(valor, dict):
+        return {}
+    return {
+        str(estilo): _normalizar_mapa_atributos(modificadores)
+        for estilo, modificadores in valor.items()
+    }
+
+
 class CampanhaImporter:
     def __init__(self, fontes, catalogo, resumo) -> None:
         self.fontes = fontes
@@ -157,10 +172,20 @@ class CampanhaImporter:
             "origens-personagem": ("Origens de personagem", "personagem", "json", regras_treinador.get("origens", [])),
             "classes-personagem": ("Classes de personagem", "personagem", "json", regras_treinador.get("classes", [])),
             "estilos-combate-personagem": ("Estilos de combate do personagem", "personagem", "json", regras_treinador.get("estilos_combate", [])),
-            "bonus-shiny": ("Bônus Shiny", "pokemon", "json", regras_pokemon.get("bonus_shiny", {})),
+            "bonus-shiny": (
+                "Bônus Shiny",
+                "pokemon",
+                "json",
+                _normalizar_mapa_atributos(regras_pokemon.get("bonus_shiny", {})),
+            ),
             "progressao-pv": ("Progressão de PV", "pokemon", "json", regras_pokemon.get("progressao_pv", [])),
             "progressao-atributos": ("Progressão dos atributos", "pokemon", "json", regras_pokemon.get("progressao_atributos", [])),
-            "estilos-combate": ("Estilos de combate", "pokemon", "json", regras_pokemon.get("estilos_combate", {})),
+            "estilos-combate": (
+                "Estilos de combate",
+                "pokemon",
+                "json",
+                _normalizar_estilos_combate(regras_pokemon.get("estilos_combate", {})),
+            ),
         }
 
         regras_existentes = {item.codigo: item for item in self._todos(Regra)}

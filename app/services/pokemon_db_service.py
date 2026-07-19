@@ -66,6 +66,31 @@ def _inteiro(valor: Any, padrao: int = 0) -> int:
         return padrao
 
 
+def _codigo_atributo(codigo: Any) -> str:
+    """Normaliza códigos vindos do banco e das regras para uma chave única.
+
+    O catálogo inicial foi importado usando ``slug``, que transforma
+    ``ataque_especial`` em ``ataque-especial``. Já as regras antigas usam
+    sublinhado. Internamente os cálculos trabalham com sublinhado e, na saída,
+    disponibilizamos os dois formatos para manter compatibilidade com as telas.
+    """
+    return str(codigo or "").strip().replace("-", "_")
+
+
+def _mapa_atributos_normalizado(mapa: Any) -> dict[str, Any]:
+    if not isinstance(mapa, dict):
+        return {}
+    return {_codigo_atributo(codigo): valor for codigo, valor in mapa.items()}
+
+
+def _com_aliases_atributos(valores: dict[str, int]) -> dict[str, int]:
+    """Expõe ``ataque_especial`` e ``ataque-especial`` com o mesmo valor."""
+    resultado = dict(valores)
+    for codigo, valor in list(valores.items()):
+        resultado[codigo.replace("_", "-")] = valor
+    return resultado
+
+
 def _decimal_numero(valor: Decimal | int | float | None) -> int | float:
     if valor is None:
         return 0
@@ -336,7 +361,7 @@ def _aplicar_status_configurado(
         tipo = str(efeito.get("tipo", "")).strip().lower()
         if tipo not in {"alterar_atributo", "modificador_atributo"}:
             continue
-        atributo = str(efeito.get("atributo", "")).strip()
+        atributo = _codigo_atributo(efeito.get("atributo", ""))
         if atributo not in valores:
             continue
         aplicado = True
@@ -367,13 +392,16 @@ def calcular_pokemon(
     nivel = max(1, personagem.nivel)
     forma = pokemon.forma_pokemon
     base_original = {
-        item.atributo.codigo: _inteiro(item.valor_base)
+        _codigo_atributo(item.atributo.codigo): _inteiro(item.valor_base)
         for item in forma.atributos_base
         if item.atributo.ativo
     }
-    bonus_shiny = regras.get("bonus_shiny", {}) if pokemon.shiny else {}
+    bonus_shiny = _mapa_atributos_normalizado(
+        regras.get("bonus_shiny", {}) if pokemon.shiny else {}
+    )
     bases = {
-        codigo: _inteiro(base_original.get(codigo)) + _inteiro(bonus_shiny.get(codigo))
+        codigo: _inteiro(base_original.get(codigo))
+        + _inteiro(bonus_shiny.get(codigo))
         for codigo in {**{item: 0 for item in ATRIBUTOS_PADRAO}, **base_original}
     }
 
@@ -388,7 +416,7 @@ def calcular_pokemon(
 
     if pokemon.natureza:
         for modificador in pokemon.natureza.modificadores:
-            codigo = modificador.atributo.codigo
+            codigo = _codigo_atributo(modificador.atributo.codigo)
             if codigo not in valores:
                 continue
             valor = float(modificador.valor)
@@ -402,7 +430,10 @@ def calcular_pokemon(
                 valores[codigo] = max(0, valores[codigo] + int(valor))
 
     estilo = personagem.estilo_combate or ""
-    for codigo, percentual in (regras.get("estilos_combate", {}).get(estilo, {}) or {}).items():
+    modificadores_estilo = _mapa_atributos_normalizado(
+        (regras.get("estilos_combate", {}).get(estilo, {}) or {})
+    )
+    for codigo, percentual in modificadores_estilo.items():
         if codigo in valores:
             valores[codigo] = aplicar_aumento(valores[codigo], float(percentual))
 
@@ -418,7 +449,7 @@ def calcular_pokemon(
             valores["ataque"] = aplicar_diminuicao(valores.get("ataque", 0), 0.50)
 
     bonus = {
-        item.atributo.codigo: _inteiro(item.valor)
+        _codigo_atributo(item.atributo.codigo): _inteiro(item.valor)
         for item in pokemon.bonus_atributos
         if item.atributo.ativo
     }
@@ -434,8 +465,8 @@ def calcular_pokemon(
     ]
     return {
         "nivel": nivel,
-        "bases": bases,
-        "totais": valores,
+        "bases": _com_aliases_atributos(bases),
+        "totais": _com_aliases_atributos(valores),
         "dados_defesa": dados_defesa,
         "dados_defesa_texto": f"{dados_defesa}d6",
         "golpes": golpes,

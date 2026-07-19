@@ -66,3 +66,10 @@ Os golpes passam a ser armazenados apenas desta forma:
 - Ao adicionar um Pokémon da Box à equipe, ele é acrescentado diretamente no fim da equipe, caso haja vaga.
 - A pesquisa por nome, apelido ou espécie reorganiza dinamicamente os cartões e coloca as correspondências no início.
 - Fichas antigas com várias Boxes são unificadas automaticamente, preservando a ordem dos Pokémon armazenados.
+
+## Correção de atributos especiais Shiny
+
+- Os códigos de atributos importados pelo banco usam hífen (`ataque-especial` e `defesa-especial`), enquanto as regras antigas usam sublinhado (`ataque_especial` e `defesa_especial`).
+- O cálculo agora normaliza os dois formatos antes de aplicar bônus Shiny, natureza, estilo de combate, status e bônus manuais.
+- A saída dos cálculos mantém aliases nos dois formatos para compatibilidade com o dashboard e a ficha individual.
+- Novas importações gravam os mapas de bônus Shiny e estilos de combate usando os códigos compatíveis com o catálogo do banco.
