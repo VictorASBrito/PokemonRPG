@@ -60,7 +60,6 @@
         data-pokemon-card
         data-nome="{{ (nome_exibicao ~ ' ' ~ especie.get('nome', ''))|lower }}"
         data-tipos="{{ especie.get('tipos', [])|join(' ')|lower }}"
-        data-nivel="{{ pokemon.get('nivel', 1) }}"
         data-shiny="{{ 'sim' if pokemon.get('shiny') else 'nao' }}"
     >
         <a class="box-pokemon-principal" href="{{ editar_url(pokemon.get('id')) }}">
@@ -75,7 +74,7 @@
             <div class="box-pokemon-info">
                 <span class="pokemon-especie">{{ especie.get('nome') }}</span>
                 <strong>{{ nome_exibicao }}</strong>
-                <span>Nv. {{ pokemon.get('nivel', 1) }} · PV {{ pokemon.get('pv_atual', 0) }}/{{ calculos.totais.pv }}</span>
+                <span>Nv. {{ calculos.nivel }} · PV {{ pokemon.get('pv_atual', 0) }}/{{ calculos.totais.pv }}</span>
                 <div class="chips chips-compactos">
                     {% for tipo in especie.get('tipos', []) %}<span class="chip tipo-chip">{{ tipo }}</span>{% endfor %}
                     {% if pokemon.get('status', 'Nenhum') != 'Nenhum' %}<span class="chip chip-status">{{ pokemon.get('status') }}</span>{% endif %}
@@ -125,10 +124,6 @@
     <div class="campo">
         <label for="filtro-box-tipo">Tipo</label>
         <input id="filtro-box-tipo" type="search" placeholder="Ex.: Grama" autocomplete="off">
-    </div>
-    <div class="campo">
-        <label for="filtro-box-nivel">Nível mínimo</label>
-        <input id="filtro-box-nivel" type="number" min="1" max="100" placeholder="1">
     </div>
     <label class="alternador filtro-shiny">
         <input id="filtro-box-shiny" type="checkbox">

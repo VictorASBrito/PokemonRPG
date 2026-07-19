@@ -42,6 +42,7 @@ def test_cadastro_e_edicao_da_ficha(tmp_path: Path) -> None:
         f"/mestre/jogadores/{jogador_id}/ficha",
         data={
             "nome": "Bartz",
+            "nivel": "48",
             "idade": "17",
             "genero": "Masculino",
             "origem": "Atleta",
@@ -69,5 +70,6 @@ def test_cadastro_e_edicao_da_ficha(tmp_path: Path) -> None:
     arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
     jogador = json.loads(arquivo.read_text(encoding="utf-8"))
     assert jogador["treinador"]["pv_maximo"] == 30
+    assert jogador["treinador"]["nivel"] == 48
     assert jogador["treinador"]["numeros_shiny"] == [7, 42]
     assert len(jogador["inventario"]) == 2

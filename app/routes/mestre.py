@@ -24,6 +24,7 @@ from app.services.jogador_service import (
     salvar_jogador,
 )
 from app.services.json_service import ler_json, salvar_json
+from app.services.pokemon_service import sincronizar_pokemons_com_nivel_jogador
 
 mestre_bp = Blueprint("mestre", __name__, url_prefix="/mestre")
 
@@ -72,7 +73,7 @@ def novo_jogador():
         erros: list[str] = []
 
         if not nome:
-            erros.append("Informe o nome do jogador ou treinador.")
+            erros.append("Informe o nome do jogador.")
         if len(login) < 3:
             erros.append("O usuário deve possuir pelo menos 3 caracteres.")
         if not login.replace("_", "").replace("-", "").isalnum():
@@ -150,6 +151,7 @@ def ficha_jogador(jogador_id: str):
                 flash(erro, "erro")
             jogador = jogador_atualizado
         else:
+            sincronizar_pokemons_com_nivel_jogador(jogador_atualizado, data_dir)
             salvar_jogador(
                 data_dir=data_dir,
                 campanha_id=campanha_id,

@@ -7,7 +7,6 @@ from pathlib import Path
 from app import create_app
 from app.services.calculo_atributos import calcular_atributos_pokemon
 from app.services.pokemon_service import (
-    carregar_catalogo_golpes,
     carregar_catalogo_pokemons,
     carregar_regras_pokemon,
     indexar_catalogo,
@@ -44,7 +43,7 @@ def _criar_cliente_com_jogador(tmp_path: Path):
     return client, data_dir, usuario["jogador_id"]
 
 
-def test_calculo_de_atributos_por_nivel_e_estilo() -> None:
+def test_calculo_usa_nivel_do_jogador() -> None:
     data_dir = Path(__file__).resolve().parent.parent / "data"
     catalogo = carregar_catalogo_pokemons(data_dir)
     regras = carregar_regras_pokemon(data_dir)
@@ -52,27 +51,52 @@ def test_calculo_de_atributos_por_nivel_e_estilo() -> None:
 
     calculos = calcular_atributos_pokemon(
         pokemon={
-            "nivel": 2,
             "shiny": False,
             "natureza": "Dócil",
             "status": "Nenhum",
             "bonus": {},
             "golpes": [],
-            "experiencia": 0,
         },
         especie=bulbasaur,
         regras=regras,
+        nivel_jogador=48,
         estilo_combate="Agressivo",
     )
 
-    assert calculos["totais"]["pv"] == 35
-    assert calculos["totais"]["ataque"] == 7
-    assert calculos["totais"]["ataque_especial"] == 9
-    assert calculos["pp_maximo"] == 22
+    assert calculos["nivel"] == 48
+    assert calculos["totais"]["pv"] == 81
+    assert calculos["totais"]["ataque"] == 58
+    assert calculos["totais"]["ataque_especial"] == 85
+    assert "pp_maximo" not in calculos
+    assert "experiencia_proximo_nivel" not in calculos
+    assert "dados_luta" not in calculos
 
 
-def test_adicionar_e_editar_pokemon_na_equipe(tmp_path: Path) -> None:
+def test_adicionar_e_editar_pokemon_sem_pp_xp_ou_amizade(tmp_path: Path) -> None:
     client, data_dir, jogador_id = _criar_cliente_com_jogador(tmp_path)
+
+    resposta = client.post(
+        f"/mestre/jogadores/{jogador_id}/ficha",
+        data={
+            "nome": "Bartz",
+            "nivel": "48",
+            "idade": "17",
+            "genero": "Masculino",
+            "origem": "Atleta",
+            "classe": "Treinador(a)",
+            "estilo_combate": "Agressivo",
+            "numeros_shiny": "7",
+            "pokedolares": "300",
+            "pv_atual": "10",
+            "atributo_fisico": "1",
+            "atributo_destreza": "1",
+            "atributo_saude": "1",
+            "atributo_conhecimento": "1",
+            "atributo_comunicacao": "1",
+            "atributo_espirito": "1",
+        },
+    )
+    assert resposta.status_code == 302
 
     resposta = client.post(
         f"/mestre/jogadores/{jogador_id}/equipe/novo",
@@ -82,9 +106,9 @@ def test_adicionar_e_editar_pokemon_na_equipe(tmp_path: Path) -> None:
 
     arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
     jogador = json.loads(arquivo.read_text(encoding="utf-8"))
-    assert jogador["schema_version"] == 3
+    assert jogador["schema_version"] == 4
+    assert jogador["treinador"]["nivel"] == 48
     assert len(jogador["pokemons"]) == 1
-    assert len(jogador["equipe"]) == 1
     pokemon_id = jogador["equipe"][0]
 
     resposta = client.post(
@@ -93,22 +117,17 @@ def test_adicionar_e_editar_pokemon_na_equipe(tmp_path: Path) -> None:
             "especie_nome": "Bulbasaur",
             "apelido": "Broto",
             "genero": "♂",
-            "nivel": "2",
-            "experiencia": "30",
-            "amizade": "12",
             "natureza": "Dócil",
             "status": "Nenhum",
             "item_carregado": "",
-            "pv_atual": "30",
+            "pv_atual": "70",
             "bonus_pv": "0",
-            "bonus_pp": "0",
             "bonus_ataque": "0",
             "bonus_defesa": "0",
             "bonus_ataque_especial": "0",
             "bonus_defesa_especial": "0",
             "bonus_velocidade": "0",
             "golpe_nome": ["Arranhão", "", "", ""],
-            "golpe_usos": ["1", "0", "0", "0"],
             "anotacoes": "Inicial do Bartz",
         },
     )
@@ -117,16 +136,21 @@ def test_adicionar_e_editar_pokemon_na_equipe(tmp_path: Path) -> None:
     jogador = json.loads(arquivo.read_text(encoding="utf-8"))
     pokemon = jogador["pokemons"][0]
     assert pokemon["apelido"] == "Broto"
-    assert pokemon["nivel"] == 2
-    assert pokemon["golpes"][0]["golpe_id"] == "arranhao"
-
-    resposta = client.get(f"/mestre/jogadores/{jogador_id}/equipe")
-    assert resposta.status_code == 200
-    assert b"Broto" in resposta.data
+    assert pokemon["golpes"][0] == {"golpe_id": "arranhao"}
+    assert "nivel" not in pokemon
+    assert "experiencia" not in pokemon
+    assert "amizade" not in pokemon
+    assert "pp" not in pokemon["bonus"]
 
     resposta = client.get(f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}")
+    texto = resposta.get_data(as_text=True)
     assert resposta.status_code == 200
-    assert b"Arranh" in resposta.data
+    assert "Nível 48" in texto
+    assert "Experiência acumulada" not in texto
+    assert "Amizade" not in texto
+    assert "Taxa de captura" not in texto
+    assert "Dano do golpe Luta" not in texto
+    assert ">PP<" not in texto
 
 
 def test_limite_de_seis_pokemons(tmp_path: Path) -> None:

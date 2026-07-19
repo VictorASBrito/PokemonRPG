@@ -142,8 +142,6 @@ def importar_pokemons(caminho_ficha: Path) -> dict[str, Any]:
                     "defesa_especial": _inteiro(linha.get("G")),
                     "velocidade": _inteiro(linha.get("H")),
                 },
-                "experiencia_base": _inteiro(linha.get("I")),
-                "taxa_captura": _decimal(linha.get("J")),
                 "imagem": str(linha.get("K", "")).strip(),
                 "imagem_shiny": str(linha.get("L", "")).strip(),
             }
@@ -192,11 +190,14 @@ def importar_golpes(caminho_ficha: Path) -> dict[str, Any]:
                 "nome": str(linha.get("A", "")).strip(),
                 "tipo": str(linha.get("B", "")).strip(),
                 "categoria": str(linha.get("C", "")).strip(),
-                "custo_pp": _inteiro(linha.get("D")),
                 "dano": str(linha.get("E", "-")).strip() or "-",
                 "precisao": _precisao(linha.get("F")),
                 "precisao_texto": str(linha.get("F", "-")).strip() or "-",
-                "efeito": str(linha.get("G", "")).strip(),
+                "efeito": (
+                    "Efeito secundário desativado pelas regras atuais da campanha."
+                    if "PP" in str(linha.get("G", ""))
+                    else str(linha.get("G", "")).strip()
+                ),
             }
         )
 

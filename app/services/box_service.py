@@ -7,6 +7,13 @@ from app.services.calculo_atributos import calcular_atributos_pokemon
 from app.services.pokemon_service import indexar_catalogo
 
 
+def _inteiro(valor: Any, padrao: int = 0) -> int:
+    try:
+        return int(str(valor).strip())
+    except (TypeError, ValueError):
+        return padrao
+
+
 CONFIG_BOX_PADRAO = {
     "espacos_por_box": 10,
     "quantidade_inicial": 1,
@@ -53,7 +60,7 @@ def garantir_estrutura_boxes(
     jogador.setdefault("pokemons", [])
     jogador.setdefault("equipe", [])
     jogador.setdefault("boxes", [])
-    jogador["schema_version"] = max(3, int(jogador.get("schema_version", 1)))
+    jogador["schema_version"] = max(4, int(jogador.get("schema_version", 1)))
 
     ids_validos = {
         str(pokemon.get("id"))
@@ -298,6 +305,7 @@ def _registro_detalhado(
     especies: dict[str, dict[str, Any]],
     golpes: dict[str, dict[str, Any]],
     regras: dict[str, Any],
+    nivel_jogador: int,
     estilo: str,
 ) -> dict[str, Any] | None:
     especie = especies.get(str(pokemon.get("especie_id")))
@@ -307,6 +315,7 @@ def _registro_detalhado(
         pokemon=pokemon,
         especie=especie,
         regras=regras,
+        nivel_jogador=nivel_jogador,
         estilo_combate=estilo,
         golpes_catalogo=golpes,
     )
@@ -328,7 +337,9 @@ def boxes_detalhadas(
         for item in jogador.get("pokemons", [])
         if isinstance(item, dict) and item.get("id")
     }
-    estilo = str(jogador.get("treinador", {}).get("estilo_combate", ""))
+    treinador = jogador.get("treinador", {})
+    estilo = str(treinador.get("estilo_combate", ""))
+    nivel_jogador = max(1, _inteiro(treinador.get("nivel"), 1))
 
     equipe: list[dict[str, Any]] = []
     for pokemon_id in jogador.get("equipe", []):
@@ -339,6 +350,7 @@ def boxes_detalhadas(
                 especies=especies,
                 golpes=golpes,
                 regras=regras,
+                nivel_jogador=nivel_jogador,
                 estilo=estilo,
             )
             if registro:
@@ -355,6 +367,7 @@ def boxes_detalhadas(
                     especies=especies,
                     golpes=golpes,
                     regras=regras,
+                    nivel_jogador=nivel_jogador,
                     estilo=estilo,
                 )
                 if registro:

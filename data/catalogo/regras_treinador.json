@@ -49,35 +49,116 @@
     }
   ],
   "origens": [
-    { "id": "amnesico", "nome": "Amnésico(a)" },
-    { "id": "artista", "nome": "Artista" },
-    { "id": "atleta", "nome": "Atleta" },
-    { "id": "capanga", "nome": "Capanga" },
-    { "id": "cozinheiro", "nome": "Cozinheiro(a)" },
-    { "id": "devoto", "nome": "Devoto(a)" },
-    { "id": "eremita", "nome": "Eremita" },
-    { "id": "herdeiro", "nome": "Herdeiro(a)" },
-    { "id": "lutador", "nome": "Lutador(a)" },
-    { "id": "oficial", "nome": "Oficial" },
-    { "id": "nerd", "nome": "Nerd" },
-    { "id": "paranormal", "nome": "Paranormal" },
-    { "id": "pescador", "nome": "Pescador(a)" },
-    { "id": "professor", "nome": "Professor(a)" },
-    { "id": "vendedor", "nome": "Vendedor(a)" }
+    {
+      "id": "amnesico",
+      "nome": "Amnésico(a)"
+    },
+    {
+      "id": "artista",
+      "nome": "Artista"
+    },
+    {
+      "id": "atleta",
+      "nome": "Atleta"
+    },
+    {
+      "id": "capanga",
+      "nome": "Capanga"
+    },
+    {
+      "id": "cozinheiro",
+      "nome": "Cozinheiro(a)"
+    },
+    {
+      "id": "devoto",
+      "nome": "Devoto(a)"
+    },
+    {
+      "id": "eremita",
+      "nome": "Eremita"
+    },
+    {
+      "id": "herdeiro",
+      "nome": "Herdeiro(a)"
+    },
+    {
+      "id": "lutador",
+      "nome": "Lutador(a)"
+    },
+    {
+      "id": "oficial",
+      "nome": "Oficial"
+    },
+    {
+      "id": "nerd",
+      "nome": "Nerd"
+    },
+    {
+      "id": "paranormal",
+      "nome": "Paranormal"
+    },
+    {
+      "id": "pescador",
+      "nome": "Pescador(a)"
+    },
+    {
+      "id": "professor",
+      "nome": "Professor(a)"
+    },
+    {
+      "id": "vendedor",
+      "nome": "Vendedor(a)"
+    }
   ],
   "classes": [
-    { "id": "treinador", "nome": "Treinador(a)" },
-    { "id": "criador", "nome": "Criador(a)" },
-    { "id": "colecionador", "nome": "Colecionador(a)" },
-    { "id": "rastreador", "nome": "Rastreador(a)" },
-    { "id": "pesquisador", "nome": "Pesquisador(a)" },
-    { "id": "rocket", "nome": "Rocket" },
-    { "id": "detetive", "nome": "Detetive" }
+    {
+      "id": "treinador",
+      "nome": "Treinador(a)"
+    },
+    {
+      "id": "criador",
+      "nome": "Criador(a)"
+    },
+    {
+      "id": "colecionador",
+      "nome": "Colecionador(a)"
+    },
+    {
+      "id": "rastreador",
+      "nome": "Rastreador(a)"
+    },
+    {
+      "id": "pesquisador",
+      "nome": "Pesquisador(a)"
+    },
+    {
+      "id": "rocket",
+      "nome": "Rocket"
+    },
+    {
+      "id": "detetive",
+      "nome": "Detetive"
+    }
   ],
   "estilos_combate": [
-    { "id": "agressivo", "nome": "Agressivo" },
-    { "id": "resistente", "nome": "Resistente" },
-    { "id": "tatico", "nome": "Tático" },
-    { "id": "vigoroso", "nome": "Vigoroso" }
-  ]
+    {
+      "id": "agressivo",
+      "nome": "Agressivo"
+    },
+    {
+      "id": "resistente",
+      "nome": "Resistente"
+    },
+    {
+      "id": "tatico",
+      "nome": "Tático"
+    },
+    {
+      "id": "vigoroso",
+      "nome": "Vigoroso"
+    }
+  ],
+  "nivel_minimo": 1,
+  "nivel_maximo": 100,
+  "nivel_inicial": 1
 }

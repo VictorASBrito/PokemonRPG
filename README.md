@@ -1,4 +1,4 @@
-# Pokémon RPG — Etapa 4
+# Pokémon RPG — Regras personalizadas da campanha
 
 Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como armazenamento.
 
@@ -13,9 +13,20 @@ Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como 
 - listagem dos jogadores da campanha;
 - gravação atômica em JSON e backup antes de alterações.
 
+### Dashboard do jogador
+
+- painel em duas colunas, separando personagem e equipe;
+- foto do personagem por URL, com avatar de inicial como alternativa;
+- nome do jogador e nome do personagem exibidos separadamente;
+- nível, PV, idade, números shiny, pokédolares e atributos sempre visíveis;
+- equipe ativa em grade de duas colunas;
+- cartões com foto, apelido, espécie, nível compartilhado, barra de vida, atributos base e golpes;
+- espaços vazios da equipe usados como atalho para cadastrar novos Pokémon;
+- layout responsivo para computador, tablet e celular.
+
 ### Ficha do treinador
 
-- dados pessoais, origem, classe e estilo de combate;
+- dados pessoais, foto, nível, origem, classe e estilo de combate;
 - seis atributos do treinador;
 - cálculo automático dos PV máximos a partir de Saúde;
 - números shiny, pokédolares, benefícios e anotações;
@@ -28,44 +39,49 @@ Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como 
 - catálogo com 1.064 espécies e formas;
 - catálogo com 687 golpes;
 - cadastro, edição e remoção de Pokémon;
-- espécie, apelido, gênero, nível, experiência, amizade, Shiny, natureza e status;
+- espécie, apelido, gênero, Shiny, natureza e status;
 - item carregado e anotações individuais;
-- até quatro golpes, com controle da quantidade de usos;
-- cálculo do PP gasto e restante;
+- até quatro golpes, sem controle de recurso ou quantidade de usos;
 - imagem normal ou Shiny carregada a partir do catálogo;
 - mudança de espécie para representar evoluções e formas diferentes.
 
+### Nível compartilhado
+
+O nível pertence ao jogador e é definido na ficha do treinador. Todos os Pokémon, estejam na equipe ou nos Boxes, usam automaticamente esse mesmo nível nos cálculos.
+
+Exemplo: um jogador de nível 48 possui todos os seus Pokémon no nível 48. O nível não é armazenado individualmente dentro de cada Pokémon.
 
 ### Boxes Pokémon
 
 - um Box inicial com dez espaços;
 - compra de novos Boxes por 100 pokédolares;
 - custo, capacidade e quantidade inicial configuráveis;
-- renomeação de Boxes;
-- exclusão de Boxes vazios, mantendo sempre pelo menos um;
+- renomeação e exclusão de Boxes vazios;
 - movimentação entre equipe e Boxes;
-- movimentação entre Boxes diferentes;
-- bloqueio quando a equipe ou o Box de destino estiver cheio;
 - cadastro de novos Pokémon diretamente em um Box;
-- edição e remoção dos Pokémon guardados;
-- filtros por nome, espécie, tipo, nível mínimo e Shiny;
+- filtros por nome, espécie, tipo e Shiny;
 - acesso completo pelo jogador e pelo mestre;
-- migração automática da estrutura anterior para o `schema_version` 3.
+- migração automática dos dados para o `schema_version` 4.
 
 ### Cálculos automáticos atuais
 
-- PV e atributos por nível;
+- PV e atributos usando o nível do jogador;
 - tabela própria de progressão para PV;
 - tabela própria de progressão para Ataque, Defesa, Ataque Especial, Defesa Especial e Velocidade;
 - bônus de Pokémon Shiny;
 - bônus do estilo de combate do treinador;
 - modificadores de natureza;
 - efeitos de Queimando, Paralisado e Dormindo nos atributos aplicáveis;
-- PP máximo, gasto e restante;
 - dados de defesa pela Velocidade;
-- dano do golpe Luta conforme o nível;
-- experiência necessária para o próximo nível;
 - bônus manuais para regras próprias da campanha.
+
+Não fazem parte das regras atuais da campanha:
+
+- experiência individual;
+- amizade;
+- taxa de captura automática;
+- recurso e consumo dos golpes;
+- golpe de emergência por esgotamento de recurso.
 
 ## Requisitos
 
@@ -111,16 +127,17 @@ As regras do treinador estão em:
 data/catalogo/regras_treinador.json
 ```
 
+Esse arquivo controla, entre outros valores, o nível mínimo, máximo e inicial do jogador.
+
 As regras dos Pokémon estão em:
 
 ```text
 data/catalogo/regras_pokemon.json
 ```
 
-O segundo arquivo concentra:
+Esse arquivo concentra:
 
-- limites de nível, amizade, golpes e tamanho da equipe;
-- PP base e crescimento por nível;
+- limite de golpes e tamanho da equipe;
 - bônus Shiny;
 - faixas de progressão dos atributos;
 - efeitos dos estilos de combate;
@@ -128,8 +145,6 @@ O segundo arquivo concentra:
 - status disponíveis;
 - regra de arredondamento;
 - capacidade, quantidade inicial, custo e limite dos Boxes.
-
-Isso permite que mudanças de balanceamento sejam realizadas sem espalhar valores fixos pelo HTML ou pelas rotas.
 
 ## Catálogos importados
 
@@ -144,58 +159,48 @@ Os arquivos foram extraídos da **Ficha Editável v2.5**. Para gerar novamente o
 python scripts/importar_catalogos.py "C:\caminho\Ficha Editável v2.5.xlsx" --destino data/catalogo
 ```
 
-O importador usa apenas recursos da biblioteca padrão do Python e não depende do Excel instalado.
+O importador ignora experiência base, taxa de captura e o custo de recurso dos golpes. Descrições cujo efeito dependia exclusivamente desse recurso são neutralizadas.
 
-## Estrutura do JSON do jogador
-
-Cada jogador possui um arquivo em:
-
-```text
-data/campanhas/ankar/jogadores/<jogador_id>.json
-```
-
-Estrutura resumida:
+## Estrutura resumida do JSON
 
 ```json
 {
-  "schema_version": 3,
-  "treinador": {},
-  "inventario": [],
-  "insigneas": [],
-  "pokemons": [],
-  "equipe": ["pkm_exemplo"],
-  "boxes": [
+  "schema_version": 4,
+  "treinador": {
+    "nivel": 48
+  },
+  "pokemons": [
     {
-      "id": "box_exemplo",
-      "nome": "Box 1",
-      "limite": 10,
-      "pokemon_ids": []
+      "id": "pkm_exemplo",
+      "especie_id": "bulbasaur",
+      "golpes": [
+        { "golpe_id": "arranhao" }
+      ]
     }
   ],
-  "pokedex": {}
+  "equipe": ["pkm_exemplo"],
+  "boxes": []
 }
 ```
 
-`pokemons` armazena os dados completos de cada parceiro. `equipe` e `boxes[].pokemon_ids` guardam apenas identificadores, evitando duplicação da ficha do Pokémon durante as movimentações.
+Os Pokémon não armazenam nível, experiência, amizade ou contagem de usos. O nível é lido diretamente da ficha do treinador.
 
 ## Testes
-
-Instale as dependências de desenvolvimento:
 
 ```bash
 pip install -r requirements-dev.txt
 pytest
 ```
 
-Os testes atuais cobrem:
+Os testes cobrem:
 
 - cadastro e edição da ficha do treinador;
-- progressão de atributos por nível;
-- aplicação do estilo de combate;
+- nível compartilhado entre jogador e Pokémon;
+- progressão de atributos;
+- remoção dos campos desativados;
 - inclusão e edição de Pokémon;
-- seleção de golpes;
-- limite máximo de seis Pokémon na equipe;
+- seleção de golpes sem contagem de usos;
+- limite máximo de seis Pokémon;
 - movimentação entre equipe e Box;
 - compra, renomeação e exclusão de Box vazio;
-- cadastro direto em Box;
-- bloqueio de movimentação quando a equipe está cheia.
+- renderização do dashboard.

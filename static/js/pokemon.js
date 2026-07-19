@@ -18,7 +18,7 @@
 
     const formulario = document.querySelector("#form-pokemon");
     const camposRecalculo = formulario?.querySelectorAll(
-        "#especie_nome, #nivel, #natureza, #status, #shiny, [name^='bonus_'], [name='golpe_nome'], [name='golpe_usos']"
+        "#especie_nome, #natureza, #status, #shiny, [name^='bonus_'], [name='golpe_nome']"
     );
     const avisoExistente = document.querySelector("#aviso-recalculo");
 

@@ -1,0 +1,94 @@
+{
+  "schema_version": 3,
+  "id": "jog_fed01bdbe821",
+  "usuario_id": "usr_800f6cf310f8",
+  "campanha_id": "ankar",
+  "criado_em": "2026-07-19T03:07:10+00:00",
+  "atualizado_em": "2026-07-19T03:19:03+00:00",
+  "treinador": {
+    "nome": "Victor",
+    "foto_url": "",
+    "idade": null,
+    "genero": "",
+    "origem": "",
+    "classe": "",
+    "estilo_combate": "",
+    "numeros_shiny": [],
+    "pokedolares": 0,
+    "pv_atual": 10,
+    "pv_maximo": 10,
+    "atributos": {
+      "fisico": 1,
+      "destreza": 1,
+      "saude": 1,
+      "conhecimento": 1,
+      "comunicacao": 1,
+      "espirito": 1
+    },
+    "beneficios_habilidades": "",
+    "anotacoes": ""
+  },
+  "inventario": [],
+  "insigneas": [],
+  "pokemons": [
+    {
+      "id": "pkm_ef50246661f5",
+      "especie_id": "aerodactyl",
+      "apelido": "",
+      "genero": "Ø",
+      "nivel": 100,
+      "experiencia": 0,
+      "amizade": 1,
+      "shiny": true,
+      "natureza": "Dócil",
+      "status": "Nenhum",
+      "item_carregado": "",
+      "pv_atual": 268,
+      "bonus": {
+        "pv": 0,
+        "pp": 0,
+        "ataque": 0,
+        "defesa": 0,
+        "ataque_especial": 0,
+        "defesa_especial": 0,
+        "velocidade": 0
+      },
+      "golpes": [
+        {
+          "golpe_id": "bate-cabeca",
+          "usos": 0
+        },
+        {
+          "golpe_id": "deslize-de-pedras",
+          "usos": 0
+        },
+        {
+          "golpe_id": "terremoto",
+          "usos": 0
+        },
+        {
+          "golpe_id": "ataque-de-asa",
+          "usos": 0
+        }
+      ],
+      "anotacoes": "",
+      "criado_em": "2026-07-19T03:07:50+00:00",
+      "atualizado_em": "2026-07-19T03:10:24+00:00"
+    }
+  ],
+  "equipe": [
+    "pkm_ef50246661f5"
+  ],
+  "boxes": [
+    {
+      "id": "box_1",
+      "nome": "Box 1",
+      "limite": 10,
+      "pokemon_ids": []
+    }
+  ],
+  "pokedex": {
+    "vistos": [],
+    "capturados": []
+  }
+}

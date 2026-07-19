@@ -27,6 +27,9 @@ def carregar_regras_treinador(data_dir: str | Path) -> dict[str, Any]:
         {
             "versao": "custom",
             "pv_por_ponto_saude": 10,
+            "nivel_minimo": 1,
+            "nivel_maximo": 100,
+            "nivel_inicial": 1,
             "limite_numeros_shiny": 10,
             "atributos": [],
             "origens": [],
@@ -209,6 +212,17 @@ def atualizar_ficha_treinador(
     else:
         idade = None
 
+    nivel_minimo = int(regras.get("nivel_minimo", 1))
+    nivel_maximo = int(regras.get("nivel_maximo", 100))
+    nivel = _inteiro(
+        formulario.get("nivel"),
+        padrao=int(treinador_atual.get("nivel", regras.get("nivel_inicial", 1))),
+    )
+    if nivel < nivel_minimo or nivel > nivel_maximo:
+        erros.append(
+            f"O nível do jogador deve estar entre {nivel_minimo} e {nivel_maximo}."
+        )
+
     origem = str(formulario.get("origem", "")).strip()
     classe = str(formulario.get("classe", "")).strip()
     estilo = str(formulario.get("estilo_combate", "")).strip()
@@ -260,6 +274,8 @@ def atualizar_ficha_treinador(
     candidato = {
         **treinador_atual,
         "nome": nome,
+        "nivel": nivel,
+        "foto_url": str(formulario.get("foto_url", "")).strip(),
         "idade": idade,
         "genero": str(formulario.get("genero", "")).strip(),
         "origem": origem,

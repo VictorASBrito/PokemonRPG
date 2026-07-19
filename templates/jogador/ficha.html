@@ -30,13 +30,25 @@
 
         <div class="grade-formulario grade-tres-colunas">
             <div class="campo campo-duas-colunas">
-                <label for="nome">Nome</label>
+                <label for="nome">Nome do personagem</label>
                 <input id="nome" name="nome" value="{{ treinador.get('nome', '') }}" maxlength="80" required>
+            </div>
+
+            <div class="campo campo-largo">
+                <label for="foto_url">Foto do personagem</label>
+                <input id="foto_url" name="foto_url" type="url" value="{{ treinador.get('foto_url', '') }}" maxlength="500" placeholder="https://exemplo.com/imagem.png">
+                <small>Use a URL de uma imagem. Quando estiver vazio, o painel exibirá um avatar com a inicial do personagem.</small>
             </div>
 
             <div class="campo">
                 <label for="idade">Idade</label>
                 <input id="idade" name="idade" type="number" min="0" max="150" value="{{ '' if treinador.get('idade') is none else treinador.get('idade') }}">
+            </div>
+
+            <div class="campo">
+                <label for="nivel">Nível do jogador</label>
+                <input id="nivel" name="nivel" type="number" min="{{ regras.get('nivel_minimo', 1) }}" max="{{ regras.get('nivel_maximo', 100) }}" value="{{ treinador.get('nivel', regras.get('nivel_inicial', 1)) }}" required>
+                <small>Este nível será usado automaticamente por todos os Pokémon da ficha.</small>
             </div>
 
             <div class="campo">

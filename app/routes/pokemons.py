@@ -79,9 +79,9 @@ def _golpes_formulario(
     for item in pokemon.get("golpes", []):
         golpe = golpes_por_id.get(str(item.get("golpe_id", "")))
         if golpe:
-            resultado.append({**golpe, "usos": int(item.get("usos", 0))})
+            resultado.append(golpe)
     while len(resultado) < limite:
-        resultado.append({"id": "", "nome": "", "usos": 0})
+        resultado.append({"id": "", "nome": ""})
     return resultado[:limite]
 
 
@@ -248,7 +248,9 @@ def _editar(jogador: dict[str, Any], pokemon_id: str, *, modo_mestre: bool):
         flash("A espécie vinculada a este Pokémon não existe mais no catálogo.", "erro")
         return redirect(voltar_url)
 
-    estilo = str(jogador.get("treinador", {}).get("estilo_combate", ""))
+    treinador = jogador.get("treinador", {})
+    estilo = str(treinador.get("estilo_combate", ""))
+    nivel_jogador = max(1, int(treinador.get("nivel", 1)))
     erros: list[str] = []
     if request.method == "POST":
         especie_nome = request.form.get("especie_nome", "").strip()
@@ -265,6 +267,7 @@ def _editar(jogador: dict[str, Any], pokemon_id: str, *, modo_mestre: bool):
                 especie=especie,
                 regras=regras,
                 catalogo_golpes=catalogo_golpes,
+                nivel_jogador=nivel_jogador,
                 estilo_combate=estilo,
             )
             erros.extend(erros_formulario)
@@ -298,6 +301,7 @@ def _editar(jogador: dict[str, Any], pokemon_id: str, *, modo_mestre: bool):
         pokemon=pokemon,
         especie=especie,
         regras=regras,
+        nivel_jogador=nivel_jogador,
         estilo_combate=estilo,
         golpes_catalogo=golpes_por_id,
     )

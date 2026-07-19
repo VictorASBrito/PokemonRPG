@@ -13,7 +13,7 @@
     <div>
         <p class="rotulo">{% if modo_mestre %}Edição pelo mestre{% else %}Ficha do Pokémon{% endif %}</p>
         <h1>{{ nome_exibicao }}</h1>
-        <p class="texto-suave">{{ especie.get('nome') }} · Nível {{ pokemon.get('nivel', 1) }} · {{ especie.get('tipos', [])|join(' / ') }}</p>
+        <p class="texto-suave">{{ especie.get('nome') }} · Nível {{ calculos.nivel }} · {{ especie.get('tipos', [])|join(' / ') }}</p>
     </div>
     <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">{% if retorno == 'boxes' %}Voltar aos Boxes{% else %}Voltar à equipe{% endif %}</a>
 </section>
@@ -47,6 +47,11 @@
                     <input id="apelido" name="apelido" value="{{ pokemon.get('apelido', '') }}" maxlength="60" placeholder="Opcional">
                 </div>
                 <div class="campo">
+                    <label>Nível da equipe</label>
+                    <div class="campo-calculado"><strong>{{ calculos.nivel }}</strong></div>
+                    <small>Todos os Pokémon acompanham automaticamente o nível do jogador.</small>
+                </div>
+                <div class="campo">
                     <label for="genero">Gênero</label>
                     <select id="genero" name="genero">
                         {% for genero in regras.get('generos', []) %}<option value="{{ genero }}" {% if pokemon.get('genero') == genero %}selected{% endif %}>{{ genero }}</option>{% endfor %}
@@ -58,19 +63,6 @@
                         <input id="shiny" name="shiny" type="checkbox" value="1" {% if pokemon.get('shiny') %}checked{% endif %}>
                         <span>Pokémon Shiny</span>
                     </label>
-                </div>
-                <div class="campo">
-                    <label for="nivel">Nível</label>
-                    <input id="nivel" name="nivel" type="number" min="{{ regras.get('limites', {}).get('nivel_minimo', 1) }}" max="{{ regras.get('limites', {}).get('nivel_maximo', 100) }}" value="{{ pokemon.get('nivel', 1) }}" required>
-                </div>
-                <div class="campo">
-                    <label for="experiencia">Experiência acumulada</label>
-                    <input id="experiencia" name="experiencia" type="number" min="0" value="{{ pokemon.get('experiencia', 0) }}">
-                    {% if calculos.experiencia_proximo_nivel is not none %}<small>Próximo nível: {{ calculos.experiencia_proximo_nivel }} · faltam {{ calculos.experiencia_faltante }}</small>{% else %}<small>Nível máximo alcançado.</small>{% endif %}
-                </div>
-                <div class="campo">
-                    <label for="amizade">Amizade</label>
-                    <input id="amizade" name="amizade" type="number" min="{{ regras.get('limites', {}).get('amizade_minima', 0) }}" max="{{ regras.get('limites', {}).get('amizade_maxima', 100) }}" value="{{ pokemon.get('amizade', 1) }}">
                 </div>
                 <div class="campo">
                     <label for="natureza">Natureza</label>
@@ -104,7 +96,7 @@
             <div>
                 <p class="rotulo">Cálculo automático</p>
                 <h2>Atributos</h2>
-                <p class="texto-suave">Estilo aplicado: {{ estilo_combate or 'nenhum' }}. Aumentos arredondam para cima e reduções para baixo.</p>
+                <p class="texto-suave">Cálculo no nível {{ calculos.nivel }}. Estilo aplicado: {{ estilo_combate or 'nenhum' }}. Aumentos arredondam para cima e reduções para baixo.</p>
             </div>
             <div class="saude-pokemon-destaque">
                 <label for="pv_atual">PV atual</label>
@@ -115,24 +107,17 @@
         <div class="grade-atributos-pokemon">
             {% for atributo in regras.get('atributos', []) %}
                 {% set atributo_id = atributo.get('id') %}
-                <article class="atributo-pokemon-card {% if atributo_id in ['pv', 'pp'] %}atributo-recurso{% endif %}">
+                <article class="atributo-pokemon-card {% if atributo_id == 'pv' %}atributo-recurso{% endif %}">
                     <span>{{ atributo.get('nome') }}</span>
-                    {% if atributo_id == 'pp' %}
-                        <strong>{{ calculos.pp_atual }}<small>/{{ calculos.pp_maximo }}</small></strong>
-                        <em>{{ calculos.pp_gasto }} gastos</em>
-                    {% else %}
-                        <strong>{{ calculos.totais.get(atributo_id, 0) }}</strong>
-                        <em>Base {{ calculos.bases.get(atributo_id, 0) }}</em>
-                    {% endif %}
+                    <strong>{{ calculos.totais.get(atributo_id, 0) }}</strong>
+                    <em>Base {{ calculos.bases.get(atributo_id, 0) }}</em>
                 </article>
             {% endfor %}
         </div>
 
         <div class="metricas-calculo">
+            <div><span>Nível compartilhado</span><strong>{{ calculos.nivel }}</strong></div>
             <div><span>Dados de defesa</span><strong>{{ calculos.dados_defesa_texto }}</strong></div>
-            <div><span>Dano do golpe Luta</span><strong>{{ calculos.dados_luta_texto }}</strong></div>
-            <div><span>Experiência base</span><strong>{{ especie.get('experiencia_base', 0) }}</strong></div>
-            <div><span>Taxa de captura base</span><strong>{{ (especie.get('taxa_captura', 0) * 100)|round|int }}%</strong></div>
         </div>
     </section>
 
@@ -158,23 +143,22 @@
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Movimentos</p>
-                <h2>Golpes e usos</h2>
-                <p class="texto-suave">Cada uso consome o custo de PP do golpe no reservatório total do Pokémon.</p>
+                <h2>Golpes</h2>
+                <p class="texto-suave">Registre apenas os movimentos disponíveis, sem controle de quantidade de usos.</p>
             </div>
             <span class="contador-golpes">{{ pokemon.get('golpes', [])|length }}/{{ regras.get('limites', {}).get('golpes_por_pokemon', 4) }}</span>
         </div>
 
-        <div class="tabela-golpes">
+        <div class="tabela-golpes tabela-golpes-simples">
             <div class="linha-golpe cabecalho-golpes">
-                <span>Golpe</span><span>Tipo / categoria</span><span>Dano</span><span>Custo</span><span>Usos</span>
+                <span>Golpe</span><span>Tipo / categoria</span><span>Dano</span><span>Precisão</span>
             </div>
             {% for golpe in golpes_selecionados %}
                 <div class="linha-golpe">
                     <input name="golpe_nome" list="catalogo-golpes" value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe" autocomplete="off">
                     <span>{{ (golpe.get('tipo', '—') ~ ' / ' ~ golpe.get('categoria', '—')) if golpe.get('nome') else '—' }}</span>
                     <span>{{ golpe.get('dano', '—') if golpe.get('nome') else '—' }}</span>
-                    <span>{{ golpe.get('custo_pp', '—') if golpe.get('nome') else '—' }}</span>
-                    <input name="golpe_usos" type="number" min="0" value="{{ golpe.get('usos', 0) }}">
+                    <span>{{ golpe.get('precisao_texto', '—') if golpe.get('nome') else '—' }}</span>
                 </div>
             {% endfor %}
         </div>

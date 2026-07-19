@@ -1,18 +1,9 @@
 {
-  "schema_version": 2,
-  "versao": "2.5-customizavel",
+  "schema_version": 3,
+  "versao": "campanha-ankar-sem-pp-xp-amizade",
   "limites": {
-    "nivel_minimo": 1,
-    "nivel_maximo": 100,
-    "amizade_minima": 0,
-    "amizade_maxima": 100,
     "golpes_por_pokemon": 4,
     "tamanho_equipe": 6
-  },
-  "pp": {
-    "base_formula": 18,
-    "por_nivel": 2,
-    "bonus_shiny": 10
   },
   "bonus_shiny": {
     "pv": 10,
@@ -150,10 +141,6 @@
     {
       "id": "pv",
       "nome": "Pontos de Vida"
-    },
-    {
-      "id": "pp",
-      "nome": "Pontos de Poder"
     },
     {
       "id": "ataque",

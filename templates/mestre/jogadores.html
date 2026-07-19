@@ -25,6 +25,7 @@
                     {% if treinador.get('origem') %} · {{ treinador.get('origem') }}{% endif %}
                 </p>
                 <div class="chips">
+                    <span class="chip">Nível {{ treinador.get('nivel', 1) }}</span>
                     <span class="chip">PV {{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</span>
                     <span class="chip">₽ {{ treinador.get('pokedolares', 0) }}</span>
                     <span class="chip">Equipe {{ jogador.get('equipe', [])|length }}/6</span>

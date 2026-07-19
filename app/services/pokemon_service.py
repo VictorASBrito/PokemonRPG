@@ -54,6 +54,40 @@ def buscar_por_nome(
     )
 
 
+def _inteiro(valor: Any, padrao: int = 0) -> int:
+    try:
+        return int(str(valor).strip())
+    except (TypeError, ValueError):
+        return padrao
+
+
+def _limpar_dados_desativados(pokemon: dict[str, Any]) -> None:
+    """Remove campos de versões anteriores que não são usados na campanha."""
+    pokemon.pop("nivel", None)
+    pokemon.pop("experiencia", None)
+    pokemon.pop("amizade", None)
+
+    bonus = pokemon.get("bonus")
+    if not isinstance(bonus, dict):
+        bonus = {}
+    bonus.pop("pp", None)
+    pokemon["bonus"] = {
+        atributo: _inteiro(bonus.get(atributo), 0)
+        for atributo in ATRIBUTOS_BONUS
+    }
+
+    golpes_limpos: list[dict[str, str]] = []
+    ids_usados: set[str] = set()
+    for registro in pokemon.get("golpes", []):
+        if not isinstance(registro, dict):
+            continue
+        golpe_id = str(registro.get("golpe_id", "")).strip()
+        if golpe_id and golpe_id not in ids_usados:
+            golpes_limpos.append({"golpe_id": golpe_id})
+            ids_usados.add(golpe_id)
+    pokemon["golpes"] = golpes_limpos
+
+
 def garantir_estrutura_pokemon(jogador: dict[str, Any]) -> dict[str, Any]:
     jogador.setdefault("pokemons", [])
     jogador.setdefault("equipe", [])
@@ -61,7 +95,20 @@ def garantir_estrutura_pokemon(jogador: dict[str, Any]) -> dict[str, Any]:
         "boxes",
         [{"id": "box_1", "nome": "Box 1", "limite": 10, "pokemon_ids": []}],
     )
-    jogador["schema_version"] = max(3, int(jogador.get("schema_version", 1)))
+    jogador["schema_version"] = max(4, int(jogador.get("schema_version", 1)))
+
+    treinador = jogador.setdefault("treinador", {})
+    if "nivel" not in treinador:
+        niveis_antigos = [
+            _inteiro(pokemon.get("nivel"), 0)
+            for pokemon in jogador.get("pokemons", [])
+            if isinstance(pokemon, dict) and _inteiro(pokemon.get("nivel"), 0) > 0
+        ]
+        treinador["nivel"] = max(niveis_antigos, default=1)
+
+    for pokemon in jogador.get("pokemons", []):
+        if isinstance(pokemon, dict):
+            _limpar_dados_desativados(pokemon)
 
     ids_validos = {
         str(item.get("id"))
@@ -119,13 +166,6 @@ def encontrar_pokemon(jogador: dict[str, Any], pokemon_id: str) -> dict[str, Any
     )
 
 
-def _inteiro(valor: Any, padrao: int = 0) -> int:
-    try:
-        return int(str(valor).strip())
-    except (TypeError, ValueError):
-        return padrao
-
-
 def _opcoes(regras: dict[str, Any], chave: str) -> set[str]:
     return {
         str(item.get("nome", item)).strip()
@@ -150,9 +190,7 @@ def _normalizar_golpes(
     erros: list[str] = []
     ids_usados: set[str] = set()
 
-    nomes = formulario.getlist("golpe_nome")
-    usos = formulario.getlist("golpe_usos")
-    for nome, quantidade_usos in list(zip(nomes, usos))[:limite]:
+    for nome in formulario.getlist("golpe_nome")[:limite]:
         nome = str(nome).strip()
         if not nome:
             continue
@@ -165,12 +203,7 @@ def _normalizar_golpes(
             erros.append(f'O golpe "{nome}" foi informado mais de uma vez.')
             continue
         ids_usados.add(golpe_id)
-        golpes.append(
-            {
-                "golpe_id": golpe_id,
-                "usos": max(0, _inteiro(quantidade_usos, 0)),
-            }
-        )
+        golpes.append({"golpe_id": golpe_id})
     return golpes, erros
 
 
@@ -181,23 +214,13 @@ def montar_pokemon_do_formulario(
     especie: dict[str, Any],
     regras: dict[str, Any],
     catalogo_golpes: dict[str, Any],
+    nivel_jogador: int,
     estilo_combate: str,
 ) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
     limites = regras.get("limites", {})
     erros: list[str] = []
     candidato = deepcopy(pokemon_atual) if pokemon_atual else {}
-
-    nivel_min = _inteiro(limites.get("nivel_minimo"), 1)
-    nivel_max = _inteiro(limites.get("nivel_maximo"), 100)
-    nivel = _inteiro(formulario.get("nivel"), 1)
-    if nivel < nivel_min or nivel > nivel_max:
-        erros.append(f"O nível deve estar entre {nivel_min} e {nivel_max}.")
-
-    amizade_min = _inteiro(limites.get("amizade_minima"), 0)
-    amizade_max = _inteiro(limites.get("amizade_maxima"), 100)
-    amizade = _inteiro(formulario.get("amizade"), 1)
-    if amizade < amizade_min or amizade > amizade_max:
-        erros.append(f"A amizade deve estar entre {amizade_min} e {amizade_max}.")
+    _limpar_dados_desativados(candidato)
 
     generos = set(str(item) for item in regras.get("generos", []))
     genero = str(formulario.get("genero", "Ø")).strip() or "Ø"
@@ -223,9 +246,6 @@ def montar_pokemon_do_formulario(
             "especie_id": str(especie["id"]),
             "apelido": str(formulario.get("apelido", "")).strip(),
             "genero": genero,
-            "nivel": nivel,
-            "experiencia": max(0, _inteiro(formulario.get("experiencia"), 0)),
-            "amizade": amizade,
             "shiny": formulario.get("shiny") == "1",
             "natureza": natureza,
             "status": status,
@@ -241,6 +261,7 @@ def montar_pokemon_do_formulario(
         pokemon=candidato,
         especie=especie,
         regras=regras,
+        nivel_jogador=nivel_jogador,
         estilo_combate=estilo_combate,
         golpes_catalogo=indexar_catalogo(catalogo_golpes, "golpes"),
     )
@@ -251,11 +272,6 @@ def montar_pokemon_do_formulario(
     if pv_atual < 0 or pv_atual > pv_maximo:
         erros.append(f"Os PV atuais devem estar entre 0 e {pv_maximo}.")
     candidato["pv_atual"] = max(0, min(pv_atual, pv_maximo))
-
-    if calculos.get("pp_excedente", 0) > 0:
-        erros.append(
-            "O total de PP gasto pelos usos dos golpes ultrapassa o PP máximo do Pokémon."
-        )
 
     if "id" not in candidato:
         base = estrutura_pokemon_padrao(
@@ -276,8 +292,10 @@ def criar_pokemon_na_equipe(
     regras: dict[str, Any],
 ) -> dict[str, Any]:
     garantir_estrutura_pokemon(jogador)
+    treinador = jogador.get("treinador", {})
+    nivel_jogador = max(1, _inteiro(treinador.get("nivel"), 1))
+    estilo = str(treinador.get("estilo_combate", ""))
     pokemon_base = {
-        "nivel": 1,
         "shiny": False,
         "natureza": "Dócil",
         "status": "Nenhum",
@@ -288,6 +306,8 @@ def criar_pokemon_na_equipe(
         pokemon=pokemon_base,
         especie=especie,
         regras=regras,
+        nivel_jogador=nivel_jogador,
+        estilo_combate=estilo,
     )
     pokemon = estrutura_pokemon_padrao(
         especie_id=str(especie["id"]),
@@ -312,6 +332,39 @@ def remover_pokemon(jogador: dict[str, Any], pokemon_id: str) -> bool:
     return len(jogador["pokemons"]) < quantidade_antes
 
 
+def sincronizar_pokemons_com_nivel_jogador(
+    jogador: dict[str, Any],
+    data_dir: str | Path,
+) -> dict[str, Any]:
+    """Migra dados antigos e limita os PV atuais ao novo máximo da equipe."""
+    garantir_estrutura_pokemon(jogador)
+    regras = carregar_regras_pokemon(data_dir)
+    especies = indexar_catalogo(carregar_catalogo_pokemons(data_dir), "pokemons")
+    treinador = jogador.get("treinador", {})
+    nivel = max(1, _inteiro(treinador.get("nivel"), 1))
+    estilo = str(treinador.get("estilo_combate", ""))
+
+    for pokemon in jogador.get("pokemons", []):
+        if not isinstance(pokemon, dict):
+            continue
+        especie = especies.get(str(pokemon.get("especie_id")))
+        if not especie:
+            continue
+        calculos = calcular_atributos_pokemon(
+            pokemon=pokemon,
+            especie=especie,
+            regras=regras,
+            nivel_jogador=nivel,
+            estilo_combate=estilo,
+        )
+        pv_maximo = calculos["totais"]["pv"]
+        pokemon["pv_atual"] = max(
+            0,
+            min(_inteiro(pokemon.get("pv_atual"), pv_maximo), pv_maximo),
+        )
+    return jogador
+
+
 def equipe_detalhada(
     *,
     jogador: dict[str, Any],
@@ -327,7 +380,9 @@ def equipe_detalhada(
         for item in jogador.get("pokemons", [])
         if isinstance(item, dict)
     }
-    estilo = str(jogador.get("treinador", {}).get("estilo_combate", ""))
+    treinador = jogador.get("treinador", {})
+    estilo = str(treinador.get("estilo_combate", ""))
+    nivel = max(1, _inteiro(treinador.get("nivel"), 1))
     resultado: list[dict[str, Any]] = []
 
     for pokemon_id in jogador.get("equipe", []):
@@ -341,6 +396,7 @@ def equipe_detalhada(
             pokemon=pokemon,
             especie=especie,
             regras=regras,
+            nivel_jogador=nivel,
             estilo_combate=estilo,
             golpes_catalogo=golpes,
         )

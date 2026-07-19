@@ -6,7 +6,6 @@ from typing import Any
 
 ATRIBUTOS_BONUS = (
     "pv",
-    "pp",
     "ataque",
     "defesa",
     "ataque_especial",
@@ -31,9 +30,6 @@ def estrutura_pokemon_padrao(
         "especie_id": especie_id,
         "apelido": "",
         "genero": "Ø",
-        "nivel": 1,
-        "experiencia": 0,
-        "amizade": 1,
         "shiny": False,
         "natureza": natureza,
         "status": "Nenhum",

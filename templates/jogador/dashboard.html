@@ -1,46 +1,199 @@
 {% extends "base.html" %}
 
-{% block titulo %}Minha jornada | Pokémon RPG{% endblock %}
+{% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
 
 {% block conteudo %}
-{% set treinador = jogador.get('treinador', {}) %}
-<section class="cabecalho-pagina cabecalho-com-acoes">
+{% set atributos_salvos = treinador.get('atributos', {}) %}
+{% set numeros_shiny = treinador.get('numeros_shiny', []) %}
+<section class="cabecalho-dashboard">
     <div>
         <p class="rotulo">Área do jogador</p>
-        <h1>Olá, {{ nome }}</h1>
-        <p class="texto-suave">Sua ficha e os recursos da jornada ficam reunidos aqui.</p>
+        <h1>Painel de {{ treinador.get('nome') or 'Treinador' }}</h1>
+        <p class="texto-suave">As informações essenciais da ficha e sua equipe ativa em um único lugar.</p>
     </div>
-    <a class="botao botao-primario botao-link" href="{{ url_for('jogadores.ficha') }}">Editar ficha</a>
-</section>
-
-<section class="resumo-treinador cartao">
-    <div>
-        <p class="rotulo">Treinador</p>
-        <h2>{{ treinador.get('nome') }}</h2>
-        <p class="texto-suave">{{ treinador.get('classe') or 'Classe não definida' }}{% if treinador.get('origem') %} · {{ treinador.get('origem') }}{% endif %}</p>
-    </div>
-    <div class="metricas-resumo">
-        <div><strong>{{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</strong><span>PV</span></div>
-        <div><strong>₽ {{ treinador.get('pokedolares', 0) }}</strong><span>Pokédolares</span></div>
-        <div><strong>{{ jogador.get('equipe', [])|length }}/6</strong><span>Equipe</span></div>
+    <div class="acoes-dashboard">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('boxes.boxes_jogador') }}">Boxes</a>
+        <a class="botao botao-primario botao-link" href="{{ url_for('jogadores.ficha') }}">Editar ficha</a>
     </div>
 </section>
 
-<section class="grade-cartoes espacamento-topo">
-    <a class="cartao cartao-link" href="{{ url_for('jogadores.ficha') }}">
-        <h2>Ficha do treinador</h2>
-        <p>Atributos, origem, classe, dinheiro, inventário e insígnias.</p>
-        <span class="link-seta">Abrir ficha →</span>
-    </a>
-    <a class="cartao cartao-link" href="{{ url_for('pokemons.equipe_jogador') }}">
-        <h2>Equipe Pokémon</h2>
-        <p>Seis parceiros, golpes, PV, PP, amizade e experiência.</p>
-        <span class="link-seta">Abrir equipe →</span>
-    </a>
-    <a class="cartao cartao-link" href="{{ url_for('boxes.boxes_jogador') }}">
-        <h2>Boxes Pokémon</h2>
-        <p>Guarde capturas, organize seus parceiros e altere a equipe ativa.</p>
-        <span class="link-seta">Abrir Boxes →</span>
-    </a>
-</section>
+<div class="dashboard-jogador">
+    <aside class="coluna-treinador">
+        <section class="cartao painel-identidade">
+            <div class="foto-treinador-wrap">
+                {% if treinador.get('foto_url') %}
+                    <img
+                        class="foto-treinador"
+                        src="{{ treinador.get('foto_url') }}"
+                        alt="Foto de {{ treinador.get('nome') or 'personagem' }}"
+                    >
+                {% else %}
+                    <div class="foto-treinador foto-treinador-placeholder" aria-label="Foto não definida">
+                        {{ (treinador.get('nome') or nome_jogador or 'T')[0]|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="nomes-treinador">
+                <span>Jogador</span>
+                <strong>{{ nome_jogador }}</strong>
+                <span>Personagem</span>
+                <h2>{{ treinador.get('nome') or 'Não definido' }}</h2>
+            </div>
+
+            <div class="vida-treinador">
+                <div class="linha-vida">
+                    <span>Pontos de Vida</span>
+                    <strong>{{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</strong>
+                </div>
+                <progress
+                    value="{{ treinador.get('pv_atual', 0) if treinador.get('pv_atual', 0) > 0 else 0 }}"
+                    max="{{ treinador.get('pv_maximo', 1) if treinador.get('pv_maximo', 0) > 0 else 1 }}"
+                ></progress>
+            </div>
+
+            <dl class="informacoes-treinador">
+                <div>
+                    <dt>Idade</dt>
+                    <dd>{{ treinador.get('idade') if treinador.get('idade') is not none else 'Não definida' }}</dd>
+                </div>
+                <div>
+                    <dt>Nível</dt>
+                    <dd>{{ treinador.get('nivel', 1) }}</dd>
+                </div>
+                <div>
+                    <dt>Número Shiny</dt>
+                    <dd>{{ numeros_shiny|join(', ') if numeros_shiny else 'Não definido' }}</dd>
+                </div>
+                <div class="informacao-destaque">
+                    <dt>Pokédolares</dt>
+                    <dd>₽ {{ treinador.get('pokedolares', 0) }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="cartao painel-atributos-treinador">
+            <div class="titulo-painel-lateral">
+                <div>
+                    <p class="rotulo">Personagem</p>
+                    <h2>Atributos</h2>
+                </div>
+                <a href="{{ url_for('jogadores.ficha') }}#atributos">Editar</a>
+            </div>
+
+            <div class="lista-atributos-treinador">
+                {% for atributo in atributos_config %}
+                    <div class="atributo-treinador">
+                        <span>{{ atributo.get('nome', atributo.get('id')) }}</span>
+                        <strong>{{ atributos_salvos.get(atributo.get('id'), atributo.get('valor_inicial', 1)) }}</strong>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </aside>
+
+    <main class="coluna-equipe">
+        <div class="cabecalho-equipe-dashboard">
+            <div>
+                <p class="rotulo">Equipe ativa</p>
+                <h2>Pokémon</h2>
+                <p class="texto-suave">{{ equipe|length }} de {{ limite_equipe }} espaços ocupados.</p>
+            </div>
+            <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_jogador') }}">Gerenciar equipe</a>
+        </div>
+
+        <section class="grade-pokemons-dashboard">
+            {% for item in equipe %}
+                {% set pokemon = item.get('pokemon', {}) %}
+                {% set especie = item.get('especie', {}) %}
+                {% set calculos = item.get('calculos', {}) %}
+                {% set totais = calculos.get('totais', {}) %}
+                {% set pv_maximo = totais.get('pv', 0) %}
+                {% set pv_atual = pokemon.get('pv_atual', pv_maximo) %}
+                {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome', 'Pokémon') %}
+                <a class="cartao pokemon-dashboard-card" href="{{ url_for('pokemons.editar_jogador', pokemon_id=pokemon.get('id')) }}">
+                    <div class="pokemon-dashboard-topo">
+                        <div class="retrato-pokemon-dashboard">
+                            <img
+                                src="{{ especie.get('imagem_shiny') if pokemon.get('shiny') else especie.get('imagem') }}"
+                                alt="{{ nome_exibicao }}"
+                            >
+                            {% if pokemon.get('shiny') %}<span class="selo-shiny-dashboard">Shiny</span>{% endif %}
+                        </div>
+
+                        <div class="dados-pokemon-dashboard">
+                            <div class="nome-pokemon-dashboard">
+                                <div>
+                                    <span>{{ especie.get('nome', 'Pokémon') }}</span>
+                                    <h3>{{ nome_exibicao }}</h3>
+                                </div>
+                                <strong>Nv. {{ calculos.get('nivel', treinador.get('nivel', 1)) }}</strong>
+                            </div>
+
+                            <div class="vida-pokemon-dashboard">
+                                <div class="linha-vida">
+                                    <span>Vida</span>
+                                    <strong>{{ pv_atual }}/{{ pv_maximo }}</strong>
+                                </div>
+                                <progress
+                                    value="{{ pv_atual if pv_atual > 0 else 0 }}"
+                                    max="{{ pv_maximo if pv_maximo > 0 else 1 }}"
+                                ></progress>
+                            </div>
+
+                            <div class="tipos-pokemon-dashboard">
+                                {% for tipo in especie.get('tipos', []) %}
+                                    <span>{{ tipo }}</span>
+                                {% endfor %}
+                                {% if pokemon.get('status') and pokemon.get('status') != 'Nenhum' %}
+                                    <span class="status-pokemon-dashboard">{{ pokemon.get('status') }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="conteudo-pokemon-dashboard">
+                        <section class="bloco-pokemon-dashboard">
+                            <h4>Atributos base</h4>
+                            <div class="atributos-base-pokemon">
+                                <div><span>PV</span><strong>{{ calculos.get('bases', {}).get('pv', 0) }}</strong></div>
+                                <div><span>ATQ</span><strong>{{ calculos.get('bases', {}).get('ataque', 0) }}</strong></div>
+                                <div><span>DEF</span><strong>{{ calculos.get('bases', {}).get('defesa', 0) }}</strong></div>
+                                <div><span>ATQ.E</span><strong>{{ calculos.get('bases', {}).get('ataque_especial', 0) }}</strong></div>
+                                <div><span>DEF.E</span><strong>{{ calculos.get('bases', {}).get('defesa_especial', 0) }}</strong></div>
+                                <div><span>VEL</span><strong>{{ calculos.get('bases', {}).get('velocidade', 0) }}</strong></div>
+                            </div>
+                        </section>
+
+                        <section class="bloco-pokemon-dashboard">
+                            <h4>Golpes</h4>
+                            <div class="golpes-pokemon-dashboard">
+                                {% for golpe in calculos.get('golpes', []) %}
+                                    <div>
+                                        <span>{{ golpe.get('nome') }}</span>
+                                        <small>{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}</small>
+                                    </div>
+                                {% else %}
+                                    <p>Nenhum golpe registrado.</p>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+                </a>
+            {% endfor %}
+
+            {% for _ in range(limite_equipe - equipe|length) %}
+                <a class="cartao pokemon-dashboard-vazio" href="{{ url_for('pokemons.novo_jogador') }}">
+                    <span>＋</span>
+                    <strong>Espaço vazio</strong>
+                    <small>Adicionar Pokémon</small>
+                </a>
+            {% endfor %}
+        </section>
+    </main>
+</div>
 {% endblock %}

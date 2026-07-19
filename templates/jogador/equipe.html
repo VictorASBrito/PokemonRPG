@@ -12,7 +12,7 @@
     <div>
         <p class="rotulo">{% if modo_mestre %}Equipe do jogador{% else %}Meus parceiros{% endif %}</p>
         <h1>Equipe de {{ treinador.get('nome') or 'Treinador' }}</h1>
-        <p class="texto-suave">Até {{ limite }} Pokémon ativos. Os atributos são recalculados a partir da espécie, nível, natureza, estilo e condições atuais.</p>
+        <p class="texto-suave">Até {{ limite }} Pokémon ativos. Todos os Pokémon acompanham o nível do jogador. Os atributos são recalculados a partir da espécie, natureza, estilo e condições atuais.</p>
     </div>
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
@@ -65,7 +65,7 @@
                     <span class="pokemon-especie">{{ especie.get('nome') }}</span>
                     <h2>{{ nome_exibicao }}</h2>
                 </div>
-                <span class="nivel-pokemon">Nv. {{ pokemon.get('nivel', 1) }}</span>
+                <span class="nivel-pokemon">Nv. {{ calculos.nivel }}</span>
             </div>
 
             <div class="chips chips-tipos">
@@ -82,14 +82,10 @@
                     <div class="linha-barra"><span>PV</span><strong>{{ pokemon.get('pv_atual', 0) }}/{{ calculos.totais.pv }}</strong></div>
                     <progress value="{{ pokemon.get('pv_atual', 0) }}" max="{{ calculos.totais.pv or 1 }}"></progress>
                 </div>
-                <div>
-                    <div class="linha-barra"><span>PP</span><strong>{{ calculos.pp_atual }}/{{ calculos.pp_maximo }}</strong></div>
-                    <progress class="barra-pp" value="{{ calculos.pp_atual }}" max="{{ calculos.pp_maximo or 1 }}"></progress>
-                </div>
             </div>
 
             <div class="metricas-pokemon-card">
-                <span><strong>{{ pokemon.get('amizade', 0) }}</strong> Amizade</span>
+                <span><strong>{{ calculos.nivel }}</strong> Nível</span>
                 <span><strong>{{ calculos.dados_defesa_texto }}</strong> Defesa</span>
                 <span><strong>{{ pokemon.get('golpes', [])|length }}/4</strong> Golpes</span>
             </div>

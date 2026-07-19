@@ -1,0 +1,74 @@
+{
+  "schema_version": 4,
+  "id": "jog_ec752851ea5b",
+  "usuario_id": "usr_1b8d10bf7089",
+  "campanha_id": "ankar",
+  "criado_em": "2026-07-19T03:32:31+00:00",
+  "atualizado_em": "2026-07-19T03:36:35+00:00",
+  "treinador": {
+    "nome": "Victor",
+    "nivel": 100,
+    "foto_url": "",
+    "idade": null,
+    "genero": "",
+    "origem": "",
+    "classe": "",
+    "estilo_combate": "",
+    "numeros_shiny": [],
+    "pokedolares": 0,
+    "pv_atual": 10,
+    "pv_maximo": 10,
+    "atributos": {
+      "fisico": 1,
+      "destreza": 1,
+      "saude": 1,
+      "conhecimento": 1,
+      "comunicacao": 1,
+      "espirito": 1
+    },
+    "beneficios_habilidades": "",
+    "anotacoes": ""
+  },
+  "inventario": [],
+  "insigneas": [],
+  "pokemons": [
+    {
+      "id": "pkm_a18a4ecdc812",
+      "especie_id": "abomasnow",
+      "apelido": "Tuts",
+      "genero": "Ø",
+      "shiny": true,
+      "natureza": "Dócil",
+      "status": "Nenhum",
+      "item_carregado": "",
+      "pv_atual": 68,
+      "bonus": {
+        "pv": 0,
+        "ataque": 0,
+        "defesa": 0,
+        "ataque_especial": 0,
+        "defesa_especial": 0,
+        "velocidade": 0
+      },
+      "golpes": [],
+      "anotacoes": "",
+      "criado_em": "2026-07-19T03:32:53+00:00",
+      "atualizado_em": "2026-07-19T03:36:35+00:00"
+    }
+  ],
+  "equipe": [
+    "pkm_a18a4ecdc812"
+  ],
+  "boxes": [
+    {
+      "id": "box_1",
+      "nome": "Box 1",
+      "limite": 10,
+      "pokemon_ids": []
+    }
+  ],
+  "pokedex": {
+    "vistos": [],
+    "capturados": []
+  }
+}

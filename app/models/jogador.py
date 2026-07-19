@@ -28,7 +28,7 @@ def estrutura_jogador_padrao(
     horario = agora_iso()
 
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "id": jogador_id,
         "usuario_id": usuario_id,
         "campanha_id": campanha_id,
@@ -36,6 +36,8 @@ def estrutura_jogador_padrao(
         "atualizado_em": horario,
         "treinador": {
             "nome": nome.strip(),
+            "nivel": int(regras.get("nivel_inicial", 1)),
+            "foto_url": "",
             "idade": None,
             "genero": "",
             "origem": "",

@@ -20,6 +20,13 @@ from app.services.jogador_service import (
     carregar_regras_treinador,
     salvar_jogador,
 )
+from app.services.pokemon_service import (
+    carregar_catalogo_golpes,
+    carregar_catalogo_pokemons,
+    carregar_regras_pokemon,
+    equipe_detalhada,
+    sincronizar_pokemons_com_nivel_jogador,
+)
 
 jogadores_bp = Blueprint("jogadores", __name__, url_prefix="/jogador")
 
@@ -38,17 +45,33 @@ def _carregar_jogador_da_sessao():
 @jogadores_bp.get("/dashboard")
 @perfil_obrigatorio("jogador")
 def dashboard():
-    jogador, _, _ = _carregar_jogador_da_sessao()
-    if not jogador:
+    jogador, data_dir, _ = _carregar_jogador_da_sessao()
+    if not jogador or data_dir is None:
         session.clear()
         flash("Sua ficha ainda não foi vinculada a este usuário.", "erro")
         return redirect(url_for("auth.login"))
 
     treinador = jogador.get("treinador", {})
+    regras_treinador = carregar_regras_treinador(data_dir)
+    regras_pokemon = carregar_regras_pokemon(data_dir)
+    limite_equipe = int(
+        regras_pokemon.get("limites", {}).get("tamanho_equipe", 6)
+    )
+    equipe = equipe_detalhada(
+        jogador=jogador,
+        catalogo_pokemons=carregar_catalogo_pokemons(data_dir),
+        catalogo_golpes=carregar_catalogo_golpes(data_dir),
+        regras=regras_pokemon,
+    )
+
     return render_template(
         "jogador/dashboard.html",
-        nome=treinador.get("nome") or session.get("nome", "Jogador"),
+        nome_jogador=session.get("nome", "Jogador"),
         jogador=jogador,
+        treinador=treinador,
+        atributos_config=regras_treinador.get("atributos", []),
+        equipe=equipe,
+        limite_equipe=limite_equipe,
     )
 
 
@@ -73,6 +96,7 @@ def ficha():
                 flash(erro, "erro")
             jogador = jogador_atualizado
         else:
+            sincronizar_pokemons_com_nivel_jogador(jogador_atualizado, data_dir)
             salvar_jogador(
                 data_dir=data_dir,
                 campanha_id=campanha_id,
