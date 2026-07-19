@@ -1,12 +1,17 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from flask import Flask, redirect, session, url_for
+
+from app.config import Config
+from app.extensions import db, migrate
 
 
 def create_app() -> Flask:
+    load_dotenv()
+
     raiz = Path(__file__).resolve().parent.parent
 
     app = Flask(
@@ -15,14 +20,16 @@ def create_app() -> Flask:
         static_folder=str(raiz / "static"),
     )
 
-    app.config.update(
-        SECRET_KEY=os.getenv("POKEMON_RPG_SECRET_KEY", "troque-esta-chave-em-producao"),
-        DATA_DIR=raiz / "data",
-        CAMPANHA_PADRAO=os.getenv("POKEMON_RPG_CAMPANHA", "ankar"),
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE="Lax",
-    )
+    Config(raiz).aplicar(app)
 
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    # Garante que todos os modelos relacionais façam parte do metadata usado
+    # pelo Alembic, sem substituir ainda os serviços legados baseados em JSON.
+    from app import models as _models  # noqa: F401
+
+    from app.commands import banco_cli
     from app.routes.auth import auth_bp
     from app.routes.boxes import boxes_bp
     from app.routes.jogadores import jogadores_bp
@@ -34,6 +41,7 @@ def create_app() -> Flask:
     app.register_blueprint(mestre_bp)
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
+    app.register_blueprint(banco_cli, cli_group=None)
 
     @app.get("/")
     def inicio():

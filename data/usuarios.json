@@ -7,15 +7,6 @@
       "perfil": "mestre",
       "senha_hash": "pbkdf2_sha256$600000$1c1dd5797aa4144a7c1e082c37260bb1$9641a51ebfbdff2bf5b62282092e29cba5780a31fe5254a852b3e0a9d40961ba",
       "ativo": true
-    },
-    {
-      "id": "usr_a0aa71a7aa16",
-      "login": "aaa",
-      "nome": "Victor",
-      "perfil": "jogador",
-      "jogador_id": "jog_522ace8c5d23",
-      "senha_hash": "pbkdf2_sha256$600000$32a883b73fd5b62c3fccd4c2d8b4fc7c$4a91f68d94d8acf1894620942265d3111388965f6df2b180ea90759e8a06c32e",
-      "ativo": true
     }
   ]
 }

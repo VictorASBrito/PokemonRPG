@@ -214,3 +214,9 @@ Os testes cobrem:
 - migração para uma Box única de 100 espaços;
 - pesquisa dinâmica e renomeação da Box;
 - renderização do dashboard.
+
+## PostgreSQL
+
+A fundação do banco relacional foi adicionada sem remover o funcionamento atual em JSON.
+
+Consulte [BANCO_DE_DADOS.md](BANCO_DE_DADOS.md) para configurar o `.env`, validar a conexão e aplicar a primeira migration.
