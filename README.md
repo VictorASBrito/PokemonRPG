@@ -220,3 +220,12 @@ Os testes cobrem:
 A fundação do banco relacional foi adicionada sem remover o funcionamento atual em JSON.
 
 Consulte [BANCO_DE_DADOS.md](BANCO_DE_DADOS.md) para configurar o `.env`, validar a conexão e aplicar a primeira migration.
+
+## Autenticação PostgreSQL
+
+Depois da importação inicial, a autenticação e o cadastro de jogadores passam a
+usar o PostgreSQL. Consulte `AUTENTICACAO_POSTGRESQL.md` e valide os vínculos com:
+
+```powershell
+flask --app app.py usuarios verificar
+```

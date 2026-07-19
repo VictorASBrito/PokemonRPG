@@ -7,6 +7,15 @@
       "perfil": "mestre",
       "senha_hash": "pbkdf2_sha256$600000$1c1dd5797aa4144a7c1e082c37260bb1$9641a51ebfbdff2bf5b62282092e29cba5780a31fe5254a852b3e0a9d40961ba",
       "ativo": true
+    },
+    {
+      "id": "usr_ecbf2e93629c",
+      "login": "teste",
+      "nome": "Teste",
+      "perfil": "jogador",
+      "jogador_id": "jog_8fe3131546c5",
+      "senha_hash": "pbkdf2_sha256$600000$f5634884643f4126cd46463ef9b085c4$e9ecf625a54197bfb8963036c88bea5502d78b69500045167a10dd964de8b0d1",
+      "ativo": true
     }
   ]
 }

@@ -29,7 +29,7 @@ def create_app() -> Flask:
     # pelo Alembic, sem substituir ainda os serviços legados baseados em JSON.
     from app import models as _models  # noqa: F401
 
-    from app.commands import banco_cli
+    from app.commands import banco_cli, dados_cli, usuarios_cli
     from app.routes.auth import auth_bp
     from app.routes.boxes import boxes_bp
     from app.routes.jogadores import jogadores_bp
@@ -42,6 +42,8 @@ def create_app() -> Flask:
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
     app.register_blueprint(banco_cli, cli_group=None)
+    app.register_blueprint(dados_cli, cli_group=None)
+    app.register_blueprint(usuarios_cli, cli_group=None)
 
     @app.get("/")
     def inicio():

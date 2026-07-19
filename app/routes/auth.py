@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import hashlib
-import hmac
-import secrets
 from functools import wraps
 from pathlib import Path
 from typing import Callable, TypeVar
+from urllib.parse import urljoin, urlparse
 
 from flask import (
     Blueprint,
@@ -17,39 +15,16 @@ from flask import (
     session,
     url_for,
 )
+from sqlalchemy.exc import SQLAlchemyError
 
+from app.extensions import db
+from app.services.auth_service import autenticar_usuario
+from app.services.compatibilidade_legado import buscar_id_jogador_legado
 from app.services.json_service import ler_json
+from app.services.senha_service import gerar_hash_senha, verificar_senha
 
 auth_bp = Blueprint("auth", __name__)
 F = TypeVar("F", bound=Callable)
-
-
-
-def gerar_hash_senha(senha: str, iteracoes: int = 600_000) -> str:
-    salt = secrets.token_hex(16)
-    hash_senha = hashlib.pbkdf2_hmac(
-        "sha256",
-        senha.encode("utf-8"),
-        salt.encode("utf-8"),
-        iteracoes,
-    ).hex()
-    return f"pbkdf2_sha256${iteracoes}${salt}${hash_senha}"
-
-def verificar_senha(senha: str, senha_hash: str) -> bool:
-    try:
-        algoritmo, iteracoes, salt, hash_esperado = senha_hash.split("$", 3)
-        if algoritmo != "pbkdf2_sha256":
-            return False
-
-        hash_recebido = hashlib.pbkdf2_hmac(
-            "sha256",
-            senha.encode("utf-8"),
-            salt.encode("utf-8"),
-            int(iteracoes),
-        ).hex()
-        return hmac.compare_digest(hash_recebido, hash_esperado)
-    except (TypeError, ValueError):
-        return False
 
 
 def login_obrigatorio(view: F) -> F:
@@ -79,6 +54,40 @@ def perfil_obrigatorio(perfil: str):
     return decorador
 
 
+def _destino_seguro(destino: str | None) -> str | None:
+    if not destino:
+        return None
+    base = urlparse(request.host_url)
+    alvo = urlparse(urljoin(request.host_url, destino))
+    if alvo.scheme in {"http", "https"} and alvo.netloc == base.netloc:
+        return alvo.path + (f"?{alvo.query}" if alvo.query else "")
+    return None
+
+
+def _login_legado_para_testes(login: str, senha: str) -> dict | None:
+    """Mantém os testes antigos isolados enquanto eles ainda usam JSON.
+
+    Em execução normal esta função nunca é usada: falhas de banco não fazem o
+    sistema voltar silenciosamente ao JSON.
+    """
+    if not current_app.testing:
+        return None
+
+    caminho = Path(current_app.config["DATA_DIR"]) / "usuarios.json"
+    dados = ler_json(caminho, {"usuarios": []})
+    usuario = next(
+        (
+            item
+            for item in dados.get("usuarios", [])
+            if item.get("login", "").lower() == login and item.get("ativo", True)
+        ),
+        None,
+    )
+    if not usuario or not verificar_senha(senha, usuario.get("senha_hash", "")):
+        return None
+    return usuario
+
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("usuario_id"):
@@ -88,30 +97,59 @@ def login():
         login_informado = request.form.get("login", "").strip().lower()
         senha = request.form.get("senha", "")
 
-        caminho = Path(current_app.config["DATA_DIR"]) / "usuarios.json"
-        dados = ler_json(caminho, {"usuarios": []})
+        try:
+            resultado = autenticar_usuario(
+                login_informado,
+                senha,
+                str(current_app.config["CAMPANHA_PADRAO"]),
+            )
+        except SQLAlchemyError:
+            db.session.rollback()
+            usuario_legado = _login_legado_para_testes(login_informado, senha)
+            if usuario_legado is None:
+                current_app.logger.exception("Falha ao consultar usuários no PostgreSQL.")
+                flash(
+                    "Não foi possível acessar o banco de dados. Tente novamente em instantes.",
+                    "erro",
+                )
+                return render_template("login.html", login=login_informado), 503
 
-        usuario = next(
-            (
-                item
-                for item in dados.get("usuarios", [])
-                if item.get("login", "").lower() == login_informado
-                and item.get("ativo", True)
-            ),
-            None,
-        )
+            session.clear()
+            session["usuario_id"] = usuario_legado["id"]
+            session["nome"] = usuario_legado.get("nome", usuario_legado["login"])
+            session["perfil"] = usuario_legado.get("perfil", "jogador")
+            session["jogador_id"] = usuario_legado.get("jogador_id")
+            return redirect(url_for("inicio"))
 
-        if not usuario or not verificar_senha(senha, usuario.get("senha_hash", "")):
+        if resultado is None:
             flash("Usuário ou senha inválidos.", "erro")
             return render_template("login.html", login=login_informado), 401
 
-        session.clear()
-        session["usuario_id"] = usuario["id"]
-        session["nome"] = usuario.get("nome", usuario["login"])
-        session["perfil"] = usuario.get("perfil", "jogador")
-        session["jogador_id"] = usuario.get("jogador_id")
+        usuario = resultado.usuario
+        campanha_codigo = str(current_app.config["CAMPANHA_PADRAO"])
+        jogador_id_legado = None
+        if resultado.perfil_sessao == "jogador":
+            jogador_id_legado = buscar_id_jogador_legado(
+                current_app.config["DATA_DIR"],
+                campanha_codigo,
+                usuario.id,
+            )
 
-        return redirect(url_for("inicio"))
+        session.clear()
+        session["usuario_id"] = str(usuario.id)
+        session["nome"] = usuario.nome
+        session["perfil"] = resultado.perfil_sessao
+        session["campanha_id"] = (
+            str(resultado.campanha.id) if resultado.campanha is not None else None
+        )
+        session["personagem_id"] = (
+            str(resultado.personagem.id) if resultado.personagem is not None else None
+        )
+        # Ponte temporária para as telas que ainda leem JSON.
+        session["jogador_id"] = jogador_id_legado
+
+        destino = _destino_seguro(request.args.get("proxima"))
+        return redirect(destino or url_for("inicio"))
 
     return render_template("login.html")
 

@@ -7,7 +7,8 @@
     <div>
         <p class="rotulo">Painel do mestre</p>
         <h1>{{ campanha.get('nome', 'Campanha') }}</h1>
-        <p class="texto-suave">{{ campanha.get('descricao', 'Gerencie jogadores, combates e utilitários da mesa.') }}</p>
+        <p class="texto-suave">{{ campanha.get('descricao') or 'Gerencie jogadores, combates e utilitários da mesa.' }}</p>
+        {% if fonte_dados %}<p class="texto-suave"><small>Fonte: {{ fonte_dados }}</small></p>{% endif %}
     </div>
     <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Novo jogador</a>
 </section>

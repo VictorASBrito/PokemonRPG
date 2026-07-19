@@ -1,12 +1,14 @@
 {
-  "schema_version": 1,
-  "id": "jog_6577d9d59713",
-  "usuario_id": "usr_ab7b0f13cebe",
+  "schema_version": 5,
+  "id": "jog_8fe3131546c5",
+  "usuario_id": "usr_ecbf2e93629c",
   "campanha_id": "ankar",
-  "criado_em": "2026-07-19T01:37:22+00:00",
-  "atualizado_em": "2026-07-19T01:46:22+00:00",
+  "criado_em": "2026-07-19T05:55:52+00:00",
+  "atualizado_em": "2026-07-19T05:55:57+00:00",
   "treinador": {
-    "nome": "Victor",
+    "nome": "Teste",
+    "nivel": 1,
+    "foto_url": "",
     "idade": null,
     "genero": "",
     "origem": "",
@@ -29,11 +31,13 @@
   },
   "inventario": [],
   "insigneas": [],
+  "pokemons": [],
   "equipe": [],
   "boxes": [
     {
       "id": "box_1",
-      "nome": "Box 1",
+      "nome": "Box Pokémon",
+      "limite": 100,
       "pokemon_ids": []
     }
   ],

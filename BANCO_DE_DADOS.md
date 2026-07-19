@@ -123,3 +123,27 @@ As rotas atuais continuam usando JSON. Ainda não foram migrados:
 - inventário.
 
 A próxima etapa será criar um importador dos JSON atuais para as tabelas e validar os totais antes de trocar qualquer rota.
+
+## Carga inicial dos arquivos JSON
+
+Com as migrations aplicadas, use os comandos abaixo na ordem:
+
+```powershell
+flask --app app.py dados analisar
+flask --app app.py dados importar --dry-run
+flask --app app.py dados importar
+flask --app app.py dados validar
+```
+
+- `dados analisar` lê somente os arquivos e apresenta as quantidades encontradas.
+- `dados importar --dry-run` executa a carga dentro de uma transação e faz rollback ao final.
+- `dados importar` grava os dados no PostgreSQL de forma idempotente.
+- `dados validar` compara as quantidades do banco com as fontes JSON.
+
+Os relatórios são gravados em `logs/`. A pasta não contém credenciais e pode ser
+mantida localmente para auditoria da migração.
+
+A importação mantém identificadores estáveis por meio de UUIDs determinísticos,
+permitindo executar o comando novamente sem duplicar registros. Os catálogos JSON
+continuam no projeto apenas como fonte de transição até que todas as telas passem a
+usar o banco.

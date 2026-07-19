@@ -118,11 +118,7 @@ class PokemonGolpe(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
 class PokemonStatus(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
     __tablename__ = "pokemon_status"
     __table_args__ = (
-        UniqueConstraint(
-            "pokemon_id",
-            "status_id",
-            name="uq_pokemon_status_pokemon_id_status_id",
-        ),
+        UniqueConstraint("pokemon_id", "status_id", name="uq_pokemon_status_pokemon_id_status_id"),
     )
 
     pokemon_id: Mapped[uuid.UUID] = mapped_column(
