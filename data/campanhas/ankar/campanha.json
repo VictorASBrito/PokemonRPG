@@ -1,0 +1,13 @@
+{
+  "id": "ankar",
+  "nome": "Região de Ankar",
+  "descricao": "Campanha Pokémon RPG ambientada na Região de Ankar.",
+  "jogadores": [
+    "jog_455959e11952"
+  ],
+  "configuracoes": {
+    "limite_equipe": 6,
+    "limite_box_inicial": 10,
+    "versao_regras": "2.5-custom"
+  }
+}

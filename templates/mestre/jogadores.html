@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block titulo %}Jogadores | Pokémon RPG{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Campanha</p>
+        <h1>Jogadores</h1>
+        <p class="texto-suave">Gerencie os acessos e abra as fichas dos treinadores.</p>
+    </div>
+    <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Cadastrar jogador</a>
+</section>
+
+{% if jogadores %}
+<section class="lista-jogadores">
+    {% for jogador in jogadores %}
+        {% set treinador = jogador.get('treinador', {}) %}
+        <article class="cartao jogador-cartao">
+            <div class="avatar-inicial">{{ (treinador.get('nome') or '?')[0]|upper }}</div>
+            <div class="jogador-resumo">
+                <h2>{{ treinador.get('nome') or 'Treinador sem nome' }}</h2>
+                <p class="texto-suave">
+                    {{ treinador.get('classe') or 'Classe não definida' }}
+                    {% if treinador.get('origem') %} · {{ treinador.get('origem') }}{% endif %}
+                </p>
+                <div class="chips">
+                    <span class="chip">PV {{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</span>
+                    <span class="chip">₽ {{ treinador.get('pokedolares', 0) }}</span>
+                    <span class="chip">Equipe {{ jogador.get('equipe', [])|length }}/6</span>
+                </div>
+            </div>
+            <div class="acoes-jogador">
+                <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.ficha_jogador', jogador_id=jogador.get('id')) }}">Ficha</a>
+                <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_mestre', jogador_id=jogador.get('id')) }}">Equipe</a>
+                <a class="botao botao-primario botao-link" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Boxes</a>
+            </div>
+        </article>
+    {% endfor %}
+</section>
+{% else %}
+<section class="cartao estado-vazio">
+    <div class="estado-vazio-icone">＋</div>
+    <h2>Nenhum jogador cadastrado</h2>
+    <p class="texto-suave">Crie o primeiro acesso para começar a preencher as fichas da campanha.</p>
+    <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Cadastrar primeiro jogador</a>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,191 @@
+.resumo-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.metrica-box {
+    padding: 15px 16px;
+    background: var(--superficie-suave);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+}
+
+.metrica-box strong,
+.metrica-box span { display: block; }
+.metrica-box strong { font-size: 1.35rem; }
+.metrica-box span { margin-top: 3px; color: var(--texto-suave); font-size: .78rem; }
+
+.filtros-boxes {
+    display: grid;
+    grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) 130px auto auto;
+    gap: 14px;
+    align-items: end;
+    padding: 20px;
+}
+
+.filtro-shiny { min-height: 44px; margin-bottom: 0; }
+.resultado-filtro { min-height: 22px; margin: 10px 0 0; }
+
+.secao-armazenamento {
+    padding: 26px;
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 18px;
+    box-shadow: var(--sombra-suave);
+    scroll-margin-top: 90px;
+}
+
+.titulo-armazenamento,
+.box-cabecalho,
+.titulo-box-linha,
+.acoes-box,
+.form-renomear-box,
+.comprar-box {
+    display: flex;
+    align-items: center;
+}
+
+.titulo-armazenamento,
+.box-cabecalho,
+.comprar-box { justify-content: space-between; gap: 20px; }
+.titulo-armazenamento h2,
+.box-cabecalho h2,
+.comprar-box h2 { margin: 0; }
+.titulo-box-linha { gap: 12px; }
+.acoes-box { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.acoes-box form { margin: 0; }
+
+.contador-ocupacao {
+    padding: 7px 10px;
+    color: var(--primaria);
+    background: var(--primaria-suave);
+    border-radius: 9px;
+    font-size: .8rem;
+    font-weight: 850;
+}
+
+.form-renomear-box {
+    gap: 10px;
+    margin: 18px 0;
+    padding: 14px;
+    background: var(--superficie-suave);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+}
+.form-renomear-box .campo { flex: 1; }
+.form-renomear-box input { min-height: 40px; }
+
+.grade-box-pokemons {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.box-pokemon-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    box-shadow: var(--sombra-suave);
+}
+
+.box-pokemon-principal {
+    display: block;
+    padding: 14px;
+    text-decoration: none;
+}
+.box-pokemon-principal:hover { background: #fbfcfd; }
+
+.box-pokemon-imagem-wrap {
+    position: relative;
+    min-height: 130px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(145deg, #f8fafc, #edf1f6);
+    border-radius: 11px;
+}
+.box-pokemon-imagem-wrap img {
+    width: 118px;
+    height: 118px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 10px rgba(16, 24, 40, .14));
+}
+.box-pokemon-imagem-wrap .selo-shiny { top: 8px; right: 8px; }
+
+.box-pokemon-info { margin-top: 12px; }
+.box-pokemon-info > strong { display: block; margin: 2px 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.box-pokemon-info > span:not(.pokemon-especie) { color: var(--texto-suave); font-size: .75rem; }
+.chips-compactos { gap: 5px; margin-top: 9px; }
+.chips-compactos .chip { padding: 4px 7px; font-size: .67rem; }
+
+.form-mover-pokemon {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    padding: 10px;
+    background: var(--superficie-suave);
+    border-top: 1px solid var(--borda);
+}
+.form-mover-pokemon select,
+.form-mover-pokemon .botao { min-height: 36px; padding: 7px 8px; font-size: .74rem; }
+.form-mover-pokemon .botao { white-space: nowrap; }
+
+.slot-box-vazio {
+    min-height: 265px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 5px;
+    color: #98a2b3;
+    background: rgba(248, 250, 252, .7);
+    border: 1px dashed #c8d0db;
+    border-radius: 14px;
+    text-decoration: none;
+}
+.slot-box-vazio:hover { color: var(--primaria); border-color: var(--primaria); background: var(--primaria-suave); }
+.slot-box-vazio span { font-size: 1.35rem; }
+.slot-equipe-vazio { min-height: 220px; }
+
+.comprar-box { padding: 24px 28px; }
+.comprar-box p { margin-bottom: 0; }
+.botao:disabled { opacity: .5; cursor: not-allowed; }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+[hidden] { display: none !important; }
+
+@media (max-width: 1050px) {
+    .grade-box-pokemons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .filtros-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .campo-filtro-nome { grid-column: span 2; }
+}
+
+@media (max-width: 720px) {
+    .resumo-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grade-box-pokemons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .box-cabecalho,
+    .titulo-armazenamento,
+    .comprar-box { align-items: flex-start; flex-direction: column; }
+    .acoes-box { justify-content: flex-start; }
+    .form-renomear-box { align-items: stretch; flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+    .filtros-boxes,
+    .grade-box-pokemons { grid-template-columns: 1fr; }
+    .campo-filtro-nome { grid-column: auto; }
+    .slot-box-vazio { min-height: 150px; }
+}

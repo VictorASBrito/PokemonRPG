@@ -1,0 +1,83 @@
+{
+  "versao": "2.5-custom",
+  "descricao": "Configurações editáveis da ficha do treinador. Alterações de balanceamento podem ser feitas neste arquivo sem modificar as telas.",
+  "pv_por_ponto_saude": 10,
+  "pontos_livres_iniciais": 6,
+  "limite_numeros_shiny": 10,
+  "atributos": [
+    {
+      "id": "fisico",
+      "nome": "Físico",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    },
+    {
+      "id": "destreza",
+      "nome": "Destreza",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    },
+    {
+      "id": "saude",
+      "nome": "Saúde",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    },
+    {
+      "id": "conhecimento",
+      "nome": "Conhecimento",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    },
+    {
+      "id": "comunicacao",
+      "nome": "Comunicação",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    },
+    {
+      "id": "espirito",
+      "nome": "Espírito",
+      "minimo": 1,
+      "maximo": 6,
+      "valor_inicial": 1
+    }
+  ],
+  "origens": [
+    { "id": "amnesico", "nome": "Amnésico(a)" },
+    { "id": "artista", "nome": "Artista" },
+    { "id": "atleta", "nome": "Atleta" },
+    { "id": "capanga", "nome": "Capanga" },
+    { "id": "cozinheiro", "nome": "Cozinheiro(a)" },
+    { "id": "devoto", "nome": "Devoto(a)" },
+    { "id": "eremita", "nome": "Eremita" },
+    { "id": "herdeiro", "nome": "Herdeiro(a)" },
+    { "id": "lutador", "nome": "Lutador(a)" },
+    { "id": "oficial", "nome": "Oficial" },
+    { "id": "nerd", "nome": "Nerd" },
+    { "id": "paranormal", "nome": "Paranormal" },
+    { "id": "pescador", "nome": "Pescador(a)" },
+    { "id": "professor", "nome": "Professor(a)" },
+    { "id": "vendedor", "nome": "Vendedor(a)" }
+  ],
+  "classes": [
+    { "id": "treinador", "nome": "Treinador(a)" },
+    { "id": "criador", "nome": "Criador(a)" },
+    { "id": "colecionador", "nome": "Colecionador(a)" },
+    { "id": "rastreador", "nome": "Rastreador(a)" },
+    { "id": "pesquisador", "nome": "Pesquisador(a)" },
+    { "id": "rocket", "nome": "Rocket" },
+    { "id": "detetive", "nome": "Detetive" }
+  ],
+  "estilos_combate": [
+    { "id": "agressivo", "nome": "Agressivo" },
+    { "id": "resistente", "nome": "Resistente" },
+    { "id": "tatico", "nome": "Tático" },
+    { "id": "vigoroso", "nome": "Vigoroso" }
+  ]
+}

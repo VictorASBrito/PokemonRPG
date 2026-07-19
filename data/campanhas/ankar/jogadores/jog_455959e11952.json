@@ -1,0 +1,104 @@
+{
+  "schema_version": 3,
+  "id": "jog_455959e11952",
+  "usuario_id": "usr_85e437fd082c",
+  "campanha_id": "ankar",
+  "criado_em": "2026-07-19T02:34:21+00:00",
+  "atualizado_em": "2026-07-19T02:38:31+00:00",
+  "treinador": {
+    "nome": "Victor",
+    "idade": null,
+    "genero": "",
+    "origem": "",
+    "classe": "",
+    "estilo_combate": "Tático",
+    "numeros_shiny": [],
+    "pokedolares": 999999800,
+    "pv_atual": 10,
+    "pv_maximo": 10,
+    "atributos": {
+      "fisico": 1,
+      "destreza": 1,
+      "saude": 1,
+      "conhecimento": 1,
+      "comunicacao": 1,
+      "espirito": 1
+    },
+    "beneficios_habilidades": "",
+    "anotacoes": ""
+  },
+  "inventario": [],
+  "insigneas": [],
+  "pokemons": [
+    {
+      "id": "pkm_7839a33a2091",
+      "especie_id": "morpeko-satisfeito",
+      "apelido": "",
+      "genero": "Ø",
+      "nivel": 1,
+      "experiencia": 0,
+      "amizade": 1,
+      "shiny": false,
+      "natureza": "Dócil",
+      "status": "Nenhum",
+      "item_carregado": "",
+      "pv_atual": 56,
+      "bonus": {
+        "pv": 0,
+        "pp": 0,
+        "ataque": 0,
+        "defesa": 0,
+        "ataque_especial": 0,
+        "defesa_especial": 0,
+        "velocidade": 0
+      },
+      "golpes": [],
+      "anotacoes": "",
+      "criado_em": "2026-07-19T02:34:47+00:00",
+      "atualizado_em": "2026-07-19T02:34:50+00:00"
+    },
+    {
+      "id": "pkm_a33fc8fff93d",
+      "especie_id": "accelgor",
+      "apelido": "",
+      "genero": "Ø",
+      "nivel": 1,
+      "experiencia": 0,
+      "amizade": 1,
+      "shiny": false,
+      "natureza": "Dócil",
+      "status": "Nenhum",
+      "item_carregado": "",
+      "pv_atual": 60,
+      "bonus": {
+        "pv": 0,
+        "pp": 0,
+        "ataque": 0,
+        "defesa": 0,
+        "ataque_especial": 0,
+        "defesa_especial": 0,
+        "velocidade": 0
+      },
+      "golpes": [],
+      "anotacoes": "",
+      "criado_em": "2026-07-19T02:34:59+00:00",
+      "atualizado_em": "2026-07-19T02:34:59+00:00"
+    }
+  ],
+  "equipe": [
+    "pkm_a33fc8fff93d",
+    "pkm_7839a33a2091"
+  ],
+  "boxes": [
+    {
+      "id": "box_1",
+      "nome": "Box 1",
+      "limite": 10,
+      "pokemon_ids": []
+    }
+  ],
+  "pokedex": {
+    "vistos": [],
+    "capturados": []
+  }
+}

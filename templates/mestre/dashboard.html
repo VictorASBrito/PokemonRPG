@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block titulo %}Painel do Mestre | Pokémon RPG{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Painel do mestre</p>
+        <h1>{{ campanha.get('nome', 'Campanha') }}</h1>
+        <p class="texto-suave">{{ campanha.get('descricao', 'Gerencie jogadores, combates e utilitários da mesa.') }}</p>
+    </div>
+    <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Novo jogador</a>
+</section>
+
+<section class="grade-cartoes">
+    <a class="cartao cartao-link" href="{{ url_for('mestre.jogadores') }}">
+        <span class="cartao-indicador">{{ total_jogadores }}</span>
+        <h2>Jogadores</h2>
+        <p>Cadastre jogadores e acompanhe as fichas da campanha.</p>
+        <span class="link-seta">Abrir gerenciamento →</span>
+    </a>
+    <article class="cartao">
+        <span class="cartao-indicador">—</span>
+        <h2>Combates</h2>
+        <p>Controle iniciativa, PV, PP, status e experiência.</p>
+        <span class="em-breve">Próxima etapa</span>
+    </article>
+    <article class="cartao">
+        <span class="cartao-indicador">—</span>
+        <h2>Utilitários</h2>
+        <p>Acesse captura, experiência, CPP e Criadouro.</p>
+        <span class="em-breve">Em breve</span>
+    </article>
+</section>
+{% endblock %}

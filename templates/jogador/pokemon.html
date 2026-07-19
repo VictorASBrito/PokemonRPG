@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ pokemon.get('apelido') or especie.get('nome') }} | Pokémon RPG{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+{% set nome_exibicao = pokemon.get('apelido') or especie.get('nome') %}
+{% set bonus = pokemon.get('bonus', {}) %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">{% if modo_mestre %}Edição pelo mestre{% else %}Ficha do Pokémon{% endif %}</p>
+        <h1>{{ nome_exibicao }}</h1>
+        <p class="texto-suave">{{ especie.get('nome') }} · Nível {{ pokemon.get('nivel', 1) }} · {{ especie.get('tipos', [])|join(' / ') }}</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">{% if retorno == 'boxes' %}Voltar aos Boxes{% else %}Voltar à equipe{% endif %}</a>
+</section>
+
+<form method="post" action="{{ salvar_url }}" id="form-pokemon">
+    <input type="hidden" name="retorno" value="{{ retorno }}">
+    <section class="cartao painel-pokemon">
+        <div class="retrato-pokemon">
+            <img
+                id="imagem-pokemon"
+                src="{{ especie.get('imagem_shiny') if pokemon.get('shiny') else especie.get('imagem') }}"
+                data-normal="{{ especie.get('imagem') }}"
+                data-shiny="{{ especie.get('imagem_shiny') }}"
+                alt="{{ nome_exibicao }}"
+            >
+            <div class="chips chips-centralizados">
+                {% for tipo in especie.get('tipos', []) %}<span class="chip tipo-chip">{{ tipo }}</span>{% endfor %}
+            </div>
+            <span class="texto-suave texto-centralizado">Catálogo #{{ especie.get('ordem_catalogo') }}</span>
+        </div>
+
+        <div class="dados-principais-pokemon">
+            <div class="grade-formulario grade-tres-colunas">
+                <div class="campo campo-duas-colunas">
+                    <label for="especie_nome">Espécie ou forma</label>
+                    <input id="especie_nome" name="especie_nome" list="catalogo-especies" value="{{ especie.get('nome') }}" autocomplete="off" required>
+                    <small>Alterar a espécie recalcula todos os atributos, servindo também para evoluções.</small>
+                </div>
+                <div class="campo">
+                    <label for="apelido">Apelido</label>
+                    <input id="apelido" name="apelido" value="{{ pokemon.get('apelido', '') }}" maxlength="60" placeholder="Opcional">
+                </div>
+                <div class="campo">
+                    <label for="genero">Gênero</label>
+                    <select id="genero" name="genero">
+                        {% for genero in regras.get('generos', []) %}<option value="{{ genero }}" {% if pokemon.get('genero') == genero %}selected{% endif %}>{{ genero }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="campo campo-checkbox">
+                    <label for="shiny">Variação</label>
+                    <label class="alternador">
+                        <input id="shiny" name="shiny" type="checkbox" value="1" {% if pokemon.get('shiny') %}checked{% endif %}>
+                        <span>Pokémon Shiny</span>
+                    </label>
+                </div>
+                <div class="campo">
+                    <label for="nivel">Nível</label>
+                    <input id="nivel" name="nivel" type="number" min="{{ regras.get('limites', {}).get('nivel_minimo', 1) }}" max="{{ regras.get('limites', {}).get('nivel_maximo', 100) }}" value="{{ pokemon.get('nivel', 1) }}" required>
+                </div>
+                <div class="campo">
+                    <label for="experiencia">Experiência acumulada</label>
+                    <input id="experiencia" name="experiencia" type="number" min="0" value="{{ pokemon.get('experiencia', 0) }}">
+                    {% if calculos.experiencia_proximo_nivel is not none %}<small>Próximo nível: {{ calculos.experiencia_proximo_nivel }} · faltam {{ calculos.experiencia_faltante }}</small>{% else %}<small>Nível máximo alcançado.</small>{% endif %}
+                </div>
+                <div class="campo">
+                    <label for="amizade">Amizade</label>
+                    <input id="amizade" name="amizade" type="number" min="{{ regras.get('limites', {}).get('amizade_minima', 0) }}" max="{{ regras.get('limites', {}).get('amizade_maxima', 100) }}" value="{{ pokemon.get('amizade', 1) }}">
+                </div>
+                <div class="campo">
+                    <label for="natureza">Natureza</label>
+                    <select id="natureza" name="natureza">
+                        {% for natureza in regras.get('naturezas', []) %}
+                            <option value="{{ natureza.get('nome') }}" {% if pokemon.get('natureza') == natureza.get('nome') %}selected{% endif %}>{{ natureza.get('nome') }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        {% for status in regras.get('status', []) %}
+                            <option value="{{ status.get('nome') }}" {% if pokemon.get('status') == status.get('nome') %}selected{% endif %}>{{ status.get('nome') }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="campo campo-duas-colunas">
+                    <label for="item_carregado">Item carregado</label>
+                    <input id="item_carregado" name="item_carregado" value="{{ pokemon.get('item_carregado', '') }}" maxlength="80" placeholder="Baga, pedra ou outro item permitido">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <datalist id="catalogo-especies">{% for nome in especies %}<option value="{{ nome }}"></option>{% endfor %}</datalist>
+    <datalist id="catalogo-golpes">{% for nome in golpes %}<option value="{{ nome }}"></option>{% endfor %}</datalist>
+
+    <section class="cartao secao-pokemon">
+        <div class="titulo-secao-pokemon">
+            <div>
+                <p class="rotulo">Cálculo automático</p>
+                <h2>Atributos</h2>
+                <p class="texto-suave">Estilo aplicado: {{ estilo_combate or 'nenhum' }}. Aumentos arredondam para cima e reduções para baixo.</p>
+            </div>
+            <div class="saude-pokemon-destaque">
+                <label for="pv_atual">PV atual</label>
+                <div><input id="pv_atual" name="pv_atual" type="number" min="0" max="{{ calculos.totais.pv }}" value="{{ pokemon.get('pv_atual', calculos.totais.pv) }}"><strong>/ {{ calculos.totais.pv }}</strong></div>
+            </div>
+        </div>
+
+        <div class="grade-atributos-pokemon">
+            {% for atributo in regras.get('atributos', []) %}
+                {% set atributo_id = atributo.get('id') %}
+                <article class="atributo-pokemon-card {% if atributo_id in ['pv', 'pp'] %}atributo-recurso{% endif %}">
+                    <span>{{ atributo.get('nome') }}</span>
+                    {% if atributo_id == 'pp' %}
+                        <strong>{{ calculos.pp_atual }}<small>/{{ calculos.pp_maximo }}</small></strong>
+                        <em>{{ calculos.pp_gasto }} gastos</em>
+                    {% else %}
+                        <strong>{{ calculos.totais.get(atributo_id, 0) }}</strong>
+                        <em>Base {{ calculos.bases.get(atributo_id, 0) }}</em>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+
+        <div class="metricas-calculo">
+            <div><span>Dados de defesa</span><strong>{{ calculos.dados_defesa_texto }}</strong></div>
+            <div><span>Dano do golpe Luta</span><strong>{{ calculos.dados_luta_texto }}</strong></div>
+            <div><span>Experiência base</span><strong>{{ especie.get('experiencia_base', 0) }}</strong></div>
+            <div><span>Taxa de captura base</span><strong>{{ (especie.get('taxa_captura', 0) * 100)|round|int }}%</strong></div>
+        </div>
+    </section>
+
+    <section class="cartao secao-pokemon">
+        <div class="titulo-secao-pokemon">
+            <div>
+                <p class="rotulo">Ajustes particulares</p>
+                <h2>Bônus manuais</h2>
+                <p class="texto-suave">Use estes campos para itens, vantagens narrativas ou regras próprias da campanha. Podem receber valores negativos.</p>
+            </div>
+        </div>
+        <div class="grade-bonus-pokemon">
+            {% for atributo in regras.get('atributos', []) %}
+                <div class="campo">
+                    <label for="bonus_{{ atributo.get('id') }}">{{ atributo.get('nome') }}</label>
+                    <input id="bonus_{{ atributo.get('id') }}" name="bonus_{{ atributo.get('id') }}" type="number" min="-999" max="999" value="{{ bonus.get(atributo.get('id'), 0) }}">
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="cartao secao-pokemon">
+        <div class="titulo-secao-pokemon">
+            <div>
+                <p class="rotulo">Movimentos</p>
+                <h2>Golpes e usos</h2>
+                <p class="texto-suave">Cada uso consome o custo de PP do golpe no reservatório total do Pokémon.</p>
+            </div>
+            <span class="contador-golpes">{{ pokemon.get('golpes', [])|length }}/{{ regras.get('limites', {}).get('golpes_por_pokemon', 4) }}</span>
+        </div>
+
+        <div class="tabela-golpes">
+            <div class="linha-golpe cabecalho-golpes">
+                <span>Golpe</span><span>Tipo / categoria</span><span>Dano</span><span>Custo</span><span>Usos</span>
+            </div>
+            {% for golpe in golpes_selecionados %}
+                <div class="linha-golpe">
+                    <input name="golpe_nome" list="catalogo-golpes" value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe" autocomplete="off">
+                    <span>{{ (golpe.get('tipo', '—') ~ ' / ' ~ golpe.get('categoria', '—')) if golpe.get('nome') else '—' }}</span>
+                    <span>{{ golpe.get('dano', '—') if golpe.get('nome') else '—' }}</span>
+                    <span>{{ golpe.get('custo_pp', '—') if golpe.get('nome') else '—' }}</span>
+                    <input name="golpe_usos" type="number" min="0" value="{{ golpe.get('usos', 0) }}">
+                </div>
+            {% endfor %}
+        </div>
+        {% if calculos.golpes %}
+            <div class="efeitos-golpes">
+                {% for golpe in calculos.golpes %}
+                    <details>
+                        <summary>{{ golpe.get('nome') }} · Precisão {{ golpe.get('precisao_texto', '—') }}</summary>
+                        <p>{{ golpe.get('efeito') or 'Sem descrição cadastrada.' }}</p>
+                    </details>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="cartao secao-pokemon">
+        <div class="campo">
+            <label for="anotacoes">Anotações</label>
+            <textarea id="anotacoes" name="anotacoes" rows="5" placeholder="Personalidade, habilidades especiais, história ou observações da campanha...">{{ pokemon.get('anotacoes', '') }}</textarea>
+        </div>
+    </section>
+
+    <div class="barra-salvar-pokemon">
+        <button class="botao botao-primario" type="submit">Salvar Pokémon</button>
+        <button class="botao botao-perigo" type="submit" form="form-excluir-pokemon">Remover da ficha</button>
+    </div>
+</form>
+
+<form id="form-excluir-pokemon" method="post" action="{{ excluir_url }}" data-confirmacao="Tem certeza que deseja remover {{ nome_exibicao }} da ficha? Esta ação não pode ser desfeita.">
+    <input type="hidden" name="retorno" value="{{ retorno }}">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pokemon.js') }}"></script>
+{% endblock %}

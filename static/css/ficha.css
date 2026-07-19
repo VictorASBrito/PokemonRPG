@@ -1,0 +1,180 @@
+.secao-ficha { margin-bottom: 20px; }
+
+.titulo-secao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.titulo-secao h2 { margin: 0; }
+
+.selo-versao {
+    padding: 7px 10px;
+    color: #694b00;
+    background: #fff4cc;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 760;
+}
+
+.campo-duas-colunas { grid-column: span 2; }
+
+.grade-atributos {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.atributo-cartao {
+    padding: 16px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+}
+.atributo-cartao label {
+    display: block;
+    min-height: 34px;
+    margin-bottom: 8px;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+.atributo-cartao input {
+    min-height: 52px;
+    padding: 6px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 850;
+}
+.atributo-cartao small {
+    display: block;
+    margin-top: 7px;
+    color: var(--texto-suave);
+}
+.atributo-saude {
+    background: #fff7f7;
+    border-color: #edc4c4;
+}
+
+.pv-destaque {
+    min-width: 118px;
+    padding: 10px 14px;
+    text-align: right;
+    color: white;
+    background: var(--primaria);
+    border-radius: 12px;
+}
+.pv-destaque span,
+.pv-destaque strong { display: block; }
+.pv-destaque > span { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; }
+.pv-destaque strong { margin-top: 2px; font-size: 1.25rem; }
+.pv-destaque strong span { display: inline; }
+
+.bloco-pv {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--borda);
+}
+
+.campo-calculado {
+    min-height: 98px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+}
+.campo-calculado strong { font-size: 1.55rem; }
+
+.tabela-editavel {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+}
+.linha-tabela {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px 48px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borda);
+}
+.linha-tabela:last-child { border-bottom: 0; }
+.cabecalho-tabela {
+    min-height: 42px;
+    color: #475467;
+    background: #f8fafc;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+.linha-tabela input { min-height: 40px; }
+
+.botao-remover {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #9b1c1c;
+    background: #fff0f0;
+    border: 0;
+    border-radius: 9px;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+.botao-remover:hover { background: #ffe0e0; }
+
+.grade-insigneas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.insignea-editavel {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #fffaf0;
+    border: 1px solid #ead9ad;
+    border-radius: 12px;
+}
+.insignea-simbolo { color: #b97a00; font-size: 1.2rem; }
+.insignea-editavel input { min-height: 40px; }
+.mensagem-lista-vazia { grid-column: 1 / -1; margin: 0; }
+
+.barra-salvar {
+    position: sticky;
+    bottom: 16px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 28px;
+    padding: 16px 18px;
+    color: white;
+    background: #20252d;
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(16, 24, 40, 0.25);
+}
+.barra-salvar strong,
+.barra-salvar span { display: block; }
+.barra-salvar span { margin-top: 3px; color: #cbd1d8; font-size: 0.82rem; }
+.barra-salvar .botao { flex: 0 0 auto; }
+
+@media (max-width: 1000px) {
+    .grade-atributos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grade-insigneas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+    .titulo-secao { align-items: flex-start; flex-direction: column; }
+    .titulo-secao .botao { width: 100%; }
+    .campo-duas-colunas { grid-column: auto; }
+    .grade-atributos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grade-insigneas { grid-template-columns: 1fr; }
+    .cabecalho-tabela { display: none; }
+    .linha-tabela { grid-template-columns: minmax(0, 1fr) 92px 42px; }
+    .barra-salvar { align-items: stretch; flex-direction: column; }
+    .barra-salvar .botao { width: 100%; }
+}

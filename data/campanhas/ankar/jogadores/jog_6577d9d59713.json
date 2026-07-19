@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "id": "jog_6577d9d59713",
+  "usuario_id": "usr_ab7b0f13cebe",
+  "campanha_id": "ankar",
+  "criado_em": "2026-07-19T01:37:22+00:00",
+  "atualizado_em": "2026-07-19T01:46:22+00:00",
+  "treinador": {
+    "nome": "Victor",
+    "idade": null,
+    "genero": "",
+    "origem": "",
+    "classe": "",
+    "estilo_combate": "",
+    "numeros_shiny": [],
+    "pokedolares": 0,
+    "pv_atual": 10,
+    "pv_maximo": 10,
+    "atributos": {
+      "fisico": 1,
+      "destreza": 1,
+      "saude": 1,
+      "conhecimento": 1,
+      "comunicacao": 1,
+      "espirito": 1
+    },
+    "beneficios_habilidades": "",
+    "anotacoes": ""
+  },
+  "inventario": [],
+  "insigneas": [],
+  "equipe": [],
+  "boxes": [
+    {
+      "id": "box_1",
+      "nome": "Box 1",
+      "pokemon_ids": []
+    }
+  ],
+  "pokedex": {
+    "vistos": [],
+    "capturados": []
+  }
+}

@@ -1,0 +1,388 @@
+{
+  "schema_version": 2,
+  "versao": "2.5-customizavel",
+  "limites": {
+    "nivel_minimo": 1,
+    "nivel_maximo": 100,
+    "amizade_minima": 0,
+    "amizade_maxima": 100,
+    "golpes_por_pokemon": 4,
+    "tamanho_equipe": 6
+  },
+  "pp": {
+    "base_formula": 18,
+    "por_nivel": 2,
+    "bonus_shiny": 10
+  },
+  "bonus_shiny": {
+    "pv": 10,
+    "ataque": 1,
+    "defesa": 1,
+    "ataque_especial": 1,
+    "defesa_especial": 1,
+    "velocidade": 1
+  },
+  "progressao_pv": [
+    {
+      "minimo": 1,
+      "maximo": 25,
+      "par": 1,
+      "impar": 0
+    },
+    {
+      "minimo": 26,
+      "maximo": 40,
+      "par": 1,
+      "impar": 1
+    },
+    {
+      "minimo": 41,
+      "maximo": 55,
+      "par": 2,
+      "impar": 1
+    },
+    {
+      "minimo": 56,
+      "maximo": 70,
+      "par": 2,
+      "impar": 2
+    },
+    {
+      "minimo": 71,
+      "maximo": 85,
+      "par": 3,
+      "impar": 2
+    },
+    {
+      "minimo": 86,
+      "maximo": 100,
+      "par": 3,
+      "impar": 3
+    },
+    {
+      "minimo": 101,
+      "maximo": 120,
+      "par": 4,
+      "impar": 3
+    },
+    {
+      "minimo": 121,
+      "maximo": 140,
+      "par": 4,
+      "impar": 4
+    },
+    {
+      "minimo": 141,
+      "maximo": 160,
+      "par": 5,
+      "impar": 4
+    },
+    {
+      "minimo": 161,
+      "maximo": 9999,
+      "par": 5,
+      "impar": 5
+    }
+  ],
+  "progressao_atributos": [
+    {
+      "minimo": 0,
+      "maximo": 3,
+      "par": 1,
+      "impar": 0
+    },
+    {
+      "minimo": 4,
+      "maximo": 5,
+      "par": 1,
+      "impar": 1
+    },
+    {
+      "minimo": 6,
+      "maximo": 7,
+      "par": 2,
+      "impar": 1
+    },
+    {
+      "minimo": 8,
+      "maximo": 9,
+      "par": 2,
+      "impar": 2
+    },
+    {
+      "minimo": 10,
+      "maximo": 11,
+      "par": 3,
+      "impar": 2
+    },
+    {
+      "minimo": 12,
+      "maximo": 13,
+      "par": 3,
+      "impar": 3
+    },
+    {
+      "minimo": 14,
+      "maximo": 15,
+      "par": 4,
+      "impar": 3
+    },
+    {
+      "minimo": 16,
+      "maximo": 18,
+      "par": 4,
+      "impar": 4
+    },
+    {
+      "minimo": 19,
+      "maximo": 21,
+      "par": 5,
+      "impar": 4
+    },
+    {
+      "minimo": 22,
+      "maximo": 9999,
+      "par": 5,
+      "impar": 5
+    }
+  ],
+  "atributos": [
+    {
+      "id": "pv",
+      "nome": "Pontos de Vida"
+    },
+    {
+      "id": "pp",
+      "nome": "Pontos de Poder"
+    },
+    {
+      "id": "ataque",
+      "nome": "Ataque"
+    },
+    {
+      "id": "defesa",
+      "nome": "Defesa"
+    },
+    {
+      "id": "ataque_especial",
+      "nome": "Ataque Especial"
+    },
+    {
+      "id": "defesa_especial",
+      "nome": "Defesa Especial"
+    },
+    {
+      "id": "velocidade",
+      "nome": "Velocidade"
+    }
+  ],
+  "generos": [
+    "Ø",
+    "♂",
+    "♀"
+  ],
+  "estilos_combate": {
+    "Agressivo": {
+      "ataque": 0.1,
+      "ataque_especial": 0.1
+    },
+    "Resistente": {
+      "defesa": 0.2,
+      "defesa_especial": 0.2
+    },
+    "Tático": {
+      "velocidade": 0.15
+    },
+    "Vigoroso": {
+      "pv": 0.2
+    }
+  },
+  "naturezas": [
+    {
+      "nome": "Ousado",
+      "aumenta": null,
+      "diminui": null
+    },
+    {
+      "nome": "Dócil",
+      "aumenta": null,
+      "diminui": null
+    },
+    {
+      "nome": "Sério",
+      "aumenta": null,
+      "diminui": null
+    },
+    {
+      "nome": "Reservado",
+      "aumenta": null,
+      "diminui": null
+    },
+    {
+      "nome": "Peculiar",
+      "aumenta": null,
+      "diminui": null
+    },
+    {
+      "nome": "Solitário",
+      "aumenta": "ataque",
+      "diminui": "defesa"
+    },
+    {
+      "nome": "Valente",
+      "aumenta": "ataque",
+      "diminui": "velocidade"
+    },
+    {
+      "nome": "Inflexível",
+      "aumenta": "ataque",
+      "diminui": "ataque_especial"
+    },
+    {
+      "nome": "Desobediente",
+      "aumenta": "ataque",
+      "diminui": "defesa_especial"
+    },
+    {
+      "nome": "Corajoso",
+      "aumenta": "defesa",
+      "diminui": "ataque"
+    },
+    {
+      "nome": "Relaxado",
+      "aumenta": "defesa",
+      "diminui": "velocidade"
+    },
+    {
+      "nome": "Travesso",
+      "aumenta": "defesa",
+      "diminui": "ataque_especial"
+    },
+    {
+      "nome": "Descuidado",
+      "aumenta": "defesa",
+      "diminui": "defesa_especial"
+    },
+    {
+      "nome": "Modesto",
+      "aumenta": "ataque_especial",
+      "diminui": "ataque"
+    },
+    {
+      "nome": "Moderado",
+      "aumenta": "ataque_especial",
+      "diminui": "defesa"
+    },
+    {
+      "nome": "Quieto",
+      "aumenta": "ataque_especial",
+      "diminui": "velocidade"
+    },
+    {
+      "nome": "Precipitado",
+      "aumenta": "ataque_especial",
+      "diminui": "defesa_especial"
+    },
+    {
+      "nome": "Calmo",
+      "aumenta": "defesa_especial",
+      "diminui": "ataque"
+    },
+    {
+      "nome": "Gentil",
+      "aumenta": "defesa_especial",
+      "diminui": "defesa"
+    },
+    {
+      "nome": "Atrevido",
+      "aumenta": "defesa_especial",
+      "diminui": "velocidade"
+    },
+    {
+      "nome": "Cuidadoso",
+      "aumenta": "defesa_especial",
+      "diminui": "ataque_especial"
+    },
+    {
+      "nome": "Tímido",
+      "aumenta": "velocidade",
+      "diminui": "ataque"
+    },
+    {
+      "nome": "Apressado",
+      "aumenta": "velocidade",
+      "diminui": "defesa"
+    },
+    {
+      "nome": "Alegre",
+      "aumenta": "velocidade",
+      "diminui": "ataque_especial"
+    },
+    {
+      "nome": "Ingênuo",
+      "aumenta": "velocidade",
+      "diminui": "defesa_especial"
+    }
+  ],
+  "status": [
+    {
+      "nome": "Nenhum",
+      "descricao": "Sem condição ativa."
+    },
+    {
+      "nome": "Amaldiçoado",
+      "descricao": "Todo turno perde 25% do PV atual."
+    },
+    {
+      "nome": "Confuso",
+      "descricao": "Durante 1d6 turnos, pode perder o turno e sofrer dano em si mesmo."
+    },
+    {
+      "nome": "Congelado",
+      "descricao": "Pode perder o turno até conseguir se descongelar."
+    },
+    {
+      "nome": "Dormindo",
+      "descricao": "Não ataca e a Velocidade efetiva fica em 0."
+    },
+    {
+      "nome": "Envenenado",
+      "descricao": "Todo turno perde 10% do PV total."
+    },
+    {
+      "nome": "Muito Envenenado",
+      "descricao": "A perda de PV aumenta em 10% a cada turno."
+    },
+    {
+      "nome": "Paralisado",
+      "descricao": "Pode perder o turno e a Velocidade efetiva é reduzida pela metade."
+    },
+    {
+      "nome": "Preso",
+      "descricao": "Não pode fugir ou ser trocado."
+    },
+    {
+      "nome": "Queimando",
+      "descricao": "Perde PV por turno e o Ataque efetivo é reduzido pela metade."
+    },
+    {
+      "nome": "Recuando",
+      "descricao": "Fica impedido de atacar por um turno."
+    },
+    {
+      "nome": "Repetindo",
+      "descricao": "Repete o ataque anterior durante a duração do efeito."
+    }
+  ],
+  "arredondamento": {
+    "aumento": "cima",
+    "diminuicao": "baixo"
+  },
+  "boxes": {
+    "espacos_por_box": 10,
+    "quantidade_inicial": 1,
+    "custo_novo_box": 100,
+    "permitir_boxes_ilimitados": true,
+    "limite_boxes": null
+  }
+}

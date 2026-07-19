@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minha jornada | Pokémon RPG{% endblock %}
+
+{% block conteudo %}
+{% set treinador = jogador.get('treinador', {}) %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Área do jogador</p>
+        <h1>Olá, {{ nome }}</h1>
+        <p class="texto-suave">Sua ficha e os recursos da jornada ficam reunidos aqui.</p>
+    </div>
+    <a class="botao botao-primario botao-link" href="{{ url_for('jogadores.ficha') }}">Editar ficha</a>
+</section>
+
+<section class="resumo-treinador cartao">
+    <div>
+        <p class="rotulo">Treinador</p>
+        <h2>{{ treinador.get('nome') }}</h2>
+        <p class="texto-suave">{{ treinador.get('classe') or 'Classe não definida' }}{% if treinador.get('origem') %} · {{ treinador.get('origem') }}{% endif %}</p>
+    </div>
+    <div class="metricas-resumo">
+        <div><strong>{{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</strong><span>PV</span></div>
+        <div><strong>₽ {{ treinador.get('pokedolares', 0) }}</strong><span>Pokédolares</span></div>
+        <div><strong>{{ jogador.get('equipe', [])|length }}/6</strong><span>Equipe</span></div>
+    </div>
+</section>
+
+<section class="grade-cartoes espacamento-topo">
+    <a class="cartao cartao-link" href="{{ url_for('jogadores.ficha') }}">
+        <h2>Ficha do treinador</h2>
+        <p>Atributos, origem, classe, dinheiro, inventário e insígnias.</p>
+        <span class="link-seta">Abrir ficha →</span>
+    </a>
+    <a class="cartao cartao-link" href="{{ url_for('pokemons.equipe_jogador') }}">
+        <h2>Equipe Pokémon</h2>
+        <p>Seis parceiros, golpes, PV, PP, amizade e experiência.</p>
+        <span class="link-seta">Abrir equipe →</span>
+    </a>
+    <a class="cartao cartao-link" href="{{ url_for('boxes.boxes_jogador') }}">
+        <h2>Boxes Pokémon</h2>
+        <p>Guarde capturas, organize seus parceiros e altere a equipe ativa.</p>
+        <span class="link-seta">Abrir Boxes →</span>
+    </a>
+</section>
+{% endblock %}

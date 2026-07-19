@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block titulo %}Novo jogador | Pokémon RPG{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina">
+    <p class="rotulo">Painel do mestre</p>
+    <h1>Cadastrar jogador</h1>
+    <p class="texto-suave">O cadastro cria o acesso e o arquivo JSON individual da ficha.</p>
+</section>
+
+<form method="post" class="cartao formulario formulario-largo">
+    <div class="grade-formulario grade-duas-colunas">
+        <div class="campo campo-largo">
+            <label for="nome">Nome do jogador ou treinador</label>
+            <input id="nome" name="nome" value="{{ dados.get('nome', '') }}" maxlength="80" required autofocus>
+            <small>Este nome poderá ser alterado depois na ficha.</small>
+        </div>
+
+        <div class="campo">
+            <label for="login">Usuário de acesso</label>
+            <input id="login" name="login" value="{{ dados.get('login', '') }}" minlength="3" maxlength="40" autocomplete="off" required>
+        </div>
+
+        <div class="campo">
+            <label for="senha">Senha inicial</label>
+            <input id="senha" name="senha" type="password" minlength="6" autocomplete="new-password" required>
+        </div>
+
+        <div class="campo">
+            <label for="confirmar_senha">Confirmar senha</label>
+            <input id="confirmar_senha" name="confirmar_senha" type="password" minlength="6" autocomplete="new-password" required>
+        </div>
+    </div>
+
+    <div class="barra-acoes-formulario">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.jogadores') }}">Cancelar</a>
+        <button class="botao botao-primario" type="submit">Criar jogador e ficha</button>
+    </div>
+</form>
+{% endblock %}

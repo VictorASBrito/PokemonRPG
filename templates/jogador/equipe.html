@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block titulo %}Equipe de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+{% set treinador = jogador.get('treinador', {}) %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">{% if modo_mestre %}Equipe do jogador{% else %}Meus parceiros{% endif %}</p>
+        <h1>Equipe de {{ treinador.get('nome') or 'Treinador' }}</h1>
+        <p class="texto-suave">Até {{ limite }} Pokémon ativos. Os atributos são recalculados a partir da espécie, nível, natureza, estilo e condições atuais.</p>
+    </div>
+    <div class="grupo-acoes">
+        <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
+        <a class="botao botao-secundario botao-link" href="{{ boxes_url }}">Abrir Boxes</a>
+        {% if equipe|length < limite %}
+            <a class="botao botao-primario botao-link" href="{{ novo_url }}">Adicionar Pokémon</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="resumo-equipe cartao">
+    <div>
+        <span class="numero-equipe">{{ equipe|length }}/{{ limite }}</span>
+        <div>
+            <strong>Pokémon ativos</strong>
+            <span class="texto-suave">Estilo do treinador: {{ treinador.get('estilo_combate') or 'não definido' }}</span>
+        </div>
+    </div>
+    <div class="legenda-equipe">
+        <span><i class="ponto-status ponto-ok"></i> Disponível</span>
+        <span><i class="ponto-status ponto-alerta"></i> Com status</span>
+        <span><i class="ponto-status ponto-desmaiado"></i> Desmaiado</span>
+    </div>
+</section>
+
+<section class="grade-equipe espacamento-topo">
+    {% for registro in equipe %}
+        {% set pokemon = registro.pokemon %}
+        {% set especie = registro.especie %}
+        {% set calculos = registro.calculos %}
+        {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome') %}
+        {% if modo_mestre %}
+            {% set editar_url = url_for(editar_endpoint, jogador_id=jogador.get('id'), pokemon_id=pokemon.get('id')) %}
+        {% else %}
+            {% set editar_url = url_for(editar_endpoint, pokemon_id=pokemon.get('id')) %}
+        {% endif %}
+        <a class="cartao pokemon-cartao" href="{{ editar_url }}">
+            <div class="pokemon-imagem-wrap">
+                <img
+                    class="pokemon-imagem"
+                    src="{{ especie.get('imagem_shiny') if pokemon.get('shiny') else especie.get('imagem') }}"
+                    alt="{{ nome_exibicao }}"
+                    loading="lazy"
+                >
+                {% if pokemon.get('shiny') %}<span class="selo-shiny">Shiny</span>{% endif %}
+            </div>
+
+            <div class="pokemon-cabecalho-card">
+                <div>
+                    <span class="pokemon-especie">{{ especie.get('nome') }}</span>
+                    <h2>{{ nome_exibicao }}</h2>
+                </div>
+                <span class="nivel-pokemon">Nv. {{ pokemon.get('nivel', 1) }}</span>
+            </div>
+
+            <div class="chips chips-tipos">
+                {% for tipo in especie.get('tipos', []) %}
+                    <span class="chip tipo-chip">{{ tipo }}</span>
+                {% endfor %}
+                {% if pokemon.get('status', 'Nenhum') != 'Nenhum' %}
+                    <span class="chip chip-status">{{ pokemon.get('status') }}</span>
+                {% endif %}
+            </div>
+
+            <div class="barras-pokemon">
+                <div>
+                    <div class="linha-barra"><span>PV</span><strong>{{ pokemon.get('pv_atual', 0) }}/{{ calculos.totais.pv }}</strong></div>
+                    <progress value="{{ pokemon.get('pv_atual', 0) }}" max="{{ calculos.totais.pv or 1 }}"></progress>
+                </div>
+                <div>
+                    <div class="linha-barra"><span>PP</span><strong>{{ calculos.pp_atual }}/{{ calculos.pp_maximo }}</strong></div>
+                    <progress class="barra-pp" value="{{ calculos.pp_atual }}" max="{{ calculos.pp_maximo or 1 }}"></progress>
+                </div>
+            </div>
+
+            <div class="metricas-pokemon-card">
+                <span><strong>{{ pokemon.get('amizade', 0) }}</strong> Amizade</span>
+                <span><strong>{{ calculos.dados_defesa_texto }}</strong> Defesa</span>
+                <span><strong>{{ pokemon.get('golpes', [])|length }}/4</strong> Golpes</span>
+            </div>
+
+            <span class="abrir-pokemon">Abrir ficha →</span>
+        </a>
+    {% endfor %}
+
+    {% for _ in range(limite - equipe|length) %}
+        <a class="cartao pokemon-cartao pokemon-vazio" href="{{ novo_url }}">
+            <span class="pokemon-vazio-icone">＋</span>
+            <strong>Espaço disponível</strong>
+            <span>Adicionar parceiro</span>
+        </a>
+    {% endfor %}
+</section>
+{% endblock %}

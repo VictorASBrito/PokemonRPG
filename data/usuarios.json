@@ -1,0 +1,21 @@
+{
+  "usuarios": [
+    {
+      "id": "usr_mestre",
+      "login": "mestre",
+      "nome": "Mestre",
+      "perfil": "mestre",
+      "senha_hash": "pbkdf2_sha256$600000$1c1dd5797aa4144a7c1e082c37260bb1$9641a51ebfbdff2bf5b62282092e29cba5780a31fe5254a852b3e0a9d40961ba",
+      "ativo": true
+    },
+    {
+      "id": "usr_85e437fd082c",
+      "login": "aaa",
+      "nome": "Victor",
+      "perfil": "jogador",
+      "jogador_id": "jog_455959e11952",
+      "senha_hash": "pbkdf2_sha256$600000$1c8b9c5a0c8d3b2adaf78958000b87b8$7d77b413b79c5018b327ad961c6694bf4d0cc7ad7bf4ae1719cd9323f14a9395",
+      "ativo": true
+    }
+  ]
+}

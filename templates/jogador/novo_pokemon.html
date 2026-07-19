@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block titulo %}Adicionar Pokémon | Pokémon RPG{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Nova captura</p>
+        <h1>Adicionar Pokémon</h1>
+        <p class="texto-suave">Escolha uma das {{ total_catalogo }} espécies e formas importadas da Ficha Editável v2.5.</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
+</section>
+
+<section class="cartao formulario-novo-pokemon">
+    <form method="post" class="formulario formulario-largo">
+        <div class="campo">
+            <label for="especie_nome">Espécie ou forma</label>
+            <input
+                id="especie_nome"
+                name="especie_nome"
+                list="catalogo-especies"
+                autocomplete="off"
+                placeholder="Digite para pesquisar, por exemplo: Torterra"
+                required
+                autofocus
+            >
+            <small>O nome precisa corresponder a uma opção do catálogo. Formas regionais e Mega Evoluções aparecem separadamente.</small>
+        </div>
+
+        <datalist id="catalogo-especies">
+            {% for nome in especies %}<option value="{{ nome }}"></option>{% endfor %}
+        </datalist>
+
+        <div class="aviso-configuracao">
+            <strong>Configuração inicial</strong>
+            <p>O Pokémon será criado no nível 1, com amizade 1, natureza Dócil e PV completos. Ele será enviado para <strong>{{ destino_rotulo }}</strong>. Na tela seguinte você poderá alterar todos esses dados e selecionar os golpes.</p>
+        </div>
+
+        <div class="barra-acoes-formulario">
+            <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Cancelar</a>
+            <button class="botao botao-primario" type="submit">Adicionar a {{ destino_rotulo }}</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
