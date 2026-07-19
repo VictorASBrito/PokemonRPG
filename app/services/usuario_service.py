@@ -30,6 +30,7 @@ from app.services.jogador_service import (
 )
 from app.services.json_service import ler_json, salvar_json
 from app.services.senha_service import gerar_hash_senha
+from app.services.personagem_service import carregar_regras_personagem
 
 
 @dataclass(slots=True)
@@ -202,6 +203,14 @@ def criar_jogador_postgresql(
     jogador_id_legado = f"jog_{uuid.uuid4().hex[:12]}"
     senha_hash = gerar_hash_senha(senha)
 
+    regras_personagem = carregar_regras_personagem(campanha.id)
+    atributos_config = {
+        item["id"]: item for item in regras_personagem.get("atributos", [])
+    }
+    saude_inicial = int(
+        atributos_config.get("saude", {}).get("valor_inicial", 1)
+    )
+
     usuario = Usuario(
         id=uuid_legado("usuario", usuario_id_legado),
         login=login_normalizado,
@@ -215,9 +224,10 @@ def criar_jogador_postgresql(
         usuario=usuario,
         campanha=campanha,
         nome=nome,
-        nivel=1,
+        nivel=int(regras_personagem.get("nivel_inicial", 1)),
         pokedolares=0,
-        pv_atual=10,
+        pv_atual=saude_inicial
+        * int(regras_personagem.get("pv_por_ponto_saude", 10)),
         ativo=True,
     )
     membro = CampanhaMembro(
@@ -246,7 +256,13 @@ def criar_jogador_postgresql(
                 ),
                 personagem=personagem,
                 atributo=atributo,
-                valor=Decimal("1"),
+                valor=Decimal(
+                    str(
+                        atributos_config.get(atributo.codigo, {}).get(
+                            "valor_inicial", 1
+                        )
+                    )
+                ),
             )
         )
 

@@ -13,7 +13,7 @@
     <div>
         <p class="rotulo">{% if modo_mestre %}Edição pelo mestre{% else %}Minha ficha{% endif %}</p>
         <h1>{{ treinador.get('nome') or 'Novo treinador' }}</h1>
-        <p class="texto-suave">As regras estruturais desta tela são carregadas de <code>data/catalogo/regras_treinador.json</code>.</p>
+        <p class="texto-suave">A ficha e suas configurações são carregadas do PostgreSQL.</p>
     </div>
     <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
 </section>
@@ -223,7 +223,7 @@
     <div class="barra-salvar">
         <div>
             <strong>Ficha do treinador</strong>
-            <span>Os dados serão gravados no JSON individual do jogador.</span>
+            <span>Os dados serão gravados diretamente no PostgreSQL.</span>
         </div>
         <button class="botao botao-primario" type="submit">Salvar alterações</button>
     </div>

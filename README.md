@@ -1,6 +1,6 @@
 # Pokémon RPG — Regras personalizadas da campanha
 
-Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como armazenamento.
+Aplicação Flask para gerenciamento da campanha, em migração controlada para PostgreSQL. Autenticação, ficha e dashboard já usam o banco; Pokémon e Box ainda mantêm uma ponte temporária com os JSON legados.
 
 ## O que já funciona
 
@@ -9,9 +9,10 @@ Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como 
 - login e logout por sessão;
 - perfis separados de mestre e jogador;
 - cadastro de jogadores pelo mestre;
-- criação automática de usuário e ficha JSON individual;
-- listagem dos jogadores da campanha;
-- gravação atômica em JSON e backup antes de alterações.
+- criação automática de usuário e personagem no PostgreSQL;
+- listagem dos jogadores da campanha pelo banco;
+- ficha, inventário, insígnias e histórico de alterações no PostgreSQL;
+- ponte JSON temporária apenas para Pokémon e Box.
 
 ### Dashboard do jogador
 
@@ -121,78 +122,24 @@ Acesse `http://127.0.0.1:5000`.
 
 Troque a senha e a chave secreta antes de publicar o projeto na internet.
 
-## Arquivos de balanceamento
+## Configurações e dados
 
-As regras do treinador estão em:
+A ficha do personagem, o inventário, as insígnias e suas configurações agora
+são lidos e gravados no PostgreSQL. As opções de origem, classe, estilo de
+combate e limites de atributos ficam em `regras` e `regra_valores`.
+
+Os arquivos abaixo permanecem apenas como fonte legada durante a migração das
+telas de Pokémon e Box:
 
 ```text
 data/catalogo/regras_treinador.json
-```
-
-Esse arquivo controla, entre outros valores, o nível mínimo, máximo e inicial do jogador.
-
-As regras dos Pokémon estão em:
-
-```text
 data/catalogo/regras_pokemon.json
-```
-
-Esse arquivo concentra:
-
-- limite de golpes e tamanho da equipe;
-- bônus Shiny;
-- faixas de progressão dos atributos;
-- efeitos dos estilos de combate;
-- naturezas;
-- status disponíveis;
-- regra de arredondamento;
-- nome e capacidade da Box única.
-
-## Catálogos importados
-
-```text
 data/catalogo/pokemons.json
 data/catalogo/golpes.json
 ```
 
-Os arquivos foram extraídos da **Ficha Editável v2.5**. Para gerar novamente os catálogos após atualizar a planilha, execute:
-
-```bash
-python scripts/importar_catalogos.py "C:\caminho\Ficha Editável v2.5.xlsx" --destino data/catalogo
-```
-
-O importador ignora experiência base, taxa de captura e o custo de recurso dos golpes. Descrições cujo efeito dependia exclusivamente desse recurso são neutralizadas.
-
-## Estrutura resumida do JSON
-
-```json
-{
-  "schema_version": 5,
-  "treinador": {
-    "nivel": 48
-  },
-  "pokemons": [
-    {
-      "id": "pkm_exemplo",
-      "especie_id": "bulbasaur",
-      "golpes": [
-        { "golpe_id": "arranhao" }
-      ]
-    }
-  ],
-  "equipe": [],
-  "boxes": [
-    {
-      "id": "box_1",
-      "nome": "Box Pokémon",
-      "limite": 100,
-      "pokemon_ids": ["pkm_exemplo"]
-    }
-  ]
-}
-```
-
-Os Pokémon não armazenam nível, experiência, amizade ou contagem de usos. O nível é lido diretamente da ficha do treinador.
+Não trate esses arquivos como fonte oficial da ficha. Consulte
+`FICHA_POSTGRESQL.md` para preparar as configurações no banco.
 
 ## Testes
 
@@ -229,3 +176,16 @@ usar o PostgreSQL. Consulte `AUTENTICACAO_POSTGRESQL.md` e valide os vínculos c
 ```powershell
 flask --app app.py usuarios verificar
 ```
+
+## Ficha e dashboard PostgreSQL
+
+A ficha, o dashboard, os atributos, o inventário e as insígnias já usam o
+PostgreSQL. Para aplicar esta etapa:
+
+```powershell
+flask --app app.py db upgrade
+flask --app app.py ficha preparar
+flask --app app.py ficha verificar
+```
+
+Consulte `FICHA_POSTGRESQL.md` para os detalhes.

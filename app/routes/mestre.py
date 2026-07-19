@@ -10,6 +10,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 from sqlalchemy.exc import SQLAlchemyError
@@ -27,6 +28,11 @@ from app.services.jogador_service import (
 )
 from app.services.json_service import ler_json, salvar_json
 from app.services.pokemon_service import sincronizar_pokemons_com_nivel_jogador
+from app.services.compatibilidade_legado import sincronizar_ficha_legada
+from app.services.personagem_service import (
+    atualizar_ficha_personagem,
+    carregar_contexto_ficha,
+)
 from app.services.senha_service import gerar_hash_senha
 from app.services.usuario_service import (
     alterar_atividade_usuario,
@@ -263,41 +269,112 @@ def atividade_usuario(usuario_id: str):
 @perfil_obrigatorio("mestre")
 def ficha_jogador(jogador_id: str):
     data_dir, campanha_id = _contexto()
-    jogador = carregar_jogador(data_dir, campanha_id, jogador_id)
-    if not jogador:
-        flash(
-            "A ficha JSON temporária desse jogador não foi encontrada. "
-            "A conversão da ficha para PostgreSQL será feita na próxima etapa.",
-            "erro",
+
+    try:
+        contexto = carregar_contexto_ficha(
+            jogador_id,
+            campanha_codigo=campanha_id,
         )
+    except SQLAlchemyError:
+        db.session.rollback()
+        contexto = None
+        if not current_app.testing:
+            current_app.logger.exception("Falha ao carregar a ficha no PostgreSQL.")
+            flash("Não foi possível carregar a ficha no banco de dados.", "erro")
+            return redirect(url_for("mestre.jogadores"))
+
+    # Mantém os testes legados durante a conversão das demais telas.
+    if contexto is None and current_app.testing:
+        jogador = carregar_jogador(data_dir, campanha_id, jogador_id)
+        if not jogador:
+            flash("Ficha não encontrada.", "erro")
+            return redirect(url_for("mestre.jogadores"))
+        regras = carregar_regras_treinador(data_dir)
+        if request.method == "POST":
+            jogador_atualizado, erros = atualizar_ficha_treinador(
+                jogador=jogador,
+                formulario=request.form,
+                regras=regras,
+            )
+            if erros:
+                for erro in erros:
+                    flash(erro, "erro")
+                jogador = jogador_atualizado
+            else:
+                sincronizar_pokemons_com_nivel_jogador(jogador_atualizado, data_dir)
+                salvar_jogador(
+                    data_dir=data_dir,
+                    campanha_id=campanha_id,
+                    jogador=jogador_atualizado,
+                )
+                flash("Ficha atualizada com sucesso.", "sucesso")
+                return redirect(url_for("mestre.ficha_jogador", jogador_id=jogador_id))
+        return render_template(
+            "jogador/ficha.html",
+            jogador=jogador,
+            regras=regras,
+            modo_mestre=True,
+            voltar_url=url_for("mestre.jogadores"),
+            salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
+            fonte_ficha="JSON de teste",
+        )
+
+    if contexto is None:
+        flash("A ficha desse jogador não foi encontrada no PostgreSQL.", "erro")
         return redirect(url_for("mestre.jogadores"))
 
-    regras = carregar_regras_treinador(data_dir)
+    jogador = contexto.jogador
     if request.method == "POST":
-        jogador_atualizado, erros = atualizar_ficha_treinador(
-            jogador=jogador,
-            formulario=request.form,
-            regras=regras,
-        )
+        try:
+            jogador, erros = atualizar_ficha_personagem(
+                personagem=contexto.personagem,
+                formulario=request.form,
+                regras=contexto.regras,
+                usuario_responsavel_id=session.get("usuario_id"),
+            )
+        except SQLAlchemyError:
+            db.session.rollback()
+            current_app.logger.exception("Falha ao salvar a ficha no PostgreSQL.")
+            flash("Não foi possível salvar a ficha no banco de dados.", "erro")
+            return render_template(
+                "jogador/ficha.html",
+                jogador=contexto.jogador,
+                regras=contexto.regras,
+                modo_mestre=True,
+                voltar_url=url_for("mestre.jogadores"),
+                salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
+                fonte_ficha="PostgreSQL",
+            ), 503
+
         if erros:
             for erro in erros:
                 flash(erro, "erro")
-            jogador = jogador_atualizado
         else:
-            sincronizar_pokemons_com_nivel_jogador(jogador_atualizado, data_dir)
-            salvar_jogador(
-                data_dir=data_dir,
-                campanha_id=campanha_id,
-                jogador=jogador_atualizado,
-            )
-            flash("Ficha atualizada com sucesso.", "sucesso")
+            try:
+                sincronizar_ficha_legada(
+                    data_dir=data_dir,
+                    campanha_codigo=campanha_id,
+                    usuario_id_banco=contexto.personagem.usuario_id,
+                    ficha_banco=jogador,
+                )
+            except Exception:
+                current_app.logger.exception(
+                    "A ficha foi salva, mas a ponte temporária com Pokémon/Box falhou."
+                )
+                flash(
+                    "A ficha foi salva, mas a equipe poderá exibir dados antigos temporariamente.",
+                    "aviso",
+                )
+            flash("Ficha atualizada com sucesso no PostgreSQL.", "sucesso")
             return redirect(url_for("mestre.ficha_jogador", jogador_id=jogador_id))
 
     return render_template(
         "jogador/ficha.html",
         jogador=jogador,
-        regras=regras,
+        regras=contexto.regras,
         modo_mestre=True,
         voltar_url=url_for("mestre.jogadores"),
         salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
+        fonte_ficha="PostgreSQL",
     )
+

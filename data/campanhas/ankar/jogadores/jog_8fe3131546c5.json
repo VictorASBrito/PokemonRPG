@@ -4,19 +4,21 @@
   "usuario_id": "usr_ecbf2e93629c",
   "campanha_id": "ankar",
   "criado_em": "2026-07-19T05:55:52+00:00",
-  "atualizado_em": "2026-07-19T05:55:57+00:00",
+  "atualizado_em": "2026-07-19T14:51:37+00:00",
   "treinador": {
     "nome": "Teste",
-    "nivel": 1,
     "foto_url": "",
-    "idade": null,
-    "genero": "",
-    "origem": "",
-    "classe": "",
-    "estilo_combate": "",
-    "numeros_shiny": [],
+    "nivel": 100,
+    "idade": 24,
+    "genero": "Masculino",
+    "origem": "Pescador(a)",
+    "classe": "Treinador(a)",
+    "estilo_combate": "Tático",
+    "numeros_shiny": [
+      12
+    ],
     "pokedolares": 0,
-    "pv_atual": 10,
+    "pv_atual": -8,
     "pv_maximo": 10,
     "atributos": {
       "fisico": 1,
@@ -26,19 +28,45 @@
       "comunicacao": 1,
       "espirito": 1
     },
-    "beneficios_habilidades": "",
-    "anotacoes": ""
+    "beneficios_habilidades": "Teste",
+    "anotacoes": "teste"
   },
   "inventario": [],
   "insigneas": [],
-  "pokemons": [],
+  "pokemons": [
+    {
+      "id": "pkm_00fbf34d2e13",
+      "especie_id": "torterra",
+      "apelido": "",
+      "genero": "Ø",
+      "shiny": false,
+      "natureza": "Dócil",
+      "status": "Nenhum",
+      "item_carregado": "",
+      "pv_atual": 320,
+      "bonus": {
+        "pv": 0,
+        "ataque": 0,
+        "defesa": 0,
+        "ataque_especial": 0,
+        "defesa_especial": 0,
+        "velocidade": 0
+      },
+      "golpes": [],
+      "anotacoes": "",
+      "criado_em": "2026-07-19T14:50:04+00:00",
+      "atualizado_em": "2026-07-19T14:50:07+00:00"
+    }
+  ],
   "equipe": [],
   "boxes": [
     {
       "id": "box_1",
       "nome": "Box Pokémon",
       "limite": 100,
-      "pokemon_ids": []
+      "pokemon_ids": [
+        "pkm_00fbf34d2e13"
+      ]
     }
   ],
   "pokedex": {

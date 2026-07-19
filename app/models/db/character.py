@@ -22,7 +22,6 @@ class Personagem(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
         UniqueConstraint("usuario_id", "campanha_id", name="usuario_campanha"),
         CheckConstraint("nivel > 0", name="nivel_positivo"),
         CheckConstraint("pokedolares >= 0", name="pokedolares_nao_negativos"),
-        CheckConstraint("pv_atual >= 0", name="pv_atual_nao_negativo"),
     )
 
     usuario_id: Mapped[uuid.UUID] = mapped_column(
