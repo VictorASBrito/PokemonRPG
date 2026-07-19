@@ -58,9 +58,18 @@ def test_dashboard_exibe_treinador_e_equipe(tmp_path: Path) -> None:
         },
     ).status_code == 302
 
+    arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
+    jogador = json.loads(arquivo.read_text(encoding="utf-8"))
+    box_id = jogador["boxes"][0]["id"]
     assert client.post(
-        f"/mestre/jogadores/{jogador_id}/equipe/novo",
+        f"/mestre/jogadores/{jogador_id}/equipe/novo?destino=box:{box_id}",
         data={"especie_nome": "Bulbasaur"},
+    ).status_code == 302
+    jogador = json.loads(arquivo.read_text(encoding="utf-8"))
+    pokemon_id = jogador["boxes"][0]["pokemon_ids"][0]
+    assert client.post(
+        f"/mestre/jogadores/{jogador_id}/boxes/mover",
+        data={"pokemon_id": pokemon_id, "destino": "equipe"},
     ).status_code == 302
 
     client.post("/logout")

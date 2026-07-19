@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block titulo %}Boxes de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
+{% block titulo %}Box de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
@@ -15,51 +15,35 @@
     {%- endif -%}
 {%- endmacro %}
 
-{% macro novo_pokemon_url(box_id) -%}
+{% macro novo_pokemon_url() -%}
     {%- if modo_mestre -%}
-        {{ url_for(novo_pokemon_endpoint, jogador_id=jogador.get('id'), destino='box:' ~ box_id) }}
+        {{ url_for(novo_pokemon_endpoint, jogador_id=jogador.get('id'), destino='box:' ~ box.get('id')) }}
     {%- else -%}
-        {{ url_for(novo_pokemon_endpoint, destino='box:' ~ box_id) }}
+        {{ url_for(novo_pokemon_endpoint, destino='box:' ~ box.get('id')) }}
     {%- endif -%}
 {%- endmacro %}
 
-{% macro renomear_url(box_id) -%}
+{% macro renomear_url() -%}
     {%- if modo_mestre -%}
-        {{ url_for(renomear_endpoint, jogador_id=jogador.get('id'), box_id=box_id) }}
+        {{ url_for(renomear_endpoint, jogador_id=jogador.get('id'), box_id=box.get('id')) }}
     {%- else -%}
-        {{ url_for(renomear_endpoint, box_id=box_id) }}
+        {{ url_for(renomear_endpoint, box_id=box.get('id')) }}
     {%- endif -%}
 {%- endmacro %}
 
-{% macro excluir_url(box_id) -%}
-    {%- if modo_mestre -%}
-        {{ url_for(excluir_endpoint, jogador_id=jogador.get('id'), box_id=box_id) }}
-    {%- else -%}
-        {{ url_for(excluir_endpoint, box_id=box_id) }}
-    {%- endif -%}
-{%- endmacro %}
-
-{% macro opcoes_destino(pokemon_id, local_atual, box_atual='') %}
-    {% if local_atual != 'equipe' and equipe|length < limite_equipe %}
-        <option value="equipe">Equipe ativa</option>
-    {% endif %}
-    {% for box_destino in boxes %}
-        {% if box_destino.get('id') != box_atual and box_destino.get('registros', [])|length < box_destino.get('limite', 10) %}
-            <option value="box:{{ box_destino.get('id') }}">{{ box_destino.get('nome') }}</option>
-        {% endif %}
-    {% endfor %}
-{% endmacro %}
-
-{% macro cartao_pokemon(registro, local_atual, box_atual='') %}
+{% macro cartao_pokemon(registro, local_atual) %}
     {% set pokemon = registro.pokemon %}
     {% set especie = registro.especie %}
     {% set calculos = registro.calculos %}
     {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome') %}
     <article
         class="box-pokemon-card"
-        data-pokemon-card
-        data-nome="{{ (nome_exibicao ~ ' ' ~ especie.get('nome', ''))|lower }}"
-        data-tipos="{{ especie.get('tipos', [])|join(' ')|lower }}"
+        {% if local_atual == 'box' %}
+            data-box-pokemon-card
+            data-ordem="{{ registro.get('ordem_box', 0) }}"
+        {% endif %}
+        data-nome="{{ nome_exibicao }} {{ especie.get('nome', '') }}"
+        data-tipos="{{ especie.get('tipos', [])|join(' ') }}"
         data-shiny="{{ 'sim' if pokemon.get('shiny') else 'nao' }}"
     >
         <a class="box-pokemon-principal" href="{{ editar_url(pokemon.get('id')) }}">
@@ -81,27 +65,33 @@
                 </div>
             </div>
         </a>
+
         <form class="form-mover-pokemon" method="post" action="{{ mover_url }}">
             <input type="hidden" name="pokemon_id" value="{{ pokemon.get('id') }}">
-            <label class="sr-only" for="destino-{{ pokemon.get('id') }}">Mover {{ nome_exibicao }}</label>
-            <select id="destino-{{ pokemon.get('id') }}" name="destino" required>
-                <option value="">Mover para...</option>
-                {{ opcoes_destino(pokemon.get('id'), local_atual, box_atual) }}
-            </select>
-            <button class="botao botao-secundario" type="submit">Mover</button>
+            {% if local_atual == 'equipe' %}
+                <input type="hidden" name="destino" value="box:{{ box.get('id') }}">
+                <button class="botao botao-secundario" type="submit">Retirar do time</button>
+            {% else %}
+                <input type="hidden" name="destino" value="equipe">
+                <button
+                    class="botao botao-primario"
+                    type="submit"
+                    {% if equipe|length >= limite_equipe %}disabled title="A equipe está cheia"{% endif %}
+                >Adicionar ao time</button>
+            {% endif %}
         </form>
     </article>
 {% endmacro %}
 
 {% block conteudo %}
 {% set treinador = jogador.get('treinador', {}) %}
-{% set total_guardados = namespace(valor=0) %}
-{% for box in boxes %}{% set total_guardados.valor = total_guardados.valor + box.get('registros', [])|length %}{% endfor %}
+{% set ocupados = box.get('registros', [])|length %}
+{% set limite_box = box.get('limite', config_boxes.get('espacos', 100))|int %}
 <section class="cabecalho-pagina cabecalho-com-acoes">
     <div>
         <p class="rotulo">Armazenamento Pokémon</p>
-        <h1>Boxes de {{ treinador.get('nome') or 'Treinador' }}</h1>
-        <p class="texto-suave">Organize os parceiros guardados e mova Pokémon entre os Boxes e a equipe ativa.</p>
+        <h1>Box de {{ treinador.get('nome') or 'Treinador' }}</h1>
+        <p class="texto-suave">A campanha utiliza uma Box única com {{ limite_box }} espaços. Novos Pokémon são criados somente nos espaços vazios abaixo.</p>
     </div>
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
@@ -111,33 +101,16 @@
 
 <section class="resumo-boxes cartao">
     <div class="metrica-box"><strong>{{ equipe|length }}/{{ limite_equipe }}</strong><span>Equipe ativa</span></div>
-    <div class="metrica-box"><strong>{{ total_guardados.valor }}</strong><span>Pokémon guardados</span></div>
-    <div class="metrica-box"><strong>{{ boxes|length }}</strong><span>Boxes</span></div>
-    <div class="metrica-box"><strong>₽ {{ treinador.get('pokedolares', 0) }}</strong><span>Saldo</span></div>
+    <div class="metrica-box"><strong>{{ ocupados }}/{{ limite_box }}</strong><span>Espaços ocupados</span></div>
+    <div class="metrica-box"><strong>{{ limite_box - ocupados }}</strong><span>Espaços disponíveis</span></div>
 </section>
-
-<section class="filtros-boxes cartao espacamento-topo" aria-label="Filtros dos Boxes">
-    <div class="campo campo-filtro-nome">
-        <label for="filtro-box-nome">Pesquisar</label>
-        <input id="filtro-box-nome" type="search" placeholder="Nome, apelido ou espécie" autocomplete="off">
-    </div>
-    <div class="campo">
-        <label for="filtro-box-tipo">Tipo</label>
-        <input id="filtro-box-tipo" type="search" placeholder="Ex.: Grama" autocomplete="off">
-    </div>
-    <label class="alternador filtro-shiny">
-        <input id="filtro-box-shiny" type="checkbox">
-        <span>Somente Shiny</span>
-    </label>
-    <button id="limpar-filtros-box" class="botao botao-secundario" type="button">Limpar</button>
-</section>
-<p id="resultado-filtro-box" class="resultado-filtro texto-suave" aria-live="polite"></p>
 
 <section id="equipe-ativa" class="secao-armazenamento espacamento-topo">
     <div class="titulo-armazenamento">
         <div>
             <p class="rotulo">Prontos para batalha</p>
             <h2>Equipe ativa</h2>
+            <p class="texto-suave">Ao retirar um Pokémon, ele será colocado no final da Box.</p>
         </div>
         <span class="contador-ocupacao">{{ equipe|length }}/{{ limite_equipe }}</span>
     </div>
@@ -146,35 +119,27 @@
             {{ cartao_pokemon(registro, 'equipe') }}
         {% endfor %}
         {% for _ in range(limite_equipe - equipe|length) %}
-            <article class="slot-box-vazio slot-equipe-vazio"><span>Espaço livre</span></article>
+            <article class="slot-box-vazio slot-equipe-vazio">
+                <span>Espaço livre</span>
+                <small>Adicione um Pokémon pela Box</small>
+            </article>
         {% endfor %}
     </div>
 </section>
 
-{% for box in boxes %}
-<section id="{{ box.get('id') }}" class="secao-armazenamento box-container espacamento-topo">
+<section id="box-pokemon" class="secao-armazenamento box-container espacamento-topo">
     <header class="box-cabecalho">
         <div>
-            <p class="rotulo">Armazenamento</p>
+            <p class="rotulo">Armazenamento único</p>
             <div class="titulo-box-linha">
                 <h2>{{ box.get('nome') }}</h2>
-                <span class="contador-ocupacao">{{ box.get('registros', [])|length }}/{{ box.get('limite', 10) }}</span>
+                <span class="contador-ocupacao">{{ ocupados }}/{{ limite_box }}</span>
             </div>
         </div>
-        <div class="acoes-box">
-            <button class="botao botao-secundario" type="button" data-abrir-renomear="{{ box.get('id') }}">Renomear</button>
-            {% if box.get('registros', [])|length < box.get('limite', 10) %}
-                <a class="botao botao-primario botao-link" href="{{ novo_pokemon_url(box.get('id')) }}">Adicionar Pokémon</a>
-            {% endif %}
-            {% if boxes|length > 1 and not box.get('registros', []) %}
-                <form method="post" action="{{ excluir_url(box.get('id')) }}" data-confirmacao="Remover o Box vazio {{ box.get('nome') }}?">
-                    <button class="botao botao-perigo" type="submit">Excluir</button>
-                </form>
-            {% endif %}
-        </div>
+        <button class="botao botao-secundario" type="button" data-abrir-renomear="{{ box.get('id') }}">Renomear</button>
     </header>
 
-    <form id="renomear-{{ box.get('id') }}" class="form-renomear-box" method="post" action="{{ renomear_url(box.get('id')) }}" hidden>
+    <form id="renomear-{{ box.get('id') }}" class="form-renomear-box" method="post" action="{{ renomear_url() }}" hidden>
         <div class="campo">
             <label for="nome-{{ box.get('id') }}">Novo nome</label>
             <input id="nome-{{ box.get('id') }}" name="nome" maxlength="60" value="{{ box.get('nome') }}" required>
@@ -183,30 +148,34 @@
         <button class="botao botao-secundario" type="button" data-fechar-renomear="{{ box.get('id') }}">Cancelar</button>
     </form>
 
-    <div class="grade-box-pokemons">
-        {% for registro in box.get('registros', []) %}
-            {{ cartao_pokemon(registro, 'box', box.get('id')) }}
-        {% endfor %}
-        {% for _ in range(box.get('limite', 10) - box.get('registros', [])|length) %}
-            <a class="slot-box-vazio" href="{{ novo_pokemon_url(box.get('id')) }}"><span>＋</span><small>Espaço livre</small></a>
-        {% endfor %}
-    </div>
-</section>
-{% endfor %}
+    <section class="filtros-boxes" aria-label="Pesquisa dinâmica da Box">
+        <div class="campo campo-filtro-nome">
+            <label for="filtro-box-nome">Pesquisar Pokémon</label>
+            <input id="filtro-box-nome" type="search" placeholder="Nome, apelido ou espécie" autocomplete="off">
+        </div>
+        <div class="campo">
+            <label for="filtro-box-tipo">Tipo</label>
+            <input id="filtro-box-tipo" type="search" placeholder="Ex.: Grama" autocomplete="off">
+        </div>
+        <label class="alternador filtro-shiny">
+            <input id="filtro-box-shiny" type="checkbox">
+            <span>Somente Shiny</span>
+        </label>
+        <button id="limpar-filtros-box" class="botao botao-secundario" type="button">Limpar</button>
+    </section>
+    <p id="resultado-filtro-box" class="resultado-filtro texto-suave" aria-live="polite"></p>
 
-<section class="comprar-box cartao espacamento-topo">
-    <div>
-        <p class="rotulo">Mais espaço</p>
-        <h2>Comprar novo Box</h2>
-        <p class="texto-suave">Cada novo Box possui {{ config_boxes.get('espacos_por_box', 10) }} espaços e custa ₽ {{ config_boxes.get('custo_novo_box', 100) }}.</p>
+    <div id="grade-box-unica" class="grade-box-pokemons">
+        {% for registro in box.get('registros', []) %}
+            {{ cartao_pokemon(registro, 'box') }}
+        {% endfor %}
+        {% for _ in range(limite_box - ocupados) %}
+            <a class="slot-box-vazio" data-box-slot-vazio href="{{ novo_pokemon_url() }}">
+                <span>＋</span>
+                <small>Criar Pokémon</small>
+            </a>
+        {% endfor %}
     </div>
-    <form method="post" action="{{ novo_box_url }}" data-confirmacao="Comprar um novo Box por ₽ {{ config_boxes.get('custo_novo_box', 100) }}?">
-        <button
-            class="botao botao-primario"
-            type="submit"
-            {% if treinador.get('pokedolares', 0)|int < config_boxes.get('custo_novo_box', 100)|int %}disabled title="Saldo insuficiente"{% endif %}
-        >Comprar Box</button>
-    </form>
 </section>
 {% endblock %}
 

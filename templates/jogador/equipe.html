@@ -16,10 +16,7 @@
     </div>
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
-        <a class="botao botao-secundario botao-link" href="{{ boxes_url }}">Abrir Boxes</a>
-        {% if equipe|length < limite %}
-            <a class="botao botao-primario botao-link" href="{{ novo_url }}">Adicionar Pokémon</a>
-        {% endif %}
+        <a class="botao botao-primario botao-link" href="{{ boxes_url }}">Gerenciar pela Box</a>
     </div>
 </section>
 
@@ -95,10 +92,10 @@
     {% endfor %}
 
     {% for _ in range(limite - equipe|length) %}
-        <a class="cartao pokemon-cartao pokemon-vazio" href="{{ novo_url }}">
-            <span class="pokemon-vazio-icone">＋</span>
+        <a class="cartao pokemon-cartao pokemon-vazio" href="{{ boxes_url }}">
+            <span class="pokemon-vazio-icone">↔</span>
             <strong>Espaço disponível</strong>
-            <span>Adicionar parceiro</span>
+            <span>Adicione um Pokémon pela Box</span>
         </a>
     {% endfor %}
 </section>

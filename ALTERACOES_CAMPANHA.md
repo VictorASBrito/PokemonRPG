@@ -20,7 +20,7 @@ Foram removidos da ficha e dos cálculos automáticos dos Pokémon:
 
 ## Migração dos JSON
 
-A estrutura atual usa `schema_version: 4`.
+A estrutura atual usa `schema_version: 5`.
 
 Ao abrir ou salvar fichas antigas, o sistema remove de cada Pokémon:
 
@@ -54,3 +54,15 @@ Os golpes passam a ser armazenados apenas desta forma:
 - `templates/jogador/pokemon.html`
 - `templates/jogador/equipe.html`
 - `templates/jogador/boxes.html`
+
+
+## Reformulação da Box
+
+- A campanha agora utiliza uma única Box com 100 espaços.
+- O sistema de compra, criação e exclusão de Boxes foi removido.
+- Novos Pokémon só podem ser criados a partir de um espaço vazio da Box.
+- Espaços vazios da equipe apenas direcionam o jogador para a Box.
+- Ao retirar um Pokémon da equipe, ele é acrescentado no fim da Box.
+- Ao adicionar um Pokémon da Box à equipe, ele é acrescentado diretamente no fim da equipe, caso haja vaga.
+- A pesquisa por nome, apelido ou espécie reorganiza dinamicamente os cartões e coloca as correspondências no início.
+- Fichas antigas com várias Boxes são unificadas automaticamente, preservando a ordem dos Pokémon armazenados.

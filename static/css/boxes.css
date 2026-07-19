@@ -1,6 +1,6 @@
 .resumo-boxes {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
 }
 
@@ -18,10 +18,14 @@
 
 .filtros-boxes {
     display: grid;
-    grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) 130px auto auto;
+    grid-template-columns: minmax(260px, 2fr) minmax(160px, 1fr) 140px auto;
     gap: 14px;
     align-items: end;
-    padding: 20px;
+    margin-top: 20px;
+    padding: 18px;
+    background: var(--superficie-suave);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
 }
 
 .filtro-shiny { min-height: 44px; margin-bottom: 0; }
@@ -39,22 +43,17 @@
 .titulo-armazenamento,
 .box-cabecalho,
 .titulo-box-linha,
-.acoes-box,
-.form-renomear-box,
-.comprar-box {
+.form-renomear-box {
     display: flex;
     align-items: center;
 }
 
 .titulo-armazenamento,
-.box-cabecalho,
-.comprar-box { justify-content: space-between; gap: 20px; }
+.box-cabecalho { justify-content: space-between; gap: 20px; }
 .titulo-armazenamento h2,
-.box-cabecalho h2,
-.comprar-box h2 { margin: 0; }
+.box-cabecalho h2 { margin: 0; }
+.titulo-armazenamento p { margin-bottom: 0; }
 .titulo-box-linha { gap: 12px; }
-.acoes-box { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-.acoes-box form { margin: 0; }
 
 .contador-ocupacao {
     padding: 7px 10px;
@@ -90,6 +89,16 @@
     border: 1px solid var(--borda);
     border-radius: 14px;
     box-shadow: var(--sombra-suave);
+    transition: opacity .18s ease, transform .18s ease, border-color .18s ease;
+}
+
+.box-pokemon-card.pokemon-pesquisa-correspondente {
+    border-color: var(--primaria);
+    transform: translateY(-2px);
+}
+
+.box-pokemon-card.pokemon-pesquisa-secundario {
+    opacity: .58;
 }
 
 .box-pokemon-principal {
@@ -116,22 +125,28 @@
 .box-pokemon-imagem-wrap .selo-shiny { top: 8px; right: 8px; }
 
 .box-pokemon-info { margin-top: 12px; }
-.box-pokemon-info > strong { display: block; margin: 2px 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.box-pokemon-info > strong {
+    display: block;
+    margin: 2px 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .box-pokemon-info > span:not(.pokemon-especie) { color: var(--texto-suave); font-size: .75rem; }
 .chips-compactos { gap: 5px; margin-top: 9px; }
 .chips-compactos .chip { padding: 4px 7px; font-size: .67rem; }
 
 .form-mover-pokemon {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 7px;
     padding: 10px;
     background: var(--superficie-suave);
     border-top: 1px solid var(--borda);
 }
-.form-mover-pokemon select,
-.form-mover-pokemon .botao { min-height: 36px; padding: 7px 8px; font-size: .74rem; }
-.form-mover-pokemon .botao { white-space: nowrap; }
+.form-mover-pokemon .botao {
+    width: 100%;
+    min-height: 36px;
+    padding: 7px 8px;
+    font-size: .74rem;
+}
 
 .slot-box-vazio {
     min-height: 265px;
@@ -145,25 +160,15 @@
     border-radius: 14px;
     text-decoration: none;
 }
-.slot-box-vazio:hover { color: var(--primaria); border-color: var(--primaria); background: var(--primaria-suave); }
-.slot-box-vazio span { font-size: 1.35rem; }
-.slot-equipe-vazio { min-height: 220px; }
-
-.comprar-box { padding: 24px 28px; }
-.comprar-box p { margin-bottom: 0; }
-.botao:disabled { opacity: .5; cursor: not-allowed; }
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+.slot-box-vazio:hover {
+    color: var(--primaria);
+    border-color: var(--primaria);
+    background: var(--primaria-suave);
 }
+.slot-box-vazio span { font-size: 1.35rem; }
+.slot-equipe-vazio { min-height: 220px; text-align: center; padding: 16px; }
+.slot-equipe-vazio small { max-width: 130px; }
+.botao:disabled { opacity: .5; cursor: not-allowed; }
 
 [hidden] { display: none !important; }
 
@@ -174,12 +179,10 @@
 }
 
 @media (max-width: 720px) {
-    .resumo-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .resumo-boxes { grid-template-columns: 1fr; }
     .grade-box-pokemons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .box-cabecalho,
-    .titulo-armazenamento,
-    .comprar-box { align-items: flex-start; flex-direction: column; }
-    .acoes-box { justify-content: flex-start; }
+    .titulo-armazenamento { align-items: flex-start; flex-direction: column; }
     .form-renomear-box { align-items: stretch; flex-direction: column; }
 }
 

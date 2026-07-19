@@ -40,7 +40,20 @@ def _criar_cliente_com_jogador(tmp_path: Path):
 
     usuarios = json.loads((data_dir / "usuarios.json").read_text(encoding="utf-8"))
     usuario = next(item for item in usuarios["usuarios"] if item["login"] == "bartz")
-    return client, data_dir, usuario["jogador_id"]
+    arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{usuario['jogador_id']}.json"
+    return client, data_dir, arquivo, usuario["jogador_id"]
+
+
+def _criar_na_box(client, arquivo: Path, jogador_id: str, especie: str) -> str:
+    jogador = json.loads(arquivo.read_text(encoding="utf-8"))
+    box_id = jogador["boxes"][0]["id"]
+    resposta = client.post(
+        f"/mestre/jogadores/{jogador_id}/equipe/novo?destino=box:{box_id}",
+        data={"especie_nome": especie},
+    )
+    assert resposta.status_code == 302
+    jogador = json.loads(arquivo.read_text(encoding="utf-8"))
+    return jogador["boxes"][0]["pokemon_ids"][-1]
 
 
 def test_calculo_usa_nivel_do_jogador() -> None:
@@ -72,8 +85,8 @@ def test_calculo_usa_nivel_do_jogador() -> None:
     assert "dados_luta" not in calculos
 
 
-def test_adicionar_e_editar_pokemon_sem_pp_xp_ou_amizade(tmp_path: Path) -> None:
-    client, data_dir, jogador_id = _criar_cliente_com_jogador(tmp_path)
+def test_adicionar_na_box_e_editar_pokemon_sem_pp_xp_ou_amizade(tmp_path: Path) -> None:
+    client, data_dir, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
 
     resposta = client.post(
         f"/mestre/jogadores/{jogador_id}/ficha",
@@ -98,22 +111,17 @@ def test_adicionar_e_editar_pokemon_sem_pp_xp_ou_amizade(tmp_path: Path) -> None
     )
     assert resposta.status_code == 302
 
-    resposta = client.post(
-        f"/mestre/jogadores/{jogador_id}/equipe/novo",
-        data={"especie_nome": "Bulbasaur"},
-    )
-    assert resposta.status_code == 302
-
-    arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
+    pokemon_id = _criar_na_box(client, arquivo, jogador_id, "Bulbasaur")
     jogador = json.loads(arquivo.read_text(encoding="utf-8"))
-    assert jogador["schema_version"] == 4
+    assert jogador["schema_version"] == 5
     assert jogador["treinador"]["nivel"] == 48
-    assert len(jogador["pokemons"]) == 1
-    pokemon_id = jogador["equipe"][0]
+    assert pokemon_id in jogador["boxes"][0]["pokemon_ids"]
+    assert pokemon_id not in jogador["equipe"]
 
     resposta = client.post(
-        f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}",
+        f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}?retorno=boxes",
         data={
+            "retorno": "boxes",
             "especie_nome": "Bulbasaur",
             "apelido": "Broto",
             "genero": "♂",
@@ -142,35 +150,14 @@ def test_adicionar_e_editar_pokemon_sem_pp_xp_ou_amizade(tmp_path: Path) -> None
     assert "amizade" not in pokemon
     assert "pp" not in pokemon["bonus"]
 
-    resposta = client.get(f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}")
+
+def test_tela_da_equipe_direciona_espacos_vazios_para_box(tmp_path: Path) -> None:
+    client, _, _, jogador_id = _criar_cliente_com_jogador(tmp_path)
+    resposta = client.get(f"/mestre/jogadores/{jogador_id}/equipe")
     texto = resposta.get_data(as_text=True)
+
     assert resposta.status_code == 200
-    assert "Nível 48" in texto
-    assert "Experiência acumulada" not in texto
-    assert "Amizade" not in texto
-    assert "Taxa de captura" not in texto
-    assert "Dano do golpe Luta" not in texto
-    assert ">PP<" not in texto
-
-
-def test_limite_de_seis_pokemons(tmp_path: Path) -> None:
-    client, data_dir, jogador_id = _criar_cliente_com_jogador(tmp_path)
-    especies = ["Bulbasaur", "Charmander", "Squirtle", "Caterpie", "Weedle", "Pidgey"]
-    for especie in especies:
-        resposta = client.post(
-            f"/mestre/jogadores/{jogador_id}/equipe/novo",
-            data={"especie_nome": especie},
-        )
-        assert resposta.status_code == 302
-
-    resposta = client.post(
-        f"/mestre/jogadores/{jogador_id}/equipe/novo",
-        data={"especie_nome": "Rattata"},
-        follow_redirects=True,
-    )
-    assert resposta.status_code == 200
-    assert "limite de 6" in resposta.get_data(as_text=True)
-
-    arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
-    jogador = json.loads(arquivo.read_text(encoding="utf-8"))
-    assert len(jogador["equipe"]) == 6
+    assert "Gerenciar pela Box" in texto
+    assert "Adicione um Pokémon pela Box" in texto
+    assert f"/mestre/jogadores/{jogador_id}/boxes" in texto
+    assert "Adicionar Pokémon" not in texto

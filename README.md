@@ -21,7 +21,7 @@ Aplicação Flask para gerenciamento da campanha, utilizando arquivos JSON como 
 - nível, PV, idade, números shiny, pokédolares e atributos sempre visíveis;
 - equipe ativa em grade de duas colunas;
 - cartões com foto, apelido, espécie, nível compartilhado, barra de vida, atributos base e golpes;
-- espaços vazios da equipe usados como atalho para cadastrar novos Pokémon;
+- espaços vazios da equipe usados como atalho para abrir a Box;
 - layout responsivo para computador, tablet e celular.
 
 ### Ficha do treinador
@@ -51,17 +51,19 @@ O nível pertence ao jogador e é definido na ficha do treinador. Todos os Poké
 
 Exemplo: um jogador de nível 48 possui todos os seus Pokémon no nível 48. O nível não é armazenado individualmente dentro de cada Pokémon.
 
-### Boxes Pokémon
+### Box Pokémon
 
-- um Box inicial com dez espaços;
-- compra de novos Boxes por 100 pokédolares;
-- custo, capacidade e quantidade inicial configuráveis;
-- renomeação e exclusão de Boxes vazios;
-- movimentação entre equipe e Boxes;
-- cadastro de novos Pokémon diretamente em um Box;
-- filtros por nome, espécie, tipo e Shiny;
+- uma única Box com 100 espaços;
+- novos Pokémon só podem ser criados por um espaço vazio da Box;
+- espaços vazios da equipe não criam Pokémon diretamente;
+- ao sair da equipe, o Pokémon é colocado no final da Box;
+- ao sair da Box, o Pokémon é colocado diretamente no final da equipe, caso exista vaga;
+- pesquisa dinâmica por nome, apelido ou espécie, priorizando correspondências no início;
+- filtros adicionais por tipo e Shiny;
+- renomeação da Box;
 - acesso completo pelo jogador e pelo mestre;
-- migração automática dos dados para o `schema_version` 4.
+- migração automática de múltiplas Boxes antigas para o `schema_version` 5;
+- sistema de compra, criação e exclusão de Boxes removido.
 
 ### Cálculos automáticos atuais
 
@@ -144,7 +146,7 @@ Esse arquivo concentra:
 - naturezas;
 - status disponíveis;
 - regra de arredondamento;
-- capacidade, quantidade inicial, custo e limite dos Boxes.
+- nome e capacidade da Box única.
 
 ## Catálogos importados
 
@@ -165,7 +167,7 @@ O importador ignora experiência base, taxa de captura e o custo de recurso dos 
 
 ```json
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "treinador": {
     "nivel": 48
   },
@@ -178,8 +180,15 @@ O importador ignora experiência base, taxa de captura e o custo de recurso dos 
       ]
     }
   ],
-  "equipe": ["pkm_exemplo"],
-  "boxes": []
+  "equipe": [],
+  "boxes": [
+    {
+      "id": "box_1",
+      "nome": "Box Pokémon",
+      "limite": 100,
+      "pokemon_ids": ["pkm_exemplo"]
+    }
+  ]
 }
 ```
 
@@ -198,9 +207,10 @@ Os testes cobrem:
 - nível compartilhado entre jogador e Pokémon;
 - progressão de atributos;
 - remoção dos campos desativados;
-- inclusão e edição de Pokémon;
+- criação de Pokémon exclusivamente pela Box;
 - seleção de golpes sem contagem de usos;
-- limite máximo de seis Pokémon;
-- movimentação entre equipe e Box;
-- compra, renomeação e exclusão de Box vazio;
+- limite máximo de seis Pokémon na equipe;
+- movimentação entre equipe e Box com preservação da ordem;
+- migração para uma Box única de 100 espaços;
+- pesquisa dinâmica e renomeação da Box;
 - renderização do dashboard.

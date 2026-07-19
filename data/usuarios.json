@@ -9,12 +9,12 @@
       "ativo": true
     },
     {
-      "id": "usr_1b8d10bf7089",
+      "id": "usr_a0aa71a7aa16",
       "login": "aaa",
       "nome": "Victor",
       "perfil": "jogador",
-      "jogador_id": "jog_ec752851ea5b",
-      "senha_hash": "pbkdf2_sha256$600000$6a421b5c563afc3c21c0443e5574b3b5$071fe6e830a1699c00fce2d2d5d4383cff8f673ab6ad6866e382f87747320c4e",
+      "jogador_id": "jog_522ace8c5d23",
+      "senha_hash": "pbkdf2_sha256$600000$32a883b73fd5b62c3fccd4c2d8b4fc7c$4a91f68d94d8acf1894620942265d3111388965f6df2b180ea90759e8a06c32e",
       "ativo": true
     }
   ]

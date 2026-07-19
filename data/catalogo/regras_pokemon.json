@@ -1,6 +1,6 @@
 {
-  "schema_version": 3,
-  "versao": "campanha-ankar-sem-pp-xp-amizade",
+  "schema_version": 4,
+  "versao": "campanha-ankar-box-unica-100",
   "limites": {
     "golpes_por_pokemon": 4,
     "tamanho_equipe": 6
@@ -366,10 +366,7 @@
     "diminuicao": "baixo"
   },
   "boxes": {
-    "espacos_por_box": 10,
-    "quantidade_inicial": 1,
-    "custo_novo_box": 100,
-    "permitir_boxes_ilimitados": true,
-    "limite_boxes": null
+    "espacos": 100,
+    "nome": "Box Pokémon"
   }
 }

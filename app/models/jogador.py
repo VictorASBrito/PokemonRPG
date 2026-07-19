@@ -28,7 +28,7 @@ def estrutura_jogador_padrao(
     horario = agora_iso()
 
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "id": jogador_id,
         "usuario_id": usuario_id,
         "campanha_id": campanha_id,
@@ -58,8 +58,8 @@ def estrutura_jogador_padrao(
         "boxes": [
             {
                 "id": "box_1",
-                "nome": "Box 1",
-                "limite": 10,
+                "nome": "Box Pokémon",
+                "limite": 100,
                 "pokemon_ids": [],
             }
         ],

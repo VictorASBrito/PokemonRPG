@@ -92,13 +92,13 @@ def _render_equipe(jogador: dict[str, Any], *, modo_mestre: bool):
     jogador_id = str(jogador["id"])
 
     if modo_mestre:
-        novo_url = url_for("pokemons.novo_mestre", jogador_id=jogador_id)
         voltar_url = url_for("mestre.jogadores")
         editar_endpoint = "pokemons.editar_mestre"
+        boxes_url = url_for("boxes.boxes_mestre", jogador_id=jogador_id)
     else:
-        novo_url = url_for("pokemons.novo_jogador")
         voltar_url = url_for("jogadores.dashboard")
         editar_endpoint = "pokemons.editar_jogador"
+        boxes_url = url_for("boxes.boxes_jogador")
 
     return render_template(
         "jogador/equipe.html",
@@ -111,14 +111,9 @@ def _render_equipe(jogador: dict[str, Any], *, modo_mestre: bool):
         ),
         limite=limite,
         modo_mestre=modo_mestre,
-        novo_url=novo_url,
         voltar_url=voltar_url,
         editar_endpoint=editar_endpoint,
-        boxes_url=(
-            url_for("boxes.boxes_mestre", jogador_id=jogador_id)
-            if modo_mestre
-            else url_for("boxes.boxes_jogador")
-        ),
+        boxes_url=boxes_url,
     )
 
 
@@ -126,42 +121,28 @@ def _novo(jogador: dict[str, Any], *, modo_mestre: bool):
     data_dir, campanha_id = _contexto()
     catalogo_pokemons, _, regras = _catalogos(data_dir)
     garantir_estrutura_boxes(jogador, regras)
-    limite = int(regras.get("limites", {}).get("tamanho_equipe", 6))
     jogador_id = str(jogador["id"])
-    destino = str(request.args.get("destino", "equipe")).strip() or "equipe"
+    box = jogador.get("boxes", [None])[0]
 
-    if destino == "equipe":
-        destino_rotulo = "equipe"
-        voltar_url = url_for(
-            "pokemons.equipe_mestre" if modo_mestre else "pokemons.equipe_jogador",
-            **({"jogador_id": jogador_id} if modo_mestre else {}),
-        )
-        if len(jogador.get("equipe", [])) >= limite:
-            flash(f"A equipe já possui o limite de {limite} Pokémon.", "aviso")
-            return redirect(voltar_url)
-    elif destino.startswith("box:"):
-        box_id = destino.split(":", 1)[1]
-        box = encontrar_box(jogador, box_id)
-        voltar_url = url_for(
-            "boxes.boxes_mestre" if modo_mestre else "boxes.boxes_jogador",
-            **({"jogador_id": jogador_id} if modo_mestre else {}),
-            _anchor=box_id,
-        )
-        if not box:
-            flash("O Box selecionado não foi encontrado.", "erro")
-            return redirect(voltar_url)
-        if len(box.get("pokemon_ids", [])) >= int(box.get("limite", 10)):
-            flash(f'O Box "{box.get("nome", "Box")}" está cheio.', "aviso")
-            return redirect(voltar_url)
-        destino_rotulo = str(box.get("nome", "Box"))
-    else:
-        flash("Selecione um destino válido para o Pokémon.", "erro")
-        return redirect(
-            url_for(
-                "pokemons.equipe_mestre" if modo_mestre else "pokemons.equipe_jogador",
-                **({"jogador_id": jogador_id} if modo_mestre else {}),
-            )
-        )
+    voltar_url = url_for(
+        "boxes.boxes_mestre" if modo_mestre else "boxes.boxes_jogador",
+        **({"jogador_id": jogador_id} if modo_mestre else {}),
+        _anchor="box-pokemon",
+    )
+
+    if not box:
+        flash("A Box do jogador não foi encontrada.", "erro")
+        return redirect(voltar_url)
+
+    destino = str(request.args.get("destino", "")).strip()
+    destino_esperado = f"box:{box['id']}"
+    if destino != destino_esperado:
+        flash("Novos Pokémon só podem ser criados em um espaço vazio da Box.", "aviso")
+        return redirect(voltar_url)
+
+    if len(box.get("pokemon_ids", [])) >= int(box.get("limite", 100)):
+        flash("A Box está cheia.", "aviso")
+        return redirect(voltar_url)
 
     if request.method == "POST":
         especie_nome = request.form.get("especie_nome", "").strip()
@@ -174,27 +155,26 @@ def _novo(jogador: dict[str, Any], *, modo_mestre: bool):
                 especie=especie,
                 regras=regras,
             )
-            if destino != "equipe":
-                erro_movimento = mover_pokemon(
-                    jogador,
-                    regras,
-                    pokemon_id=str(pokemon["id"]),
-                    destino=destino,
-                )
-                if erro_movimento:
-                    remover_pokemon(jogador, str(pokemon["id"]))
-                    flash(erro_movimento, "erro")
-                    return redirect(voltar_url)
+            erro_movimento = mover_pokemon(
+                jogador,
+                regras,
+                pokemon_id=str(pokemon["id"]),
+                destino=destino_esperado,
+            )
+            if erro_movimento:
+                remover_pokemon(jogador, str(pokemon["id"]))
+                flash(erro_movimento, "erro")
+                return redirect(voltar_url)
 
             salvar_jogador(
                 data_dir=data_dir,
                 campanha_id=campanha_id,
                 jogador=jogador,
             )
-            flash(f"{especie['nome']} foi adicionado a {destino_rotulo}.", "sucesso")
+            flash(f"{especie['nome']} foi criado no último espaço ocupado da Box.", "sucesso")
             parametros = {
                 "pokemon_id": pokemon["id"],
-                "retorno": "boxes" if destino != "equipe" else "equipe",
+                "retorno": "boxes",
             }
             if modo_mestre:
                 parametros["jogador_id"] = jogador_id
@@ -212,10 +192,9 @@ def _novo(jogador: dict[str, Any], *, modo_mestre: bool):
         total_catalogo=catalogo_pokemons.get("total", 0),
         modo_mestre=modo_mestre,
         voltar_url=voltar_url,
-        destino=destino,
-        destino_rotulo=destino_rotulo,
+        destino=destino_esperado,
+        destino_rotulo=str(box.get("nome", "Box")),
     )
-
 
 def _editar(jogador: dict[str, Any], pokemon_id: str, *, modo_mestre: bool):
     data_dir, campanha_id = _contexto()

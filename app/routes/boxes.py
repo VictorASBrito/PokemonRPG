@@ -18,8 +18,6 @@ from app.routes.auth import perfil_obrigatorio
 from app.services.box_service import (
     boxes_detalhadas,
     carregar_config_boxes,
-    criar_box,
-    excluir_box,
     garantir_estrutura_boxes,
     mover_pokemon,
     renomear_box,
@@ -69,14 +67,13 @@ def _render_boxes(jogador: dict[str, Any], regras: dict[str, Any], *, modo_mestr
         regras=regras,
     )
     jogador_id = str(jogador["id"])
-    config = carregar_config_boxes(regras)
 
     return render_template(
         "jogador/boxes.html",
         jogador=jogador,
         equipe=equipe,
-        boxes=boxes,
-        config_boxes=config,
+        box=boxes[0],
+        config_boxes=carregar_config_boxes(regras),
         limite_equipe=int(regras.get("limites", {}).get("tamanho_equipe", 6)),
         modo_mestre=modo_mestre,
         voltar_url=(
@@ -89,11 +86,6 @@ def _render_boxes(jogador: dict[str, Any], regras: dict[str, Any], *, modo_mestr
             if modo_mestre
             else url_for("pokemons.equipe_jogador")
         ),
-        novo_box_url=(
-            url_for("boxes.novo_box_mestre", jogador_id=jogador_id)
-            if modo_mestre
-            else url_for("boxes.novo_box_jogador")
-        ),
         mover_url=(
             url_for("boxes.mover_mestre", jogador_id=jogador_id)
             if modo_mestre
@@ -101,9 +93,6 @@ def _render_boxes(jogador: dict[str, Any], regras: dict[str, Any], *, modo_mestr
         ),
         renomear_endpoint=(
             "boxes.renomear_mestre" if modo_mestre else "boxes.renomear_jogador"
-        ),
-        excluir_endpoint=(
-            "boxes.excluir_mestre" if modo_mestre else "boxes.excluir_jogador"
         ),
         editar_endpoint=(
             "pokemons.editar_mestre" if modo_mestre else "pokemons.editar_jogador"
@@ -114,17 +103,14 @@ def _render_boxes(jogador: dict[str, Any], regras: dict[str, Any], *, modo_mestr
     )
 
 
-def _criar_novo_box(jogador: dict[str, Any], data_dir: Path, campanha_id: str, regras: dict[str, Any], *, modo_mestre: bool):
-    box, erro = criar_box(jogador, regras, cobrar=True)
-    if erro:
-        flash(erro, "erro")
-    else:
-        salvar_jogador(data_dir=data_dir, campanha_id=campanha_id, jogador=jogador)
-        flash(f'{box["nome"]} comprado com sucesso.', "sucesso")
-    return redirect(_rota_boxes(modo_mestre, str(jogador["id"]), ancora=box["id"] if box else None))
-
-
-def _mover(jogador: dict[str, Any], data_dir: Path, campanha_id: str, regras: dict[str, Any], *, modo_mestre: bool):
+def _mover(
+    jogador: dict[str, Any],
+    data_dir: Path,
+    campanha_id: str,
+    regras: dict[str, Any],
+    *,
+    modo_mestre: bool,
+):
     pokemon_id = str(request.form.get("pokemon_id", "")).strip()
     destino = str(request.form.get("destino", "")).strip()
     erro = mover_pokemon(
@@ -137,29 +123,31 @@ def _mover(jogador: dict[str, Any], data_dir: Path, campanha_id: str, regras: di
         flash(erro, "erro")
     else:
         salvar_jogador(data_dir=data_dir, campanha_id=campanha_id, jogador=jogador)
-        flash("Pokémon movido com sucesso.", "sucesso")
-    ancora = destino.split(":", 1)[1] if destino.startswith("box:") else "equipe-ativa"
+        mensagem = (
+            "Pokémon adicionado ao fim da equipe."
+            if destino == "equipe"
+            else "Pokémon enviado para o último espaço ocupado da Box."
+        )
+        flash(mensagem, "sucesso")
+    ancora = "equipe-ativa" if destino == "equipe" else "box-pokemon"
     return redirect(_rota_boxes(modo_mestre, str(jogador["id"]), ancora=ancora))
 
 
-def _renomear(jogador: dict[str, Any], data_dir: Path, campanha_id: str, box_id: str, *, modo_mestre: bool):
+def _renomear(
+    jogador: dict[str, Any],
+    data_dir: Path,
+    campanha_id: str,
+    box_id: str,
+    *,
+    modo_mestre: bool,
+):
     erro = renomear_box(jogador, box_id, str(request.form.get("nome", "")))
     if erro:
         flash(erro, "erro")
     else:
         salvar_jogador(data_dir=data_dir, campanha_id=campanha_id, jogador=jogador)
-        flash("Box renomeado com sucesso.", "sucesso")
-    return redirect(_rota_boxes(modo_mestre, str(jogador["id"]), ancora=box_id))
-
-
-def _excluir(jogador: dict[str, Any], data_dir: Path, campanha_id: str, box_id: str, *, modo_mestre: bool):
-    erro = excluir_box(jogador, box_id)
-    if erro:
-        flash(erro, "erro")
-    else:
-        salvar_jogador(data_dir=data_dir, campanha_id=campanha_id, jogador=jogador)
-        flash("Box vazio removido.", "sucesso")
-    return redirect(_rota_boxes(modo_mestre, str(jogador["id"])))
+        flash("Box renomeada com sucesso.", "sucesso")
+    return redirect(_rota_boxes(modo_mestre, str(jogador["id"]), ancora="box-pokemon"))
 
 
 @boxes_bp.get("/jogador/boxes")
@@ -171,17 +159,6 @@ def boxes_jogador():
         flash("Sua ficha ainda não foi vinculada a este usuário.", "erro")
         return redirect(url_for("jogadores.dashboard"))
     return _render_boxes(jogador, regras, modo_mestre=False)
-
-
-@boxes_bp.post("/jogador/boxes/novo")
-@perfil_obrigatorio("jogador")
-def novo_box_jogador():
-    jogador_id = str(session.get("jogador_id", ""))
-    jogador, data_dir, campanha_id, regras = _carregar(jogador_id)
-    if not jogador:
-        flash("Sua ficha ainda não foi vinculada a este usuário.", "erro")
-        return redirect(url_for("jogadores.dashboard"))
-    return _criar_novo_box(jogador, data_dir, campanha_id, regras, modo_mestre=False)
 
 
 @boxes_bp.post("/jogador/boxes/mover")
@@ -206,17 +183,6 @@ def renomear_jogador(box_id: str):
     return _renomear(jogador, data_dir, campanha_id, box_id, modo_mestre=False)
 
 
-@boxes_bp.post("/jogador/boxes/<box_id>/excluir")
-@perfil_obrigatorio("jogador")
-def excluir_jogador(box_id: str):
-    jogador_id = str(session.get("jogador_id", ""))
-    jogador, data_dir, campanha_id, _ = _carregar(jogador_id)
-    if not jogador:
-        flash("Sua ficha ainda não foi vinculada a este usuário.", "erro")
-        return redirect(url_for("jogadores.dashboard"))
-    return _excluir(jogador, data_dir, campanha_id, box_id, modo_mestre=False)
-
-
 @boxes_bp.get("/mestre/jogadores/<jogador_id>/boxes")
 @perfil_obrigatorio("mestre")
 def boxes_mestre(jogador_id: str):
@@ -225,16 +191,6 @@ def boxes_mestre(jogador_id: str):
         flash("Jogador não encontrado.", "erro")
         return redirect(url_for("mestre.jogadores"))
     return _render_boxes(jogador, regras, modo_mestre=True)
-
-
-@boxes_bp.post("/mestre/jogadores/<jogador_id>/boxes/novo")
-@perfil_obrigatorio("mestre")
-def novo_box_mestre(jogador_id: str):
-    jogador, data_dir, campanha_id, regras = _carregar(jogador_id)
-    if not jogador:
-        flash("Jogador não encontrado.", "erro")
-        return redirect(url_for("mestre.jogadores"))
-    return _criar_novo_box(jogador, data_dir, campanha_id, regras, modo_mestre=True)
 
 
 @boxes_bp.post("/mestre/jogadores/<jogador_id>/boxes/mover")
@@ -255,13 +211,3 @@ def renomear_mestre(jogador_id: str, box_id: str):
         flash("Jogador não encontrado.", "erro")
         return redirect(url_for("mestre.jogadores"))
     return _renomear(jogador, data_dir, campanha_id, box_id, modo_mestre=True)
-
-
-@boxes_bp.post("/mestre/jogadores/<jogador_id>/boxes/<box_id>/excluir")
-@perfil_obrigatorio("mestre")
-def excluir_mestre(jogador_id: str, box_id: str):
-    jogador, data_dir, campanha_id, _ = _carregar(jogador_id)
-    if not jogador:
-        flash("Jogador não encontrado.", "erro")
-        return redirect(url_for("mestre.jogadores"))
-    return _excluir(jogador, data_dir, campanha_id, box_id, modo_mestre=True)

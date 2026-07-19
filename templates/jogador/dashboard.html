@@ -187,10 +187,10 @@
             {% endfor %}
 
             {% for _ in range(limite_equipe - equipe|length) %}
-                <a class="cartao pokemon-dashboard-vazio" href="{{ url_for('pokemons.novo_jogador') }}">
-                    <span>＋</span>
+                <a class="cartao pokemon-dashboard-vazio" href="{{ url_for('boxes.boxes_jogador') }}">
+                    <span>↔</span>
                     <strong>Espaço vazio</strong>
-                    <small>Adicionar Pokémon</small>
+                    <small>Adicionar pela Box</small>
                 </a>
             {% endfor %}
         </section>

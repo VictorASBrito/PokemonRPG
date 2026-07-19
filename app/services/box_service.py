@@ -15,39 +15,24 @@ def _inteiro(valor: Any, padrao: int = 0) -> int:
 
 
 CONFIG_BOX_PADRAO = {
-    "espacos_por_box": 10,
-    "quantidade_inicial": 1,
-    "custo_novo_box": 100,
-    "permitir_boxes_ilimitados": True,
-    "limite_boxes": None,
+    "espacos": 100,
+    "nome": "Box Pokémon",
 }
 
 
 def carregar_config_boxes(regras: dict[str, Any]) -> dict[str, Any]:
     configuracao = dict(CONFIG_BOX_PADRAO)
     configuracao.update(regras.get("boxes", {}))
-    configuracao["espacos_por_box"] = max(
-        1, int(configuracao.get("espacos_por_box", 10))
-    )
-    configuracao["quantidade_inicial"] = max(
-        1, int(configuracao.get("quantidade_inicial", 1))
-    )
-    configuracao["custo_novo_box"] = max(
-        0, int(configuracao.get("custo_novo_box", 100))
-    )
-    limite = configuracao.get("limite_boxes")
-    configuracao["limite_boxes"] = int(limite) if limite not in (None, "") else None
-    configuracao["permitir_boxes_ilimitados"] = bool(
-        configuracao.get("permitir_boxes_ilimitados", True)
-    )
+    configuracao["espacos"] = max(1, int(configuracao.get("espacos", 100)))
+    configuracao["nome"] = str(configuracao.get("nome", "Box Pokémon")).strip() or "Box Pokémon"
     return configuracao
 
 
-def _novo_box(indice: int, limite: int) -> dict[str, Any]:
+def _box_unica(config: dict[str, Any], *, box_id: str | None = None, nome: str | None = None) -> dict[str, Any]:
     return {
-        "id": f"box_{uuid.uuid4().hex[:10]}",
-        "nome": f"Box {indice}",
-        "limite": limite,
+        "id": box_id or f"box_{uuid.uuid4().hex[:10]}",
+        "nome": (nome or config["nome"])[:60],
+        "limite": int(config["espacos"]),
         "pokemon_ids": [],
     }
 
@@ -56,17 +41,23 @@ def garantir_estrutura_boxes(
     jogador: dict[str, Any],
     regras: dict[str, Any],
 ) -> dict[str, Any]:
+    """Normaliza qualquer estrutura antiga para uma única Box de 100 espaços.
+
+    A ordem já existente é preservada: primeiro os Pokémon da primeira Box,
+    depois os das Boxes seguintes e, por fim, qualquer Pokémon sem localização.
+    """
     config = carregar_config_boxes(regras)
     jogador.setdefault("pokemons", [])
     jogador.setdefault("equipe", [])
     jogador.setdefault("boxes", [])
-    jogador["schema_version"] = max(4, int(jogador.get("schema_version", 1)))
+    jogador["schema_version"] = max(5, int(jogador.get("schema_version", 1)))
 
-    ids_validos = {
+    ids_validos_ordenados = [
         str(pokemon.get("id"))
         for pokemon in jogador.get("pokemons", [])
         if isinstance(pokemon, dict) and pokemon.get("id")
-    }
+    ]
+    ids_validos = set(ids_validos_ordenados)
 
     equipe: list[str] = []
     limite_equipe = int(regras.get("limites", {}).get("tamanho_equipe", 6))
@@ -80,70 +71,38 @@ def garantir_estrutura_boxes(
             equipe.append(pokemon_id)
     jogador["equipe"] = equipe
 
-    boxes_normalizados: list[dict[str, Any]] = []
-    ids_boxes: set[str] = set()
+    boxes_antigas = [
+        box for box in jogador.get("boxes", []) if isinstance(box, dict)
+    ]
+    primeira_box = boxes_antigas[0] if boxes_antigas else {}
+    box = _box_unica(
+        config,
+        box_id=str(primeira_box.get("id", "")).strip() or None,
+        nome=str(primeira_box.get("nome", "")).strip() or None,
+    )
+
     ocupados = set(equipe)
+    pokemon_ids: list[str] = []
 
-    for indice, box_atual in enumerate(jogador.get("boxes", []), start=1):
-        if not isinstance(box_atual, dict):
-            continue
-        box_id = str(box_atual.get("id", "")).strip()
-        if not box_id or box_id in ids_boxes:
-            box_id = f"box_{uuid.uuid4().hex[:10]}"
-        ids_boxes.add(box_id)
-
-        limite = box_atual.get("limite", config["espacos_por_box"])
-        try:
-            limite = max(1, int(limite))
-        except (TypeError, ValueError):
-            limite = config["espacos_por_box"]
-
-        nome = str(box_atual.get("nome", "")).strip() or f"Box {indice}"
-        pokemon_ids: list[str] = []
-        for pokemon_id in box_atual.get("pokemon_ids", []):
+    for box_antiga in boxes_antigas:
+        for pokemon_id in box_antiga.get("pokemon_ids", []):
             pokemon_id = str(pokemon_id)
             if (
                 pokemon_id in ids_validos
                 and pokemon_id not in ocupados
-                and len(pokemon_ids) < limite
+                and len(pokemon_ids) < box["limite"]
             ):
                 pokemon_ids.append(pokemon_id)
                 ocupados.add(pokemon_id)
 
-        boxes_normalizados.append(
-            {
-                "id": box_id,
-                "nome": nome[:60],
-                "limite": limite,
-                "pokemon_ids": pokemon_ids,
-            }
-        )
+    # Preserva fichas antigas que não possuíam localização registrada.
+    for pokemon_id in ids_validos_ordenados:
+        if pokemon_id not in ocupados and len(pokemon_ids) < box["limite"]:
+            pokemon_ids.append(pokemon_id)
+            ocupados.add(pokemon_id)
 
-    while len(boxes_normalizados) < config["quantidade_inicial"]:
-        boxes_normalizados.append(
-            _novo_box(len(boxes_normalizados) + 1, config["espacos_por_box"])
-        )
-
-    # Preserva qualquer Pokémon antigo que ainda não possua localização.
-    sem_local = [pokemon_id for pokemon_id in ids_validos if pokemon_id not in ocupados]
-    for pokemon_id in sem_local:
-        destino = next(
-            (
-                box
-                for box in boxes_normalizados
-                if len(box["pokemon_ids"]) < int(box["limite"])
-            ),
-            None,
-        )
-        if destino is None:
-            destino = _novo_box(
-                len(boxes_normalizados) + 1, config["espacos_por_box"]
-            )
-            boxes_normalizados.append(destino)
-        destino["pokemon_ids"].append(pokemon_id)
-        ocupados.add(pokemon_id)
-
-    jogador["boxes"] = boxes_normalizados
+    box["pokemon_ids"] = pokemon_ids
+    jogador["boxes"] = [box]
     return jogador
 
 
@@ -158,59 +117,26 @@ def encontrar_box(jogador: dict[str, Any], box_id: str) -> dict[str, Any] | None
     )
 
 
+def box_unica(jogador: dict[str, Any]) -> dict[str, Any] | None:
+    boxes = jogador.get("boxes", [])
+    return boxes[0] if boxes else None
+
+
 def localizar_pokemon(jogador: dict[str, Any], pokemon_id: str) -> tuple[str, str | None]:
     pokemon_id = str(pokemon_id)
     if pokemon_id in [str(item) for item in jogador.get("equipe", [])]:
         return "equipe", None
-    for box in jogador.get("boxes", []):
-        if pokemon_id in [str(item) for item in box.get("pokemon_ids", [])]:
-            return "box", str(box.get("id"))
+    box = box_unica(jogador)
+    if box and pokemon_id in [str(item) for item in box.get("pokemon_ids", [])]:
+        return "box", str(box.get("id"))
     return "sem_local", None
 
 
 def primeiro_box_com_espaco(jogador: dict[str, Any]) -> dict[str, Any] | None:
-    return next(
-        (
-            box
-            for box in jogador.get("boxes", [])
-            if len(box.get("pokemon_ids", [])) < int(box.get("limite", 10))
-        ),
-        None,
-    )
-
-
-def criar_box(
-    jogador: dict[str, Any],
-    regras: dict[str, Any],
-    *,
-    cobrar: bool = True,
-) -> tuple[dict[str, Any] | None, str | None]:
-    garantir_estrutura_boxes(jogador, regras)
-    config = carregar_config_boxes(regras)
-
-    limite_boxes = config.get("limite_boxes")
-    if (
-        not config["permitir_boxes_ilimitados"]
-        and limite_boxes is not None
-        and len(jogador["boxes"]) >= limite_boxes
-    ):
-        return None, f"O limite de {limite_boxes} Boxes já foi alcançado."
-
-    custo = config["custo_novo_box"] if cobrar else 0
-    treinador = jogador.setdefault("treinador", {})
-    saldo = int(treinador.get("pokedolares", 0))
-    if saldo < custo:
-        return None, (
-            f"São necessários ₽ {custo} para comprar um novo Box. "
-            f"Saldo atual: ₽ {saldo}."
-        )
-
-    if custo:
-        treinador["pokedolares"] = saldo - custo
-
-    box = _novo_box(len(jogador["boxes"]) + 1, config["espacos_por_box"])
-    jogador["boxes"].append(box)
-    return box, None
+    box = box_unica(jogador)
+    if box and len(box.get("pokemon_ids", [])) < int(box.get("limite", 100)):
+        return box
+    return None
 
 
 def renomear_box(
@@ -220,27 +146,13 @@ def renomear_box(
 ) -> str | None:
     box = encontrar_box(jogador, box_id)
     if not box:
-        return "Box não encontrado."
+        return "Box não encontrada."
     nome = nome.strip()
     if not nome:
-        return "Informe um nome para o Box."
+        return "Informe um nome para a Box."
     if len(nome) > 60:
-        return "O nome do Box deve possuir no máximo 60 caracteres."
+        return "O nome da Box deve possuir no máximo 60 caracteres."
     box["nome"] = nome
-    return None
-
-
-def excluir_box(jogador: dict[str, Any], box_id: str) -> str | None:
-    box = encontrar_box(jogador, box_id)
-    if not box:
-        return "Box não encontrado."
-    if len(jogador.get("boxes", [])) <= 1:
-        return "É necessário manter pelo menos um Box."
-    if box.get("pokemon_ids"):
-        return "Somente Boxes vazios podem ser removidos."
-    jogador["boxes"] = [
-        item for item in jogador["boxes"] if str(item.get("id")) != str(box_id)
-    ]
     return None
 
 
@@ -251,6 +163,11 @@ def mover_pokemon(
     pokemon_id: str,
     destino: str,
 ) -> str | None:
+    """Move Pokémon entre a equipe e a Box única.
+
+    Ao sair da equipe, o Pokémon é sempre acrescentado no fim da Box. Ao sair
+    da Box, ele é acrescentado diretamente ao fim da equipe, caso exista vaga.
+    """
     garantir_estrutura_boxes(jogador, regras)
     pokemon_id = str(pokemon_id)
     ids_validos = {
@@ -261,41 +178,37 @@ def mover_pokemon(
     if pokemon_id not in ids_validos:
         return "Pokémon não encontrado na ficha."
 
+    box = box_unica(jogador)
+    if not box:
+        return "A Box do jogador não foi encontrada."
+
     destino = str(destino).strip()
     if destino == "equipe":
         limite_equipe = int(regras.get("limites", {}).get("tamanho_equipe", 6))
-        if pokemon_id not in jogador["equipe"] and len(jogador["equipe"]) >= limite_equipe:
+        if pokemon_id in jogador["equipe"]:
+            return None
+        if len(jogador["equipe"]) >= limite_equipe:
             return f"A equipe já possui o limite de {limite_equipe} Pokémon."
-    elif destino.startswith("box:"):
-        box_id = destino.split(":", 1)[1]
-        box = encontrar_box(jogador, box_id)
-        if not box:
-            return "O Box de destino não foi encontrado."
-        if (
-            pokemon_id not in [str(item) for item in box.get("pokemon_ids", [])]
-            and len(box.get("pokemon_ids", [])) >= int(box.get("limite", 10))
-        ):
-            return f'O Box "{box.get("nome", "Box")}" está cheio.'
-    else:
+
+        box["pokemon_ids"] = [
+            item for item in box.get("pokemon_ids", []) if str(item) != pokemon_id
+        ]
+        jogador["equipe"].append(pokemon_id)
+        return None
+
+    destino_box_id = destino.split(":", 1)[1] if destino.startswith("box:") else ""
+    if destino_box_id != str(box.get("id")):
         return "Selecione um destino válido."
+    if pokemon_id in [str(item) for item in box.get("pokemon_ids", [])]:
+        return None
+    if len(box.get("pokemon_ids", [])) >= int(box.get("limite", 100)):
+        return "A Box está cheia."
 
     jogador["equipe"] = [
         item for item in jogador.get("equipe", []) if str(item) != pokemon_id
     ]
-    for box_atual in jogador.get("boxes", []):
-        box_atual["pokemon_ids"] = [
-            item
-            for item in box_atual.get("pokemon_ids", [])
-            if str(item) != pokemon_id
-        ]
-
-    if destino == "equipe":
-        jogador["equipe"].append(pokemon_id)
-    else:
-        box_id = destino.split(":", 1)[1]
-        box = encontrar_box(jogador, box_id)
-        assert box is not None
-        box["pokemon_ids"].append(pokemon_id)
+    # append garante que o Pokémon retirado do time vá para o último lugar.
+    box["pokemon_ids"].append(pokemon_id)
     return None
 
 
@@ -359,7 +272,7 @@ def boxes_detalhadas(
     boxes: list[dict[str, Any]] = []
     for box in jogador.get("boxes", []):
         registros: list[dict[str, Any]] = []
-        for pokemon_id in box.get("pokemon_ids", []):
+        for indice, pokemon_id in enumerate(box.get("pokemon_ids", [])):
             pokemon = pokemons.get(str(pokemon_id))
             if pokemon:
                 registro = _registro_detalhado(
@@ -371,6 +284,7 @@ def boxes_detalhadas(
                     estilo=estilo,
                 )
                 if registro:
+                    registro["ordem_box"] = indice
                     registros.append(registro)
         boxes.append({**box, "registros": registros})
 
