@@ -126,3 +126,78 @@ def test_tela_da_equipe_direciona_espacos_vazios_para_box(app_db, client_db) -> 
     assert "Adicione um Pokémon pela Box" in texto
     assert f"/mestre/jogadores/{jogador_id}/boxes" in texto
     assert "Adicionar Pokémon" not in texto
+
+
+def test_natureza_percentual_aplica_dez_por_cento_e_nao_mil_por_cento(app_db, client_db) -> None:
+    from sqlalchemy.orm import selectinload
+
+    from app.models.db import (
+        FormaPokemon,
+        FormaPokemonAtributo,
+        Natureza,
+        NaturezaModificador,
+        Personagem,
+        PokemonBonusAtributo,
+        PokemonStatus,
+    )
+    from app.services.pokemon_db_service import (
+        calcular_pokemon,
+        carregar_regras_pokemon_db,
+    )
+
+    _login_mestre(client_db)
+    pokemon_id = _criar_na_box(app_db, client_db)
+    jogador_id = app_db.config["TEST_IDS"]["personagem"]
+
+    resposta = client_db.post(
+        f"/mestre/jogadores/{jogador_id}/pokemon/{pokemon_id}?retorno=boxes",
+        data={
+            "retorno": "boxes",
+            "especie_nome": "Bulbasaur",
+            "apelido": "Broto",
+            "genero": "Ø",
+            "natureza": "Valente",
+            "status": "Nenhum",
+            "item_carregado": "",
+            "pv_atual": "80",
+            "bonus_pv": "0",
+            "bonus_ataque": "0",
+            "bonus_defesa": "0",
+            "bonus_ataque_especial": "0",
+            "bonus_defesa_especial": "0",
+            "bonus_velocidade": "0",
+            "golpe_nome": ["", "", "", ""],
+            "anotacoes": "",
+        },
+    )
+    assert resposta.status_code == 302
+
+    with app_db.app_context():
+        personagem = db.session.execute(
+            select(Personagem)
+            .where(Personagem.id == uuid.UUID(jogador_id))
+            .options(
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.forma_pokemon)
+                .selectinload(FormaPokemon.atributos_base)
+                .selectinload(FormaPokemonAtributo.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.natureza)
+                .selectinload(Natureza.modificadores)
+                .selectinload(NaturezaModificador.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.bonus_atributos)
+                .selectinload(PokemonBonusAtributo.atributo),
+                selectinload(Personagem.pokemons)
+                .selectinload(Pokemon.status_ativos)
+                .selectinload(PokemonStatus.status),
+            )
+        ).scalar_one()
+        pokemon = next(item for item in personagem.pokemons if str(item.id) == pokemon_id)
+        regras = carregar_regras_pokemon_db(personagem.campanha_id)
+        calculos = calcular_pokemon(pokemon, personagem, regras)
+
+        # Base 5 no nível 48 vira 52. Valente aumenta Ataque em 10%
+        # e reduz Velocidade em 10%; depois o estilo Agressivo soma 10% ao Ataque.
+        assert calculos["totais"]["ataque"] == 64
+        assert calculos["totais"]["velocidade"] == 46

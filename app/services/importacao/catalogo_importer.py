@@ -338,9 +338,9 @@ class CatalogoImporter:
                 continue
             desejados: dict[str, Decimal] = {}
             if item.get("aumenta"):
-                desejados[slug(item["aumenta"])] = Decimal("10")
+                desejados[slug(item["aumenta"])] = Decimal("0.10")
             if item.get("diminui"):
-                desejados[slug(item["diminui"])] = Decimal("-10")
+                desejados[slug(item["diminui"])] = Decimal("-0.10")
             atuais = {rel.atributo.codigo: rel for rel in natureza.modificadores}
             for codigo_atributo, valor in desejados.items():
                 atributo = self.atributos.get(codigo_atributo)
