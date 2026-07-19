@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import uuid
-from pathlib import Path
-
 from flask import (
     Blueprint,
     current_app,
@@ -17,23 +14,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
-from app.services.jogador_service import (
-    adicionar_jogador_na_campanha,
-    atualizar_ficha_treinador,
-    carregar_jogador,
-    carregar_regras_treinador,
-    criar_jogador,
-    listar_jogadores,
-    salvar_jogador,
-)
-from app.services.json_service import ler_json, salvar_json
-from app.services.pokemon_service import sincronizar_pokemons_com_nivel_jogador
-from app.services.compatibilidade_legado import sincronizar_ficha_legada
 from app.services.personagem_service import (
     atualizar_ficha_personagem,
     carregar_contexto_ficha,
 )
-from app.services.senha_service import gerar_hash_senha
 from app.services.usuario_service import (
     alterar_atividade_usuario,
     criar_jogador_postgresql,
@@ -43,41 +27,12 @@ from app.services.usuario_service import (
 mestre_bp = Blueprint("mestre", __name__, url_prefix="/mestre")
 
 
-def _contexto() -> tuple[Path, str]:
-    return (
-        Path(current_app.config["DATA_DIR"]),
-        str(current_app.config["CAMPANHA_PADRAO"]),
-    )
+def _campanha_codigo() -> str:
+    return str(current_app.config["CAMPANHA_PADRAO"])
 
 
 def _dados_banco():
-    data_dir, campanha_id = _contexto()
-    return listar_jogadores_campanha(
-        campanha_codigo=campanha_id,
-        data_dir=data_dir,
-    )
-
-
-def _dashboard_legado():
-    data_dir, campanha_id = _contexto()
-    caminho = data_dir / "campanhas" / campanha_id / "campanha.json"
-    campanha = ler_json(caminho, {"nome": campanha_id.title(), "jogadores": []})
-    jogadores = listar_jogadores(data_dir, campanha_id)
-    return render_template(
-        "mestre/dashboard.html",
-        campanha=campanha,
-        total_jogadores=len(jogadores),
-        fonte_dados="JSON de teste",
-    )
-
-
-def _jogadores_legado():
-    data_dir, campanha_id = _contexto()
-    return render_template(
-        "mestre/jogadores.html",
-        jogadores=listar_jogadores(data_dir, campanha_id),
-        fonte_dados="JSON de teste",
-    )
+    return listar_jogadores_campanha(campanha_codigo=_campanha_codigo())
 
 
 @mestre_bp.get("/dashboard")
@@ -87,8 +42,6 @@ def dashboard():
         campanha, jogadores = _dados_banco()
     except SQLAlchemyError:
         db.session.rollback()
-        if current_app.testing:
-            return _dashboard_legado()
         current_app.logger.exception("Falha ao carregar o painel do mestre.")
         flash("Não foi possível carregar os dados da campanha.", "erro")
         return render_template(
@@ -117,8 +70,6 @@ def jogadores():
         _, lista = _dados_banco()
     except SQLAlchemyError:
         db.session.rollback()
-        if current_app.testing:
-            return _jogadores_legado()
         current_app.logger.exception("Falha ao listar jogadores no PostgreSQL.")
         flash("Não foi possível carregar os jogadores.", "erro")
         return render_template(
@@ -149,46 +100,9 @@ def _validar_novo_jogador(nome: str, login: str, senha: str, confirmar: str) -> 
     return erros
 
 
-def _novo_jogador_legado(nome: str, login: str, senha: str):
-    data_dir, campanha_id = _contexto()
-    arquivo_usuarios = data_dir / "usuarios.json"
-    dados_usuarios = ler_json(arquivo_usuarios, {"usuarios": []})
-    if any(
-        str(usuario.get("login", "")).casefold() == login.casefold()
-        for usuario in dados_usuarios.get("usuarios", [])
-    ):
-        raise ValueError("Já existe um usuário com esse login.")
-
-    usuario_id = f"usr_{uuid.uuid4().hex[:12]}"
-    jogador_id = f"jog_{uuid.uuid4().hex[:12]}"
-    dados_usuarios.setdefault("usuarios", []).append(
-        {
-            "id": usuario_id,
-            "login": login,
-            "nome": nome,
-            "perfil": "jogador",
-            "jogador_id": jogador_id,
-            "senha_hash": gerar_hash_senha(senha),
-            "ativo": True,
-        }
-    )
-    salvar_json(arquivo_usuarios, dados_usuarios)
-    criar_jogador(
-        data_dir=data_dir,
-        campanha_id=campanha_id,
-        jogador_id=jogador_id,
-        usuario_id=usuario_id,
-        nome=nome,
-    )
-    adicionar_jogador_na_campanha(data_dir, campanha_id, jogador_id)
-    return jogador_id
-
-
 @mestre_bp.route("/jogadores/novo", methods=["GET", "POST"])
 @perfil_obrigatorio("mestre")
 def novo_jogador():
-    data_dir, campanha_id = _contexto()
-
     if request.method == "POST":
         nome = request.form.get("nome", "").strip()
         login = request.form.get("login", "").strip().lower()
@@ -206,31 +120,19 @@ def novo_jogador():
 
         try:
             criado = criar_jogador_postgresql(
-                data_dir=data_dir,
-                campanha_codigo=campanha_id,
+                campanha_codigo=_campanha_codigo(),
                 nome=nome,
                 login=login,
                 senha=senha,
             )
-            jogador_id = criado.jogador_id_legado
         except SQLAlchemyError:
             db.session.rollback()
-            if current_app.testing:
-                try:
-                    jogador_id = _novo_jogador_legado(nome, login, senha)
-                except ValueError as erro:
-                    flash(str(erro), "erro")
-                    return render_template(
-                        "mestre/novo_jogador.html",
-                        dados={"nome": nome, "login": login},
-                    ), 400
-            else:
-                current_app.logger.exception("Falha ao cadastrar jogador no PostgreSQL.")
-                flash("Não foi possível cadastrar o jogador no banco de dados.", "erro")
-                return render_template(
-                    "mestre/novo_jogador.html",
-                    dados={"nome": nome, "login": login},
-                ), 503
+            current_app.logger.exception("Falha ao cadastrar jogador no PostgreSQL.")
+            flash("Não foi possível cadastrar o jogador no banco de dados.", "erro")
+            return render_template(
+                "mestre/novo_jogador.html",
+                dados={"nome": nome, "login": login},
+            ), 503
         except ValueError as erro:
             db.session.rollback()
             flash(str(erro), "erro")
@@ -240,7 +142,9 @@ def novo_jogador():
             ), 400
 
         flash(f"Jogador {nome} criado com sucesso no PostgreSQL.", "sucesso")
-        return redirect(url_for("mestre.ficha_jogador", jogador_id=jogador_id))
+        return redirect(
+            url_for("mestre.ficha_jogador", jogador_id=str(criado.personagem.id))
+        )
 
     return render_template("mestre/novo_jogador.html", dados={})
 
@@ -268,56 +172,16 @@ def atividade_usuario(usuario_id: str):
 @mestre_bp.route("/jogadores/<jogador_id>/ficha", methods=["GET", "POST"])
 @perfil_obrigatorio("mestre")
 def ficha_jogador(jogador_id: str):
-    data_dir, campanha_id = _contexto()
-
     try:
         contexto = carregar_contexto_ficha(
             jogador_id,
-            campanha_codigo=campanha_id,
+            campanha_codigo=_campanha_codigo(),
         )
     except SQLAlchemyError:
         db.session.rollback()
-        contexto = None
-        if not current_app.testing:
-            current_app.logger.exception("Falha ao carregar a ficha no PostgreSQL.")
-            flash("Não foi possível carregar a ficha no banco de dados.", "erro")
-            return redirect(url_for("mestre.jogadores"))
-
-    # Mantém os testes legados durante a conversão das demais telas.
-    if contexto is None and current_app.testing:
-        jogador = carregar_jogador(data_dir, campanha_id, jogador_id)
-        if not jogador:
-            flash("Ficha não encontrada.", "erro")
-            return redirect(url_for("mestre.jogadores"))
-        regras = carregar_regras_treinador(data_dir)
-        if request.method == "POST":
-            jogador_atualizado, erros = atualizar_ficha_treinador(
-                jogador=jogador,
-                formulario=request.form,
-                regras=regras,
-            )
-            if erros:
-                for erro in erros:
-                    flash(erro, "erro")
-                jogador = jogador_atualizado
-            else:
-                sincronizar_pokemons_com_nivel_jogador(jogador_atualizado, data_dir)
-                salvar_jogador(
-                    data_dir=data_dir,
-                    campanha_id=campanha_id,
-                    jogador=jogador_atualizado,
-                )
-                flash("Ficha atualizada com sucesso.", "sucesso")
-                return redirect(url_for("mestre.ficha_jogador", jogador_id=jogador_id))
-        return render_template(
-            "jogador/ficha.html",
-            jogador=jogador,
-            regras=regras,
-            modo_mestre=True,
-            voltar_url=url_for("mestre.jogadores"),
-            salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
-            fonte_ficha="JSON de teste",
-        )
+        current_app.logger.exception("Falha ao carregar a ficha no PostgreSQL.")
+        flash("Não foi possível carregar a ficha no banco de dados.", "erro")
+        return redirect(url_for("mestre.jogadores"))
 
     if contexto is None:
         flash("A ficha desse jogador não foi encontrada no PostgreSQL.", "erro")
@@ -350,21 +214,6 @@ def ficha_jogador(jogador_id: str):
             for erro in erros:
                 flash(erro, "erro")
         else:
-            try:
-                sincronizar_ficha_legada(
-                    data_dir=data_dir,
-                    campanha_codigo=campanha_id,
-                    usuario_id_banco=contexto.personagem.usuario_id,
-                    ficha_banco=jogador,
-                )
-            except Exception:
-                current_app.logger.exception(
-                    "A ficha foi salva, mas a ponte temporária com Pokémon/Box falhou."
-                )
-                flash(
-                    "A ficha foi salva, mas a equipe poderá exibir dados antigos temporariamente.",
-                    "aviso",
-                )
             flash("Ficha atualizada com sucesso no PostgreSQL.", "sucesso")
             return redirect(url_for("mestre.ficha_jogador", jogador_id=jogador_id))
 
@@ -377,4 +226,3 @@ def ficha_jogador(jogador_id: str):
         salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
         fonte_ficha="PostgreSQL",
     )
-

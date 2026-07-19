@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import wraps
-from pathlib import Path
 from typing import Callable, TypeVar
 from urllib.parse import urljoin, urlparse
 
@@ -19,9 +18,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.services.auth_service import autenticar_usuario
-from app.services.compatibilidade_legado import buscar_id_jogador_legado
-from app.services.json_service import ler_json
-from app.services.senha_service import gerar_hash_senha, verificar_senha
 
 auth_bp = Blueprint("auth", __name__)
 F = TypeVar("F", bound=Callable)
@@ -64,29 +60,6 @@ def _destino_seguro(destino: str | None) -> str | None:
     return None
 
 
-def _login_legado_para_testes(login: str, senha: str) -> dict | None:
-    """Mantém os testes antigos isolados enquanto eles ainda usam JSON.
-
-    Em execução normal esta função nunca é usada: falhas de banco não fazem o
-    sistema voltar silenciosamente ao JSON.
-    """
-    if not current_app.testing:
-        return None
-
-    caminho = Path(current_app.config["DATA_DIR"]) / "usuarios.json"
-    dados = ler_json(caminho, {"usuarios": []})
-    usuario = next(
-        (
-            item
-            for item in dados.get("usuarios", [])
-            if item.get("login", "").lower() == login and item.get("ativo", True)
-        ),
-        None,
-    )
-    if not usuario or not verificar_senha(senha, usuario.get("senha_hash", "")):
-        return None
-    return usuario
-
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -105,36 +78,18 @@ def login():
             )
         except SQLAlchemyError:
             db.session.rollback()
-            usuario_legado = _login_legado_para_testes(login_informado, senha)
-            if usuario_legado is None:
-                current_app.logger.exception("Falha ao consultar usuários no PostgreSQL.")
-                flash(
-                    "Não foi possível acessar o banco de dados. Tente novamente em instantes.",
-                    "erro",
-                )
-                return render_template("login.html", login=login_informado), 503
-
-            session.clear()
-            session["usuario_id"] = usuario_legado["id"]
-            session["nome"] = usuario_legado.get("nome", usuario_legado["login"])
-            session["perfil"] = usuario_legado.get("perfil", "jogador")
-            session["jogador_id"] = usuario_legado.get("jogador_id")
-            return redirect(url_for("inicio"))
+            current_app.logger.exception("Falha ao consultar usuários no PostgreSQL.")
+            flash(
+                "Não foi possível acessar o banco de dados. Tente novamente em instantes.",
+                "erro",
+            )
+            return render_template("login.html", login=login_informado), 503
 
         if resultado is None:
             flash("Usuário ou senha inválidos.", "erro")
             return render_template("login.html", login=login_informado), 401
 
         usuario = resultado.usuario
-        campanha_codigo = str(current_app.config["CAMPANHA_PADRAO"])
-        jogador_id_legado = None
-        if resultado.perfil_sessao == "jogador":
-            jogador_id_legado = buscar_id_jogador_legado(
-                current_app.config["DATA_DIR"],
-                campanha_codigo,
-                usuario.id,
-            )
-
         session.clear()
         session["usuario_id"] = str(usuario.id)
         session["nome"] = usuario.nome
@@ -145,9 +100,6 @@ def login():
         session["personagem_id"] = (
             str(resultado.personagem.id) if resultado.personagem is not None else None
         )
-        # Ponte temporária para as telas que ainda leem JSON.
-        session["jogador_id"] = jogador_id_legado
-
         destino = _destino_seguro(request.args.get("proxima"))
         return redirect(destino or url_for("inicio"))
 

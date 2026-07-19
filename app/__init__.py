@@ -26,10 +26,10 @@ def create_app() -> Flask:
     migrate.init_app(app, db)
 
     # Garante que todos os modelos relacionais façam parte do metadata usado
-    # pelo Alembic, sem substituir ainda os serviços legados baseados em JSON.
+    # pelo Alembic. Os JSON permanecem apenas como fonte de importação legada.
     from app import models as _models  # noqa: F401
 
-    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli
+    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli
     from app.routes.auth import auth_bp
     from app.routes.boxes import boxes_bp
     from app.routes.jogadores import jogadores_bp
@@ -45,6 +45,7 @@ def create_app() -> Flask:
     app.register_blueprint(dados_cli, cli_group=None)
     app.register_blueprint(usuarios_cli, cli_group=None)
     app.register_blueprint(ficha_cli, cli_group=None)
+    app.register_blueprint(pokemon_cli, cli_group=None)
 
     @app.get("/")
     def inicio():

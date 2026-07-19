@@ -39,25 +39,8 @@ def _app_ficha(monkeypatch, tmp_path: Path):
     shutil.copytree(origem, data_dir)
     app.config.update(TESTING=True, SECRET_KEY="teste", DATA_DIR=data_dir)
 
-    tabelas = [
-        Usuario.__table__,
-        Campanha.__table__,
-        CampanhaMembro.__table__,
-        Atributo.__table__,
-        Regra.__table__,
-        ConjuntoRegras.__table__,
-        RegraValor.__table__,
-        Personagem.__table__,
-        PersonagemAtributo.__table__,
-        CategoriaItem.__table__,
-        Item.__table__,
-        PersonagemItem.__table__,
-        Insignia.__table__,
-        PersonagemInsignia.__table__,
-        HistoricoAlteracao.__table__,
-    ]
     with app.app_context():
-        db.metadata.create_all(db.engine, tables=tabelas)
+        db.create_all()
         campanha = Campanha(codigo="ankar", nome="Ankar", ativo=True)
         usuario = Usuario(
             login="victor-db",

@@ -1,6 +1,6 @@
 # Pokémon RPG — Regras personalizadas da campanha
 
-Aplicação Flask para gerenciamento da campanha, em migração controlada para PostgreSQL. Autenticação, ficha e dashboard já usam o banco; Pokémon e Box ainda mantêm uma ponte temporária com os JSON legados.
+Aplicação Flask para gerenciamento da campanha. Autenticação, ficha, dashboard, Pokémon, equipe e Box usam o PostgreSQL como fonte oficial. Os JSON permanecem somente como backup e fonte de importação legada.
 
 ## O que já funciona
 
@@ -12,7 +12,7 @@ Aplicação Flask para gerenciamento da campanha, em migração controlada para 
 - criação automática de usuário e personagem no PostgreSQL;
 - listagem dos jogadores da campanha pelo banco;
 - ficha, inventário, insígnias e histórico de alterações no PostgreSQL;
-- ponte JSON temporária apenas para Pokémon e Box.
+- Pokémon, equipe e Box armazenados integralmente no PostgreSQL.
 
 ### Dashboard do jogador
 
@@ -63,7 +63,6 @@ Exemplo: um jogador de nível 48 possui todos os seus Pokémon no nível 48. O n
 - filtros adicionais por tipo e Shiny;
 - renomeação da Box;
 - acesso completo pelo jogador e pelo mestre;
-- migração automática de múltiplas Boxes antigas para o `schema_version` 5;
 - sistema de compra, criação e exclusão de Boxes removido.
 
 ### Cálculos automáticos atuais
@@ -128,8 +127,7 @@ A ficha do personagem, o inventário, as insígnias e suas configurações agora
 são lidos e gravados no PostgreSQL. As opções de origem, classe, estilo de
 combate e limites de atributos ficam em `regras` e `regra_valores`.
 
-Os arquivos abaixo permanecem apenas como fonte legada durante a migração das
-telas de Pokémon e Box:
+Os arquivos abaixo permanecem apenas como fonte de importação e backup legado:
 
 ```text
 data/catalogo/regras_treinador.json
@@ -138,8 +136,8 @@ data/catalogo/pokemons.json
 data/catalogo/golpes.json
 ```
 
-Não trate esses arquivos como fonte oficial da ficha. Consulte
-`FICHA_POSTGRESQL.md` para preparar as configurações no banco.
+Eles não são consultados pelas rotas normais da aplicação. Consulte
+`FICHA_POSTGRESQL.md` e `POKEMON_POSTGRESQL.md` para a implantação.
 
 ## Testes
 
@@ -164,7 +162,7 @@ Os testes cobrem:
 
 ## PostgreSQL
 
-A fundação do banco relacional foi adicionada sem remover o funcionamento atual em JSON.
+O banco relacional é a fonte oficial das funcionalidades principais do sistema.
 
 Consulte [BANCO_DE_DADOS.md](BANCO_DE_DADOS.md) para configurar o `.env`, validar a conexão e aplicar a primeira migration.
 
@@ -189,3 +187,15 @@ flask --app app.py ficha verificar
 ```
 
 Consulte `FICHA_POSTGRESQL.md` para os detalhes.
+
+## Pokémon, equipe e Box PostgreSQL
+
+Para aplicar a etapa que remove a ponte JSON das telas de Pokémon:
+
+```powershell
+flask --app app.py db upgrade
+flask --app app.py pokemon verificar
+```
+
+A migration atual esperada é `f20c9d44a1b7 (head)`. Consulte
+`POKEMON_POSTGRESQL.md` para os testes manuais e detalhes da estrutura.

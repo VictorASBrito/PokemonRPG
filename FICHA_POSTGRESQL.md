@@ -14,8 +14,7 @@ Nesta etapa, o PostgreSQL passa a ser a fonte oficial para:
 - configurações exibidas na ficha;
 - histórico de edições.
 
-Os arquivos JSON ainda são mantidos temporariamente apenas como ponte para as
-telas de Pokémon, equipe e Box. A ficha não lê mais o JSON como fonte oficial.
+Os arquivos JSON não são mais usados pelas telas da ficha, dashboard, Pokémon, equipe ou Box. Eles permanecem somente como backup e fonte de importação legada.
 
 ## 1. Atualizar o projeto
 
@@ -120,12 +119,8 @@ regra_valores
 historico_alteracoes
 ```
 
-## Ponte temporária
+## Integração concluída
 
-Ao salvar a ficha, o sistema também atualiza uma cópia temporária no JSON do
-jogador. Essa cópia é usada somente porque os cálculos e as telas dos Pokémon
-ainda não foram convertidos. Uma falha nessa ponte não desfaz a gravação válida
-no PostgreSQL.
-
-A próxima conversão deve mover Pokémon, golpes equipados, equipe e Box para o
-banco, permitindo remover definitivamente essa compatibilidade.
+A etapa seguinte foi concluída em `POKEMON_POSTGRESQL.md`. Alterações no nível e
+no estilo de combate do personagem são lidas diretamente do PostgreSQL durante
+o cálculo de todos os Pokémon, sem sincronização paralela com JSON.

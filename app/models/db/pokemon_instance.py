@@ -26,8 +26,6 @@ class Pokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
             "localizacao",
             "posicao",
             name="personagem_localizacao_posicao",
-            deferrable=True,
-            initially="DEFERRED",
         ),
         CheckConstraint(
             "localizacao IS NULL OR localizacao IN ('equipe', 'box')",

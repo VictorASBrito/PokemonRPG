@@ -1,179 +1,163 @@
 from __future__ import annotations
 
-import json
-import shutil
-from pathlib import Path
+import uuid
 
-from app import create_app
-from app.services.box_service import garantir_estrutura_boxes, mover_pokemon
-from app.services.pokemon_service import carregar_regras_pokemon
+from sqlalchemy import func, select
+
+from app.extensions import db
+from app.models.db import Pokemon
 
 
-def _criar_cliente_com_jogador(tmp_path: Path):
-    origem_dados = Path(__file__).resolve().parent.parent / "data"
-    data_dir = tmp_path / "data"
-    shutil.copytree(origem_dados, data_dir)
-
-    app = create_app()
-    app.config.update(TESTING=True, DATA_DIR=data_dir, SECRET_KEY="teste")
-    client = app.test_client()
+def _login_mestre(client) -> None:
     assert client.post(
-        "/login", data={"login": "mestre", "senha": "mestre123"}
-    ).status_code == 302
-    assert client.post(
-        "/mestre/jogadores/novo",
-        data={
-            "nome": "Claire",
-            "login": "claire",
-            "senha": "abc123",
-            "confirmar_senha": "abc123",
-        },
+        "/login", data={"login": "mestre-db", "senha": "senha-db"}
     ).status_code == 302
 
-    usuarios = json.loads((data_dir / "usuarios.json").read_text(encoding="utf-8"))
-    jogador_id = next(
-        item["jogador_id"] for item in usuarios["usuarios"] if item["login"] == "claire"
-    )
-    arquivo = data_dir / "campanhas" / "ankar" / "jogadores" / f"{jogador_id}.json"
-    return client, data_dir, arquivo, jogador_id
+
+def _personagem_id(app) -> str:
+    return app.config["TEST_IDS"]["personagem"]
 
 
-def _ler(arquivo: Path) -> dict:
-    return json.loads(arquivo.read_text(encoding="utf-8"))
-
-
-def _criar_na_box(client, arquivo: Path, jogador_id: str, especie: str) -> str:
-    jogador = _ler(arquivo)
-    box_id = jogador["boxes"][0]["id"]
+def _criar_na_box(app, client, especie: str) -> str:
+    jogador_id = _personagem_id(app)
     resposta = client.post(
-        f"/mestre/jogadores/{jogador_id}/equipe/novo?destino=box:{box_id}",
+        f"/mestre/jogadores/{jogador_id}/equipe/novo?destino=box:box-unica",
         data={"especie_nome": especie},
     )
     assert resposta.status_code == 302
-    jogador = _ler(arquivo)
-    return jogador["boxes"][0]["pokemon_ids"][-1]
+    with app.app_context():
+        pokemon = db.session.execute(
+            select(Pokemon)
+            .where(
+                Pokemon.personagem_id == uuid.UUID(jogador_id),
+                Pokemon.ativo.is_(True),
+                Pokemon.localizacao == "box",
+            )
+            .order_by(Pokemon.posicao.desc())
+        ).scalars().first()
+        assert pokemon is not None
+        return str(pokemon.id)
 
 
-def test_box_unica_tem_cem_espacos_e_nao_possui_compra(tmp_path: Path) -> None:
-    client, _, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
-    jogador = _ler(arquivo)
-
-    assert jogador["schema_version"] == 5
-    assert len(jogador["boxes"]) == 1
-    assert jogador["boxes"][0]["limite"] == 100
-
-    resposta = client.get(f"/mestre/jogadores/{jogador_id}/boxes")
+def test_box_unica_tem_cem_espacos_e_nao_possui_compra(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    jogador_id = _personagem_id(app_db)
+    resposta = client_db.get(f"/mestre/jogadores/{jogador_id}/boxes")
     texto = resposta.get_data(as_text=True)
+
     assert resposta.status_code == 200
     assert "100 espaços" in texto
     assert "Comprar Box" not in texto
     assert "/boxes/novo" not in texto
+    assert "Fonte: PostgreSQL" not in texto  # sem poluir a tela principal
 
 
-def test_pokemon_so_pode_ser_criado_em_espaco_da_box(tmp_path: Path) -> None:
-    client, _, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
+def test_pokemon_so_pode_ser_criado_em_espaco_da_box(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    jogador_id = _personagem_id(app_db)
 
-    resposta = client.post(
+    resposta = client_db.post(
         f"/mestre/jogadores/{jogador_id}/equipe/novo",
         data={"especie_nome": "Bulbasaur"},
         follow_redirects=True,
     )
     assert resposta.status_code == 200
     assert "só podem ser criados em um espaço vazio da Box" in resposta.get_data(as_text=True)
-    jogador = _ler(arquivo)
-    assert jogador["pokemons"] == []
-    assert jogador["equipe"] == []
 
-    pokemon_id = _criar_na_box(client, arquivo, jogador_id, "Bulbasaur")
-    jogador = _ler(arquivo)
-    assert pokemon_id in jogador["boxes"][0]["pokemon_ids"]
-    assert pokemon_id not in jogador["equipe"]
+    with app_db.app_context():
+        assert db.session.scalar(select(func.count(Pokemon.id))) == 0
+
+    pokemon_id = _criar_na_box(app_db, client_db, "Bulbasaur")
+    with app_db.app_context():
+        pokemon = db.session.get(Pokemon, uuid.UUID(pokemon_id))
+        assert pokemon is not None
+        assert pokemon.localizacao == "box"
+        assert pokemon.posicao == 1
 
 
-def test_movimentacao_adiciona_ao_fim_da_equipe_e_da_box(tmp_path: Path) -> None:
-    client, _, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
-    bulbasaur = _criar_na_box(client, arquivo, jogador_id, "Bulbasaur")
-    charmander = _criar_na_box(client, arquivo, jogador_id, "Charmander")
+def test_movimentacao_adiciona_ao_fim_da_equipe_e_da_box(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    jogador_id = _personagem_id(app_db)
+    bulbasaur = _criar_na_box(app_db, client_db, "Bulbasaur")
+    charmander = _criar_na_box(app_db, client_db, "Charmander")
 
     for pokemon_id in (bulbasaur, charmander):
-        assert client.post(
+        assert client_db.post(
             f"/mestre/jogadores/{jogador_id}/boxes/mover",
             data={"pokemon_id": pokemon_id, "destino": "equipe"},
         ).status_code == 302
 
-    jogador = _ler(arquivo)
-    assert jogador["equipe"] == [bulbasaur, charmander]
-    assert jogador["boxes"][0]["pokemon_ids"] == []
+    with app_db.app_context():
+        equipe = list(
+            db.session.execute(
+                select(Pokemon)
+                .where(Pokemon.localizacao == "equipe")
+                .order_by(Pokemon.posicao)
+            ).scalars()
+        )
+        assert [str(item.id) for item in equipe] == [bulbasaur, charmander]
 
-    box_id = jogador["boxes"][0]["id"]
-    assert client.post(
-        f"/mestre/jogadores/{jogador_id}/boxes/mover",
-        data={"pokemon_id": bulbasaur, "destino": f"box:{box_id}"},
-    ).status_code == 302
-    assert client.post(
-        f"/mestre/jogadores/{jogador_id}/boxes/mover",
-        data={"pokemon_id": charmander, "destino": f"box:{box_id}"},
-    ).status_code == 302
+    for pokemon_id in (bulbasaur, charmander):
+        assert client_db.post(
+            f"/mestre/jogadores/{jogador_id}/boxes/mover",
+            data={"pokemon_id": pokemon_id, "destino": "box:box-unica"},
+        ).status_code == 302
 
-    jogador = _ler(arquivo)
-    assert jogador["equipe"] == []
-    assert jogador["boxes"][0]["pokemon_ids"] == [bulbasaur, charmander]
+    with app_db.app_context():
+        box = list(
+            db.session.execute(
+                select(Pokemon)
+                .where(Pokemon.localizacao == "box")
+                .order_by(Pokemon.posicao)
+            ).scalars()
+        )
+        assert [str(item.id) for item in box] == [bulbasaur, charmander]
+        assert [item.posicao for item in box] == [1, 2]
 
 
-def test_equipe_cheia_impede_adicao_vinda_da_box(tmp_path: Path) -> None:
-    client, _, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
-    especies = ["Bulbasaur", "Charmander", "Squirtle", "Caterpie", "Weedle", "Pidgey", "Rattata"]
-    ids = [_criar_na_box(client, arquivo, jogador_id, especie) for especie in especies]
+def test_equipe_cheia_impede_adicao_vinda_da_box(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    jogador_id = _personagem_id(app_db)
+    especies = [
+        "Bulbasaur",
+        "Charmander",
+        "Squirtle",
+        "Caterpie",
+        "Weedle",
+        "Pidgey",
+        "Rattata",
+    ]
+    ids = [_criar_na_box(app_db, client_db, especie) for especie in especies]
 
     for pokemon_id in ids[:6]:
-        assert client.post(
+        assert client_db.post(
             f"/mestre/jogadores/{jogador_id}/boxes/mover",
             data={"pokemon_id": pokemon_id, "destino": "equipe"},
         ).status_code == 302
 
-    resposta = client.post(
+    resposta = client_db.post(
         f"/mestre/jogadores/{jogador_id}/boxes/mover",
         data={"pokemon_id": ids[6], "destino": "equipe"},
         follow_redirects=True,
     )
     assert resposta.status_code == 200
     assert "limite de 6" in resposta.get_data(as_text=True)
-    jogador = _ler(arquivo)
-    assert len(jogador["equipe"]) == 6
-    assert ids[6] in jogador["boxes"][0]["pokemon_ids"]
+
+    with app_db.app_context():
+        assert db.session.scalar(
+            select(func.count(Pokemon.id)).where(Pokemon.localizacao == "equipe")
+        ) == 6
+        ultimo = db.session.get(Pokemon, uuid.UUID(ids[6]))
+        assert ultimo is not None and ultimo.localizacao == "box"
 
 
-def test_migracao_reune_boxes_antigas_preservando_ordem() -> None:
-    data_dir = Path(__file__).resolve().parent.parent / "data"
-    regras = carregar_regras_pokemon(data_dir)
-    jogador = {
-        "schema_version": 4,
-        "treinador": {"nivel": 1},
-        "pokemons": [
-            {"id": "a"}, {"id": "b"}, {"id": "c"}, {"id": "d"}
-        ],
-        "equipe": ["a"],
-        "boxes": [
-            {"id": "box_antiga", "nome": "Primeira", "limite": 10, "pokemon_ids": ["b"]},
-            {"id": "box_2", "nome": "Segunda", "limite": 10, "pokemon_ids": ["c"]},
-        ],
-    }
+def test_box_renderiza_pesquisa_dinamica_com_ordem(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    jogador_id = _personagem_id(app_db)
+    _criar_na_box(app_db, client_db, "Bulbasaur")
+    _criar_na_box(app_db, client_db, "Charmander")
 
-    garantir_estrutura_boxes(jogador, regras)
-
-    assert jogador["schema_version"] == 5
-    assert len(jogador["boxes"]) == 1
-    assert jogador["boxes"][0]["id"] == "box_antiga"
-    assert jogador["boxes"][0]["limite"] == 100
-    assert jogador["boxes"][0]["pokemon_ids"] == ["b", "c", "d"]
-
-
-def test_box_renderiza_pesquisa_dinamica_com_ordem(tmp_path: Path) -> None:
-    client, _, arquivo, jogador_id = _criar_cliente_com_jogador(tmp_path)
-    _criar_na_box(client, arquivo, jogador_id, "Bulbasaur")
-    _criar_na_box(client, arquivo, jogador_id, "Pikachu")
-
-    resposta = client.get(f"/mestre/jogadores/{jogador_id}/boxes")
+    resposta = client_db.get(f"/mestre/jogadores/{jogador_id}/boxes")
     texto = resposta.get_data(as_text=True)
     assert resposta.status_code == 200
     assert 'id="filtro-box-nome"' in texto

@@ -3,7 +3,6 @@ from __future__ import annotations
 import uuid
 from dataclasses import dataclass
 from decimal import Decimal
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy import func, select
@@ -22,22 +21,14 @@ from app.models.db import (
     RegraValor,
     Usuario,
 )
-from app.services.compatibilidade_legado import buscar_id_jogador_legado
-from app.services.importacao.utils import uuid_legado
-from app.services.jogador_service import (
-    adicionar_jogador_na_campanha,
-    criar_jogador,
-)
-from app.services.json_service import ler_json, salvar_json
-from app.services.senha_service import gerar_hash_senha
 from app.services.personagem_service import carregar_regras_personagem
+from app.services.senha_service import gerar_hash_senha
 
 
 @dataclass(slots=True)
 class JogadorCriado:
     usuario: Usuario
     personagem: Personagem
-    jogador_id_legado: str
 
 
 def obter_campanha(codigo: str) -> Campanha | None:
@@ -59,7 +50,6 @@ def _valor_regra(campanha_id, codigo: str, padrao: Any) -> Any:
     ).scalar_one_or_none()
     if conjunto is None:
         return padrao
-
     valor = db.session.execute(
         select(RegraValor.valor)
         .join(Regra, Regra.id == RegraValor.regra_id)
@@ -82,7 +72,6 @@ def _decimal_para_numero(valor: Decimal | int | float | None) -> int | float:
 def listar_jogadores_campanha(
     *,
     campanha_codigo: str,
-    data_dir: str | Path,
 ) -> tuple[Campanha | None, list[dict[str, Any]]]:
     campanha = obter_campanha(campanha_codigo)
     if campanha is None:
@@ -95,11 +84,12 @@ def listar_jogadores_campanha(
             .where(
                 Personagem.campanha_id == campanha.id,
                 Personagem.ativo.is_(True),
-                Usuario.ativo.is_(True),
             )
             .options(
                 selectinload(Personagem.usuario),
-                selectinload(Personagem.atributos).selectinload(PersonagemAtributo.atributo),
+                selectinload(Personagem.atributos).selectinload(
+                    PersonagemAtributo.atributo
+                ),
             )
             .order_by(func.lower(Personagem.nome))
         ).scalars()
@@ -120,15 +110,9 @@ def listar_jogadores_campanha(
                 Pokemon.localizacao == "equipe",
             )
         ) or 0
-        jogador_id_legado = buscar_id_jogador_legado(
-            data_dir,
-            campanha_codigo,
-            personagem.usuario_id,
-        )
-
         resultado.append(
             {
-                "id": jogador_id_legado or str(personagem.id),
+                "id": str(personagem.id),
                 "personagem_id": str(personagem.id),
                 "usuario": {
                     "id": str(personagem.usuario.id),
@@ -147,47 +131,19 @@ def listar_jogadores_campanha(
                     "atributos": atributos,
                 },
                 "equipe": [None] * int(equipe_total),
-                "compatibilidade_json": jogador_id_legado is not None,
+                "fonte": "PostgreSQL",
             }
         )
     return campanha, resultado
 
 
-def _gravar_usuario_legado(
-    *,
-    data_dir: Path,
-    usuario_id_legado: str,
-    jogador_id_legado: str,
-    nome: str,
-    login: str,
-    senha_hash: str,
-) -> None:
-    arquivo = data_dir / "usuarios.json"
-    dados = ler_json(arquivo, {"usuarios": []})
-    usuarios = dados.setdefault("usuarios", [])
-    usuarios.append(
-        {
-            "id": usuario_id_legado,
-            "login": login,
-            "nome": nome,
-            "perfil": "jogador",
-            "jogador_id": jogador_id_legado,
-            "senha_hash": senha_hash,
-            "ativo": True,
-        }
-    )
-    salvar_json(arquivo, dados)
-
-
 def criar_jogador_postgresql(
     *,
-    data_dir: str | Path,
     campanha_codigo: str,
     nome: str,
     login: str,
     senha: str,
 ) -> JogadorCriado:
-    data_path = Path(data_dir)
     campanha = obter_campanha(campanha_codigo)
     if campanha is None:
         raise ValueError("A campanha configurada não foi encontrada no PostgreSQL.")
@@ -199,10 +155,6 @@ def criar_jogador_postgresql(
     if existente is not None:
         raise ValueError("Já existe um usuário com esse login.")
 
-    usuario_id_legado = f"usr_{uuid.uuid4().hex[:12]}"
-    jogador_id_legado = f"jog_{uuid.uuid4().hex[:12]}"
-    senha_hash = gerar_hash_senha(senha)
-
     regras_personagem = carregar_regras_personagem(campanha.id)
     atributos_config = {
         item["id"]: item for item in regras_personagem.get("atributos", [])
@@ -212,15 +164,13 @@ def criar_jogador_postgresql(
     )
 
     usuario = Usuario(
-        id=uuid_legado("usuario", usuario_id_legado),
         login=login_normalizado,
         nome=nome,
-        senha_hash=senha_hash,
+        senha_hash=gerar_hash_senha(senha),
         perfil="jogador",
         ativo=True,
     )
     personagem = Personagem(
-        id=uuid_legado("personagem", jogador_id_legado),
         usuario=usuario,
         campanha=campanha,
         nome=nome,
@@ -231,7 +181,6 @@ def criar_jogador_postgresql(
         ativo=True,
     )
     membro = CampanhaMembro(
-        id=uuid_legado("campanha-membro", f"{campanha.id}:{usuario.id}"),
         campanha=campanha,
         usuario=usuario,
         papel="jogador",
@@ -241,19 +190,17 @@ def criar_jogador_postgresql(
 
     atributos = list(
         db.session.execute(
-            select(Atributo).where(
+            select(Atributo)
+            .where(
                 Atributo.ativo.is_(True),
                 Atributo.escopo.in_(["personagem", "ambos"]),
-            ).order_by(Atributo.ordem, Atributo.nome)
+            )
+            .order_by(Atributo.ordem, Atributo.nome)
         ).scalars()
     )
     for atributo in atributos:
         db.session.add(
             PersonagemAtributo(
-                id=uuid_legado(
-                    "personagem-atributo",
-                    f"{personagem.id}:{atributo.id}",
-                ),
                 personagem=personagem,
                 atributo=atributo,
                 valor=Decimal(
@@ -266,31 +213,8 @@ def criar_jogador_postgresql(
             )
         )
 
-    # A compatibilidade é criada dentro da mesma operação lógica. Esses JSONs
-    # serão removidos quando ficha, Pokémon e Box forem convertidos ao banco.
-    _gravar_usuario_legado(
-        data_dir=data_path,
-        usuario_id_legado=usuario_id_legado,
-        jogador_id_legado=jogador_id_legado,
-        nome=nome,
-        login=login_normalizado,
-        senha_hash=senha_hash,
-    )
-    criar_jogador(
-        data_dir=data_path,
-        campanha_id=campanha_codigo,
-        jogador_id=jogador_id_legado,
-        usuario_id=usuario_id_legado,
-        nome=nome,
-    )
-    adicionar_jogador_na_campanha(data_path, campanha_codigo, jogador_id_legado)
-
     db.session.commit()
-    return JogadorCriado(
-        usuario=usuario,
-        personagem=personagem,
-        jogador_id_legado=jogador_id_legado,
-    )
+    return JogadorCriado(usuario=usuario, personagem=personagem)
 
 
 def alterar_atividade_usuario(usuario_id: str, ativo: bool) -> Usuario | None:
