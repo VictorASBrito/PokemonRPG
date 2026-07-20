@@ -12,7 +12,8 @@ Aplicação Flask para gerenciamento da campanha. Autenticação, ficha, dashboa
 - criação automática de usuário e personagem no PostgreSQL;
 - listagem dos jogadores da campanha pelo banco;
 - ficha, inventário, insígnias e histórico de alterações no PostgreSQL;
-- Pokémon, equipe e Box armazenados integralmente no PostgreSQL.
+- Pokémon, equipe e Box armazenados integralmente no PostgreSQL;
+- painel administrativo para espécies e formas Pokémon.
 
 ### Dashboard do jogador
 
@@ -158,7 +159,8 @@ Os testes cobrem:
 - movimentação entre equipe e Box com preservação da ordem;
 - migração para uma Box única de 100 espaços;
 - pesquisa dinâmica e renomeação da Box;
-- renderização do dashboard.
+- renderização do dashboard;
+- gerenciamento administrativo de espécies e formas.
 
 ## PostgreSQL
 
@@ -197,5 +199,17 @@ flask --app app.py db upgrade
 flask --app app.py pokemon verificar
 ```
 
-A migration atual esperada é `f20c9d44a1b7 (head)`. Consulte
+A migration atual esperada é `a31d7e8c4f20 (head)`. Consulte
 `POKEMON_POSTGRESQL.md` para os testes manuais e detalhes da estrutura.
+
+## Painel administrativo do catálogo
+
+O mestre pode pesquisar, criar, editar, duplicar, desativar e simular espécies
+e formas Pokémon diretamente no PostgreSQL. Esta etapa não cria migration nova.
+Valide com:
+
+```powershell
+flask --app app.py catalogo verificar
+```
+
+Consulte `CATALOGO_ADMIN.md` para o fluxo completo.

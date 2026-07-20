@@ -73,3 +73,12 @@ Os golpes passam a ser armazenados apenas desta forma:
 - O cálculo agora normaliza os dois formatos antes de aplicar bônus Shiny, natureza, estilo de combate, status e bônus manuais.
 - A saída dos cálculos mantém aliases nos dois formatos para compatibilidade com o dashboard e a ficha individual.
 - Novas importações gravam os mapas de bônus Shiny e estilos de combate usando os códigos compatíveis com o catálogo do banco.
+
+
+## Painel administrativo do catálogo
+
+- Espécies e formas Pokémon agora podem ser criadas e editadas pelo mestre.
+- Tipos, imagens e atributos base são lidos e gravados diretamente no PostgreSQL.
+- Formas podem ser duplicadas, desativadas e reativadas sem exclusão física.
+- A prévia de atributos usa as regras atuais da campanha, incluindo Shiny, natureza e estilo de combate.
+- Todas as alterações são registradas em `historico_alteracoes`.

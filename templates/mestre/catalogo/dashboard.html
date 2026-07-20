@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Catálogo | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Administração</p>
+        <h1>Catálogo do RPG</h1>
+        <p class="texto-suave">Gerencie o conteúdo utilizado pelas fichas e pelas regras da campanha.</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.dashboard') }}">Voltar ao painel</a>
+</section>
+
+<section class="catalogo-resumo">
+    <article class="cartao resumo-item"><strong>{{ resumo.formas_ativas }}</strong><span>Formas ativas</span><small>{{ resumo.formas }} no total</small></article>
+    <article class="cartao resumo-item"><strong>{{ resumo.especies_ativas }}</strong><span>Espécies ativas</span><small>{{ resumo.especies }} no total</small></article>
+    <article class="cartao resumo-item"><strong>{{ resumo.tipos }}</strong><span>Tipos ativos</span><small>Disponíveis nas formas</small></article>
+</section>
+
+<section class="grade-cartoes espacamento-topo">
+    <a class="cartao cartao-link" href="{{ url_for('catalogo_admin.pokemons') }}">
+        <span class="cartao-indicador">◉</span>
+        <h2>Espécies e formas</h2>
+        <p>Crie Pokémon personalizados, altere tipos, imagens e atributos base.</p>
+        <span class="link-seta">Abrir catálogo Pokémon →</span>
+    </a>
+    <article class="cartao catalogo-modulo-futuro">
+        <span class="cartao-indicador">✦</span><h2>Golpes</h2>
+        <p>Cadastro, efeitos e vínculos com as formas Pokémon.</p><span class="em-breve">Próxima etapa</span>
+    </article>
+    <article class="cartao catalogo-modulo-futuro">
+        <span class="cartao-indicador">⚙</span><h2>Tipos e regras</h2>
+        <p>Efetividades, naturezas, status e parâmetros da campanha.</p><span class="em-breve">Planejado</span>
+    </article>
+</section>
+{% endblock %}

@@ -19,6 +19,7 @@
                 {% if session.get('perfil') == 'mestre' %}
                     <a href="{{ url_for('mestre.dashboard') }}">Painel</a>
                     <a href="{{ url_for('mestre.jogadores') }}">Jogadores</a>
+                    <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
                 {% else %}
                     <a href="{{ url_for('jogadores.dashboard') }}">Painel</a>
                     <a href="{{ url_for('jogadores.ficha') }}">Minha ficha</a>

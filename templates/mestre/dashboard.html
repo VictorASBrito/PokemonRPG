@@ -20,17 +20,17 @@
         <p>Cadastre jogadores e acompanhe as fichas da campanha.</p>
         <span class="link-seta">Abrir gerenciamento →</span>
     </a>
+    <a class="cartao cartao-link" href="{{ url_for('catalogo_admin.dashboard') }}">
+        <span class="cartao-indicador">◉</span>
+        <h2>Catálogo</h2>
+        <p>Gerencie espécies, formas, tipos, imagens e atributos base.</p>
+        <span class="link-seta">Abrir catálogo →</span>
+    </a>
     <article class="cartao">
         <span class="cartao-indicador">—</span>
         <h2>Combates</h2>
         <p>Controle iniciativa, PV, status e os atributos dos Pokémon.</p>
-        <span class="em-breve">Próxima etapa</span>
-    </article>
-    <article class="cartao">
-        <span class="cartao-indicador">—</span>
-        <h2>Utilitários</h2>
-        <p>Acesse os serviços e ferramentas auxiliares usados pela campanha.</p>
-        <span class="em-breve">Em breve</span>
+        <span class="em-breve">Etapa futura</span>
     </article>
 </section>
 {% endblock %}

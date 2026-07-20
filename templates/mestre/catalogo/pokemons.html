@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Pokémon do catálogo | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div><p class="rotulo">Catálogo</p><h1>Espécies e formas Pokémon</h1><p class="texto-suave">Pesquise, crie, duplique e desative formas sem alterar arquivos JSON.</p></div>
+    <div class="acoes-cabecalho">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.novo_pokemon') }}">Nova forma</a>
+    </div>
+</section>
+
+<form class="cartao filtros-catalogo" method="get">
+    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ filtros.q }}" placeholder="Nome, espécie ou código"></div>
+    <div class="campo"><label for="categoria">Categoria</label><select id="categoria" name="categoria"><option value="">Todas</option>{% for codigo, nome in categorias %}<option value="{{ codigo }}" {% if filtros.categoria == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
+    <div class="campo"><label for="tipo_id">Tipo</label><select id="tipo_id" name="tipo_id"><option value="">Todos</option>{% for tipo in tipos %}<option value="{{ tipo.id }}" {% if filtros.tipo_id == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}</select></div>
+    <div class="campo"><label for="situacao">Situação</label><select id="situacao" name="situacao"><option value="ativas" {% if filtros.situacao == 'ativas' %}selected{% endif %}>Ativas</option><option value="inativas" {% if filtros.situacao == 'inativas' %}selected{% endif %}>Inativas</option><option value="todas" {% if filtros.situacao == 'todas' %}selected{% endif %}>Todas</option></select></div>
+    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Limpar</a></div>
+</form>
+
+{% if pagina and pagina.itens %}
+<p class="resultado-contagem">{{ pagina.total }} forma(s) encontrada(s).</p>
+<section class="grade-formas-admin">
+{% for forma in pagina.itens %}
+<article class="cartao forma-admin-card {% if not forma.ativo %}registro-inativo{% endif %}">
+    <div class="forma-admin-imagem">
+        {% if forma.imagem_url %}<img src="{{ forma.imagem_url }}" alt="{{ forma.nome }}" loading="lazy">{% else %}<span>{{ forma.nome[:1] }}</span>{% endif %}
+        {% if not forma.ativo %}<span class="selo-inativo">Inativa</span>{% endif %}
+    </div>
+    <div class="forma-admin-conteudo">
+        <div class="forma-admin-topo"><div><small>#{{ forma.especie.numero or '—' }} · {{ forma.categoria|capitalize }}</small><h2>{{ forma.nome }}</h2><p>{{ forma.especie.nome }}</p></div></div>
+        <div class="chips-tipos">{% for relacao in forma.tipos|sort(attribute='posicao') %}<span class="chip-tipo">{{ relacao.tipo.nome }}</span>{% endfor %}</div>
+        <code>{{ forma.codigo }}</code>
+        <div class="acoes-card"><a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar</a><form method="post" action="{{ url_for('catalogo_admin.atividade_pokemon', forma_id=forma.id) }}"><input type="hidden" name="ativo" value="{{ '0' if forma.ativo else '1' }}"><button class="botao botao-secundario" type="submit">{{ 'Desativar' if forma.ativo else 'Reativar' }}</button></form></div>
+    </div>
+</article>
+{% endfor %}
+</section>
+<nav class="paginacao" aria-label="Paginação">
+    {% if pagina.tem_anterior %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons', pagina=pagina.pagina-1, q=filtros.q, categoria=filtros.categoria, situacao=filtros.situacao, tipo_id=filtros.tipo_id) }}">← Anterior</a>{% else %}<span></span>{% endif %}
+    <span>Página {{ pagina.pagina }} de {{ pagina.paginas }}</span>
+    {% if pagina.tem_proxima %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons', pagina=pagina.pagina+1, q=filtros.q, categoria=filtros.categoria, situacao=filtros.situacao, tipo_id=filtros.tipo_id) }}">Próxima →</a>{% endif %}
+</nav>
+{% else %}
+<section class="cartao estado-vazio"><h2>Nenhuma forma encontrada</h2><p>Altere os filtros ou crie uma nova forma Pokémon.</p></section>
+{% endif %}
+{% endblock %}
