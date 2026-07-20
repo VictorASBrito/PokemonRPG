@@ -1,10 +1,33 @@
 from __future__ import annotations
 
+import json
+
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+
+from app.services.golpe_admin_service import (
+    ALVOS_EFEITO,
+    METODOS_APRENDIZADO,
+    MODOS_CURA,
+    OPERACOES_ATRIBUTO,
+    TIPOS_EFEITO,
+    alterar_atividade_golpe,
+    atualizar_golpe_admin,
+    carregar_golpe_admin,
+    criar_golpe_admin,
+    duplicar_golpe_admin,
+    efeitos_para_editor,
+    listar_formas_para_vinculo,
+    listar_golpes_admin,
+    opcoes_golpes,
+    remover_vinculo_golpe,
+    resumo_golpes,
+    salvar_vinculo_golpe,
+    vinculos_golpe,
+)
 from app.services.catalogo_admin_service import (
     CATEGORIAS_FORMA,
     alterar_atividade_forma,
@@ -27,14 +50,24 @@ def _erro_banco(mensagem: str):
     flash("Não foi possível concluir a operação no catálogo.", "erro")
 
 
+def _efeitos_enviados() -> list[dict]:
+    try:
+        bruto = json.loads(request.form.get("efeitos_json", "{}") or "{}")
+    except (TypeError, ValueError):
+        return []
+    itens = bruto.get("efeitos", []) if isinstance(bruto, dict) else bruto
+    return itens if isinstance(itens, list) else []
+
+
 @catalogo_admin_bp.get("")
 @perfil_obrigatorio("mestre")
 def dashboard():
     try:
         resumo = resumo_catalogo()
+        resumo.update(resumo_golpes())
     except SQLAlchemyError:
         _erro_banco("Falha ao carregar o resumo do catálogo.")
-        resumo = {"especies": 0, "especies_ativas": 0, "formas": 0, "formas_ativas": 0, "tipos": 0}
+        resumo = {"especies": 0, "especies_ativas": 0, "formas": 0, "formas_ativas": 0, "tipos": 0, "golpes": 0, "golpes_ativos": 0, "categorias_golpe": 0, "vinculos_golpe": 0}
     return render_template("mestre/catalogo/dashboard.html", resumo=resumo)
 
 
@@ -197,3 +230,227 @@ def simular_pokemon():
         db.session.rollback()
         return jsonify({"erro": str(erro) or "Não foi possível simular os atributos."}), 400
     return jsonify({"atributos": resultado})
+
+
+@catalogo_admin_bp.get("/golpes")
+@perfil_obrigatorio("mestre")
+def golpes():
+    filtros = {
+        "q": request.args.get("q", "").strip(),
+        "tipo_id": request.args.get("tipo_id", "").strip(),
+        "categoria_id": request.args.get("categoria_id", "").strip(),
+        "situacao": request.args.get("situacao", "ativos").strip(),
+        "origem": request.args.get("origem", "todas").strip(),
+    }
+    try:
+        pagina_atual = max(1, int(request.args.get("pagina", "1")))
+    except ValueError:
+        pagina_atual = 1
+    try:
+        pagina = listar_golpes_admin(
+            termo=filtros["q"],
+            tipo_id=filtros["tipo_id"],
+            categoria_id=filtros["categoria_id"],
+            situacao=filtros["situacao"],
+            origem=filtros["origem"],
+            pagina=pagina_atual,
+        )
+        opcoes = opcoes_golpes()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao listar golpes do catálogo.")
+        return render_template(
+            "mestre/catalogo/golpes.html",
+            pagina=None,
+            opcoes=None,
+            filtros=filtros,
+        ), 503
+    return render_template(
+        "mestre/catalogo/golpes.html",
+        pagina=pagina,
+        opcoes=opcoes,
+        filtros=filtros,
+    )
+
+
+@catalogo_admin_bp.route("/golpes/novo", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def novo_golpe():
+    try:
+        opcoes = opcoes_golpes()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar as opções dos golpes.")
+        return redirect(url_for("catalogo_admin.golpes"))
+
+    dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
+    efeitos_iniciais = []
+    if request.method == "POST":
+        try:
+            golpe, erros = criar_golpe_admin(request.form, usuario_id=session.get("usuario_id"))
+            efeitos_iniciais = _efeitos_enviados()
+        except SQLAlchemyError:
+            _erro_banco("Falha ao criar golpe no catálogo.")
+            erros = ["Não foi possível gravar o golpe no banco de dados."]
+            golpe = None
+        if not erros and golpe is not None:
+            flash(f"{golpe.nome} foi criado no catálogo.", "sucesso")
+            return redirect(url_for("catalogo_admin.editar_golpe", golpe_id=str(golpe.id)))
+        for erro in erros:
+            flash(erro, "erro")
+
+    return render_template(
+        "mestre/catalogo/golpe_form.html",
+        golpe=None,
+        dados=dados,
+        opcoes=opcoes,
+        modo="novo",
+        efeitos_iniciais=efeitos_iniciais,
+        tipos_efeito=TIPOS_EFEITO,
+        alvos_efeito=ALVOS_EFEITO,
+        operacoes_atributo=OPERACOES_ATRIBUTO,
+        modos_cura=MODOS_CURA,
+    )
+
+
+@catalogo_admin_bp.route("/golpes/<golpe_id>/editar", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def editar_golpe(golpe_id: str):
+    try:
+        golpe = carregar_golpe_admin(golpe_id)
+        opcoes = opcoes_golpes()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar golpe para edição.")
+        return redirect(url_for("catalogo_admin.golpes"))
+    if golpe is None:
+        flash("Golpe não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.golpes"))
+
+    dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
+    efeitos_iniciais = efeitos_para_editor(golpe.efeitos)
+    if request.method == "POST":
+        try:
+            erros = atualizar_golpe_admin(golpe, request.form, usuario_id=session.get("usuario_id"))
+        except SQLAlchemyError:
+            _erro_banco("Falha ao atualizar golpe no catálogo.")
+            erros = ["Não foi possível salvar as alterações no banco de dados."]
+        if not erros:
+            flash("Golpe atualizado com sucesso.", "sucesso")
+            return redirect(url_for("catalogo_admin.editar_golpe", golpe_id=golpe_id))
+        for erro in erros:
+            flash(erro, "erro")
+        efeitos_iniciais = _efeitos_enviados() or efeitos_iniciais
+
+    return render_template(
+        "mestre/catalogo/golpe_form.html",
+        golpe=golpe,
+        dados=dados,
+        opcoes=opcoes,
+        modo="editar",
+        efeitos_iniciais=efeitos_iniciais,
+        tipos_efeito=TIPOS_EFEITO,
+        alvos_efeito=ALVOS_EFEITO,
+        operacoes_atributo=OPERACOES_ATRIBUTO,
+        modos_cura=MODOS_CURA,
+    )
+
+
+@catalogo_admin_bp.post("/golpes/<golpe_id>/atividade")
+@perfil_obrigatorio("mestre")
+def atividade_golpe(golpe_id: str):
+    golpe = carregar_golpe_admin(golpe_id)
+    if golpe is None:
+        flash("Golpe não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.golpes"))
+    ativo = request.form.get("ativo") == "1"
+    try:
+        alterar_atividade_golpe(golpe, ativo=ativo, usuario_id=session.get("usuario_id"))
+    except SQLAlchemyError:
+        _erro_banco("Falha ao alterar a atividade do golpe.")
+    else:
+        flash(f"{golpe.nome} foi {'reativado' if ativo else 'desativado'}.", "sucesso")
+    return redirect(url_for("catalogo_admin.editar_golpe", golpe_id=golpe_id))
+
+
+@catalogo_admin_bp.post("/golpes/<golpe_id>/duplicar")
+@perfil_obrigatorio("mestre")
+def duplicar_golpe(golpe_id: str):
+    golpe = carregar_golpe_admin(golpe_id)
+    if golpe is None:
+        flash("Golpe não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.golpes"))
+    try:
+        copia = duplicar_golpe_admin(golpe, usuario_id=session.get("usuario_id"))
+    except SQLAlchemyError:
+        _erro_banco("Falha ao duplicar golpe.")
+        return redirect(url_for("catalogo_admin.editar_golpe", golpe_id=golpe_id))
+    flash("Cópia criada como golpe personalizado e inativo.", "sucesso")
+    return redirect(url_for("catalogo_admin.editar_golpe", golpe_id=str(copia.id)))
+
+
+@catalogo_admin_bp.route("/golpes/<golpe_id>/vinculos", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def vinculos_do_golpe(golpe_id: str):
+    try:
+        golpe = carregar_golpe_admin(golpe_id)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar os vínculos do golpe.")
+        return redirect(url_for("catalogo_admin.golpes"))
+    if golpe is None:
+        flash("Golpe não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.golpes"))
+
+    if request.method == "POST":
+        try:
+            _, erros = salvar_vinculo_golpe(
+                golpe,
+                request.form,
+                usuario_id=session.get("usuario_id"),
+            )
+        except SQLAlchemyError:
+            _erro_banco("Falha ao vincular golpe a uma forma Pokémon.")
+            erros = ["Não foi possível salvar o vínculo no banco de dados."]
+        if not erros:
+            flash("Vínculo salvo com sucesso.", "sucesso")
+            return redirect(url_for("catalogo_admin.vinculos_do_golpe", golpe_id=golpe_id))
+        for erro in erros:
+            flash(erro, "erro")
+
+    termo = request.args.get("q", "").strip()
+    try:
+        pagina_atual = max(1, int(request.args.get("pagina", "1")))
+    except ValueError:
+        pagina_atual = 1
+    try:
+        pagina_formas = listar_formas_para_vinculo(termo=termo, pagina=pagina_atual)
+        vinculos = vinculos_golpe(golpe)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao listar formas para o vínculo.")
+        pagina_formas = None
+        vinculos = []
+    return render_template(
+        "mestre/catalogo/golpe_vinculos.html",
+        golpe=golpe,
+        pagina=pagina_formas,
+        vinculos=vinculos,
+        termo=termo,
+        metodos=METODOS_APRENDIZADO,
+    )
+
+
+@catalogo_admin_bp.post("/golpes/<golpe_id>/vinculos/<vinculo_id>/remover")
+@perfil_obrigatorio("mestre")
+def remover_vinculo_do_golpe(golpe_id: str, vinculo_id: str):
+    golpe = carregar_golpe_admin(golpe_id)
+    if golpe is None:
+        flash("Golpe não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.golpes"))
+    try:
+        removido = remover_vinculo_golpe(
+            golpe,
+            vinculo_id,
+            usuario_id=session.get("usuario_id"),
+        )
+    except SQLAlchemyError:
+        _erro_banco("Falha ao remover vínculo de golpe.")
+    else:
+        flash("Vínculo removido." if removido else "Vínculo não encontrado.", "sucesso" if removido else "aviso")
+    return redirect(url_for("catalogo_admin.vinculos_do_golpe", golpe_id=golpe_id))

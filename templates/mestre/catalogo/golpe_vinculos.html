@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block titulo %}Formas de {{ golpe.nome }} | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div><p class="rotulo">Catálogo de golpes</p><h1>{{ golpe.nome }} · Formas</h1><p class="texto-suave">Defina quais formas podem aprender o golpe e por qual método.</p></div>
+    <div class="acoes-cabecalho"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.editar_golpe', golpe_id=golpe.id) }}">Editar golpe</a><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes') }}">Lista de golpes</a></div>
+</section>
+
+<section class="cartao secao-formulario">
+    <div class="secao-titulo"><div><span>1</span><h2>Vínculos atuais</h2></div><p>{{ vinculos|length }} método(s) configurado(s).</p></div>
+    {% if vinculos %}
+    <div class="lista-vinculos-golpe">
+    {% for vinculo in vinculos %}
+    <article class="vinculo-golpe-item">
+        <form method="post" action="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}" class="grade-vinculo-form">
+            <input type="hidden" name="vinculo_id" value="{{ vinculo.id }}">
+            <input type="hidden" name="forma_pokemon_id" value="{{ vinculo.forma_pokemon_id }}">
+            <div class="vinculo-forma"><strong>{{ vinculo.forma_pokemon.nome }}</strong><small>{{ vinculo.forma_pokemon.especie.nome }} · {{ vinculo.forma_pokemon.codigo }}</small></div>
+            <div class="campo"><label>Método</label><select name="metodo">{% for codigo, nome in metodos %}<option value="{{ codigo }}" {% if vinculo.metodo == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
+            <div class="campo"><label>Nível</label><input name="nivel_requerido" type="number" min="1" max="999" value="{{ vinculo.nivel_requerido or '' }}"></div>
+            <div class="campo"><label>Observações</label><input name="observacoes" value="{{ vinculo.observacoes or '' }}"></div>
+            <button class="botao botao-secundario" type="submit">Atualizar</button>
+        </form>
+        <form method="post" action="{{ url_for('catalogo_admin.remover_vinculo_do_golpe', golpe_id=golpe.id, vinculo_id=vinculo.id) }}"><button class="botao botao-secundario botao-perigo" type="submit">Remover</button></form>
+    </article>
+    {% endfor %}
+    </div>
+    {% else %}<div class="efeitos-vazio"><strong>Nenhuma forma vinculada.</strong><span>Use a pesquisa abaixo para adicionar o primeiro vínculo.</span></div>{% endif %}
+</section>
+
+<section class="cartao secao-formulario espacamento-topo">
+    <div class="secao-titulo"><div><span>2</span><h2>Adicionar forma</h2></div><p>Pesquise pelo nome da espécie, forma ou código.</p></div>
+    <form class="pesquisa-vinculos" method="get"><div class="campo"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ termo }}" placeholder="Ex.: Charizard ou charizard-mega-x"></div><button class="botao botao-primario" type="submit">Pesquisar</button>{% if termo %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}">Limpar</a>{% endif %}</form>
+
+    {% if pagina and pagina.itens %}
+    <div class="grade-formas-vinculo">
+    {% for forma in pagina.itens %}
+    <form method="post" class="forma-vinculo-card">
+        <input type="hidden" name="forma_pokemon_id" value="{{ forma.id }}">
+        <div><strong>{{ forma.nome }}</strong><small>{{ forma.especie.nome }} · {{ forma.codigo }}</small></div>
+        <div class="campo"><label>Método</label><select name="metodo">{% for codigo, nome in metodos %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div>
+        <div class="campo"><label>Nível</label><input name="nivel_requerido" type="number" min="1" max="999" value="1"></div>
+        <div class="campo"><label>Observação</label><input name="observacoes" placeholder="Opcional"></div>
+        <button class="botao botao-primario" type="submit">Vincular</button>
+    </form>
+    {% endfor %}
+    </div>
+    <nav class="paginacao" aria-label="Paginação">
+        {% if pagina.tem_anterior %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id, pagina=pagina.pagina-1, q=termo) }}">← Anterior</a>{% else %}<span></span>{% endif %}
+        <span>Página {{ pagina.pagina }} de {{ pagina.paginas }}</span>
+        {% if pagina.tem_proxima %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id, pagina=pagina.pagina+1, q=termo) }}">Próxima →</a>{% endif %}
+    </nav>
+    {% else %}<div class="efeitos-vazio"><strong>Nenhuma forma encontrada.</strong><span>Revise a pesquisa informada.</span></div>{% endif %}
+</section>
+{% endblock %}

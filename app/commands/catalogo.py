@@ -5,7 +5,18 @@ from flask import Blueprint
 from sqlalchemy import func, select
 
 from app.extensions import db
-from app.models.db import Atributo, EspeciePokemon, FormaPokemon, FormaPokemonAtributo, FormaPokemonTipo
+from app.models.db import (
+    Atributo,
+    CategoriaGolpe,
+    EspeciePokemon,
+    FormaPokemon,
+    FormaPokemonAtributo,
+    FormaPokemonGolpe,
+    FormaPokemonTipo,
+    Golpe,
+    TipoPokemon,
+)
+from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, efeitos_para_editor
 
 catalogo_cli = Blueprint("catalogo_cli", __name__)
 
@@ -80,3 +91,52 @@ def verificar() -> None:
             click.echo(f"- ... e mais {len(problemas) - 50} problema(s).", err=True)
         raise click.ClickException("Foram encontradas inconsistências no catálogo.")
     click.echo("Catálogo de espécies e formas está consistente no PostgreSQL.")
+
+    problemas_golpes: list[str] = []
+    tipos_efeito_validos = {item[0] for item in TIPOS_EFEITO}
+    metodos_validos = {item[0] for item in METODOS_APRENDIZADO}
+    golpes = list(db.session.execute(select(Golpe)).scalars())
+    for golpe in golpes:
+        categoria = db.session.get(CategoriaGolpe, golpe.categoria_id)
+        if categoria is None:
+            problemas_golpes.append(f"{golpe.nome}: categoria inexistente.")
+        elif golpe.ativo and not categoria.ativo:
+            problemas_golpes.append(f"{golpe.nome}: golpe ativo vinculado a categoria inativa.")
+        if golpe.tipo_id:
+            tipo = db.session.get(TipoPokemon, golpe.tipo_id)
+            if tipo is None:
+                problemas_golpes.append(f"{golpe.nome}: tipo inexistente.")
+            elif golpe.ativo and not tipo.ativo:
+                problemas_golpes.append(f"{golpe.nome}: golpe ativo vinculado a tipo inativo.")
+        efeitos = efeitos_para_editor(golpe.efeitos)
+        if len(efeitos) > 20:
+            problemas_golpes.append(f"{golpe.nome}: possui mais de 20 efeitos.")
+        for indice, efeito in enumerate(efeitos, start=1):
+            tipo_efeito = efeito.get("tipo", "texto")
+            if tipo_efeito not in tipos_efeito_validos:
+                problemas_golpes.append(
+                    f"{golpe.nome}: efeito {indice} possui tipo desconhecido ({tipo_efeito})."
+                )
+
+    vinculos = list(db.session.execute(select(FormaPokemonGolpe)).scalars())
+    for vinculo in vinculos:
+        if vinculo.metodo not in metodos_validos:
+            problemas_golpes.append(
+                f"Vínculo {vinculo.id}: método de aprendizado inválido ({vinculo.metodo})."
+            )
+        if vinculo.nivel_requerido is not None and vinculo.nivel_requerido < 1:
+            problemas_golpes.append(f"Vínculo {vinculo.id}: nível requerido inválido.")
+
+    click.echo(
+        f"Golpes: {len(golpes)} registro(s), {len(vinculos)} vínculo(s) com formas Pokémon."
+    )
+    if problemas_golpes:
+        for problema in problemas_golpes[:50]:
+            click.echo(f"- {problema}", err=True)
+        if len(problemas_golpes) > 50:
+            click.echo(
+                f"- ... e mais {len(problemas_golpes) - 50} problema(s).",
+                err=True,
+            )
+        raise click.ClickException("Foram encontradas inconsistências no catálogo de golpes.")
+    click.echo("Catálogo de golpes está consistente no PostgreSQL.")

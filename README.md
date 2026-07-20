@@ -160,7 +160,8 @@ Os testes cobrem:
 - migração para uma Box única de 100 espaços;
 - pesquisa dinâmica e renomeação da Box;
 - renderização do dashboard;
-- gerenciamento administrativo de espécies e formas.
+- gerenciamento administrativo de espécies, formas e golpes;
+- editor visual de efeitos e vínculos de aprendizado.
 
 ## PostgreSQL
 
@@ -212,4 +213,5 @@ Valide com:
 flask --app app.py catalogo verificar
 ```
 
-Consulte `CATALOGO_ADMIN.md` para o fluxo completo.
+Consulte `CATALOGO_ADMIN.md` para espécies e formas, e
+`CATALOGO_GOLPES.md` para golpes, efeitos e vínculos de aprendizado.

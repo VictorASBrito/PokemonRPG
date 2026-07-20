@@ -1,4 +1,4 @@
-# Painel administrativo do catálogo Pokémon
+# Painel administrativo de espécies e formas Pokémon
 
 Esta etapa permite administrar espécies e formas diretamente no PostgreSQL.
 Os arquivos JSON não são consultados pelas telas do catálogo.
@@ -68,3 +68,9 @@ a31d7e8c4f20 (head)
 - Alterações nos atributos base afetam imediatamente os cálculos de todas as
   fichas ligadas à forma.
 - A edição de uma espécie afeta todas as formas vinculadas a ela.
+
+
+## Continuação do catálogo
+
+O gerenciamento de golpes, o editor visual de efeitos e os vínculos com formas
+Pokémon estão documentados em `CATALOGO_GOLPES.md`.

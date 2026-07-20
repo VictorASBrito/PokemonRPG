@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block titulo %}Golpes do catálogo | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Catálogo</p>
+        <h1>Golpes</h1>
+        <p class="texto-suave">Crie movimentos personalizados, ajuste cálculos e configure efeitos sem editar JSON.</p>
+    </div>
+    <div class="acoes-cabecalho">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.novo_golpe') }}">Novo golpe</a>
+    </div>
+</section>
+
+<form class="cartao filtros-catalogo filtros-golpes" method="get">
+    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ filtros.q }}" placeholder="Nome, código, descrição ou efeito"></div>
+    <div class="campo"><label for="tipo_id">Tipo</label><select id="tipo_id" name="tipo_id"><option value="">Todos</option>{% if opcoes %}{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}" {% if filtros.tipo_id == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}{% endif %}</select></div>
+    <div class="campo"><label for="categoria_id">Categoria</label><select id="categoria_id" name="categoria_id"><option value="">Todas</option>{% if opcoes %}{% for categoria in opcoes.categorias %}<option value="{{ categoria.id }}" {% if filtros.categoria_id == categoria.id|string %}selected{% endif %}>{{ categoria.nome }}</option>{% endfor %}{% endif %}</select></div>
+    <div class="campo"><label for="origem">Origem</label><select id="origem" name="origem"><option value="todas" {% if filtros.origem == 'todas' %}selected{% endif %}>Todos</option><option value="oficiais" {% if filtros.origem == 'oficiais' %}selected{% endif %}>Importados</option><option value="personalizados" {% if filtros.origem == 'personalizados' %}selected{% endif %}>Personalizados</option></select></div>
+    <div class="campo"><label for="situacao">Situação</label><select id="situacao" name="situacao"><option value="ativos" {% if filtros.situacao == 'ativos' %}selected{% endif %}>Ativos</option><option value="inativos" {% if filtros.situacao == 'inativos' %}selected{% endif %}>Inativos</option><option value="todos" {% if filtros.situacao == 'todos' %}selected{% endif %}>Todos</option></select></div>
+    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes') }}">Limpar</a></div>
+</form>
+
+{% if pagina and pagina.itens %}
+<p class="resultado-contagem">{{ pagina.total }} golpe(s) encontrado(s).</p>
+<section class="grade-golpes-admin">
+{% for golpe in pagina.itens %}
+<article class="cartao golpe-admin-card {% if not golpe.ativo %}registro-inativo{% endif %}">
+    <div class="golpe-admin-topo">
+        <div>
+            <div class="chips-tipos">
+                <span class="chip-tipo">{{ golpe.tipo.nome if golpe.tipo else 'Sem tipo' }}</span>
+                <span class="chip-tipo">{{ golpe.categoria.nome }}</span>
+                {% if golpe.personalizado %}<span class="chip-tipo chip-personalizado">Personalizado</span>{% endif %}
+                {% if not golpe.ativo %}<span class="chip-tipo chip-inativo">Inativo</span>{% endif %}
+            </div>
+            <h2>{{ golpe.nome }}</h2>
+            <code>{{ golpe.codigo }}</code>
+        </div>
+        <div class="golpe-metricas">
+            <span><small>Dano</small><strong>{{ golpe.expressao_dano or '—' }}</strong></span>
+            <span><small>Precisão</small><strong>{{ (golpe.precisao|int ~ '%') if golpe.precisao is not none else '—' }}</strong></span>
+            <span><small>Prioridade</small><strong>{{ '%+d'|format(golpe.prioridade) }}</strong></span>
+        </div>
+    </div>
+    <p class="golpe-descricao">{{ golpe.descricao or 'Sem descrição cadastrada.' }}</p>
+    <div class="acoes-card">
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.editar_golpe', golpe_id=golpe.id) }}">Editar</a>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}">Formas</a>
+        <form method="post" action="{{ url_for('catalogo_admin.atividade_golpe', golpe_id=golpe.id) }}"><input type="hidden" name="ativo" value="{{ '0' if golpe.ativo else '1' }}"><button class="botao botao-secundario" type="submit">{{ 'Desativar' if golpe.ativo else 'Reativar' }}</button></form>
+    </div>
+</article>
+{% endfor %}
+</section>
+<nav class="paginacao" aria-label="Paginação">
+    {% if pagina.tem_anterior %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes', pagina=pagina.pagina-1, q=filtros.q, tipo_id=filtros.tipo_id, categoria_id=filtros.categoria_id, situacao=filtros.situacao, origem=filtros.origem) }}">← Anterior</a>{% else %}<span></span>{% endif %}
+    <span>Página {{ pagina.pagina }} de {{ pagina.paginas }}</span>
+    {% if pagina.tem_proxima %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes', pagina=pagina.pagina+1, q=filtros.q, tipo_id=filtros.tipo_id, categoria_id=filtros.categoria_id, situacao=filtros.situacao, origem=filtros.origem) }}">Próxima →</a>{% endif %}
+</nav>
+{% else %}
+<section class="cartao estado-vazio"><h2>Nenhum golpe encontrado</h2><p>Altere os filtros ou crie um movimento personalizado.</p></section>
+{% endif %}
+{% endblock %}
