@@ -2,35 +2,171 @@
 
 {% block titulo %}Painel do Mestre | Pokémon RPG{% endblock %}
 
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/painel-mestre.css') }}">
+{% endblock %}
+
 {% block conteudo %}
-<section class="cabecalho-pagina cabecalho-com-acoes">
+<section class="cabecalho-pagina cabecalho-com-acoes painel-mestre-cabecalho">
     <div>
-        <p class="rotulo">Painel do mestre</p>
+        <p class="rotulo">Painel geral do mestre</p>
         <h1>{{ campanha.get('nome', 'Campanha') }}</h1>
-        <p class="texto-suave">{{ campanha.get('descricao') or 'Gerencie jogadores, combates e utilitários da mesa.' }}</p>
-        {% if fonte_dados %}<p class="texto-suave"><small>Fonte: {{ fonte_dados }}</small></p>{% endif %}
+        <p class="texto-suave">{{ campanha.get('descricao') or 'Acompanhe treinadores, equipes, PV e alertas da sessão em uma única tela.' }}</p>
     </div>
-    <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Novo jogador</a>
+    <div class="painel-mestre-acoes-topo">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
+        <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Novo jogador</a>
+    </div>
 </section>
 
-<section class="grade-cartoes">
-    <a class="cartao cartao-link" href="{{ url_for('mestre.jogadores') }}">
-        <span class="cartao-indicador">{{ total_jogadores }}</span>
-        <h2>Jogadores</h2>
-        <p>Cadastre jogadores e acompanhe as fichas da campanha.</p>
-        <span class="link-seta">Abrir gerenciamento →</span>
-    </a>
-    <a class="cartao cartao-link" href="{{ url_for('catalogo_admin.dashboard') }}">
-        <span class="cartao-indicador">◉</span>
-        <h2>Catálogo</h2>
-        <p>Gerencie espécies, formas, tipos, imagens e atributos base.</p>
-        <span class="link-seta">Abrir catálogo →</span>
-    </a>
-    <article class="cartao">
-        <span class="cartao-indicador">—</span>
-        <h2>Combates</h2>
-        <p>Controle iniciativa, PV, status e os atributos dos Pokémon.</p>
-        <span class="em-breve">Etapa futura</span>
+<section class="painel-mestre-metricas" aria-label="Resumo da campanha">
+    <article class="cartao metrica-mestre">
+        <span>Jogadores</span>
+        <strong>{{ resumo.get('jogadores', 0) }}</strong>
+        <small>treinadores ativos</small>
     </article>
+    <article class="cartao metrica-mestre">
+        <span>Pokémon</span>
+        <strong>{{ resumo.get('pokemons', 0) }}</strong>
+        <small>{{ resumo.get('equipe', 0) }} na equipe · {{ resumo.get('box', 0) }} na Box</small>
+    </article>
+    <article class="cartao metrica-mestre {% if resumo.get('alertas', 0) %}metrica-alerta{% endif %}">
+        <span>Alertas</span>
+        <strong>{{ resumo.get('alertas', 0) }}</strong>
+        <small>situações que merecem atenção</small>
+    </article>
+    <a class="cartao metrica-mestre metrica-link" href="{{ url_for('mestre.jogadores') }}">
+        <span>Gerenciamento</span>
+        <strong>→</strong>
+        <small>acessos e fichas completas</small>
+    </a>
 </section>
+
+<section class="cartao painel-mestre-filtros" aria-label="Pesquisa de jogadores">
+    <div class="campo painel-mestre-pesquisa">
+        <label for="pesquisa-painel-mestre">Pesquisar na campanha</label>
+        <input id="pesquisa-painel-mestre" type="search" placeholder="Jogador, treinador, classe ou Pokémon" autocomplete="off">
+    </div>
+    <div class="chips painel-mestre-chips" role="group" aria-label="Filtro de atenção">
+        <button class="chip filtro-painel-mestre ativo" type="button" data-filtro="todos">Todos</button>
+        <button class="chip filtro-painel-mestre" type="button" data-filtro="alertas">Com alertas</button>
+    </div>
+    <p id="resultado-pesquisa-painel" class="texto-suave painel-mestre-resultado" aria-live="polite"></p>
+</section>
+
+<div id="mensagem-painel-mestre" class="painel-mestre-mensagem" aria-live="polite"></div>
+
+{% if jogadores %}
+<section class="painel-mestre-jogadores" id="painel-mestre-jogadores">
+    {% for jogador in jogadores %}
+    <article
+        class="cartao painel-jogador-card"
+        data-painel-jogador
+        data-busca="{{ jogador.get('busca', '') }}"
+        data-tem-alertas="{{ '1' if jogador.get('alertas') else '0' }}"
+    >
+        <header class="painel-jogador-topo">
+            <div class="painel-jogador-identidade">
+                {% if jogador.get('foto_url') %}
+                    <img class="painel-jogador-avatar" src="{{ jogador.get('foto_url') }}" alt="{{ jogador.get('nome') }}" loading="lazy">
+                {% else %}
+                    <div class="painel-jogador-avatar painel-jogador-avatar-inicial">{{ (jogador.get('nome') or '?')[:1]|upper }}</div>
+                {% endif %}
+                <div>
+                    <p class="rotulo">{{ jogador.get('jogador') }} · @{{ jogador.get('login') }}</p>
+                    <h2>{{ jogador.get('nome') }}</h2>
+                    <p class="texto-suave">
+                        Nível {{ jogador.get('nivel', 1) }}
+                        {% if jogador.get('classe') %} · {{ jogador.get('classe') }}{% endif %}
+                        {% if jogador.get('origem') %} · {{ jogador.get('origem') }}{% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="painel-jogador-links">
+                <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.ficha_jogador', jogador_id=jogador.get('id')) }}">Ficha</a>
+                <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_mestre', jogador_id=jogador.get('id')) }}">Equipe</a>
+                <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
+                <a class="botao botao-primario botao-link" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Box</a>
+            </div>
+        </header>
+
+        <div class="painel-jogador-resumo">
+            <section class="painel-recurso painel-recurso-treinador" data-pv-container>
+                <div class="painel-recurso-cabecalho">
+                    <div>
+                        <span>PV do treinador</span>
+                        <strong data-pv-valor>{{ jogador.get('pv_atual', 0) }}/{{ jogador.get('pv_maximo', 0) }}</strong>
+                    </div>
+                    <span class="painel-dinheiro">₽ {{ jogador.get('pokedolares', 0) }}</span>
+                </div>
+                <progress data-pv-progresso value="{{ [jogador.get('pv_atual', 0), 0]|max }}" max="{{ jogador.get('pv_maximo', 1) if jogador.get('pv_maximo', 0) > 0 else 1 }}"></progress>
+                <form class="controle-pv-rapido" method="post" action="{{ url_for('mestre.ajustar_pv_personagem_painel', personagem_id=jogador.get('id')) }}" data-pv-form>
+                    <button type="submit" data-delta="-10">−10</button>
+                    <button type="submit" data-delta="-5">−5</button>
+                    <button type="submit" data-delta="5">+5</button>
+                    <button type="submit" data-delta="10">+10</button>
+                </form>
+            </section>
+            <div class="painel-jogador-contadores">
+                <span><strong>{{ jogador.get('equipe_total', 0) }}</strong>/{{ jogador.get('limite_equipe', 6) }} na equipe</span>
+                <span><strong>{{ jogador.get('box_total', 0) }}</strong> na Box</span>
+                <span class="{% if not jogador.get('acesso_ativo', true) %}texto-alerta{% endif %}">{{ 'Acesso ativo' if jogador.get('acesso_ativo', true) else 'Acesso desativado' }}</span>
+            </div>
+        </div>
+
+        {% if jogador.get('alertas') %}
+        <div class="painel-alertas-jogador">
+            {% for alerta in jogador.get('alertas', []) %}<span>{{ alerta }}</span>{% endfor %}
+        </div>
+        {% endif %}
+
+        <section class="painel-equipe-compacta" aria-label="Equipe de {{ jogador.get('nome') }}">
+            {% for pokemon in jogador.get('equipe', []) %}
+            <article class="painel-pokemon-card" data-pv-container>
+                <a class="painel-pokemon-link" href="{{ url_for('pokemons.editar_mestre', jogador_id=jogador.get('id'), pokemon_id=pokemon.get('id')) }}">
+                    <div class="painel-pokemon-imagem">
+                        {% if pokemon.get('imagem') %}<img src="{{ pokemon.get('imagem') }}" alt="{{ pokemon.get('nome') }}" loading="lazy">{% else %}<span>{{ (pokemon.get('nome') or '?')[:1]|upper }}</span>{% endif %}
+                        {% if pokemon.get('shiny') %}<em>Shiny</em>{% endif %}
+                    </div>
+                    <div class="painel-pokemon-info">
+                        <strong>{{ pokemon.get('nome') }}</strong>
+                        {% if pokemon.get('nome') != pokemon.get('especie') %}<small>{{ pokemon.get('especie') }}</small>{% endif %}
+                        <div class="painel-pokemon-tipos">{% for tipo in pokemon.get('tipos', []) %}<span>{{ tipo }}</span>{% endfor %}</div>
+                    </div>
+                </a>
+                <div class="painel-pokemon-vida">
+                    <div><span>PV</span><strong data-pv-valor>{{ pokemon.get('pv_atual', 0) }}/{{ pokemon.get('pv_maximo', 0) }}</strong></div>
+                    <progress data-pv-progresso value="{{ pokemon.get('pv_atual', 0) }}" max="{{ pokemon.get('pv_maximo', 1) if pokemon.get('pv_maximo', 0) > 0 else 1 }}"></progress>
+                    <form class="controle-pv-rapido controle-pv-pokemon" method="post" action="{{ url_for('mestre.ajustar_pv_pokemon_painel', pokemon_id=pokemon.get('id')) }}" data-pv-form>
+                        <button type="submit" data-delta="-10">−10</button>
+                        <button type="submit" data-delta="-5">−5</button>
+                        <button type="submit" data-delta="5">+5</button>
+                        <button type="submit" data-delta="10">+10</button>
+                    </form>
+                </div>
+                <footer class="painel-pokemon-rodape">
+                    {% if pokemon.get('status') %}<span class="painel-status">{{ pokemon.get('status')|join(', ') }}</span>{% else %}<span class="texto-suave">Sem status</span>{% endif %}
+                    {% if pokemon.get('item') %}<span title="Item carregado">◆ {{ pokemon.get('item') }}</span>{% endif %}
+                </footer>
+            </article>
+            {% else %}
+            <a class="painel-equipe-vazia" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Equipe vazia · abrir Box</a>
+            {% endfor %}
+        </section>
+    </article>
+    {% endfor %}
+</section>
+<p id="painel-mestre-sem-resultados" class="cartao estado-vazio" hidden>Nenhum jogador corresponde à pesquisa atual.</p>
+{% else %}
+<section class="cartao estado-vazio">
+    <div class="estado-vazio-icone">＋</div>
+    <h2>Nenhum jogador cadastrado</h2>
+    <p>Cadastre o primeiro jogador para começar a acompanhar a campanha pelo painel.</p>
+    <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Cadastrar jogador</a>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/painel-mestre.js') }}"></script>
 {% endblock %}

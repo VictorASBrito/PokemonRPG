@@ -10,14 +10,15 @@
     </div>
 </section>
 
-<form class="cartao filtros-catalogo" method="get">
-    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ filtros.q }}" placeholder="Nome, espécie ou código"></div>
+<form class="cartao filtros-catalogo" method="get" action="{{ url_for('catalogo_admin.pokemons') }}" data-pesquisa-dinamica data-resultados="#resultados-pokemons">
+    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" type="search" autocomplete="off" value="{{ filtros.q }}" placeholder="Nome, espécie ou código"></div>
     <div class="campo"><label for="categoria">Categoria</label><select id="categoria" name="categoria"><option value="">Todas</option>{% for codigo, nome in categorias %}<option value="{{ codigo }}" {% if filtros.categoria == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
     <div class="campo"><label for="tipo_id">Tipo</label><select id="tipo_id" name="tipo_id"><option value="">Todos</option>{% for tipo in tipos %}<option value="{{ tipo.id }}" {% if filtros.tipo_id == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}</select></div>
     <div class="campo"><label for="situacao">Situação</label><select id="situacao" name="situacao"><option value="ativas" {% if filtros.situacao == 'ativas' %}selected{% endif %}>Ativas</option><option value="inativas" {% if filtros.situacao == 'inativas' %}selected{% endif %}>Inativas</option><option value="todas" {% if filtros.situacao == 'todas' %}selected{% endif %}>Todas</option></select></div>
-    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Limpar</a></div>
+    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" data-pesquisa-limpar href="{{ url_for('catalogo_admin.pokemons') }}">Limpar</a></div>
 </form>
 
+<div id="resultados-pokemons" data-pesquisa-resultados aria-live="polite">
 {% if pagina and pagina.itens %}
 <p class="resultado-contagem">{{ pagina.total }} forma(s) encontrada(s).</p>
 <section class="grade-formas-admin">
@@ -44,4 +45,9 @@
 {% else %}
 <section class="cartao estado-vazio"><h2>Nenhuma forma encontrada</h2><p>Altere os filtros ou crie uma nova forma Pokémon.</p></section>
 {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pesquisa-dinamica.js') }}"></script>
 {% endblock %}

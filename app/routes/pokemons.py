@@ -4,6 +4,7 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -13,7 +14,7 @@ from flask import (
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
-from app.routes.auth import perfil_obrigatorio
+from app.routes.auth import login_obrigatorio, perfil_obrigatorio
 from app.services.pokemon_db_service import (
     BOX_ID,
     buscar_forma,
@@ -21,8 +22,9 @@ from app.services.pokemon_db_service import (
     criar_pokemon_box,
     equipe_detalhada_db,
     golpes_formulario,
-    nomes_formas,
-    nomes_golpes,
+    pesquisar_formas_autocomplete,
+    pesquisar_golpes_autocomplete,
+    total_formas_ativas,
     registro_detalhado,
     remover_pokemon_db,
     atualizar_pokemon_formulario,
@@ -123,12 +125,10 @@ def _novo(contexto, *, modo_mestre: bool):
                     )
                 )
 
-    especies = nomes_formas()
     return render_template(
         "jogador/novo_pokemon.html",
         jogador=contexto.jogador,
-        especies=especies,
-        total_catalogo=len(especies),
+        total_catalogo=total_formas_ativas(),
         modo_mestre=modo_mestre,
         voltar_url=voltar_url,
         destino=destino_esperado,
@@ -221,8 +221,6 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         calculos=registro["calculos"],
         regras=contexto.regras,
         golpes_selecionados=golpes_formulario(pokemon_model, limite_golpes),
-        especies=nomes_formas(),
-        golpes=nomes_golpes(),
         modo_mestre=modo_mestre,
         estilo_combate=contexto.personagem.estilo_combate or "",
         retorno=retorno,
@@ -270,6 +268,30 @@ def _excluir(contexto, pokemon_id: str, *, modo_mestre: bool):
     return redirect(
         url_for(endpoint, **({"jogador_id": jogador_id} if modo_mestre else {}))
     )
+
+
+@pokemons_bp.get("/api/catalogo/formas")
+@login_obrigatorio
+def autocomplete_formas():
+    try:
+        itens = pesquisar_formas_autocomplete(request.args.get("q", ""), limite=20)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao pesquisar formas para autocomplete.")
+        return jsonify({"itens": []}), 503
+    return jsonify({"itens": itens})
+
+
+@pokemons_bp.get("/api/catalogo/golpes")
+@login_obrigatorio
+def autocomplete_golpes():
+    try:
+        itens = pesquisar_golpes_autocomplete(request.args.get("q", ""), limite=20)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao pesquisar golpes para autocomplete.")
+        return jsonify({"itens": []}), 503
+    return jsonify({"itens": itens})
 
 
 @pokemons_bp.get("/jogador/equipe")

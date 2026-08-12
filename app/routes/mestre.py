@@ -4,6 +4,7 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -14,6 +15,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+from app.services.painel_mestre_service import (
+    ajustar_pv_personagem,
+    ajustar_pv_pokemon,
+    carregar_painel_mestre,
+)
 from app.services.personagem_service import (
     atualizar_ficha_personagem,
     carregar_contexto_ficha,
@@ -39,28 +45,78 @@ def _dados_banco():
 @perfil_obrigatorio("mestre")
 def dashboard():
     try:
-        campanha, jogadores = _dados_banco()
+        painel = carregar_painel_mestre(campanha_codigo=_campanha_codigo())
     except SQLAlchemyError:
         db.session.rollback()
-        current_app.logger.exception("Falha ao carregar o painel do mestre.")
+        current_app.logger.exception("Falha ao carregar o painel geral do mestre.")
         flash("Não foi possível carregar os dados da campanha.", "erro")
         return render_template(
             "mestre/dashboard.html",
-            campanha={"nome": "Campanha indisponível"},
-            total_jogadores=0,
+            campanha={"nome": "Campanha indisponível", "descricao": None},
+            resumo={"jogadores": 0, "pokemons": 0, "equipe": 0, "box": 0, "alertas": 0},
+            jogadores=[],
             fonte_dados="PostgreSQL",
         ), 503
 
-    campanha_dto = {
-        "nome": campanha.nome if campanha else "Campanha",
-        "descricao": campanha.descricao if campanha else None,
-    }
     return render_template(
         "mestre/dashboard.html",
-        campanha=campanha_dto,
-        total_jogadores=len(jogadores),
+        campanha=painel.campanha,
+        resumo=painel.resumo,
+        jogadores=painel.jogadores,
         fonte_dados="PostgreSQL",
     )
+
+
+def _delta_pv() -> int | None:
+    try:
+        delta = int(request.form.get("delta", "0"))
+    except (TypeError, ValueError):
+        return None
+    return delta if -9999 <= delta <= 9999 and delta != 0 else None
+
+
+@mestre_bp.post("/painel/personagens/<personagem_id>/pv")
+@perfil_obrigatorio("mestre")
+def ajustar_pv_personagem_painel(personagem_id: str):
+    delta = _delta_pv()
+    if delta is None:
+        return jsonify({"erro": "Ajuste de PV inválido."}), 400
+    try:
+        resultado = ajustar_pv_personagem(
+            campanha_codigo=_campanha_codigo(),
+            personagem_id=personagem_id,
+            delta=delta,
+            usuario_id=session.get("usuario_id"),
+        )
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao ajustar PV do personagem pelo painel.")
+        return jsonify({"erro": "Não foi possível atualizar os PV."}), 503
+    if resultado is None:
+        return jsonify({"erro": "Personagem não encontrado."}), 404
+    return jsonify(resultado)
+
+
+@mestre_bp.post("/painel/pokemons/<pokemon_id>/pv")
+@perfil_obrigatorio("mestre")
+def ajustar_pv_pokemon_painel(pokemon_id: str):
+    delta = _delta_pv()
+    if delta is None:
+        return jsonify({"erro": "Ajuste de PV inválido."}), 400
+    try:
+        resultado = ajustar_pv_pokemon(
+            campanha_codigo=_campanha_codigo(),
+            pokemon_id=pokemon_id,
+            delta=delta,
+            usuario_id=session.get("usuario_id"),
+        )
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao ajustar PV do Pokémon pelo painel.")
+        return jsonify({"erro": "Não foi possível atualizar os PV."}), 503
+    if resultado is None:
+        return jsonify({"erro": "Pokémon não encontrado."}), 404
+    return jsonify(resultado)
 
 
 @mestre_bp.get("/jogadores")

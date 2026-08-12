@@ -126,3 +126,12 @@
 .preview-imagem-item { min-height:150px; }
 .preview-imagem-item img { height:148px; }
 @media (max-width:700px){.upload-item-linha{grid-template-columns:1fr}.preview-item-upload{max-width:240px}}
+
+[data-pesquisa-resultados] {
+    transition: opacity 120ms ease;
+}
+[data-pesquisa-resultados].pesquisa-dinamica-carregando {
+    opacity: .48;
+    pointer-events: none;
+}
+.pesquisa-dinamica-erro { margin-top: 16px; }

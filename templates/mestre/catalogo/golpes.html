@@ -14,15 +14,16 @@
     </div>
 </section>
 
-<form class="cartao filtros-catalogo filtros-golpes" method="get">
-    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ filtros.q }}" placeholder="Nome, código, descrição ou efeito"></div>
+<form class="cartao filtros-catalogo filtros-golpes" method="get" action="{{ url_for('catalogo_admin.golpes') }}" data-pesquisa-dinamica data-resultados="#resultados-golpes">
+    <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" type="search" autocomplete="off" value="{{ filtros.q }}" placeholder="Nome, código, descrição ou efeito"></div>
     <div class="campo"><label for="tipo_id">Tipo</label><select id="tipo_id" name="tipo_id"><option value="">Todos</option>{% if opcoes %}{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}" {% if filtros.tipo_id == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}{% endif %}</select></div>
     <div class="campo"><label for="categoria_id">Categoria</label><select id="categoria_id" name="categoria_id"><option value="">Todas</option>{% if opcoes %}{% for categoria in opcoes.categorias %}<option value="{{ categoria.id }}" {% if filtros.categoria_id == categoria.id|string %}selected{% endif %}>{{ categoria.nome }}</option>{% endfor %}{% endif %}</select></div>
     <div class="campo"><label for="origem">Origem</label><select id="origem" name="origem"><option value="todas" {% if filtros.origem == 'todas' %}selected{% endif %}>Todos</option><option value="oficiais" {% if filtros.origem == 'oficiais' %}selected{% endif %}>Importados</option><option value="personalizados" {% if filtros.origem == 'personalizados' %}selected{% endif %}>Personalizados</option></select></div>
     <div class="campo"><label for="situacao">Situação</label><select id="situacao" name="situacao"><option value="ativos" {% if filtros.situacao == 'ativos' %}selected{% endif %}>Ativos</option><option value="inativos" {% if filtros.situacao == 'inativos' %}selected{% endif %}>Inativos</option><option value="todos" {% if filtros.situacao == 'todos' %}selected{% endif %}>Todos</option></select></div>
-    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes') }}">Limpar</a></div>
+    <div class="acoes-filtros"><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" data-pesquisa-limpar href="{{ url_for('catalogo_admin.golpes') }}">Limpar</a></div>
 </form>
 
+<div id="resultados-golpes" data-pesquisa-resultados aria-live="polite">
 {% if pagina and pagina.itens %}
 <p class="resultado-contagem">{{ pagina.total }} golpe(s) encontrado(s).</p>
 <section class="grade-golpes-admin">
@@ -62,4 +63,9 @@
 {% else %}
 <section class="cartao estado-vazio"><h2>Nenhum golpe encontrado</h2><p>Altere os filtros ou crie um movimento personalizado.</p></section>
 {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pesquisa-dinamica.js') }}"></script>
 {% endblock %}

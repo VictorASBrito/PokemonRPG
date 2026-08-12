@@ -24,6 +24,7 @@
                 id="especie_nome"
                 name="especie_nome"
                 list="catalogo-especies"
+                data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
                 autocomplete="off"
                 placeholder="Digite para pesquisar, por exemplo: Torterra"
                 required
@@ -32,9 +33,7 @@
             <small>O nome precisa corresponder a uma opção do catálogo. Formas regionais e Mega Evoluções aparecem separadamente.</small>
         </div>
 
-        <datalist id="catalogo-especies">
-            {% for nome in especies %}<option value="{{ nome }}"></option>{% endfor %}
-        </datalist>
+        <datalist id="catalogo-especies"></datalist>
 
         <div class="aviso-configuracao">
             <strong>Configuração inicial</strong>
@@ -47,4 +46,8 @@
         </div>
     </form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 {% endblock %}

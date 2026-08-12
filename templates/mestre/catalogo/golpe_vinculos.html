@@ -31,8 +31,9 @@
 
 <section class="cartao secao-formulario espacamento-topo">
     <div class="secao-titulo"><div><span>2</span><h2>Adicionar forma</h2></div><p>Pesquise pelo nome da espécie, forma ou código.</p></div>
-    <form class="pesquisa-vinculos" method="get"><div class="campo"><label for="q">Pesquisa</label><input id="q" name="q" value="{{ termo }}" placeholder="Ex.: Charizard ou charizard-mega-x"></div><button class="botao botao-primario" type="submit">Pesquisar</button>{% if termo %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}">Limpar</a>{% endif %}</form>
+    <form class="pesquisa-vinculos" method="get" action="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}" data-pesquisa-dinamica data-resultados="#resultados-vinculos"><div class="campo"><label for="q">Pesquisa</label><input id="q" name="q" type="search" autocomplete="off" value="{{ termo }}" placeholder="Ex.: Charizard ou charizard-mega-x"></div><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" data-pesquisa-limpar href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}">Limpar</a></form>
 
+    <div id="resultados-vinculos" data-pesquisa-resultados aria-live="polite">
     {% if pagina and pagina.itens %}
     <div class="grade-formas-vinculo">
     {% for forma in pagina.itens %}
@@ -52,5 +53,10 @@
         {% if pagina.tem_proxima %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id, pagina=pagina.pagina+1, q=termo) }}">Próxima →</a>{% endif %}
     </nav>
     {% else %}<div class="efeitos-vazio"><strong>Nenhuma forma encontrada.</strong><span>Revise a pesquisa informada.</span></div>{% endif %}
+    </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pesquisa-dinamica.js') }}"></script>
 {% endblock %}

@@ -151,7 +151,7 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-A versão atual possui **33 testes automatizados aprovados**. Eles cobrem:
+A versão atual possui **42 testes automatizados aprovados**. Eles cobrem:
 
 - cadastro e edição da ficha do treinador;
 - nível compartilhado entre jogador e Pokémon;
@@ -167,7 +167,9 @@ A versão atual possui **33 testes automatizados aprovados**. Eles cobrem:
 - gerenciamento administrativo de espécies, formas e golpes;
 - editor visual de efeitos e vínculos de aprendizado;
 - catálogo de itens, editor de efeitos e operações de inventário;
-- consumo, transferência e equipamento de itens em Pokémon.
+- consumo, transferência e equipamento de itens em Pokémon;
+- pesquisas dinâmicas e autocomplete remoto do catálogo;
+- painel geral do mestre e ajustes rápidos de PV.
 
 ## PostgreSQL
 
@@ -270,3 +272,25 @@ flask --app app.py midia limpar-orfaos --aplicar
 
 `static/uploads/` não deve ser versionado no Git. Em produção, o backup da aplicação precisa incluir tanto o PostgreSQL quanto essa pasta.
 
+
+## Pesquisas dinâmicas
+
+As pesquisas do catálogo agora atualizam os resultados automaticamente enquanto o usuário digita ou altera filtros, sem recarregar a página inteira. Isso vale para espécies/formas, golpes, itens e formas disponíveis nos vínculos de golpes. A paginação dessas listagens também é carregada de forma dinâmica.
+
+As buscas de espécie/forma e de golpes dentro da ficha de Pokémon deixaram de carregar o catálogo inteiro em `datalist`: elas consultam o PostgreSQL conforme o texto é digitado e retornam apenas as primeiras correspondências.
+
+## Painel geral do mestre
+
+`/mestre/dashboard` agora é a central de acompanhamento da sessão. O painel exibe:
+
+- resumo de jogadores, Pokémon, equipe, Box e alertas;
+- pesquisa dinâmica por jogador, treinador, classe, origem ou Pokémon;
+- filtro para jogadores com alertas;
+- PV e Pokédolares do treinador;
+- equipe completa com imagem, tipos, PV, status e item carregado;
+- atalhos para ficha, equipe, inventário e Box;
+- ajustes rápidos de PV de treinadores e Pokémon, registrados no histórico de alterações.
+
+Esta etapa não exige migration nova. A revisão do banco continua sendo `d94c7ab20e51 (head)`.
+
+A suíte atual possui **42 testes automatizados aprovados**.

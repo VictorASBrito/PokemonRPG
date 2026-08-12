@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any, Iterable
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
@@ -15,6 +15,7 @@ from app.models.db import (
     Campanha,
     CategoriaGolpe,
     ConjuntoRegras,
+    EspeciePokemon,
     FormaPokemon,
     FormaPokemonAtributo,
     FormaPokemonTipo,
@@ -1084,6 +1085,74 @@ def renomear_box_db(campanha_id: uuid.UUID, nome: str) -> str | None:
         valor.valor = nome
     db.session.commit()
     return None
+
+
+def total_formas_ativas() -> int:
+    return int(db.session.scalar(select(func.count(FormaPokemon.id)).where(FormaPokemon.ativo.is_(True))) or 0)
+
+
+def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, str]]:
+    termo = str(termo or "").strip()
+    consulta = (
+        select(FormaPokemon)
+        .join(EspeciePokemon, EspeciePokemon.id == FormaPokemon.especie_id)
+        .where(FormaPokemon.ativo.is_(True), EspeciePokemon.ativo.is_(True))
+    )
+    if termo:
+        padrao = f"%{termo.lower()}%"
+        consulta = consulta.where(
+            or_(
+                func.lower(FormaPokemon.nome).like(padrao),
+                func.lower(FormaPokemon.codigo).like(padrao),
+                func.lower(EspeciePokemon.nome).like(padrao),
+            )
+        )
+    formas = list(
+        db.session.execute(
+            consulta.order_by(func.lower(FormaPokemon.nome)).limit(max(1, min(int(limite), 50)))
+        ).scalars()
+    )
+    return [
+        {
+            "valor": forma.nome,
+            "rotulo": forma.nome,
+            "detalhe": f"{forma.especie.nome} · {forma.codigo}",
+        }
+        for forma in formas
+    ]
+
+
+def pesquisar_golpes_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, str]]:
+    termo = str(termo or "").strip()
+    consulta = select(Golpe).where(Golpe.ativo.is_(True))
+    if termo:
+        padrao = f"%{termo.lower()}%"
+        consulta = consulta.where(
+            or_(
+                func.lower(Golpe.nome).like(padrao),
+                func.lower(Golpe.codigo).like(padrao),
+            )
+        )
+    golpes = list(
+        db.session.execute(
+            consulta.order_by(func.lower(Golpe.nome)).limit(max(1, min(int(limite), 50)))
+        ).scalars()
+    )
+    return [
+        {
+            "valor": golpe.nome,
+            "rotulo": golpe.nome,
+            "detalhe": " · ".join(
+                parte
+                for parte in [
+                    golpe.tipo.nome if golpe.tipo else "",
+                    golpe.categoria.nome if golpe.categoria else "",
+                ]
+                if parte
+            ),
+        }
+        for golpe in golpes
+    ]
 
 
 def nomes_formas() -> list[str]:
