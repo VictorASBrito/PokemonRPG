@@ -23,7 +23,6 @@ from app.services.pokemon_db_service import (
     golpes_formulario,
     nomes_formas,
     nomes_golpes,
-    nomes_itens,
     registro_detalhado,
     remover_pokemon_db,
     atualizar_pokemon_formulario,
@@ -63,6 +62,7 @@ def _render_equipe(contexto, *, modo_mestre: bool):
         voltar_url=voltar_url,
         editar_endpoint=editar_endpoint,
         boxes_url=boxes_url,
+        inventario_url=url_for("inventario.inventario_mestre", personagem_id=jogador_id) if modo_mestre else url_for("inventario.inventario_jogador"),
         fonte_dados="PostgreSQL",
     )
 
@@ -223,7 +223,6 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         golpes_selecionados=golpes_formulario(pokemon_model, limite_golpes),
         especies=nomes_formas(),
         golpes=nomes_golpes(),
-        itens=nomes_itens(),
         modo_mestre=modo_mestre,
         estilo_combate=contexto.personagem.estilo_combate or "",
         retorno=retorno,
@@ -235,6 +234,11 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         excluir_url=url_for(
             "pokemons.excluir_mestre" if modo_mestre else "pokemons.excluir_jogador",
             **parametros_acao,
+        ),
+        inventario_url=(
+            url_for("inventario.inventario_mestre", personagem_id=jogador_id)
+            if modo_mestre
+            else url_for("inventario.inventario_jogador")
         ),
         fonte_dados="PostgreSQL",
     )

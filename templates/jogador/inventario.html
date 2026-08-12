@@ -1,1 +1,122 @@
-{# Tela reservada para a próxima etapa do projeto. #}
+{% extends "base.html" %}
+{% block titulo %}Inventário de {{ personagem.nome }} | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/inventario.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">{{ 'Administração do jogador' if modo_mestre else 'Mochila do treinador' }}</p>
+        <h1>Inventário de {{ personagem.nome }}</h1>
+        <p class="texto-suave">Itens, quantidades, transferências e equipamentos são gravados diretamente no PostgreSQL.</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
+</section>
+
+<section class="inventario-resumo">
+    <article class="cartao resumo-inventario"><strong>{{ contexto.total_itens }}</strong><span>Itens diferentes</span></article>
+    <article class="cartao resumo-inventario"><strong>{{ contexto.total_unidades }}</strong><span>Unidades na mochila</span></article>
+    <article class="cartao resumo-inventario"><strong>{{ contexto.total_equipados }}</strong><span>Pokémon equipados</span></article>
+</section>
+
+{% if modo_mestre %}
+<section class="cartao inventario-adicionar">
+    <div class="titulo-inventario-secao">
+        <div><p class="rotulo">Controle do mestre</p><h2>Adicionar item do catálogo</h2></div>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.itens') }}">Abrir catálogo</a>
+    </div>
+    <form class="grade-adicionar-item" method="post" action="{{ url_for('inventario.adicionar_mestre', personagem_id=personagem.id) }}">
+        <div class="campo"><label for="novo_item_id">Item</label><select id="novo_item_id" name="item_id" required><option value="">Selecione</option>{% for item in contexto.catalogo %}<option value="{{ item.id }}">{{ item.nome }}{% if item.categoria %} · {{ item.categoria.nome }}{% endif %}</option>{% endfor %}</select></div>
+        <div class="campo"><label for="nova_quantidade">Quantidade</label><input id="nova_quantidade" name="quantidade" type="number" min="1" max="999999" value="1" required></div>
+        <button class="botao botao-primario" type="submit">Adicionar</button>
+    </form>
+</section>
+{% endif %}
+
+<section class="cartao inventario-pesquisa">
+    <div class="campo"><label for="pesquisa-inventario">Pesquisar na mochila</label><input id="pesquisa-inventario" placeholder="Nome, categoria ou descrição" autocomplete="off"></div>
+    <div class="chips filtros-inventario" role="group" aria-label="Filtros do inventário">
+        <button class="chip filtro-inventario ativo" type="button" data-filtro="todos">Todos</button>
+        <button class="chip filtro-inventario" type="button" data-filtro="consumivel">Consumíveis</button>
+        <button class="chip filtro-inventario" type="button" data-filtro="equipavel">Equipáveis</button>
+    </div>
+</section>
+
+{% if contexto.inventario %}
+<section id="grade-inventario" class="grade-inventario">
+{% for registro in contexto.inventario %}
+    {% set item = registro.item %}
+    <article class="cartao inventario-item" data-nome="{{ (item.nome ~ ' ' ~ (item.categoria.nome if item.categoria else '') ~ ' ' ~ (item.descricao or ''))|lower }}" data-consumivel="{{ '1' if item.consumivel else '0' }}" data-equipavel="{{ '1' if item.equipavel else '0' }}">
+        <div class="inventario-item-topo">
+            <div class="inventario-item-imagem">{% if item.imagem_url %}<img src="{{ item.imagem_url }}" alt="{{ item.nome }}" loading="lazy">{% else %}<span>◆</span>{% endif %}</div>
+            <div class="inventario-item-identificacao">
+                <div class="chips">
+                    {% if item.categoria %}<span class="chip">{{ item.categoria.nome }}</span>{% endif %}
+                    {% if item.consumivel %}<span class="chip chip-destaque">Consumível</span>{% endif %}
+                    {% if item.equipavel %}<span class="chip chip-destaque">Equipável</span>{% endif %}
+                    {% if not item.ativo %}<span class="chip">Inativo no catálogo</span>{% endif %}
+                </div>
+                <h2>{{ item.nome }}</h2>
+                <p>{{ item.descricao or 'Sem descrição cadastrada.' }}</p>
+            </div>
+            <div class="quantidade-destaque"><small>Quantidade</small><strong>{{ registro.quantidade }}</strong></div>
+        </div>
+
+        {% if item.efeitos %}<details class="detalhes-efeitos"><summary>Ver efeitos configurados</summary><pre>{{ item.efeitos|tojson(indent=2) }}</pre></details>{% endif %}
+
+        <div class="acoes-inventario-item">
+            {% if modo_mestre %}
+            <form class="acao-inventario compacta" method="post" action="{{ url_for('inventario.ajustar_mestre', personagem_id=personagem.id) }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <label>Corrigir quantidade<input name="quantidade" type="number" min="0" max="999999" value="{{ registro.quantidade }}"></label>
+                <button class="botao botao-secundario" type="submit">Atualizar</button>
+            </form>
+            {% endif %}
+
+            {% if item.consumivel %}
+            <form class="acao-inventario compacta" method="post" action="{{ url_for('inventario.usar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.usar_jogador') }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <label>Usar<input name="quantidade" type="number" min="1" max="{{ registro.quantidade }}" value="1"></label>
+                <button class="botao botao-primario" type="submit">Registrar uso</button>
+            </form>
+            {% endif %}
+
+            {% if item.equipavel and contexto.pokemons %}
+            <form class="acao-inventario" method="post" action="{{ url_for('inventario.equipar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.equipar_jogador') }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <label>Entregar para um Pokémon<select name="pokemon_id" required><option value="">Selecione</option>{% for pokemon in contexto.pokemons %}<option value="{{ pokemon.id }}">{{ pokemon.apelido or pokemon.forma_pokemon.nome }}{% if pokemon.item_equipado %} · troca {{ pokemon.item_equipado.nome }}{% endif %}</option>{% endfor %}</select></label>
+                <button class="botao botao-secundario" type="submit">Equipar</button>
+            </form>
+            {% endif %}
+
+            {% if contexto.destinatarios %}
+            <form class="acao-inventario transferir" method="post" action="{{ url_for('inventario.transferir_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.transferir_jogador') }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <label>Transferir para<select name="personagem_destino_id" required><option value="">Selecione</option>{% for destino in contexto.destinatarios %}<option value="{{ destino.id }}">{{ destino.nome }}</option>{% endfor %}</select></label>
+                <label>Quantidade<input name="quantidade" type="number" min="1" max="{{ registro.quantidade }}" value="1"></label>
+                <button class="botao botao-secundario" type="submit">Transferir</button>
+            </form>
+            {% endif %}
+        </div>
+    </article>
+{% endfor %}
+</section>
+<p id="inventario-sem-resultados" class="cartao estado-vazio inventario-sem-resultados" hidden>Nenhum item corresponde à pesquisa.</p>
+{% else %}
+<section class="cartao estado-vazio"><div class="estado-vazio-icone">◇</div><h2>A mochila está vazia</h2><p class="texto-suave">Os itens entregues pelo mestre aparecerão aqui.</p></section>
+{% endif %}
+
+<section class="cabecalho-pagina inventario-subcabecalho">
+    <div><p class="rotulo">Itens carregados</p><h2>Pokémon equipados</h2><p class="texto-suave">Retirar um item devolve uma unidade para a mochila.</p></div>
+</section>
+<section class="grade-equipados">
+{% for pokemon in contexto.pokemons if pokemon.item_equipado %}
+    <article class="cartao pokemon-equipado">
+        <div><strong>{{ pokemon.apelido or pokemon.forma_pokemon.nome }}</strong><span>{{ pokemon.forma_pokemon.nome }}</span></div>
+        <div class="item-equipado-nome"><small>Carregando</small><strong>{{ pokemon.item_equipado.nome }}</strong></div>
+        <form method="post" action="{{ url_for('inventario.desequipar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.desequipar_jogador') }}"><input type="hidden" name="pokemon_id" value="{{ pokemon.id }}"><button class="botao botao-secundario" type="submit">Devolver à mochila</button></form>
+    </article>
+{% else %}
+    <article class="cartao estado-vazio estado-vazio-menor"><p class="texto-suave">Nenhum Pokémon está carregando item.</p></article>
+{% endfor %}
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/inventario.js') }}"></script>{% endblock %}

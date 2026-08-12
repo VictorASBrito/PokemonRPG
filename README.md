@@ -12,8 +12,9 @@ Aplicação Flask para gerenciamento da campanha. Autenticação, ficha, dashboa
 - criação automática de usuário e personagem no PostgreSQL;
 - listagem dos jogadores da campanha pelo banco;
 - ficha, inventário, insígnias e histórico de alterações no PostgreSQL;
+- catálogo administrativo de itens e movimentações de inventário;
 - Pokémon, equipe e Box armazenados integralmente no PostgreSQL;
-- painel administrativo para espécies e formas Pokémon.
+- painel administrativo para espécies, formas, golpes e itens.
 
 ### Dashboard do jogador
 
@@ -32,7 +33,8 @@ Aplicação Flask para gerenciamento da campanha. Autenticação, ficha, dashboa
 - seis atributos do treinador;
 - cálculo automático dos PV máximos a partir de Saúde;
 - números shiny, pokédolares, benefícios e anotações;
-- inventário e insígnias editáveis.
+- inventário exibido na ficha e gerenciado em uma tela própria;
+- insígnias editáveis.
 
 ### Equipe Pokémon
 
@@ -42,7 +44,7 @@ Aplicação Flask para gerenciamento da campanha. Autenticação, ficha, dashboa
 - catálogo com 687 golpes;
 - cadastro, edição e remoção de Pokémon;
 - espécie, apelido, gênero, Shiny, natureza e status;
-- item carregado e anotações individuais;
+- item carregado controlado pelo inventário e anotações individuais;
 - até quatro golpes, sem controle de recurso ou quantidade de usos;
 - imagem normal ou Shiny carregada a partir do catálogo;
 - mudança de espécie para representar evoluções e formas diferentes.
@@ -125,8 +127,10 @@ Troque a senha e a chave secreta antes de publicar o projeto na internet.
 ## Configurações e dados
 
 A ficha do personagem, o inventário, as insígnias e suas configurações agora
-são lidos e gravados no PostgreSQL. As opções de origem, classe, estilo de
-combate e limites de atributos ficam em `regras` e `regra_valores`.
+são lidos e gravados no PostgreSQL. O inventário possui uma tela própria para
+quantidades, consumo, transferências e itens carregados por Pokémon. As opções
+de origem, classe, estilo de combate e limites de atributos ficam em `regras` e
+`regra_valores`.
 
 Os arquivos abaixo permanecem apenas como fonte de importação e backup legado:
 
@@ -147,7 +151,7 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-Os testes cobrem:
+A versão atual possui **33 testes automatizados aprovados**. Eles cobrem:
 
 - cadastro e edição da ficha do treinador;
 - nível compartilhado entre jogador e Pokémon;
@@ -161,7 +165,9 @@ Os testes cobrem:
 - pesquisa dinâmica e renomeação da Box;
 - renderização do dashboard;
 - gerenciamento administrativo de espécies, formas e golpes;
-- editor visual de efeitos e vínculos de aprendizado.
+- editor visual de efeitos e vínculos de aprendizado;
+- catálogo de itens, editor de efeitos e operações de inventário;
+- consumo, transferência e equipamento de itens em Pokémon.
 
 ## PostgreSQL
 
@@ -200,18 +206,40 @@ flask --app app.py db upgrade
 flask --app app.py pokemon verificar
 ```
 
-A migration atual esperada é `a31d7e8c4f20 (head)`. Consulte
+A migration atual esperada é `d94c7ab20e51 (head)`. Consulte
 `POKEMON_POSTGRESQL.md` para os testes manuais e detalhes da estrutura.
 
 ## Painel administrativo do catálogo
 
 O mestre pode pesquisar, criar, editar, duplicar, desativar e simular espécies
-e formas Pokémon diretamente no PostgreSQL. Esta etapa não cria migration nova.
+e formas Pokémon, golpes e itens diretamente no PostgreSQL. O módulo de itens
+utiliza a migration `d94c7ab20e51`.
 Valide com:
 
 ```powershell
 flask --app app.py catalogo verificar
 ```
 
-Consulte `CATALOGO_ADMIN.md` para espécies e formas, e
-`CATALOGO_GOLPES.md` para golpes, efeitos e vínculos de aprendizado.
+Consulte `CATALOGO_ADMIN.md` para espécies e formas,
+`CATALOGO_GOLPES.md` para golpes, efeitos e vínculos de aprendizado e
+`ITENS_INVENTARIO.md` para o catálogo de itens e o inventário dos personagens.
+
+
+## Itens e inventário
+
+O catálogo de itens e as movimentações do inventário usam exclusivamente o
+PostgreSQL. A ficha do personagem e a ficha do Pokémon exibem os itens, mas
+qualquer alteração de quantidade ou item carregado deve ser feita pela tela de
+inventário.
+
+Para aplicar e validar esta etapa:
+
+```powershell
+flask --app app.py db upgrade
+flask --app app.py db current
+flask --app app.py catalogo verificar
+flask --app app.py inventario verificar
+```
+
+A revisão esperada é `d94c7ab20e51 (head)`. Consulte
+`ITENS_INVENTARIO.md` para o fluxo de teste e as regras de movimentação.

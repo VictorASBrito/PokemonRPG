@@ -8,6 +8,21 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
 
+from app.services.item_admin_service import (
+    ALVOS_EFEITO_ITEM,
+    OPERACOES_ITEM,
+    TIPOS_EFEITO_ITEM,
+    alterar_atividade_item,
+    atualizar_item_admin,
+    carregar_item_admin,
+    criar_item_admin,
+    duplicar_item_admin,
+    efeitos_item_para_editor,
+    listar_itens_admin,
+    opcoes_itens,
+    resumo_itens,
+)
+
 from app.services.golpe_admin_service import (
     ALVOS_EFEITO,
     METODOS_APRENDIZADO,
@@ -65,9 +80,10 @@ def dashboard():
     try:
         resumo = resumo_catalogo()
         resumo.update(resumo_golpes())
+        resumo.update(resumo_itens())
     except SQLAlchemyError:
         _erro_banco("Falha ao carregar o resumo do catálogo.")
-        resumo = {"especies": 0, "especies_ativas": 0, "formas": 0, "formas_ativas": 0, "tipos": 0, "golpes": 0, "golpes_ativos": 0, "categorias_golpe": 0, "vinculos_golpe": 0}
+        resumo = {"especies": 0, "especies_ativas": 0, "formas": 0, "formas_ativas": 0, "tipos": 0, "golpes": 0, "golpes_ativos": 0, "categorias_golpe": 0, "vinculos_golpe": 0, "itens": 0, "itens_ativos": 0, "categorias_item": 0, "itens_inventario": 0, "itens_equipados": 0}
     return render_template("mestre/catalogo/dashboard.html", resumo=resumo)
 
 
@@ -454,3 +470,166 @@ def remover_vinculo_do_golpe(golpe_id: str, vinculo_id: str):
     else:
         flash("Vínculo removido." if removido else "Vínculo não encontrado.", "sucesso" if removido else "aviso")
     return redirect(url_for("catalogo_admin.vinculos_do_golpe", golpe_id=golpe_id))
+
+
+@catalogo_admin_bp.get("/itens")
+@perfil_obrigatorio("mestre")
+def itens():
+    filtros = {
+        "q": request.args.get("q", "").strip(),
+        "categoria_id": request.args.get("categoria_id", "").strip(),
+        "situacao": request.args.get("situacao", "ativos").strip(),
+        "origem": request.args.get("origem", "todas").strip(),
+        "uso": request.args.get("uso", "todos").strip(),
+    }
+    try:
+        pagina_atual = max(1, int(request.args.get("pagina", "1")))
+    except ValueError:
+        pagina_atual = 1
+    try:
+        pagina = listar_itens_admin(
+            termo=filtros["q"],
+            categoria_id=filtros["categoria_id"],
+            situacao=filtros["situacao"],
+            origem=filtros["origem"],
+            uso=filtros["uso"],
+            pagina=pagina_atual,
+        )
+        opcoes = opcoes_itens()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao listar itens do catálogo.")
+        return render_template(
+            "mestre/catalogo/itens.html",
+            pagina=None,
+            opcoes=None,
+            filtros=filtros,
+        ), 503
+    return render_template(
+        "mestre/catalogo/itens.html",
+        pagina=pagina,
+        opcoes=opcoes,
+        filtros=filtros,
+    )
+
+
+@catalogo_admin_bp.route("/itens/novo", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def novo_item():
+    try:
+        opcoes = opcoes_itens()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar as opções dos itens.")
+        return redirect(url_for("catalogo_admin.itens"))
+
+    dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
+    efeitos_iniciais = []
+    if request.method == "POST":
+        try:
+            item, erros = criar_item_admin(
+                request.form,
+                usuario_id=session.get("usuario_id"),
+            )
+            efeitos_iniciais = _efeitos_enviados()
+        except SQLAlchemyError:
+            _erro_banco("Falha ao criar item no catálogo.")
+            item = None
+            erros = ["Não foi possível gravar o item no banco de dados."]
+        if not erros and item is not None:
+            flash(f"{item.nome} foi criado no catálogo.", "sucesso")
+            return redirect(url_for("catalogo_admin.editar_item", item_id=str(item.id)))
+        for erro in erros:
+            flash(erro, "erro")
+
+    return render_template(
+        "mestre/catalogo/item_form.html",
+        item=None,
+        dados=dados,
+        opcoes=opcoes,
+        modo="novo",
+        efeitos_iniciais=efeitos_iniciais,
+        tipos_efeito=TIPOS_EFEITO_ITEM,
+        alvos_efeito=ALVOS_EFEITO_ITEM,
+        operacoes=OPERACOES_ITEM,
+    )
+
+
+@catalogo_admin_bp.route("/itens/<item_id>/editar", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def editar_item(item_id: str):
+    try:
+        item = carregar_item_admin(item_id)
+        opcoes = opcoes_itens()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar item para edição.")
+        return redirect(url_for("catalogo_admin.itens"))
+    if item is None:
+        flash("Item não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.itens"))
+
+    dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
+    efeitos_iniciais = efeitos_item_para_editor(item.efeitos)
+    if request.method == "POST":
+        try:
+            erros = atualizar_item_admin(
+                item,
+                request.form,
+                usuario_id=session.get("usuario_id"),
+            )
+        except SQLAlchemyError:
+            _erro_banco("Falha ao atualizar item no catálogo.")
+            erros = ["Não foi possível salvar as alterações no banco de dados."]
+        if not erros:
+            flash("Item atualizado com sucesso.", "sucesso")
+            return redirect(url_for("catalogo_admin.editar_item", item_id=item_id))
+        for erro in erros:
+            flash(erro, "erro")
+        efeitos_iniciais = _efeitos_enviados() or efeitos_iniciais
+
+    return render_template(
+        "mestre/catalogo/item_form.html",
+        item=item,
+        dados=dados,
+        opcoes=opcoes,
+        modo="editar",
+        efeitos_iniciais=efeitos_iniciais,
+        tipos_efeito=TIPOS_EFEITO_ITEM,
+        alvos_efeito=ALVOS_EFEITO_ITEM,
+        operacoes=OPERACOES_ITEM,
+    )
+
+
+@catalogo_admin_bp.post("/itens/<item_id>/atividade")
+@perfil_obrigatorio("mestre")
+def atividade_item(item_id: str):
+    item = carregar_item_admin(item_id)
+    if item is None:
+        flash("Item não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.itens"))
+    ativo = request.form.get("ativo") == "1"
+    try:
+        alterar_atividade_item(
+            item,
+            ativo=ativo,
+            usuario_id=session.get("usuario_id"),
+        )
+    except SQLAlchemyError:
+        _erro_banco("Falha ao alterar a atividade do item.")
+    else:
+        flash(f"{item.nome} foi {'reativado' if ativo else 'desativado'}.", "sucesso")
+    return redirect(url_for("catalogo_admin.editar_item", item_id=item_id))
+
+
+@catalogo_admin_bp.post("/itens/<item_id>/duplicar")
+@perfil_obrigatorio("mestre")
+def duplicar_item(item_id: str):
+    item = carregar_item_admin(item_id)
+    if item is None:
+        flash("Item não encontrado.", "erro")
+        return redirect(url_for("catalogo_admin.itens"))
+    try:
+        copia = duplicar_item_admin(item, usuario_id=session.get("usuario_id"))
+    except SQLAlchemyError:
+        _erro_banco("Falha ao duplicar item.")
+        return redirect(url_for("catalogo_admin.editar_item", item_id=item_id))
+    flash("Cópia criada como item personalizado e inativo.", "sucesso")
+    return redirect(url_for("catalogo_admin.editar_item", item_id=str(copia.id)))

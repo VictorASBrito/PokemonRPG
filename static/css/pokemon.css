@@ -461,3 +461,5 @@ progress::-moz-progress-bar { background: #3a9b61; border-radius: 999px; }
     .barra-salvar-pokemon { align-items: stretch; flex-direction: column; }
     .barra-salvar-pokemon .botao { width: 100%; }
 }
+.campo-item-carregado { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+@media(max-width:640px){.campo-item-carregado{align-items:stretch;flex-direction:column}}

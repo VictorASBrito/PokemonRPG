@@ -91,7 +91,7 @@ historico_alteracoes
 A revisão esperada continua sendo:
 
 ```text
-a31d7e8c4f20 (head)
+d94c7ab20e51 (head)
 ```
 
 ## Aplicação
@@ -137,3 +137,6 @@ Catálogo de golpes está consistente no PostgreSQL.
 - efeitos textuais continuam válidos mesmo quando ainda não possuem automação;
 - o editor não executa efeitos em combate nesta etapa; ele apenas estrutura e
   administra os dados que serão utilizados pelo futuro assistente de combate.
+
+
+> Na versão consolidada do projeto, a revisão atual é `d94c7ab20e51` por causa do módulo posterior de itens e inventário. Consulte `ITENS_INVENTARIO.md`.

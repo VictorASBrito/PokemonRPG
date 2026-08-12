@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
@@ -27,6 +27,7 @@ class CategoriaItem(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
 class Item(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     __tablename__ = "itens"
     __table_args__ = (
+        CheckConstraint("preco >= 0", name="preco_nao_negativo"),
         Index(
             "ix_itens_nome_trgm",
             "nome",
@@ -43,6 +44,18 @@ class Item(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     )
     descricao: Mapped[str | None] = mapped_column(Text)
     imagem_url: Mapped[str | None] = mapped_column(String(500))
+    preco: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    consumivel: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    equipavel: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    uso_em_batalha: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     efeitos: Mapped[dict[str, Any] | list[Any] | None] = mapped_column(JSON_DOCUMENT)
     personalizado: Mapped[bool] = mapped_column(
         nullable=False,

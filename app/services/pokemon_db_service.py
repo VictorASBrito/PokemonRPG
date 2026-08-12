@@ -881,7 +881,7 @@ def atualizar_pokemon_formulario(
     pokemon.shiny = formulario.get("shiny") == "1"
     pokemon.anotacoes = str(formulario.get("anotacoes", "")).strip() or None
 
-    erros.extend(_sincronizar_item(pokemon, str(formulario.get("item_carregado", ""))))
+    # Itens equipados são alterados exclusivamente pela tela de inventário.
     erros.extend(_sincronizar_status(pokemon, str(formulario.get("status", "Nenhum"))))
     erros.extend(
         _sincronizar_golpes(

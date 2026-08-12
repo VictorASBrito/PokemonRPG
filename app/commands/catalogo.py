@@ -8,15 +8,18 @@ from app.extensions import db
 from app.models.db import (
     Atributo,
     CategoriaGolpe,
+    CategoriaItem,
     EspeciePokemon,
     FormaPokemon,
     FormaPokemonAtributo,
     FormaPokemonGolpe,
     FormaPokemonTipo,
     Golpe,
+    Item,
     TipoPokemon,
 )
 from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, efeitos_para_editor
+from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
 
 catalogo_cli = Blueprint("catalogo_cli", __name__)
 
@@ -28,7 +31,7 @@ def catalogo_group() -> None:
 
 @catalogo_group.command("verificar")
 def verificar() -> None:
-    """Confere formas sem espécie, tipos ou atributos base."""
+    """Confere espécies, formas, golpes, itens e seus relacionamentos."""
     atributos_esperados = int(
         db.session.scalar(
             select(func.count(Atributo.id)).where(
@@ -140,3 +143,34 @@ def verificar() -> None:
             )
         raise click.ClickException("Foram encontradas inconsistências no catálogo de golpes.")
     click.echo("Catálogo de golpes está consistente no PostgreSQL.")
+
+    problemas_itens: list[str] = []
+    tipos_efeito_item_validos = {item[0] for item in TIPOS_EFEITO_ITEM}
+    itens_catalogo = list(db.session.execute(select(Item)).scalars())
+    for item in itens_catalogo:
+        if item.preco < 0:
+            problemas_itens.append(f"{item.nome}: preço negativo.")
+        if item.categoria_id:
+            categoria = db.session.get(CategoriaItem, item.categoria_id)
+            if categoria is None:
+                problemas_itens.append(f"{item.nome}: categoria inexistente.")
+            elif item.ativo and not categoria.ativo:
+                problemas_itens.append(f"{item.nome}: item ativo vinculado a categoria inativa.")
+        efeitos = efeitos_item_para_editor(item.efeitos)
+        if len(efeitos) > 20:
+            problemas_itens.append(f"{item.nome}: possui mais de 20 efeitos.")
+        for indice, efeito in enumerate(efeitos, start=1):
+            tipo_efeito = efeito.get("tipo", "texto")
+            if tipo_efeito not in tipos_efeito_item_validos:
+                problemas_itens.append(
+                    f"{item.nome}: efeito {indice} possui tipo desconhecido ({tipo_efeito})."
+                )
+
+    click.echo(f"Itens: {len(itens_catalogo)} registro(s) no catálogo.")
+    if problemas_itens:
+        for problema in problemas_itens[:50]:
+            click.echo(f"- {problema}", err=True)
+        if len(problemas_itens) > 50:
+            click.echo(f"- ... e mais {len(problemas_itens) - 50} problema(s).", err=True)
+        raise click.ClickException("Foram encontradas inconsistências no catálogo de itens.")
+    click.echo("Catálogo de itens está consistente no PostgreSQL.")

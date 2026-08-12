@@ -21,6 +21,10 @@ Os arquivos JSON não são mais consultados pelas telas de Pokémon, equipe, Box
 dashboard. Eles devem ser preservados apenas como backup e fonte de importação
 legada.
 
+O item carregado é exibido na ficha do Pokémon, mas sua alteração ocorre pela
+tela oficial de inventário para manter as quantidades consistentes. Consulte
+`ITENS_INVENTARIO.md`.
+
 ## 1. Preserve os dados locais
 
 Antes de substituir o projeto, mantenha:
@@ -102,11 +106,12 @@ Saia de uma sessão antiga e entre novamente. Depois valide:
 2. tela da equipe;
 3. tela da Box;
 4. criação de Pokémon por um espaço vazio da Box;
-5. edição de espécie, natureza, status, item, bônus e golpes;
-6. inclusão do Pokémon no final da equipe;
-7. retirada do Pokémon para o final da Box;
-8. pesquisa dinâmica da Box;
-9. alteração do nível do jogador e recálculo de toda a equipe.
+5. edição de espécie, natureza, status, bônus e golpes;
+6. entrega e retirada do item carregado pela tela de inventário;
+7. inclusão do Pokémon no final da equipe;
+8. retirada do Pokémon para o final da Box;
+9. pesquisa dinâmica da Box;
+10. alteração do nível do jogador e recálculo de toda a equipe.
 
 ## Tabelas principais
 

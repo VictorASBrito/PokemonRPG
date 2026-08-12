@@ -208,7 +208,17 @@ def app_db(monkeypatch, tmp_path):
         categoria_fisico = CategoriaGolpe(codigo="fisico", nome="Físico", ativo=True)
         categoria_especial = CategoriaGolpe(codigo="especial", nome="Especial", ativo=True)
         categoria_item = CategoriaItem(codigo="bagas", nome="Bagas", ativo=True)
-        item = Item(codigo="baga-laranja", nome="Baga Laranja", categoria=categoria_item, ativo=True)
+        item = Item(
+            codigo="baga-laranja",
+            nome="Baga Laranja",
+            categoria=categoria_item,
+            preco=200,
+            consumivel=True,
+            equipavel=True,
+            uso_em_batalha=True,
+            efeitos={"versao": 1, "efeitos": [{"tipo": "recuperar_pv", "alvo": "pokemon", "operacao": "fixo", "valor": 10}]},
+            ativo=True,
+        )
         db.session.add_all(
             [tipo_grama, tipo_fogo, categoria_fisico, categoria_especial, categoria_item, item]
         )

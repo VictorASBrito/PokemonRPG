@@ -63,7 +63,8 @@ def test_adicionar_na_box_e_editar_pokemon_sem_pp_xp_ou_amizade(app_db, client_d
         assert pokemon.apelido == "Broto"
         assert pokemon.genero == "♂"
         assert pokemon.natureza.nome == "Valente"
-        assert pokemon.item_equipado.nome == "Baga Laranja"
+        # Itens agora são equipados exclusivamente pela tela de inventário.
+        assert pokemon.item_equipado is None
         assert pokemon.status_ativos[0].status.nome == "Paralisado"
         golpes = list(
             db.session.execute(

@@ -169,31 +169,20 @@
                 <p class="rotulo">Mochila</p>
                 <h2>Inventário</h2>
             </div>
-            <button class="botao botao-secundario" type="button" id="adicionar-item">Adicionar item</button>
+            <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) if modo_mestre else url_for('inventario.inventario_jogador') }}">Gerenciar inventário</a>
         </div>
 
-        <div class="tabela-editavel" id="lista-inventario">
-            <div class="linha-tabela cabecalho-tabela">
-                <span>Item</span>
-                <span>Quantidade</span>
-                <span aria-hidden="true"></span>
-            </div>
-            {% set inventario = jogador.get('inventario', []) %}
-            {% for item in inventario if item.get('nome') %}
-                <div class="linha-tabela linha-item">
-                    <input name="item_nome" value="{{ item.get('nome', '') }}" placeholder="Nome do item">
-                    <input name="item_quantidade" type="number" min="0" value="{{ item.get('quantidade', 0) }}">
-                    <button type="button" class="botao-remover" aria-label="Remover item">×</button>
-                </div>
+        {% set inventario = jogador.get('inventario', []) %}
+        {% if inventario %}
+        <div class="tabela-editavel inventario-resumo-ficha">
+            <div class="linha-tabela cabecalho-tabela"><span>Item</span><span>Quantidade</span><span>Categoria</span></div>
+            {% for item in inventario %}
+            <div class="linha-tabela"><span>{{ item.get('nome') }}</span><strong>{{ item.get('quantidade', 0) }}</strong><span>{{ item.get('categoria') or 'Sem categoria' }}</span></div>
             {% endfor %}
-            {% if not inventario %}
-                <div class="linha-tabela linha-item">
-                    <input name="item_nome" placeholder="Nome do item">
-                    <input name="item_quantidade" type="number" min="0" value="1">
-                    <button type="button" class="botao-remover" aria-label="Remover item">×</button>
-                </div>
-            {% endif %}
         </div>
+        {% else %}
+        <p class="texto-suave">A mochila está vazia. Use a tela própria para adicionar, usar, equipar ou transferir itens.</p>
+        {% endif %}
     </section>
 
     <section class="cartao secao-ficha">

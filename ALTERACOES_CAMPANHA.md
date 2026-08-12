@@ -82,3 +82,15 @@ Os golpes passam a ser armazenados apenas desta forma:
 - Formas podem ser duplicadas, desativadas e reativadas sem exclusão física.
 - A prévia de atributos usa as regras atuais da campanha, incluindo Shiny, natureza e estilo de combate.
 - Todas as alterações são registradas em `historico_alteracoes`.
+
+## Itens e inventário
+
+- Itens agora possuem preço, categoria, imagem, descrição e indicadores de uso.
+- O mestre pode criar, editar, duplicar, desativar e reativar itens pelo catálogo.
+- Efeitos de itens são configurados por um editor visual e armazenados de forma versionada.
+- Quantidades são controladas exclusivamente em `personagem_itens`.
+- O inventário não é mais alterado como texto livre pela ficha do personagem.
+- Itens carregados não são mais alterados diretamente pela ficha do Pokémon.
+- Equipar, desequipar, trocar, consumir e transferir itens movimenta as quantidades reais.
+- Transferências são permitidas apenas entre personagens ativos da mesma campanha.
+- Todas as movimentações são registradas em `historico_alteracoes`.

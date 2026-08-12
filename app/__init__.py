@@ -29,17 +29,19 @@ def create_app() -> Flask:
     # pelo Alembic. Os JSON permanecem apenas como fonte de importação legada.
     from app import models as _models  # noqa: F401
 
-    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli
+    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli
     from app.routes.auth import auth_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
     from app.routes.boxes import boxes_bp
     from app.routes.jogadores import jogadores_bp
+    from app.routes.inventario import inventario_bp
     from app.routes.mestre import mestre_bp
     from app.routes.pokemons import pokemons_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(catalogo_admin_bp)
     app.register_blueprint(jogadores_bp)
+    app.register_blueprint(inventario_bp)
     app.register_blueprint(mestre_bp)
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
@@ -49,6 +51,7 @@ def create_app() -> Flask:
     app.register_blueprint(ficha_cli, cli_group=None)
     app.register_blueprint(pokemon_cli, cli_group=None)
     app.register_blueprint(catalogo_cli, cli_group=None)
+    app.register_blueprint(inventario_cli, cli_group=None)
 
     @app.get("/")
     def inicio():

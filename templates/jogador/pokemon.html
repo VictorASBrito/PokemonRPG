@@ -81,8 +81,9 @@
                     </select>
                 </div>
                 <div class="campo campo-duas-colunas">
-                    <label for="item_carregado">Item carregado</label>
-                    <input id="item_carregado" name="item_carregado" list="catalogo-itens" value="{{ pokemon.get('item_carregado', '') }}" maxlength="80" placeholder="Selecione um item cadastrado">
+                    <label>Item carregado</label>
+                    <div class="campo-calculado campo-item-carregado"><strong>{{ pokemon.get('item_carregado') or 'Nenhum' }}</strong><a class="botao botao-secundario botao-link" href="{{ inventario_url }}">Gerenciar no inventário</a></div>
+                    <small>Equipar e retirar itens movimenta as quantidades reais da mochila.</small>
                 </div>
             </div>
         </div>
@@ -90,7 +91,6 @@
 
     <datalist id="catalogo-especies">{% for nome in especies %}<option value="{{ nome }}"></option>{% endfor %}</datalist>
     <datalist id="catalogo-golpes">{% for nome in golpes %}<option value="{{ nome }}"></option>{% endfor %}</datalist>
-    <datalist id="catalogo-itens">{% for nome in itens %}<option value="{{ nome }}"></option>{% endfor %}</datalist>
 
     <section class="cartao secao-pokemon">
         <div class="titulo-secao-pokemon">

@@ -45,7 +45,7 @@ python app.py
 A revisão esperada continua sendo:
 
 ```text
-a31d7e8c4f20 (head)
+d94c7ab20e51 (head)
 ```
 
 ## Teste manual sugerido
@@ -74,3 +74,6 @@ a31d7e8c4f20 (head)
 
 O gerenciamento de golpes, o editor visual de efeitos e os vínculos com formas
 Pokémon estão documentados em `CATALOGO_GOLPES.md`.
+
+
+> Na versão consolidada do projeto, a revisão atual é `d94c7ab20e51` por causa do módulo posterior de itens e inventário. Consulte `ITENS_INVENTARIO.md`.

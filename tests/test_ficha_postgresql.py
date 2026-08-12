@@ -73,6 +73,17 @@ def _app_ficha(monkeypatch, tmp_path: Path):
         )
         db.session.add_all([campanha, usuario, conjunto, personagem, membro])
         db.session.flush()
+        categoria_item = CategoriaItem(codigo="cura", nome="Cura", ativo=True)
+        pocao = Item(
+            codigo="pocao",
+            nome="Poção",
+            categoria=categoria_item,
+            consumivel=True,
+            ativo=True,
+        )
+        db.session.add_all([categoria_item, pocao])
+        db.session.flush()
+        db.session.add(PersonagemItem(personagem=personagem, item=pocao, quantidade=2))
 
         for ordem, (codigo, nome) in enumerate(
             [
@@ -191,9 +202,10 @@ def test_ficha_e_dashboard_usam_postgresql(monkeypatch, tmp_path: Path) -> None:
         assert personagem.nivel == 49
         assert personagem.pv_atual == -5
         assert personagem.pokedolares == 250
+        # Os campos antigos enviados pela ficha são ignorados. O inventário
+        # próprio permanece intacto e não é apagado pelo salvamento da ficha.
         assert {item.item.nome: item.quantidade for item in personagem.inventario} == {
-            "Poção": 3,
-            "Corda": 1,
+            "Poção": 2,
         }
         assert [item.insignia.nome for item in personagem.insignias] == [
             "Insígnia Rocha"

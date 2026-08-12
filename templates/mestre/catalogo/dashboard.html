@@ -16,6 +16,7 @@
     <article class="cartao resumo-item"><strong>{{ resumo.especies_ativas }}</strong><span>Espécies ativas</span><small>{{ resumo.especies }} no total</small></article>
     <article class="cartao resumo-item"><strong>{{ resumo.tipos }}</strong><span>Tipos ativos</span><small>Disponíveis nas formas e golpes</small></article>
     <article class="cartao resumo-item"><strong>{{ resumo.golpes_ativos }}</strong><span>Golpes ativos</span><small>{{ resumo.golpes }} no total</small></article>
+    <article class="cartao resumo-item"><strong>{{ resumo.itens_ativos }}</strong><span>Itens ativos</span><small>{{ resumo.itens }} no total</small></article>
 </section>
 
 <section class="grade-cartoes espacamento-topo">
@@ -31,9 +32,11 @@
         <p>Cadastre golpes, configure efeitos visuais e vincule movimentos às formas Pokémon.</p>
         <span class="link-seta">Abrir catálogo de golpes →</span>
     </a>
-    <article class="cartao catalogo-modulo-futuro">
-        <span class="cartao-indicador">⚙</span><h2>Tipos e regras</h2>
-        <p>Efetividades, naturezas, status e parâmetros da campanha.</p><span class="em-breve">Planejado</span>
-    </article>
+    <a class="cartao cartao-link" href="{{ url_for('catalogo_admin.itens') }}">
+        <span class="cartao-indicador">◆</span>
+        <h2>Itens</h2>
+        <p>Cadastre itens, preços, efeitos, propriedades de uso e equipamentos.</p>
+        <span class="link-seta">Abrir catálogo de itens →</span>
+    </a>
 </section>
 {% endblock %}

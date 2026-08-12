@@ -91,3 +91,27 @@
 @media (max-width:1100px){.filtros-golpes{grid-template-columns:repeat(3,minmax(0,1fr))}.filtros-golpes .filtro-pesquisa{grid-column:1/-1}.grade-vinculo-form{grid-template-columns:1fr 1fr}.vinculo-forma{grid-column:1/-1}.grade-vinculo-form .campo:nth-of-type(3){grid-column:1/-1}.grade-vinculo-form button{justify-self:start}.vinculo-golpe-item{align-items:center}.catalogo-resumo{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:800px){.grade-golpes-admin,.grade-formas-vinculo{grid-template-columns:1fr}.golpe-admin-topo{display:block}.golpe-metricas{margin-top:14px}.forma-vinculo-card{grid-template-columns:1fr}.forma-vinculo-card>*{grid-column:1!important}.pesquisa-vinculos{grid-template-columns:1fr}.vinculo-golpe-item{grid-template-columns:1fr}.grade-vinculo-form{grid-template-columns:1fr}.grade-vinculo-form>*{grid-column:1!important}.efeito-card-cabecalho{align-items:stretch; flex-direction:column}.editor-efeitos-toolbar{align-items:stretch; flex-direction:column}}
 @media (max-width:700px){.filtros-golpes,.catalogo-resumo{grid-template-columns:1fr}.filtros-golpes .filtro-pesquisa{grid-column:auto}.golpe-metricas{grid-template-columns:repeat(3,1fr)}}
+
+/* Catálogo de itens */
+.filtros-itens { display:grid; grid-template-columns:2fr repeat(4,minmax(130px,1fr)); gap:14px; align-items:end; }
+.filtros-itens .acoes-filtros { grid-column:1/-1; }
+.grade-itens-admin { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.item-admin-card { display:flex; flex-direction:column; gap:16px; }
+.item-admin-topo { display:grid; grid-template-columns:64px 1fr auto; align-items:start; gap:14px; }
+.item-admin-imagem { width:64px; height:64px; display:grid; place-items:center; overflow:hidden; border:1px solid var(--borda); border-radius:14px; background:var(--superficie-suave); font-size:1.5rem; }
+.item-admin-imagem img { width:100%; height:100%; object-fit:contain; }
+.item-admin-identificacao h2 { margin:8px 0 5px; }
+.item-preco { min-width:86px; padding:10px; border-radius:12px; background:var(--superficie-suave); text-align:right; }
+.item-preco small,.item-preco strong { display:block; }
+.item-preco small { color:var(--texto-suave); }
+.chip-consumivel { color:#14532d; background:#dcfce7; }
+.chip-equipavel { color:#1e3a8a; background:#dbeafe; }
+.grade-alternadores-item { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.alternador-card { display:flex; gap:12px; align-items:flex-start; padding:16px; border:1px solid var(--borda); border-radius:14px; background:var(--superficie-suave); cursor:pointer; }
+.alternador-card input { width:18px; min-height:18px; margin-top:2px; }
+.alternador-card span,.alternador-card strong,.alternador-card small { display:block; }
+.alternador-card small { margin-top:4px; color:var(--texto-suave); line-height:1.35; }
+.efeito-campos-item { margin-top:16px; }
+@media (max-width:1050px){.filtros-itens{grid-template-columns:repeat(3,minmax(0,1fr))}.filtros-itens .filtro-pesquisa{grid-column:1/-1}.grade-alternadores-item{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.grade-itens-admin,.filtros-itens,.grade-alternadores-item{grid-template-columns:1fr}.filtros-itens .filtro-pesquisa{grid-column:auto}.item-admin-topo{grid-template-columns:56px 1fr}.item-preco{grid-column:1/-1;text-align:left}}
+.catalogo-resumo { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); }

@@ -40,6 +40,7 @@
             <div class="acoes-jogador">
                 <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.ficha_jogador', jogador_id=jogador.get('id')) }}">Ficha</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_mestre', jogador_id=jogador.get('id')) }}">Equipe</a>
+                <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
                 <a class="botao botao-primario botao-link" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Box</a>
                 {% if usuario.get('id') %}
                     <form method="post" action="{{ url_for('mestre.atividade_usuario', usuario_id=usuario.get('id')) }}">

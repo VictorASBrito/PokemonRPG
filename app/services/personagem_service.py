@@ -212,9 +212,17 @@ def personagem_para_jogador(
 
     inventario = sorted(
         (
-            {"nome": item.item.nome, "quantidade": item.quantidade}
+            {
+                "id": str(item.item.id),
+                "nome": item.item.nome,
+                "quantidade": item.quantidade,
+                "categoria": item.item.categoria.nome if item.item.categoria else "",
+                "consumivel": item.item.consumivel,
+                "equipavel": item.item.equipavel,
+                "ativo": item.item.ativo,
+            }
             for item in personagem.inventario
-            if item.item.ativo
+            if item.quantidade > 0
         ),
         key=lambda item: item["nome"].casefold(),
     )
@@ -420,9 +428,9 @@ def _dto_formulario(
         ).strip(),
         "anotacoes": str(formulario.get("anotacoes", "")).strip(),
     }
-    atual["inventario"] = _normalizar_inventario(
-        formulario.getlist("item_nome"), formulario.getlist("item_quantidade")
-    )
+    # O inventário possui uma tela própria. A ficha não altera quantidades para
+    # evitar que um POST sem os campos antigos apague os itens do personagem.
+    atual["inventario"] = atual.get("inventario", [])
     atual["insigneas"] = _normalizar_insigneas(
         formulario.getlist("insignea_nome")
     )
@@ -567,7 +575,6 @@ def atualizar_ficha_personagem(
         else:
             registro.valor = Decimal(str(valor))
 
-    _sincronizar_inventario(personagem, candidato["inventario"])
     _sincronizar_insigneas(personagem, candidato["insigneas"])
     db.session.flush()
 
