@@ -14,7 +14,7 @@
     </div>
 </section>
 
-<form id="catalogo-item-form" class="formulario-catalogo" method="post">
+<form id="catalogo-item-form" class="formulario-catalogo" method="post" enctype="multipart/form-data">
 <section class="cartao secao-formulario">
     <div class="secao-titulo"><div><span>1</span><h2>Identificação</h2></div><p>Dados usados no catálogo, no inventário e nas pesquisas.</p></div>
     <div class="grade-formulario grade-tres-colunas">
@@ -23,7 +23,17 @@
         <div class="campo"><label for="preco">Preço em Pokédolares</label><input id="preco" name="preco" type="number" min="0" max="999999999" value="{{ dados.get('preco', item.preco if item else 0) }}"></div>
         <div class="campo"><label for="categoria_id">Categoria</label><select id="categoria_id" name="categoria_id"><option value="">Selecione</option>{% for categoria in opcoes.categorias %}<option value="{{ categoria.id }}" {% if dados.get('categoria_id', item.categoria_id|string if item and item.categoria_id else '') == categoria.id|string %}selected{% endif %}>{{ categoria.nome }}</option>{% endfor %}</select></div>
         <div class="campo"><label for="nova_categoria">Ou crie uma categoria</label><input id="nova_categoria" name="nova_categoria" maxlength="120" value="{{ dados.get('nova_categoria', '') }}" placeholder="Ex.: Mega Pedras"></div>
-        <div class="campo"><label for="imagem_url">URL da imagem</label><input id="imagem_url" name="imagem_url" maxlength="500" value="{{ dados.get('imagem_url', item.imagem_url if item else '') }}" placeholder="https://..."></div>
+        <div class="campo campo-largo upload-item-linha">
+            <div class="bloco-upload-imagem">
+                <label for="imagem_url">Imagem por URL</label>
+                <input id="imagem_url" name="imagem_url" maxlength="500" value="{{ dados.get('imagem_url', item.imagem_url if item else '') }}" placeholder="https://...">
+                <label for="imagem_arquivo">Ou envie uma imagem</label>
+                <input id="imagem_arquivo" name="imagem_arquivo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+                <small>PNG, JPG/JPEG, WEBP ou GIF. Máximo de 8 MB. O upload tem prioridade sobre a URL.</small>
+                {% if item and item.imagem_url %}<label class="alternador-linha remover-imagem"><input type="checkbox" name="remover_imagem" value="1"><span>Remover imagem atual</span></label>{% endif %}
+            </div>
+            <div class="preview-item-upload"><span>Prévia</span><div class="preview-imagem preview-imagem-item"><img id="preview-item" alt="Prévia do item"></div></div>
+        </div>
         <div class="campo campo-largo"><label for="descricao">Descrição</label><textarea id="descricao" name="descricao" rows="4">{{ dados.get('descricao', item.descricao if item else '') }}</textarea></div>
     </div>
 </section>
@@ -76,4 +86,4 @@
 </template>
 <script id="efeitos-item-iniciais" type="application/json">{{ efeitos_iniciais|tojson }}</script>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/itens-admin.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/uploads.js') }}"></script><script src="{{ url_for('static', filename='js/itens-admin.js') }}"></script>{% endblock %}

@@ -13,6 +13,9 @@ class Config:
             "DATABASE_URL",
             "postgresql+psycopg://pokemon_rpg:troque_a_senha@localhost:5432/pokemon_rpg",
         )
+        upload_imagem_max_bytes = int(
+            os.getenv("POKEMON_RPG_UPLOAD_IMAGEM_MAX_BYTES", str(8 * 1024 * 1024))
+        )
 
         app.config.update(
             SECRET_KEY=os.getenv(
@@ -26,6 +29,10 @@ class Config:
                 "pool_recycle": 1800,
             },
             DATA_DIR=self.raiz / "data",
+            UPLOAD_IMAGENS_DIR=self.raiz / "static" / "uploads",
+            UPLOAD_IMAGEM_MAX_BYTES=upload_imagem_max_bytes,
+            # O formulário de uma forma Pokémon pode enviar duas imagens de uma vez.
+            MAX_CONTENT_LENGTH=max(20 * 1024 * 1024, upload_imagem_max_bytes * 2 + 1024 * 1024),
             CAMPANHA_PADRAO=os.getenv("POKEMON_RPG_CAMPANHA", "ankar"),
             SESSION_COOKIE_HTTPONLY=True,
             SESSION_COOKIE_SAMESITE="Lax",

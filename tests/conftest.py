@@ -36,7 +36,12 @@ from app.services.senha_service import gerar_hash_senha
 def app_db(monkeypatch, tmp_path):
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path / 'pokemon.sqlite'}")
     app = create_app()
-    app.config.update(TESTING=True, SECRET_KEY="teste")
+    app.config.update(
+        TESTING=True,
+        SECRET_KEY="teste",
+        UPLOAD_IMAGENS_DIR=tmp_path / "uploads",
+        UPLOAD_IMAGEM_MAX_BYTES=1024 * 1024,
+    )
 
     with app.app_context():
         db.create_all()

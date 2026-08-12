@@ -14,22 +14,6 @@
     novaEspecie?.addEventListener('change', atualizarModoEspecie);
     atualizarModoEspecie();
 
-    const sincronizarImagem = (inputId, imgId) => {
-        const input = document.querySelector(inputId);
-        const imagem = document.querySelector(imgId);
-        const atualizar = () => {
-            if (!input || !imagem) return;
-            const url = input.value.trim();
-            imagem.src = url;
-            imagem.style.display = url ? 'block' : 'none';
-        };
-        input?.addEventListener('input', atualizar);
-        imagem?.addEventListener('error', () => { imagem.style.display = 'none'; });
-        atualizar();
-    };
-    sincronizarImagem('#imagem_url', '#preview-normal');
-    sincronizarImagem('#imagem_shiny_url', '#preview-shiny');
-
     const botaoSimular = document.querySelector('#botao-simular');
     const resultado = document.querySelector('#resultado-simulacao');
     botaoSimular?.addEventListener('click', async () => {

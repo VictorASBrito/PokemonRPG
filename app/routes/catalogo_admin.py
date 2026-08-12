@@ -7,6 +7,12 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+from app.services.upload_service import (
+    ErroUploadImagem,
+    ImagemPreparada,
+    excluir_imagem_local,
+    preparar_imagem_formulario,
+)
 
 from app.services.item_admin_service import (
     ALVOS_EFEITO_ITEM,
@@ -74,6 +80,58 @@ def _efeitos_enviados() -> list[dict]:
     return itens if isinstance(itens, list) else []
 
 
+def _preparar_campo_imagem(
+    dados: dict[str, str],
+    *,
+    campo_url: str,
+    campo_arquivo: str,
+    campo_remover: str,
+    subpasta: str,
+    url_atual: str | None = None,
+) -> ImagemPreparada:
+    preparada = preparar_imagem_formulario(
+        arquivo=request.files.get(campo_arquivo),
+        url_informada=dados[campo_url] if campo_url in dados else url_atual,
+        remover=request.form.get(campo_remover) == "1",
+        subpasta=subpasta,
+        url_atual=url_atual,
+    )
+    dados[campo_url] = preparada.url or ""
+    return preparada
+
+
+def _descartar_uploads_novos(imagens: list[ImagemPreparada]) -> None:
+    for imagem in imagens:
+        if imagem.upload_novo:
+            excluir_imagem_local(imagem.upload_novo, somente_se_orfa=False)
+
+
+def _limpar_imagens_substituidas(imagens: list[ImagemPreparada]) -> None:
+    for imagem in imagens:
+        if not imagem.url_anterior_substituida:
+            continue
+        try:
+            excluir_imagem_local(
+                imagem.url_anterior_substituida,
+                somente_se_orfa=True,
+            )
+        except SQLAlchemyError:
+            db.session.rollback()
+            current_app.logger.exception(
+                "A imagem anterior foi mantida porque não foi possível conferir suas referências."
+            )
+
+
+def _restaurar_url_apos_upload_falho(
+    dados: dict[str, str],
+    imagens: list[ImagemPreparada],
+    campos: list[str],
+) -> None:
+    for imagem, campo in zip(imagens, campos, strict=False):
+        if imagem.upload_novo and dados.get(campo) == imagem.upload_novo:
+            dados[campo] = str(request.form.get(campo, "") or "")
+
+
 @catalogo_admin_bp.get("")
 @perfil_obrigatorio("mestre")
 def dashboard():
@@ -138,15 +196,46 @@ def novo_pokemon():
 
     dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
     if request.method == "POST":
+        imagens: list[ImagemPreparada] = []
         try:
-            forma, erros = criar_forma_admin(request.form, usuario_id=session.get("usuario_id"))
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_url",
+                    campo_arquivo="imagem_arquivo",
+                    campo_remover="remover_imagem",
+                    subpasta="pokemons",
+                )
+            )
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_shiny_url",
+                    campo_arquivo="imagem_shiny_arquivo",
+                    campo_remover="remover_imagem_shiny",
+                    subpasta="pokemons",
+                )
+            )
+            forma, erros = criar_forma_admin(dados, usuario_id=session.get("usuario_id"))
+        except ErroUploadImagem as erro:
+            _descartar_uploads_novos(imagens)
+            _restaurar_url_apos_upload_falho(
+                dados, imagens, ["imagem_url", "imagem_shiny_url"]
+            )
+            erros = [str(erro)]
+            forma = None
         except SQLAlchemyError:
             _erro_banco("Falha ao criar forma Pokémon.")
+            _descartar_uploads_novos(imagens)
             erros = ["Não foi possível gravar a forma no banco de dados."]
             forma = None
         if not erros and forma is not None:
             flash(f"{forma.nome} foi criada no catálogo.", "sucesso")
             return redirect(url_for("catalogo_admin.editar_pokemon", forma_id=str(forma.id)))
+        _descartar_uploads_novos(imagens)
+        _restaurar_url_apos_upload_falho(
+            dados, imagens, ["imagem_url", "imagem_shiny_url"]
+        )
         for erro in erros:
             flash(erro, "erro")
 
@@ -175,14 +264,47 @@ def editar_pokemon(forma_id: str):
 
     dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
     if request.method == "POST":
+        imagens: list[ImagemPreparada] = []
         try:
-            erros = atualizar_forma_admin(forma, request.form, usuario_id=session.get("usuario_id"))
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_url",
+                    campo_arquivo="imagem_arquivo",
+                    campo_remover="remover_imagem",
+                    subpasta="pokemons",
+                    url_atual=forma.imagem_url,
+                )
+            )
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_shiny_url",
+                    campo_arquivo="imagem_shiny_arquivo",
+                    campo_remover="remover_imagem_shiny",
+                    subpasta="pokemons",
+                    url_atual=forma.imagem_shiny_url,
+                )
+            )
+            erros = atualizar_forma_admin(forma, dados, usuario_id=session.get("usuario_id"))
+        except ErroUploadImagem as erro:
+            _descartar_uploads_novos(imagens)
+            _restaurar_url_apos_upload_falho(
+                dados, imagens, ["imagem_url", "imagem_shiny_url"]
+            )
+            erros = [str(erro)]
         except SQLAlchemyError:
             _erro_banco("Falha ao atualizar forma Pokémon.")
+            _descartar_uploads_novos(imagens)
             erros = ["Não foi possível salvar as alterações no banco de dados."]
         if not erros:
+            _limpar_imagens_substituidas(imagens)
             flash("Forma Pokémon atualizada com sucesso.", "sucesso")
             return redirect(url_for("catalogo_admin.editar_pokemon", forma_id=forma_id))
+        _descartar_uploads_novos(imagens)
+        _restaurar_url_apos_upload_falho(
+            dados, imagens, ["imagem_url", "imagem_shiny_url"]
+        )
         for erro in erros:
             flash(erro, "erro")
 
@@ -524,19 +646,37 @@ def novo_item():
     dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
     efeitos_iniciais = []
     if request.method == "POST":
+        imagens: list[ImagemPreparada] = []
         try:
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_url",
+                    campo_arquivo="imagem_arquivo",
+                    campo_remover="remover_imagem",
+                    subpasta="itens",
+                )
+            )
             item, erros = criar_item_admin(
-                request.form,
+                dados,
                 usuario_id=session.get("usuario_id"),
             )
             efeitos_iniciais = _efeitos_enviados()
+        except ErroUploadImagem as erro:
+            _descartar_uploads_novos(imagens)
+            _restaurar_url_apos_upload_falho(dados, imagens, ["imagem_url"])
+            item = None
+            erros = [str(erro)]
         except SQLAlchemyError:
             _erro_banco("Falha ao criar item no catálogo.")
+            _descartar_uploads_novos(imagens)
             item = None
             erros = ["Não foi possível gravar o item no banco de dados."]
         if not erros and item is not None:
             flash(f"{item.nome} foi criado no catálogo.", "sucesso")
             return redirect(url_for("catalogo_admin.editar_item", item_id=str(item.id)))
+        _descartar_uploads_novos(imagens)
+        _restaurar_url_apos_upload_falho(dados, imagens, ["imagem_url"])
         for erro in erros:
             flash(erro, "erro")
 
@@ -569,18 +709,37 @@ def editar_item(item_id: str):
     dados = request.form.to_dict(flat=True) if request.method == "POST" else {}
     efeitos_iniciais = efeitos_item_para_editor(item.efeitos)
     if request.method == "POST":
+        imagens: list[ImagemPreparada] = []
         try:
+            imagens.append(
+                _preparar_campo_imagem(
+                    dados,
+                    campo_url="imagem_url",
+                    campo_arquivo="imagem_arquivo",
+                    campo_remover="remover_imagem",
+                    subpasta="itens",
+                    url_atual=item.imagem_url,
+                )
+            )
             erros = atualizar_item_admin(
                 item,
-                request.form,
+                dados,
                 usuario_id=session.get("usuario_id"),
             )
+        except ErroUploadImagem as erro:
+            _descartar_uploads_novos(imagens)
+            _restaurar_url_apos_upload_falho(dados, imagens, ["imagem_url"])
+            erros = [str(erro)]
         except SQLAlchemyError:
             _erro_banco("Falha ao atualizar item no catálogo.")
+            _descartar_uploads_novos(imagens)
             erros = ["Não foi possível salvar as alterações no banco de dados."]
         if not erros:
+            _limpar_imagens_substituidas(imagens)
             flash("Item atualizado com sucesso.", "sucesso")
             return redirect(url_for("catalogo_admin.editar_item", item_id=item_id))
+        _descartar_uploads_novos(imagens)
+        _restaurar_url_apos_upload_falho(dados, imagens, ["imagem_url"])
         for erro in erros:
             flash(erro, "erro")
         efeitos_iniciais = _efeitos_enviados() or efeitos_iniciais

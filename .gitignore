@@ -7,3 +7,7 @@ venv/
 data/campanhas/*/backups/*.json
 
 logs/*.json
+# Arquivos enviados pela interface administrativa
+static/uploads/*
+!static/uploads/.gitkeep
+

@@ -7,7 +7,7 @@
     <div class="acoes-cabecalho"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar</a>{% if forma %}<form method="post" action="{{ url_for('catalogo_admin.duplicar_pokemon', forma_id=forma.id) }}"><button class="botao botao-secundario" type="submit">Duplicar forma</button></form>{% endif %}</div>
 </section>
 
-<form id="catalogo-forma-form" class="formulario-catalogo" method="post" data-simulacao-url="{{ url_for('catalogo_admin.simular_pokemon') }}">
+<form id="catalogo-forma-form" class="formulario-catalogo" method="post" enctype="multipart/form-data" data-simulacao-url="{{ url_for('catalogo_admin.simular_pokemon') }}">
 <section class="cartao secao-formulario">
     <div class="secao-titulo"><div><span>1</span><h2>Espécie</h2></div><p>Dados compartilhados entre todas as formas da mesma espécie.</p></div>
     {% if modo == 'novo' %}
@@ -34,8 +34,22 @@
         <div class="campo"><label for="tipo_primario_id">Tipo primário</label><select id="tipo_primario_id" name="tipo_primario_id" required><option value="">Selecione</option>{% set tipos_forma = forma.tipos|sort(attribute='posicao')|list if forma else [] %}{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}" {% if dados.get('tipo_primario_id', tipos_forma[0].tipo_id|string if tipos_forma else '') == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}</select></div>
         <div class="campo"><label for="tipo_secundario_id">Tipo secundário</label><select id="tipo_secundario_id" name="tipo_secundario_id"><option value="">Nenhum</option>{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}" {% if dados.get('tipo_secundario_id', tipos_forma[1].tipo_id|string if tipos_forma|length > 1 else '') == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}</select></div>
         <div></div>
-        <div class="campo"><label for="imagem_url">Imagem normal</label><input id="imagem_url" name="imagem_url" type="url" value="{{ dados.get('imagem_url', forma.imagem_url if forma and forma.imagem_url else '') }}"></div>
-        <div class="campo"><label for="imagem_shiny_url">Imagem Shiny</label><input id="imagem_shiny_url" name="imagem_shiny_url" type="url" value="{{ dados.get('imagem_shiny_url', forma.imagem_shiny_url if forma and forma.imagem_shiny_url else '') }}"></div>
+        <div class="campo bloco-upload-imagem">
+            <label for="imagem_url">Imagem normal por URL</label>
+            <input id="imagem_url" name="imagem_url" type="text" inputmode="url" maxlength="500" value="{{ dados.get('imagem_url', forma.imagem_url if forma and forma.imagem_url else '') }}" placeholder="https://...">
+            <label for="imagem_arquivo">Ou envie uma imagem</label>
+            <input id="imagem_arquivo" name="imagem_arquivo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+            <small>PNG, JPG/JPEG, WEBP ou GIF. Máximo de 8 MB. O upload tem prioridade sobre a URL.</small>
+            {% if forma and forma.imagem_url %}<label class="alternador-linha remover-imagem"><input type="checkbox" name="remover_imagem" value="1"><span>Remover imagem normal atual</span></label>{% endif %}
+        </div>
+        <div class="campo bloco-upload-imagem">
+            <label for="imagem_shiny_url">Imagem Shiny por URL</label>
+            <input id="imagem_shiny_url" name="imagem_shiny_url" type="text" inputmode="url" maxlength="500" value="{{ dados.get('imagem_shiny_url', forma.imagem_shiny_url if forma and forma.imagem_shiny_url else '') }}" placeholder="https://...">
+            <label for="imagem_shiny_arquivo">Ou envie uma imagem Shiny</label>
+            <input id="imagem_shiny_arquivo" name="imagem_shiny_arquivo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+            <small>PNG, JPG/JPEG, WEBP ou GIF. Máximo de 8 MB. O upload tem prioridade sobre a URL.</small>
+            {% if forma and forma.imagem_shiny_url %}<label class="alternador-linha remover-imagem"><input type="checkbox" name="remover_imagem_shiny" value="1"><span>Remover imagem Shiny atual</span></label>{% endif %}
+        </div>
         <div class="preview-imagens"><div><span>Normal</span><div class="preview-imagem"><img id="preview-normal" alt="Prévia normal"></div></div><div><span>Shiny</span><div class="preview-imagem"><img id="preview-shiny" alt="Prévia shiny"></div></div></div>
     </div>
 </section>
@@ -63,4 +77,4 @@
 <div class="barra-acoes-formulario barra-flutuante"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Cancelar</a><button class="botao botao-primario" type="submit">Salvar no catálogo</button></div>
 </form>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/catalogo-admin.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/uploads.js') }}"></script><script src="{{ url_for('static', filename='js/catalogo-admin.js') }}"></script>{% endblock %}

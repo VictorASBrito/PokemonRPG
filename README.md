@@ -243,3 +243,30 @@ flask --app app.py inventario verificar
 
 A revisão esperada é `d94c7ab20e51 (head)`. Consulte
 `ITENS_INVENTARIO.md` para o fluxo de teste e as regras de movimentação.
+
+## Upload de imagens do catálogo
+
+O mestre pode usar uma URL externa ou enviar arquivos diretamente nos formulários de itens e formas Pokémon. Os uploads aceitam PNG, JPG/JPEG, WEBP e GIF e são gravados em `static/uploads/`. O limite padrão é de 8 MB por imagem e pode ser alterado por `POKEMON_RPG_UPLOAD_IMAGEM_MAX_BYTES`.
+
+Os caminhos gravados no PostgreSQL continuam usando os campos `imagem_url` e `imagem_shiny_url`, portanto esta mudança não exige nova migration. Ao substituir uma imagem local, o arquivo antigo só é removido quando nenhum outro registro ainda o referencia.
+
+Valide os arquivos locais com:
+
+```powershell
+flask --app app.py midia verificar
+```
+
+Uploads sem referência podem ser listados com:
+
+```powershell
+flask --app app.py midia limpar-orfaos
+```
+
+A remoção efetiva exige:
+
+```powershell
+flask --app app.py midia limpar-orfaos --aplicar
+```
+
+`static/uploads/` não deve ser versionado no Git. Em produção, o backup da aplicação precisa incluir tanto o PostgreSQL quanto essa pasta.
+

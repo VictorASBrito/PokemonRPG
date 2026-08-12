@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, session, url_for
+from flask import Flask, flash, redirect, request, session, url_for
 
 from app.config import Config
 from app.extensions import db, migrate
@@ -29,7 +29,7 @@ def create_app() -> Flask:
     # pelo Alembic. Os JSON permanecem apenas como fonte de importação legada.
     from app import models as _models  # noqa: F401
 
-    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli
+    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli, midia_cli
     from app.routes.auth import auth_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
     from app.routes.boxes import boxes_bp
@@ -52,6 +52,16 @@ def create_app() -> Flask:
     app.register_blueprint(pokemon_cli, cli_group=None)
     app.register_blueprint(catalogo_cli, cli_group=None)
     app.register_blueprint(inventario_cli, cli_group=None)
+    app.register_blueprint(midia_cli, cli_group=None)
+
+    @app.errorhandler(413)
+    def requisicao_muito_grande(_erro):
+        flash(
+            "O envio excedeu o limite permitido. Cada imagem pode ter até "
+            f"{app.config['UPLOAD_IMAGEM_MAX_BYTES'] // (1024 * 1024)} MB.",
+            "erro",
+        )
+        return redirect(request.referrer or url_for("inicio"))
 
     @app.get("/")
     def inicio():

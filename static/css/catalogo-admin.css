@@ -115,3 +115,14 @@
 @media (max-width:1050px){.filtros-itens{grid-template-columns:repeat(3,minmax(0,1fr))}.filtros-itens .filtro-pesquisa{grid-column:1/-1}.grade-alternadores-item{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.grade-itens-admin,.filtros-itens,.grade-alternadores-item{grid-template-columns:1fr}.filtros-itens .filtro-pesquisa{grid-column:auto}.item-admin-topo{grid-template-columns:56px 1fr}.item-preco{grid-column:1/-1;text-align:left}}
 .catalogo-resumo { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); }
+
+/* Uploads de imagens do catálogo */
+.bloco-upload-imagem { display:grid; gap:8px; align-content:start; }
+.bloco-upload-imagem input[type="file"] { padding:9px; border:1px dashed var(--borda); border-radius:10px; background:var(--superficie-suave); }
+.bloco-upload-imagem small { color:var(--texto-suave); line-height:1.4; }
+.remover-imagem { min-height:auto; margin-top:3px; color:var(--texto-suave); font-size:.82rem; }
+.upload-item-linha { display:grid; grid-template-columns:minmax(0,1fr) 180px; gap:18px; align-items:start; }
+.preview-item-upload > span { display:block; margin-bottom:6px; color:var(--texto-suave); font-size:.75rem; font-weight:800; }
+.preview-imagem-item { min-height:150px; }
+.preview-imagem-item img { height:148px; }
+@media (max-width:700px){.upload-item-linha{grid-template-columns:1fr}.preview-item-upload{max-width:240px}}
