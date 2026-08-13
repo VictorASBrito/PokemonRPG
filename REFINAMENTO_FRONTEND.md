@@ -59,3 +59,11 @@ junto ao backup do PostgreSQL.
 - No modo expandido, o cartão principal deixa de recolher por clique. O retorno ocorre pelo botão **Recolher** ou pela tecla `Esc`, permitindo selecionar e copiar informações.
 - A tela de Equipe utiliza até 6 Pokémon por linha no desktop.
 - A Equipe ativa dentro da Box e a própria Box utilizam até 6 cartões por linha no desktop, com quebra responsiva em telas menores.
+
+
+## Dashboard do jogador mais compacto
+
+- Removidos os atalhos redundantes Boxes, Editar ficha e Gerenciar equipe do corpo do dashboard; a navegação superior já oferece esses destinos.
+- Removido o bloco textual “Equipe ativa / Pokémon / X de 6 espaços ocupados”.
+- A grade da equipe começa no topo útil da página.
+- Cartões, retratos, ficha lateral e espaços vazios receberam uma versão mais compacta para tentar manter as duas fileiras da equipe e as informações do personagem dentro da primeira dobra em desktops comuns.

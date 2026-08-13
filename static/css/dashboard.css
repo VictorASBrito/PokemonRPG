@@ -900,3 +900,187 @@
     .pokemon-dashboard-botoes-expandidos { width: 100%; flex-direction: column; }
     .pokemon-dashboard-acoes-expandidas .botao { width: 100%; }
 }
+
+
+/* --------------------------------------------------------------------------
+   Dashboard compacto: primeira dobra prioriza ficha + equipe completa
+   -------------------------------------------------------------------------- */
+.dashboard-jogador {
+    gap: 16px;
+}
+
+.coluna-treinador {
+    gap: 12px;
+    top: 74px;
+}
+
+.painel-identidade,
+.painel-atributos-treinador {
+    padding: 16px;
+}
+
+.foto-treinador-wrap {
+    margin-bottom: 11px;
+}
+
+.foto-treinador {
+    width: 128px;
+    height: 128px;
+    border-width: 4px;
+}
+
+.foto-treinador-placeholder {
+    font-size: 2.9rem;
+}
+
+.nomes-treinador strong {
+    margin: 2px 0 8px;
+}
+
+.nomes-treinador h2 {
+    font-size: 1.3rem;
+}
+
+.vida-treinador {
+    margin-top: 12px;
+}
+
+.informacoes-treinador {
+    margin-top: 12px;
+}
+
+.informacoes-treinador div {
+    padding: 8px 10px;
+}
+
+.titulo-painel-lateral {
+    margin-bottom: 10px;
+}
+
+.titulo-painel-lateral h2 {
+    font-size: 1.35rem;
+}
+
+.lista-atributos-treinador {
+    gap: 7px;
+}
+
+.atributo-treinador {
+    padding: 8px;
+}
+
+.atributo-treinador strong {
+    margin-top: 2px;
+    font-size: 1.12rem;
+}
+
+/* O dashboard não possui mais um cabeçalho intermediário de equipe.
+   A grade começa imediatamente no topo útil da página. */
+.coluna-equipe {
+    align-self: start;
+}
+
+.grade-pokemons-dashboard {
+    gap: 12px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card {
+    min-height: 0;
+    padding: 13px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard {
+    min-height: 126px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard img {
+    width: min(112px, 86%);
+    height: 112px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-topo {
+    gap: 12px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .vida-pokemon-dashboard {
+    margin-top: 12px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .tipos-pokemon-dashboard {
+    margin-top: 7px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+    gap: 9px;
+    margin-top: 11px;
+    padding-top: 10px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon {
+    gap: 5px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon div {
+    padding: 5px 3px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard {
+    gap: 4px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
+    padding: 5px 6px;
+}
+
+.pokemon-dashboard-vazio {
+    min-height: 265px;
+}
+
+@media (min-width: 1280px) {
+    .dashboard-jogador {
+        grid-template-columns: minmax(250px, 280px) minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .coluna-treinador {
+        gap: 10px;
+    }
+
+    .painel-identidade,
+    .painel-atributos-treinador {
+        padding: 14px;
+    }
+}
+
+@media (min-width: 1280px) and (max-height: 900px) {
+    .foto-treinador {
+        width: 116px;
+        height: 116px;
+    }
+
+    .foto-treinador-wrap {
+        margin-bottom: 8px;
+    }
+
+    .nomes-treinador strong {
+        margin-bottom: 6px;
+    }
+
+    .vida-treinador,
+    .informacoes-treinador {
+        margin-top: 9px;
+    }
+
+    .informacoes-treinador div {
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card {
+        padding: 12px;
+    }
+
+    .pokemon-dashboard-vazio {
+        min-height: 245px;
+    }
+}

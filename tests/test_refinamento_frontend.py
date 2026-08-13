@@ -81,3 +81,18 @@ def test_modo_escuro_nao_cria_fundo_claro_nos_retratos_pokemon() -> None:
     assert "Retratos Pokémon seguem a mesma hierarquia escura" in css
     assert "radial-gradient(circle at 50% 48%" in css
     assert "var(--superficie-suave)" in css
+
+
+def test_dashboard_jogador_remove_cabecalhos_e_acoes_redundantes() -> None:
+    raiz = Path(__file__).resolve().parents[1]
+    template = (raiz / "templates" / "jogador" / "dashboard.html").read_text(encoding="utf-8")
+    css = (raiz / "static" / "css" / "dashboard.css").read_text(encoding="utf-8")
+
+    assert 'class="cabecalho-dashboard"' not in template
+    assert 'class="cabecalho-equipe-dashboard"' not in template
+    assert '>Gerenciar equipe<' not in template
+    assert '>Editar ficha<' not in template
+    assert '{{ equipe|length }} de {{ limite_equipe }} espaços ocupados.' not in template
+    assert 'Dashboard compacto: primeira dobra prioriza ficha + equipe completa' in css
+    assert '.pokemon-dashboard-vazio {' in css
+    assert 'min-height: 265px' in css
