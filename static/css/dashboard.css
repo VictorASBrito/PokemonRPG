@@ -435,3 +435,443 @@
     .coluna-treinador { gap: 14px; }
     .pokemon-dashboard-card { padding: 15px; }
 }
+
+/* --------------------------------------------------------------------------
+   Equipe interativa: 3 x 2 no estado normal e Pokémon em foco no estado amplo
+   -------------------------------------------------------------------------- */
+.grade-pokemons-dashboard {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.pokemon-dashboard-card {
+    min-height: 390px;
+    cursor: pointer;
+    outline: none;
+}
+
+.pokemon-dashboard-card:focus-visible {
+    border-color: var(--primaria);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primaria) 24%, transparent), var(--sombra);
+}
+
+.pokemon-dashboard-card .retrato-pokemon-dashboard {
+    min-height: 150px;
+}
+
+.pokemon-dashboard-card .retrato-pokemon-dashboard img {
+    width: 142px;
+    height: 142px;
+}
+
+.pokemon-dashboard-detalhes-expandidos {
+    display: none;
+}
+
+/* O espaço do treinador continua à esquerda. Dentro da equipe, o Pokémon em foco
+   ocupa a maior área e os companheiros formam uma coluna compacta à direita. */
+.grade-pokemons-dashboard.dashboard-pokemon-modo-foco {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 270px);
+    grid-auto-flow: row;
+    gap: 14px;
+    align-items: start;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-vazio {
+    display: none;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-card {
+    min-height: 0;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    min-height: 690px;
+    padding: 22px;
+    cursor: zoom-out;
+    border-color: color-mix(in srgb, var(--primaria) 38%, var(--borda));
+    box-shadow: 0 20px 46px rgba(16, 24, 40, .16);
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-topo {
+    grid-template-columns: minmax(300px, 42%) minmax(0, 1fr);
+    gap: 26px;
+    align-items: stretch;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard {
+    min-height: 350px;
+    border-radius: 18px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+    width: min(330px, 92%);
+    height: 330px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .dados-pokemon-dashboard {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .nome-pokemon-dashboard h3 {
+    font-size: clamp(1.8rem, 2.8vw, 2.65rem);
+    white-space: normal;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .nome-pokemon-dashboard span {
+    font-size: .88rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .nome-pokemon-dashboard > strong {
+    padding: 7px 10px;
+    font-size: .82rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .vida-pokemon-dashboard {
+    margin-top: 28px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .linha-vida {
+    font-size: .9rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco progress {
+    height: 13px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .tipos-pokemon-dashboard span {
+    padding: 5px 10px;
+    font-size: .75rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .conteudo-pokemon-dashboard {
+    margin-top: 22px;
+    padding-top: 20px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-detalhes-expandidos {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(260px, .8fr);
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.pokemon-dashboard-painel-detalhe {
+    min-width: 0;
+    padding: 16px;
+    background: var(--superficie-suave);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+}
+
+.pokemon-dashboard-detalhe-titulo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.pokemon-dashboard-detalhe-titulo h4 {
+    margin: 1px 0 0;
+    font-size: 1.06rem;
+}
+
+.pokemon-dashboard-defesa {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    color: var(--texto);
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 9px;
+    font-size: .74rem;
+    font-weight: 800;
+}
+
+.pokemon-dashboard-atributos-totais {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.pokemon-dashboard-atributos-totais > div {
+    min-width: 0;
+    padding: 11px 8px;
+    text-align: center;
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.pokemon-dashboard-atributos-totais span,
+.pokemon-dashboard-atributos-totais strong,
+.pokemon-dashboard-atributos-totais small {
+    display: block;
+}
+
+.pokemon-dashboard-atributos-totais span {
+    color: var(--texto-suave);
+    font-size: .66rem;
+    font-weight: 800;
+}
+
+.pokemon-dashboard-atributos-totais strong {
+    margin-top: 3px;
+    font-size: 1.25rem;
+}
+
+.pokemon-dashboard-atributos-totais small {
+    margin-top: 2px;
+    color: var(--texto-suave);
+    font-size: .6rem;
+}
+
+.pokemon-dashboard-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.pokemon-dashboard-meta > div {
+    min-width: 0;
+    padding: 10px;
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.pokemon-dashboard-meta span,
+.pokemon-dashboard-meta strong {
+    display: block;
+}
+
+.pokemon-dashboard-meta span {
+    color: var(--texto-suave);
+    font-size: .64rem;
+    font-weight: 760;
+}
+
+.pokemon-dashboard-meta strong {
+    margin-top: 3px;
+    overflow: hidden;
+    font-size: .83rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pokemon-dashboard-golpes-detalhados {
+    grid-column: 1 / -1;
+}
+
+.pokemon-dashboard-lista-golpes-detalhados {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 8px;
+}
+
+.pokemon-dashboard-golpe-detalhado {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    background: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 11px;
+}
+
+.pokemon-dashboard-golpe-detalhado > div > strong,
+.pokemon-dashboard-golpe-detalhado > div > span {
+    display: block;
+}
+
+.pokemon-dashboard-golpe-detalhado > div > span {
+    margin-top: 3px;
+    color: var(--texto-suave);
+    font-size: .7rem;
+}
+
+.pokemon-dashboard-golpe-detalhado dl {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 9px;
+    margin: 0;
+}
+
+.pokemon-dashboard-golpe-detalhado dl div {
+    text-align: right;
+}
+
+.pokemon-dashboard-golpe-detalhado dt {
+    color: var(--texto-suave);
+    font-size: .56rem;
+}
+
+.pokemon-dashboard-golpe-detalhado dd {
+    margin: 2px 0 0;
+    font-size: .7rem;
+    font-weight: 800;
+}
+
+.pokemon-dashboard-anotacoes {
+    grid-column: 1 / -1;
+}
+
+.pokemon-dashboard-anotacoes p {
+    margin: 7px 0 0;
+    color: var(--texto-suave);
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+.pokemon-dashboard-acoes-expandidas {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 2px;
+}
+
+.pokemon-dashboard-acoes-expandidas > span {
+    color: var(--texto-suave);
+    font-size: .76rem;
+}
+
+/* Cartões laterais no modo de foco. */
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral {
+    grid-column: 2;
+    padding: 11px;
+    min-height: 0;
+    cursor: pointer;
+    box-shadow: var(--sombra-suave);
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .pokemon-dashboard-topo {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard {
+    min-height: 76px;
+    border-radius: 11px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard img {
+    width: 70px;
+    height: 70px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .selo-shiny-dashboard {
+    top: 4px;
+    right: 4px;
+    padding: 2px 4px;
+    font-size: .5rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .nome-pokemon-dashboard h3 {
+    font-size: 1rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .nome-pokemon-dashboard > strong {
+    padding: 3px 5px;
+    font-size: .58rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .vida-pokemon-dashboard {
+    margin-top: 9px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .linha-vida {
+    margin-bottom: 3px;
+    font-size: .65rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral progress {
+    height: 7px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .tipos-pokemon-dashboard {
+    margin-top: 7px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .tipos-pokemon-dashboard span {
+    padding: 2px 5px;
+    font-size: .55rem;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .conteudo-pokemon-dashboard,
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .pokemon-dashboard-detalhes-expandidos {
+    display: none;
+}
+
+@media (max-width: 1180px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-topo {
+        grid-template-columns: minmax(240px, 38%) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1120px) {
+    .grade-pokemons-dashboard.dashboard-pokemon-modo-foco {
+        grid-template-columns: minmax(0, 1fr) 210px;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-topo {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard {
+        min-height: 280px;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+        height: 260px;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-detalhes-expandidos {
+        grid-template-columns: 1fr;
+    }
+    .pokemon-dashboard-golpes-detalhados,
+    .pokemon-dashboard-anotacoes,
+    .pokemon-dashboard-acoes-expandidas {
+        grid-column: 1;
+    }
+    .pokemon-dashboard-lista-golpes-detalhados {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) {
+        grid-template-columns: 1fr;
+    }
+    .grade-pokemons-dashboard.dashboard-pokemon-modo-foco {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco,
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral {
+        grid-column: 1;
+        grid-row: auto;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco {
+        order: -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .pokemon-dashboard-card { min-height: 0; }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco { padding: 14px; }
+    .pokemon-dashboard-atributos-totais { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pokemon-dashboard-meta { grid-template-columns: 1fr; }
+    .pokemon-dashboard-golpe-detalhado { grid-template-columns: 1fr; }
+    .pokemon-dashboard-golpe-detalhado dl { justify-content: start; }
+    .pokemon-dashboard-golpe-detalhado dl div { text-align: left; }
+    .pokemon-dashboard-acoes-expandidas { align-items: stretch; flex-direction: column; }
+    .pokemon-dashboard-acoes-expandidas .botao { width: 100%; }
+}

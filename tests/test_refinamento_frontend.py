@@ -27,3 +27,34 @@ def test_ficha_aceita_upload_de_foto_do_personagem() -> None:
     assert 'name="foto_arquivo"' in ficha
     assert 'name="remover_foto"' in ficha
     assert "preview-perfil" in ficha
+
+
+def test_dashboard_pokemon_tem_grade_3x2_e_modo_foco_interativo() -> None:
+    raiz = Path(__file__).resolve().parents[1]
+    template = (raiz / "templates" / "jogador" / "dashboard.html").read_text(encoding="utf-8")
+    css = (raiz / "static" / "css" / "dashboard.css").read_text(encoding="utf-8")
+    js = (raiz / "static" / "js" / "dashboard-pokemon.js").read_text(encoding="utf-8")
+
+    assert "data-dashboard-pokemon-grid" in template
+    assert "data-dashboard-pokemon-card" in template
+    assert "pokemon-dashboard-detalhes-expandidos" in template
+    assert "Editar Pokémon" in template
+    assert "dashboard-pokemon.js" in template
+    assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in css
+    assert ".dashboard-pokemon-modo-foco" in css
+    assert ".pokemon-dashboard-em-foco" in css
+    assert ".pokemon-dashboard-lateral" in css
+    assert "destacar(card)" in js
+    assert "evento.key === 'Escape'" in js
+
+
+def test_modo_escuro_corrige_contraste_dos_slots_e_cartoes() -> None:
+    raiz = Path(__file__).resolve().parents[1]
+    css = (raiz / "static" / "css" / "tema.css").read_text(encoding="utf-8")
+
+    assert '--fundo: #0d1218' in css
+    assert '--superficie: #18202a' in css
+    assert '.slot-box-vazio' in css
+    assert '.pokemon-dashboard-vazio' in css
+    assert '.pokemon-imagem-wrap' in css
+    assert '.box-pokemon-imagem-wrap' in css

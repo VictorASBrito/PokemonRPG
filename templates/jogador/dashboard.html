@@ -124,12 +124,13 @@
             <a class="botao botao-secundario botao-link" href="{{ dashboard_equipe_url }}">Gerenciar equipe</a>
         </div>
 
-        <section class="grade-pokemons-dashboard">
+        <section class="grade-pokemons-dashboard" data-dashboard-pokemon-grid aria-label="Equipe Pokémon">
             {% for item in equipe %}
                 {% set pokemon = item.get('pokemon', {}) %}
                 {% set especie = item.get('especie', {}) %}
                 {% set calculos = item.get('calculos', {}) %}
                 {% set totais = calculos.get('totais', {}) %}
+                {% set bases = calculos.get('bases', {}) %}
                 {% set pv_maximo = totais.get('pv', 0) %}
                 {% set pv_atual = pokemon.get('pv_atual', pv_maximo) %}
                 {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome', 'Pokémon') %}
@@ -138,7 +139,15 @@
                 {% else %}
                     {% set pokemon_dashboard_url = url_for('pokemons.editar_jogador', pokemon_id=pokemon.get('id')) %}
                 {% endif %}
-                <a class="cartao pokemon-dashboard-card" href="{{ pokemon_dashboard_url }}">
+                <article
+                    class="cartao pokemon-dashboard-card"
+                    data-dashboard-pokemon-card
+                    data-pokemon-id="{{ pokemon.get('id') }}"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Expandir detalhes de {{ nome_exibicao }}"
+                >
                     <div class="pokemon-dashboard-topo">
                         <div class="retrato-pokemon-dashboard">
                             <img
@@ -183,12 +192,12 @@
                         <section class="bloco-pokemon-dashboard">
                             <h4>Atributos base</h4>
                             <div class="atributos-base-pokemon">
-                                <div><span>PV</span><strong>{{ calculos.get('bases', {}).get('pv', 0) }}</strong></div>
-                                <div><span>ATQ</span><strong>{{ calculos.get('bases', {}).get('ataque', 0) }}</strong></div>
-                                <div><span>DEF</span><strong>{{ calculos.get('bases', {}).get('defesa', 0) }}</strong></div>
-                                <div><span>ATQ.E</span><strong>{{ calculos.get('bases', {}).get('ataque_especial', 0) }}</strong></div>
-                                <div><span>DEF.E</span><strong>{{ calculos.get('bases', {}).get('defesa_especial', 0) }}</strong></div>
-                                <div><span>VEL</span><strong>{{ calculos.get('bases', {}).get('velocidade', 0) }}</strong></div>
+                                <div><span>PV</span><strong>{{ bases.get('pv', 0) }}</strong></div>
+                                <div><span>ATQ</span><strong>{{ bases.get('ataque', 0) }}</strong></div>
+                                <div><span>DEF</span><strong>{{ bases.get('defesa', 0) }}</strong></div>
+                                <div><span>ATQ.E</span><strong>{{ bases.get('ataque_especial', 0) }}</strong></div>
+                                <div><span>DEF.E</span><strong>{{ bases.get('defesa_especial', 0) }}</strong></div>
+                                <div><span>VEL</span><strong>{{ bases.get('velocidade', 0) }}</strong></div>
                             </div>
                         </section>
 
@@ -206,7 +215,72 @@
                             </div>
                         </section>
                     </div>
-                </a>
+
+                    <div class="pokemon-dashboard-detalhes-expandidos" aria-hidden="true">
+                        <section class="pokemon-dashboard-painel-detalhe">
+                            <div class="pokemon-dashboard-detalhe-titulo">
+                                <div>
+                                    <span class="rotulo">Atributos atuais</span>
+                                    <h4>Valores de combate</h4>
+                                </div>
+                                <span class="pokemon-dashboard-defesa">{{ calculos.get('dados_defesa_texto', '0d6') }} defesa</span>
+                            </div>
+                            <div class="pokemon-dashboard-atributos-totais">
+                                <div><span>PV</span><strong>{{ totais.get('pv', 0) }}</strong><small>Base {{ bases.get('pv', 0) }}</small></div>
+                                <div><span>Ataque</span><strong>{{ totais.get('ataque', 0) }}</strong><small>Base {{ bases.get('ataque', 0) }}</small></div>
+                                <div><span>Defesa</span><strong>{{ totais.get('defesa', 0) }}</strong><small>Base {{ bases.get('defesa', 0) }}</small></div>
+                                <div><span>Atq. Esp.</span><strong>{{ totais.get('ataque_especial', 0) }}</strong><small>Base {{ bases.get('ataque_especial', 0) }}</small></div>
+                                <div><span>Def. Esp.</span><strong>{{ totais.get('defesa_especial', 0) }}</strong><small>Base {{ bases.get('defesa_especial', 0) }}</small></div>
+                                <div><span>Velocidade</span><strong>{{ totais.get('velocidade', 0) }}</strong><small>Base {{ bases.get('velocidade', 0) }}</small></div>
+                            </div>
+                        </section>
+
+                        <section class="pokemon-dashboard-painel-detalhe">
+                            <span class="rotulo">Informações</span>
+                            <div class="pokemon-dashboard-meta">
+                                <div><span>Natureza</span><strong>{{ pokemon.get('natureza') or 'Neutra' }}</strong></div>
+                                <div><span>Gênero</span><strong>{{ pokemon.get('genero') or 'Ø' }}</strong></div>
+                                <div><span>Status</span><strong>{{ pokemon.get('status') or 'Nenhum' }}</strong></div>
+                                <div><span>Item</span><strong>{{ pokemon.get('item_carregado') or 'Nenhum' }}</strong></div>
+                                <div><span>Variação</span><strong>{{ 'Shiny' if pokemon.get('shiny') else 'Normal' }}</strong></div>
+                                <div><span>Nível</span><strong>{{ calculos.get('nivel', treinador.get('nivel', 1)) }}</strong></div>
+                            </div>
+                        </section>
+
+                        <section class="pokemon-dashboard-painel-detalhe pokemon-dashboard-golpes-detalhados">
+                            <span class="rotulo">Golpes equipados</span>
+                            <div class="pokemon-dashboard-lista-golpes-detalhados">
+                                {% for golpe in calculos.get('golpes', []) %}
+                                    <div class="pokemon-dashboard-golpe-detalhado">
+                                        <div>
+                                            <strong>{{ golpe.get('nome') }}</strong>
+                                            <span>{{ golpe.get('tipo', '—') }} · {{ golpe.get('categoria', '—') }}</span>
+                                        </div>
+                                        <dl>
+                                            <div><dt>Dano</dt><dd>{{ golpe.get('dano') or 'Estado' }}</dd></div>
+                                            <div><dt>Precisão</dt><dd>{{ golpe.get('precisao_texto') or '—' }}</dd></div>
+                                            <div><dt>Prioridade</dt><dd>{{ golpe.get('prioridade', 0) }}</dd></div>
+                                        </dl>
+                                    </div>
+                                {% else %}
+                                    <p class="texto-suave">Nenhum golpe registrado.</p>
+                                {% endfor %}
+                            </div>
+                        </section>
+
+                        {% if pokemon.get('anotacoes') %}
+                        <section class="pokemon-dashboard-painel-detalhe pokemon-dashboard-anotacoes">
+                            <span class="rotulo">Anotações</span>
+                            <p>{{ pokemon.get('anotacoes') }}</p>
+                        </section>
+                        {% endif %}
+
+                        <div class="pokemon-dashboard-acoes-expandidas">
+                            <span>Clique novamente neste Pokémon para voltar à equipe completa.</span>
+                            <a class="botao botao-secundario botao-link" href="{{ pokemon_dashboard_url }}" data-dashboard-pokemon-edit>Editar Pokémon</a>
+                        </div>
+                    </div>
+                </article>
             {% endfor %}
 
             {% for _ in range(limite_equipe - equipe|length) %}
@@ -219,4 +293,8 @@
         </section>
     </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard-pokemon.js') }}"></script>
 {% endblock %}

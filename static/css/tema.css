@@ -113,3 +113,250 @@
 :root[data-theme="dark"] .pokemon-vazio { background: rgba(23, 29, 39, .6); }
 :root[data-theme="dark"] .barra-flutuante { background: rgba(23, 29, 39, .94); }
 :root[data-theme="dark"] .foto-url-opcional summary { color: var(--texto-suave); }
+
+/* --------------------------------------------------------------------------
+   Revisão de contraste do modo escuro
+   A hierarquia replica o modo claro: fundo < cartões < superfícies internas.
+   As áreas de arte dos Pokémon permanecem claras para preservar sprites/PNG.
+   -------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+    --fundo: #0d1218;
+    --superficie: #18202a;
+    --superficie-suave: #222c38;
+    --texto: #f5f7fa;
+    --texto-suave: #b8c3d1;
+    --borda: #3c4858;
+    --primaria: #ff4b4b;
+    --primaria-escura: #e23a3a;
+    --primaria-suave: #402127;
+    --destaque: #f4c94f;
+    --sucesso: #173728;
+    --erro: #402126;
+    --aviso: #3a301a;
+    --sombra: 0 12px 30px rgba(0, 0, 0, .34);
+    --sombra-suave: 0 4px 14px rgba(0, 0, 0, .26);
+}
+
+:root[data-theme="dark"] .topo {
+    background: #171e27;
+    border-color: #354050;
+}
+
+:root[data-theme="dark"] .navegacao-principal a { color: #c5cfdd; }
+:root[data-theme="dark"] .navegacao-principal a:hover {
+    color: #ffffff;
+    background: #26313e;
+}
+
+:root[data-theme="dark"] .tema-toggle,
+:root[data-theme="dark"] .botao-secundario {
+    color: #f1f4f8;
+    background: #25303d;
+    border: 1px solid #3e4b5c;
+}
+:root[data-theme="dark"] .tema-toggle:hover,
+:root[data-theme="dark"] .botao-secundario:hover {
+    background: #303c4a;
+    border-color: #59687a;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+    color: #f5f7fa;
+    background: #131a22;
+    border-color: #465365;
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder { color: #8f9daf; }
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] select:focus,
+:root[data-theme="dark"] textarea:focus {
+    outline-color: rgba(255, 75, 75, .23);
+    border-color: #ff6666;
+}
+
+/* Cartões/slots: evitam os blocos cinza-claro que quebravam o modo escuro. */
+:root[data-theme="dark"] .box-pokemon-card,
+:root[data-theme="dark"] .painel-pokemon-card,
+:root[data-theme="dark"] .pokemon-cartao,
+:root[data-theme="dark"] .pokemon-dashboard-card,
+:root[data-theme="dark"] .golpe-cartao,
+:root[data-theme="dark"] .item-cartao,
+:root[data-theme="dark"] .forma-admin-card,
+:root[data-theme="dark"] .item-admin-card {
+    color: var(--texto);
+    background: var(--superficie);
+    border-color: var(--borda);
+}
+
+:root[data-theme="dark"] .slot-box-vazio,
+:root[data-theme="dark"] .pokemon-vazio,
+:root[data-theme="dark"] .pokemon-dashboard-vazio {
+    color: #aab7c8;
+    background: #18202a;
+    border-color: #49586a;
+}
+:root[data-theme="dark"] .slot-box-vazio:hover,
+:root[data-theme="dark"] .pokemon-vazio:hover,
+:root[data-theme="dark"] .pokemon-dashboard-vazio:hover {
+    color: #ff7777;
+    background: #252a34;
+    border-color: #ff5c5c;
+}
+:root[data-theme="dark"] .pokemon-dashboard-vazio strong { color: #e9edf3; }
+
+/* Sprites/ilustrações continuam em uma área clara, como no tema claro. */
+:root[data-theme="dark"] .box-pokemon-imagem-wrap,
+:root[data-theme="dark"] .pokemon-imagem-wrap,
+:root[data-theme="dark"] .retrato-pokemon-dashboard,
+:root[data-theme="dark"] .forma-admin-imagem,
+:root[data-theme="dark"] .preview-imagem,
+:root[data-theme="dark"] .preview-imagem-item,
+:root[data-theme="dark"] .item-admin-imagem {
+    background: linear-gradient(145deg, #f5f7fa, #e8edf3);
+    border-color: #d4dbe4;
+}
+
+:root[data-theme="dark"] .box-pokemon-principal:hover,
+:root[data-theme="dark"] .painel-pokemon-link:hover {
+    background: #222c38;
+}
+
+:root[data-theme="dark"] .form-mover-pokemon,
+:root[data-theme="dark"] .filtros-boxes,
+:root[data-theme="dark"] .metrica-box,
+:root[data-theme="dark"] .atributo-treinador,
+:root[data-theme="dark"] .atributos-base-pokemon div,
+:root[data-theme="dark"] .golpes-pokemon-dashboard > div,
+:root[data-theme="dark"] .pokemon-dashboard-painel-detalhe,
+:root[data-theme="dark"] .secao-formulario,
+:root[data-theme="dark"] .campo-calculado,
+:root[data-theme="dark"] .atributo-cartao,
+:root[data-theme="dark"] .alternador-card,
+:root[data-theme="dark"] .alternador,
+:root[data-theme="dark"] .atributo-pokemon-card,
+:root[data-theme="dark"] .metricas-calculo div,
+:root[data-theme="dark"] .movimento-card,
+:root[data-theme="dark"] .golpe-equipado,
+:root[data-theme="dark"] .foto-perfil-editor,
+:root[data-theme="dark"] .cabecalho-tabela {
+    color: var(--texto);
+    background: var(--superficie-suave);
+    border-color: var(--borda);
+}
+
+:root[data-theme="dark"] .pokemon-dashboard-atributos-totais > div,
+:root[data-theme="dark"] .pokemon-dashboard-meta > div,
+:root[data-theme="dark"] .pokemon-dashboard-golpe-detalhado,
+:root[data-theme="dark"] .pokemon-dashboard-defesa {
+    color: var(--texto);
+    background: #18202a;
+    border-color: #3c4858;
+}
+
+:root[data-theme="dark"] .informacoes-treinador div {
+    background: #222c38;
+    border-color: #3c4858;
+}
+:root[data-theme="dark"] .informacoes-treinador .informacao-destaque {
+    background: #3b321c;
+    border-color: #66572f;
+}
+:root[data-theme="dark"] .informacoes-treinador .informacao-destaque dd { color: #f4d46e; }
+
+:root[data-theme="dark"] .atributo-saude {
+    background: #352126;
+    border-color: #664049;
+}
+:root[data-theme="dark"] .insignea-editavel {
+    background: #332d20;
+    border-color: #625636;
+}
+:root[data-theme="dark"] .selo-versao {
+    color: #f6d875;
+    background: #443816;
+}
+:root[data-theme="dark"] .botao-remover {
+    color: #ffb1b1;
+    background: #472329;
+    border-color: #67353e;
+}
+:root[data-theme="dark"] .botao-remover:hover { background: #5a2931; }
+
+:root[data-theme="dark"] .tipos-pokemon-dashboard span,
+:root[data-theme="dark"] .tipo-chip,
+:root[data-theme="dark"] .chip-tipo,
+:root[data-theme="dark"] .painel-pokemon-tipos span,
+:root[data-theme="dark"] .chip {
+    color: #e8edf4;
+    background: #2b3644;
+    border-color: #455264;
+}
+:root[data-theme="dark"] .tipos-pokemon-dashboard .status-pokemon-dashboard,
+:root[data-theme="dark"] .chip-status,
+:root[data-theme="dark"] .texto-alerta {
+    color: #ffd477;
+    background: #493716 !important;
+    border-color: #705628;
+}
+
+:root[data-theme="dark"] .selo-shiny,
+:root[data-theme="dark"] .selo-shiny-dashboard,
+:root[data-theme="dark"] .painel-pokemon-imagem em {
+    color: #ffdf78;
+    background: #514016 !important;
+    border-color: #786127;
+}
+
+:root[data-theme="dark"] .chip-consumivel { color: #a8e9bd; background: #1c452f; }
+:root[data-theme="dark"] .chip-equipavel { color: #b7d0ff; background: #203b5c; }
+:root[data-theme="dark"] .chip-personalizado { color: #ffe49a; background: #4d3e18; }
+:root[data-theme="dark"] .chip-inativo { color: #e5e9ef; background: #46505d; }
+
+:root[data-theme="dark"] progress,
+:root[data-theme="dark"] progress::-webkit-progress-bar { background: #323d4b; }
+
+:root[data-theme="dark"] .barra-salvar,
+:root[data-theme="dark"] .barra-acoes-catalogo,
+:root[data-theme="dark"] .barra-flutuante {
+    color: var(--texto);
+    background: rgba(20, 27, 36, .96);
+    border-color: #3c4858;
+}
+:root[data-theme="dark"] .barra-salvar span { color: #b8c3d1; }
+
+:root[data-theme="dark"] .preview-jogador-mestre,
+:root[data-theme="dark"] .painel-mestre-ordem-ajuda {
+    color: var(--texto);
+    background: #1d2a3a;
+    border-color: #405775;
+}
+
+:root[data-theme="dark"] .metrica-alerta {
+    background: #332b1b;
+    border-color: #6c5a2c;
+}
+:root[data-theme="dark"] .painel-alertas-jogador span {
+    color: #f5d67a;
+    background: #403417;
+    border-color: #6b5728;
+}
+
+:root[data-theme="dark"] .controle-pv-rapido button,
+:root[data-theme="dark"] .painel-ordem-controle button {
+    color: #f0f3f7;
+    background: #25303d;
+    border-color: #445163;
+}
+:root[data-theme="dark"] .controle-pv-rapido button:hover,
+:root[data-theme="dark"] .painel-ordem-controle button:hover {
+    background: #303c4a;
+    border-color: #59687a;
+}
+
+:root[data-theme="dark"] .alerta-sucesso { color: #bdebc9; background: #173728; border-color: #2d6242; }
+:root[data-theme="dark"] .alerta-erro { color: #ffc3c7; background: #402126; border-color: #713640; }
+:root[data-theme="dark"] .alerta-aviso { color: #f5d77e; background: #3a301a; border-color: #6c592a; }
+
+:root[data-theme="dark"] code { color: #e5ebf3; background: #27313d; }

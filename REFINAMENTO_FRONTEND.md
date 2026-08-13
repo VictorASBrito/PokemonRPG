@@ -40,3 +40,13 @@ static/uploads/
 ```
 
 junto ao backup do PostgreSQL.
+
+## Segunda rodada — contraste escuro e equipe expansível
+
+- O modo escuro recebeu uma nova hierarquia de contraste para aproximar a leitura do modo claro: fundo, cartões, superfícies internas, bordas e texto secundário agora possuem separação visual maior.
+- Slots vazios da Box/equipe/dashboard deixaram de usar os tons claros herdados do tema padrão.
+- As áreas de arte dos Pokémon continuam claras para preservar a leitura de sprites e PNGs, enquanto os cartões permanecem escuros.
+- O dashboard do jogador passa a exibir a equipe em 3 colunas nos desktops, formando duas fileiras de 3 slots.
+- Clicar em um Pokémon no dashboard não abre mais a edição imediatamente. O cartão passa para o modo de foco, ocupa a maior área da equipe e mostra atributos atuais, bases, natureza, gênero, status, item, dados de defesa, golpes detalhados e anotações.
+- Os demais Pokémon são reorganizados em uma coluna compacta à direita. Clicar em outro Pokémon troca o foco; clicar novamente no Pokémon em foco ou pressionar `Esc` retorna à grade normal.
+- A edição continua acessível por um botão explícito dentro da visualização expandida.
