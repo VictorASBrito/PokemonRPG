@@ -1,41 +1,73 @@
-# Painel geral do mestre e pesquisas dinâmicas
+# Painel geral do mestre e ordem da sessão
 
 ## Painel
 
-O endereço `/mestre/dashboard` concentra a visão operacional da sessão. Cada jogador apresenta PV, nível, Pokédolares, quantidade de Pokémon na Box e equipe ativa. Os Pokémon exibem imagem, tipos, PV, status e item carregado.
+O endereço `/mestre/dashboard` concentra a visão operacional da sessão. Cada jogador apresenta PV, Pokédolares, atributos do personagem, alertas e a equipe ativa.
 
 A pesquisa no topo é local e instantânea. Ela procura por jogador, treinador, classe, origem, apelido e espécie dos Pokémon da equipe. O filtro **Com alertas** mostra apenas personagens com acesso desativado, PV baixo ou Pokémon com PV baixo/status ativo.
 
+## Ordem manual da sessão
+
+A primeira etapa do assistente de combate é propositalmente manual. O mestre usa **Definir ordem** para organizar a sequência em que os jogadores aparecem no painel.
+
+- é possível arrastar os cartões;
+- também existem setas para mover para cima/baixo;
+- a ordem é salva automaticamente no PostgreSQL;
+- ao recarregar ou entrar novamente no painel, a sequência permanece;
+- nenhum cálculo de iniciativa ou turno é feito automaticamente.
+
+A ordem é gravada em `personagens.ordem_painel` e alterações são registradas em `historico_alteracoes` com a ação `reordenar_painel`.
+
+## Atributos do personagem
+
+O resumo ao lado dos PV deixa de mostrar contadores de equipe/Box/acesso e passa a mostrar os atributos ativos do personagem, respeitando a ordem definida no catálogo de atributos.
+
+## Prévia do jogador
+
+O nome/avatar do jogador e o botão **Prévia do jogador** abrem:
+
+```text
+/mestre/jogadores/<personagem_id>/preview
+```
+
+A prévia usa o mesmo template `jogador/dashboard.html` utilizado pela conta do jogador. Uma faixa identifica que o mestre está em modo de visualização e os links são redirecionados para equivalentes seguros do mestre.
+
+## Botões Voltar
+
+Quando o mestre abre ficha, equipe, Box ou inventário de um jogador, o botão **Voltar** retorna para `/mestre/dashboard` em vez da listagem `/mestre/jogadores`.
+
 ## Ajuste rápido de PV
 
-Treinadores e Pokémon possuem botões `-10`, `-5`, `+5` e `+10`. A alteração é enviada ao PostgreSQL sem recarregar a página e é registrada em `historico_alteracoes` com a ação `ajustar_pv_painel`.
+Treinadores e Pokémon continuam com botões `-10`, `-5`, `+5` e `+10`. A alteração é enviada ao PostgreSQL sem recarregar a página e é registrada em `historico_alteracoes` com a ação `ajustar_pv_painel`.
 
 - treinador: limitado entre `-PV máximo` e `PV máximo`;
 - Pokémon: limitado entre `0` e `PV máximo`.
 
-## Pesquisas do catálogo
+## Migration
 
-As listagens administrativas de Pokémon, golpes e itens, além da busca de formas para vínculos de golpes, usam `static/js/pesquisa-dinamica.js`. O formulário continua funcionando normalmente sem JavaScript, mas com JavaScript ativo os resultados e a paginação são atualizados por `fetch`.
-
-## Autocomplete de Pokémon e golpes
-
-As fichas consultam:
+Esta etapa adiciona:
 
 ```text
-/api/catalogo/formas?q=...
-/api/catalogo/golpes?q=...
+e6b19d2a4c73_ordem_jogadores_painel_mestre.py
 ```
 
-Os endpoints exigem login e retornam no máximo 20 correspondências. Isso evita inserir todo o catálogo no HTML de cada ficha.
-
-## Aplicação
-
-Não existe migration nova nesta etapa. Depois de atualizar os arquivos:
+Aplique com:
 
 ```powershell
+flask --app app.py db upgrade
 flask --app app.py db current
-pytest -q
-python app.py
 ```
 
-A revisão esperada do banco continua `d94c7ab20e51 (head)`.
+A revisão esperada é:
+
+```text
+e6b19d2a4c73 (head)
+```
+
+## Testes
+
+```powershell
+pytest -q
+```
+
+A suíte desta versão possui 46 testes automatizados.

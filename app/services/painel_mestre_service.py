@@ -144,8 +144,14 @@ def carregar_painel_mestre(*, campanha_codigo: str) -> PainelMestre:
                 .selectinload(PokemonStatus.status),
                 selectinload(Personagem.pokemons).selectinload(Pokemon.item_equipado),
             )
-            .order_by(func.lower(Personagem.nome))
         ).scalars()
+    )
+    personagens.sort(
+        key=lambda personagem: (
+            personagem.ordem_painel is None,
+            personagem.ordem_painel if personagem.ordem_painel is not None else 10**9,
+            personagem.nome.casefold(),
+        )
     )
 
     jogadores: list[dict[str, Any]] = []
@@ -204,6 +210,28 @@ def carregar_painel_mestre(*, campanha_codigo: str) -> PainelMestre:
         # preservando a ordem em que foram encontrados.
         alertas = list(dict.fromkeys(alertas))
         total_alertas += len(alertas)
+
+        atributos_personagem: list[dict[str, Any]] = []
+        for relacao in sorted(
+            (
+                item
+                for item in personagem.atributos
+                if item.atributo
+                and item.atributo.ativo
+                and item.atributo.escopo in {"personagem", "ambos"}
+            ),
+            key=lambda item: (item.atributo.ordem, item.atributo.nome.casefold()),
+        ):
+            valor = relacao.valor
+            numero = int(valor) if valor == valor.to_integral_value() else float(valor)
+            atributos_personagem.append(
+                {
+                    "codigo": relacao.atributo.codigo,
+                    "nome": relacao.atributo.nome,
+                    "valor": numero,
+                }
+            )
+
         termos_busca = " ".join(
             [
                 personagem.nome,
@@ -231,6 +259,8 @@ def carregar_painel_mestre(*, campanha_codigo: str) -> PainelMestre:
                 "pv_atual": personagem.pv_atual,
                 "pv_maximo": pv_maximo,
                 "pv_percentual": _percentual_pv(personagem.pv_atual, pv_maximo),
+                "atributos": atributos_personagem,
+                "ordem_painel": personagem.ordem_painel,
                 "equipe": equipe,
                 "equipe_total": len(equipe),
                 "limite_equipe": limite_equipe,
@@ -251,6 +281,72 @@ def carregar_painel_mestre(*, campanha_codigo: str) -> PainelMestre:
         },
         jogadores=jogadores,
     )
+
+
+def salvar_ordem_jogadores_painel(
+    *,
+    campanha_codigo: str,
+    personagem_ids: list[str],
+    usuario_id: str | None,
+) -> list[str]:
+    campanha = db.session.execute(
+        select(Campanha).where(
+            Campanha.codigo == campanha_codigo,
+            Campanha.ativo.is_(True),
+        )
+    ).scalar_one_or_none()
+    if campanha is None:
+        raise ValueError("Campanha não encontrada.")
+
+    identificadores: list[uuid.UUID] = []
+    for valor in personagem_ids:
+        identificador = _uuid(valor)
+        if identificador is None or identificador in identificadores:
+            raise ValueError("A ordem enviada contém jogadores inválidos ou repetidos.")
+        identificadores.append(identificador)
+
+    personagens = list(
+        db.session.execute(
+            select(Personagem)
+            .where(
+                Personagem.campanha_id == campanha.id,
+                Personagem.ativo.is_(True),
+            )
+            .with_for_update()
+        ).scalars()
+    )
+    existentes = {personagem.id: personagem for personagem in personagens}
+    if len(existentes) != len(identificadores) or set(existentes) != set(identificadores):
+        raise ValueError(
+            "A ordem precisa conter todos os jogadores ativos da campanha exatamente uma vez."
+        )
+
+    ordem_anterior = [
+        str(personagem.id)
+        for personagem in sorted(
+            personagens,
+            key=lambda personagem: (
+                personagem.ordem_painel is None,
+                personagem.ordem_painel if personagem.ordem_painel is not None else 10**9,
+                personagem.nome.casefold(),
+            ),
+        )
+    ]
+    for posicao, identificador in enumerate(identificadores, start=1):
+        existentes[identificador].ordem_painel = posicao
+
+    db.session.add(
+        HistoricoAlteracao(
+            usuario_id=_uuid(usuario_id) if usuario_id else None,
+            entidade="campanha",
+            registro_id=campanha.id,
+            acao="reordenar_painel",
+            dados_anteriores={"ordem_jogadores": ordem_anterior},
+            dados_novos={"ordem_jogadores": [str(item) for item in identificadores]},
+        )
+    )
+    db.session.commit()
+    return [str(item) for item in identificadores]
 
 
 def ajustar_pv_personagem(

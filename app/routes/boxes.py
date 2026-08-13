@@ -50,7 +50,7 @@ def _render_boxes(contexto, *, modo_mestre: bool):
     limite_equipe = int(contexto.regras["limites"]["tamanho_equipe"])
 
     if modo_mestre:
-        voltar_url = url_for("mestre.jogadores")
+        voltar_url = url_for("mestre.dashboard")
         equipe_url = url_for("pokemons.equipe_mestre", jogador_id=jogador_id)
         mover_url = url_for("boxes.mover_mestre", jogador_id=jogador_id)
         editar_endpoint = "pokemons.editar_mestre"
@@ -160,7 +160,7 @@ def boxes_mestre(jogador_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
         flash("Jogador não encontrado.", "erro")
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _render_boxes(contexto, modo_mestre=True)
 
 
@@ -169,7 +169,7 @@ def boxes_mestre(jogador_id: str):
 def mover_mestre(jogador_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _mover(contexto, modo_mestre=True)
 
 
@@ -178,5 +178,5 @@ def mover_mestre(jogador_id: str):
 def renomear_mestre(jogador_id: str, box_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _renomear(contexto, box_id, modo_mestre=True)

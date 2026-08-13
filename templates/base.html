@@ -16,7 +16,13 @@
 
         {% if session.get('usuario_id') %}
             <nav class="navegacao-principal" aria-label="Navegação principal">
-                {% if session.get('perfil') == 'mestre' %}
+                {% if modo_preview_mestre|default(false) %}
+                    <a href="{{ url_for('mestre.preview_jogador', jogador_id=preview_personagem_id) }}">Painel</a>
+                    <a href="{{ url_for('mestre.ficha_jogador', jogador_id=preview_personagem_id) }}">Minha ficha</a>
+                    <a href="{{ url_for('pokemons.equipe_mestre', jogador_id=preview_personagem_id) }}">Equipe</a>
+                    <a href="{{ url_for('boxes.boxes_mestre', jogador_id=preview_personagem_id) }}">Boxes</a>
+                    <a href="{{ url_for('inventario.inventario_mestre', personagem_id=preview_personagem_id) }}">Inventário</a>
+                {% elif session.get('perfil') == 'mestre' %}
                     <a href="{{ url_for('mestre.dashboard') }}">Painel</a>
                     <a href="{{ url_for('mestre.jogadores') }}">Jogadores</a>
                     <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
@@ -30,10 +36,15 @@
             </nav>
 
             <div class="usuario-topo">
-                <span>{{ session.get('nome') }}</span>
-                <form action="{{ url_for('auth.logout') }}" method="post">
-                    <button class="botao botao-secundario" type="submit">Sair</button>
-                </form>
+                {% if modo_preview_mestre|default(false) %}
+                    <span>{{ nome_jogador }}</span>
+                    <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url or url_for('mestre.dashboard') }}">Sair da prévia</a>
+                {% else %}
+                    <span>{{ session.get('nome') }}</span>
+                    <form action="{{ url_for('auth.logout') }}" method="post">
+                        <button class="botao botao-secundario" type="submit">Sair</button>
+                    </form>
+                {% endif %}
             </div>
         {% endif %}
     </header>

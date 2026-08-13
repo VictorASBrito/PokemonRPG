@@ -7,8 +7,26 @@
 {% endblock %}
 
 {% block conteudo %}
+{% if modo_preview_mestre|default(false) %}
+    {% set dashboard_boxes_url = url_for('boxes.boxes_mestre', jogador_id=preview_personagem_id) %}
+    {% set dashboard_ficha_url = url_for('mestre.ficha_jogador', jogador_id=preview_personagem_id) %}
+    {% set dashboard_equipe_url = url_for('pokemons.equipe_mestre', jogador_id=preview_personagem_id) %}
+{% else %}
+    {% set dashboard_boxes_url = url_for('boxes.boxes_jogador') %}
+    {% set dashboard_ficha_url = url_for('jogadores.ficha') %}
+    {% set dashboard_equipe_url = url_for('pokemons.equipe_jogador') %}
+{% endif %}
 {% set atributos_salvos = treinador.get('atributos', {}) %}
 {% set numeros_shiny = treinador.get('numeros_shiny', []) %}
+{% if modo_preview_mestre|default(false) %}
+<section class="cartao preview-jogador-mestre" role="status">
+    <div>
+        <strong>Visualização como jogador</strong>
+        <span>Esta é a mesma página usada por {{ nome_jogador }}. Os atalhos foram mantidos seguros para o acesso do mestre.</span>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url }}">Voltar ao painel do mestre</a>
+</section>
+{% endif %}
 <section class="cabecalho-dashboard">
     <div>
         <p class="rotulo">Área do jogador</p>
@@ -16,8 +34,8 @@
         <p class="texto-suave">As informações essenciais da ficha e sua equipe ativa em um único lugar.</p>
     </div>
     <div class="acoes-dashboard">
-        <a class="botao botao-secundario botao-link" href="{{ url_for('boxes.boxes_jogador') }}">Boxes</a>
-        <a class="botao botao-primario botao-link" href="{{ url_for('jogadores.ficha') }}">Editar ficha</a>
+        <a class="botao botao-secundario botao-link" href="{{ dashboard_boxes_url }}">Boxes</a>
+        <a class="botao botao-primario botao-link" href="{{ dashboard_ficha_url }}">Editar ficha</a>
     </div>
 </section>
 
@@ -82,7 +100,7 @@
                     <p class="rotulo">Personagem</p>
                     <h2>Atributos</h2>
                 </div>
-                <a href="{{ url_for('jogadores.ficha') }}#atributos">Editar</a>
+                <a href="{{ dashboard_ficha_url }}#atributos">Editar</a>
             </div>
 
             <div class="lista-atributos-treinador">
@@ -103,7 +121,7 @@
                 <h2>Pokémon</h2>
                 <p class="texto-suave">{{ equipe|length }} de {{ limite_equipe }} espaços ocupados.</p>
             </div>
-            <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_jogador') }}">Gerenciar equipe</a>
+            <a class="botao botao-secundario botao-link" href="{{ dashboard_equipe_url }}">Gerenciar equipe</a>
         </div>
 
         <section class="grade-pokemons-dashboard">
@@ -115,7 +133,12 @@
                 {% set pv_maximo = totais.get('pv', 0) %}
                 {% set pv_atual = pokemon.get('pv_atual', pv_maximo) %}
                 {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome', 'Pokémon') %}
-                <a class="cartao pokemon-dashboard-card" href="{{ url_for('pokemons.editar_jogador', pokemon_id=pokemon.get('id')) }}">
+                {% if modo_preview_mestre|default(false) %}
+                    {% set pokemon_dashboard_url = url_for('pokemons.editar_mestre', jogador_id=preview_personagem_id, pokemon_id=pokemon.get('id')) %}
+                {% else %}
+                    {% set pokemon_dashboard_url = url_for('pokemons.editar_jogador', pokemon_id=pokemon.get('id')) %}
+                {% endif %}
+                <a class="cartao pokemon-dashboard-card" href="{{ pokemon_dashboard_url }}">
                     <div class="pokemon-dashboard-topo">
                         <div class="retrato-pokemon-dashboard">
                             <img
@@ -187,7 +210,7 @@
             {% endfor %}
 
             {% for _ in range(limite_equipe - equipe|length) %}
-                <a class="cartao pokemon-dashboard-vazio" href="{{ url_for('boxes.boxes_jogador') }}">
+                <a class="cartao pokemon-dashboard-vazio" href="{{ dashboard_boxes_url }}">
                     <span>↔</span>
                     <strong>Espaço vazio</strong>
                     <small>Adicionar pela Box</small>

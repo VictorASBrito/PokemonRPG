@@ -310,7 +310,7 @@ def test_mestre_nao_acessa_inventario_de_outra_campanha(app_db, client_db) -> No
 
     pagina = client_db.get(f"/mestre/jogadores/{personagem_id}/inventario")
     assert pagina.status_code == 302
-    assert pagina.headers["Location"].endswith("/mestre/jogadores")
+    assert pagina.headers["Location"].endswith("/mestre/dashboard")
 
     resposta = client_db.post(
         f"/mestre/jogadores/{personagem_id}/inventario/adicionar",

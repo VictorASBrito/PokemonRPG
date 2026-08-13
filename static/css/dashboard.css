@@ -410,3 +410,20 @@
     .retrato-pokemon-dashboard img { width: 84px; height: 84px; }
     .conteudo-pokemon-dashboard { grid-template-columns: 1fr; }
 }
+
+.preview-jogador-mestre {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 13px 16px;
+    border-color: #c9d5e6;
+    background: #f7faff;
+}
+.preview-jogador-mestre strong,
+.preview-jogador-mestre span { display: block; }
+.preview-jogador-mestre span { margin-top: 3px; color: var(--texto-suave); font-size: .88rem; }
+@media (max-width: 700px) {
+    .preview-jogador-mestre { flex-direction: column; align-items: flex-start; }
+}

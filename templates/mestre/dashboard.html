@@ -14,6 +14,7 @@
         <p class="texto-suave">{{ campanha.get('descricao') or 'Acompanhe treinadores, equipes, PV e alertas da sessão em uma única tela.' }}</p>
     </div>
     <div class="painel-mestre-acoes-topo">
+        <button class="botao botao-secundario" type="button" id="alternar-ordem-painel" {% if not jogadores %}disabled{% endif %}>Definir ordem</button>
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
         <a class="botao botao-primario botao-link" href="{{ url_for('mestre.novo_jogador') }}">Novo jogador</a>
     </div>
@@ -54,35 +55,54 @@
     <p id="resultado-pesquisa-painel" class="texto-suave painel-mestre-resultado" aria-live="polite"></p>
 </section>
 
+<section id="painel-mestre-ordem-ajuda" class="cartao painel-mestre-ordem-ajuda" hidden>
+    <div>
+        <strong>Ordem da sessão</strong>
+        <p>Arraste os jogadores ou use as setas. A sequência é salva automaticamente e será mantida ao abrir o painel novamente.</p>
+    </div>
+    <button class="botao botao-primario" type="button" id="concluir-ordem-painel">Concluir ordem</button>
+</section>
+
 <div id="mensagem-painel-mestre" class="painel-mestre-mensagem" aria-live="polite"></div>
 
 {% if jogadores %}
-<section class="painel-mestre-jogadores" id="painel-mestre-jogadores">
+<section class="painel-mestre-jogadores" id="painel-mestre-jogadores" data-ordem-url="{{ url_for('mestre.salvar_ordem_painel') }}">
     {% for jogador in jogadores %}
     <article
         class="cartao painel-jogador-card"
         data-painel-jogador
+        data-personagem-id="{{ jogador.get('id') }}"
         data-busca="{{ jogador.get('busca', '') }}"
         data-tem-alertas="{{ '1' if jogador.get('alertas') else '0' }}"
+        draggable="false"
     >
         <header class="painel-jogador-topo">
-            <div class="painel-jogador-identidade">
-                {% if jogador.get('foto_url') %}
-                    <img class="painel-jogador-avatar" src="{{ jogador.get('foto_url') }}" alt="{{ jogador.get('nome') }}" loading="lazy">
-                {% else %}
-                    <div class="painel-jogador-avatar painel-jogador-avatar-inicial">{{ (jogador.get('nome') or '?')[:1]|upper }}</div>
-                {% endif %}
-                <div>
-                    <p class="rotulo">{{ jogador.get('jogador') }} · @{{ jogador.get('login') }}</p>
-                    <h2>{{ jogador.get('nome') }}</h2>
-                    <p class="texto-suave">
-                        Nível {{ jogador.get('nivel', 1) }}
-                        {% if jogador.get('classe') %} · {{ jogador.get('classe') }}{% endif %}
-                        {% if jogador.get('origem') %} · {{ jogador.get('origem') }}{% endif %}
-                    </p>
+            <div class="painel-jogador-identidade-wrap">
+                <div class="painel-ordem-controle" aria-label="Controles de ordem de {{ jogador.get('nome') }}">
+                    <span class="painel-ordem-numero" data-ordem-numero>#{{ loop.index }}</span>
+                    <button type="button" data-mover-ordem="cima" title="Mover para cima" aria-label="Mover {{ jogador.get('nome') }} para cima">↑</button>
+                    <span class="painel-ordem-arrastar" title="Arraste para reorganizar" aria-hidden="true">⋮⋮</span>
+                    <button type="button" data-mover-ordem="baixo" title="Mover para baixo" aria-label="Mover {{ jogador.get('nome') }} para baixo">↓</button>
                 </div>
+                <a class="painel-jogador-identidade painel-jogador-identidade-link" href="{{ url_for('mestre.preview_jogador', jogador_id=jogador.get('id')) }}" title="Visualizar exatamente como o jogador vê o próprio painel">
+                    {% if jogador.get('foto_url') %}
+                        <img class="painel-jogador-avatar" src="{{ jogador.get('foto_url') }}" alt="{{ jogador.get('nome') }}" loading="lazy">
+                    {% else %}
+                        <div class="painel-jogador-avatar painel-jogador-avatar-inicial">{{ (jogador.get('nome') or '?')[:1]|upper }}</div>
+                    {% endif %}
+                    <div>
+                        <p class="rotulo">{{ jogador.get('jogador') }} · @{{ jogador.get('login') }}</p>
+                        <h2>{{ jogador.get('nome') }}</h2>
+                        <p class="texto-suave">
+                            Nível {{ jogador.get('nivel', 1) }}
+                            {% if jogador.get('classe') %} · {{ jogador.get('classe') }}{% endif %}
+                            {% if jogador.get('origem') %} · {{ jogador.get('origem') }}{% endif %}
+                        </p>
+                    </div>
+                </a>
             </div>
             <div class="painel-jogador-links">
+                <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.preview_jogador', jogador_id=jogador.get('id')) }}">Prévia do jogador</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.ficha_jogador', jogador_id=jogador.get('id')) }}">Ficha</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_mestre', jogador_id=jogador.get('id')) }}">Equipe</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
@@ -107,10 +127,15 @@
                     <button type="submit" data-delta="10">+10</button>
                 </form>
             </section>
-            <div class="painel-jogador-contadores">
-                <span><strong>{{ jogador.get('equipe_total', 0) }}</strong>/{{ jogador.get('limite_equipe', 6) }} na equipe</span>
-                <span><strong>{{ jogador.get('box_total', 0) }}</strong> na Box</span>
-                <span class="{% if not jogador.get('acesso_ativo', true) %}texto-alerta{% endif %}">{{ 'Acesso ativo' if jogador.get('acesso_ativo', true) else 'Acesso desativado' }}</span>
+            <div class="painel-jogador-atributos" aria-label="Atributos de {{ jogador.get('nome') }}">
+                {% for atributo in jogador.get('atributos', []) %}
+                <div class="painel-atributo-personagem">
+                    <span>{{ atributo.get('nome') }}</span>
+                    <strong>{{ atributo.get('valor') }}</strong>
+                </div>
+                {% else %}
+                <span class="texto-suave">Nenhum atributo configurado.</span>
+                {% endfor %}
             </div>
         </div>
 

@@ -19,10 +19,15 @@ from app.services.painel_mestre_service import (
     ajustar_pv_personagem,
     ajustar_pv_pokemon,
     carregar_painel_mestre,
+    salvar_ordem_jogadores_painel,
 )
 from app.services.personagem_service import (
     atualizar_ficha_personagem,
     carregar_contexto_ficha,
+)
+from app.services.pokemon_db_service import (
+    carregar_contexto_pokemon,
+    equipe_detalhada_db,
 )
 from app.services.usuario_service import (
     alterar_atividade_usuario,
@@ -65,6 +70,31 @@ def dashboard():
         jogadores=painel.jogadores,
         fonte_dados="PostgreSQL",
     )
+
+
+
+@mestre_bp.post("/painel/ordem")
+@perfil_obrigatorio("mestre")
+def salvar_ordem_painel():
+    payload = request.get_json(silent=True) or {}
+    ordem = payload.get("ordem")
+    if not isinstance(ordem, list) or not all(isinstance(item, str) for item in ordem):
+        return jsonify({"erro": "Envie a ordem completa dos jogadores."}), 400
+    try:
+        resultado = salvar_ordem_jogadores_painel(
+            campanha_codigo=_campanha_codigo(),
+            personagem_ids=ordem,
+            usuario_id=session.get("usuario_id"),
+        )
+    except ValueError as erro:
+        db.session.rollback()
+        return jsonify({"erro": str(erro)}), 400
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao salvar a ordem dos jogadores no painel.")
+        return jsonify({"erro": "Não foi possível salvar a ordem dos jogadores."}), 503
+    return jsonify({"ordem": resultado})
+
 
 
 def _delta_pv() -> int | None:
@@ -225,6 +255,44 @@ def atividade_usuario(usuario_id: str):
     return redirect(url_for("mestre.jogadores"))
 
 
+@mestre_bp.get("/jogadores/<jogador_id>/preview")
+@perfil_obrigatorio("mestre")
+def preview_jogador(jogador_id: str):
+    try:
+        ficha = carregar_contexto_ficha(
+            jogador_id,
+            campanha_codigo=_campanha_codigo(),
+        )
+        contexto_pokemon = carregar_contexto_pokemon(
+            jogador_id,
+            campanha_codigo=_campanha_codigo(),
+        )
+        if ficha is None or contexto_pokemon is None:
+            flash("A ficha desse jogador não foi encontrada no PostgreSQL.", "erro")
+            return redirect(url_for("mestre.dashboard"))
+        equipe = equipe_detalhada_db(contexto_pokemon)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao carregar a prévia do jogador.")
+        flash("Não foi possível carregar a visualização do jogador.", "erro")
+        return redirect(url_for("mestre.dashboard"))
+
+    treinador = ficha.jogador["treinador"]
+    return render_template(
+        "jogador/dashboard.html",
+        nome_jogador=ficha.personagem.usuario.nome,
+        jogador=ficha.jogador,
+        treinador=treinador,
+        atributos_config=ficha.regras.get("atributos", []),
+        equipe=equipe,
+        limite_equipe=int(contexto_pokemon.regras["limites"]["tamanho_equipe"]),
+        fonte_ficha="PostgreSQL",
+        modo_preview_mestre=True,
+        preview_personagem_id=str(ficha.personagem.id),
+        voltar_painel_url=url_for("mestre.dashboard"),
+    )
+
+
 @mestre_bp.route("/jogadores/<jogador_id>/ficha", methods=["GET", "POST"])
 @perfil_obrigatorio("mestre")
 def ficha_jogador(jogador_id: str):
@@ -237,11 +305,11 @@ def ficha_jogador(jogador_id: str):
         db.session.rollback()
         current_app.logger.exception("Falha ao carregar a ficha no PostgreSQL.")
         flash("Não foi possível carregar a ficha no banco de dados.", "erro")
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
 
     if contexto is None:
         flash("A ficha desse jogador não foi encontrada no PostgreSQL.", "erro")
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
 
     jogador = contexto.jogador
     if request.method == "POST":
@@ -261,7 +329,7 @@ def ficha_jogador(jogador_id: str):
                 jogador=contexto.jogador,
                 regras=contexto.regras,
                 modo_mestre=True,
-                voltar_url=url_for("mestre.jogadores"),
+                voltar_url=url_for("mestre.dashboard"),
                 salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
                 fonte_ficha="PostgreSQL",
             ), 503
@@ -278,7 +346,7 @@ def ficha_jogador(jogador_id: str):
         jogador=jogador,
         regras=contexto.regras,
         modo_mestre=True,
-        voltar_url=url_for("mestre.jogadores"),
+        voltar_url=url_for("mestre.dashboard"),
         salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
         fonte_ficha="PostgreSQL",
     )

@@ -39,7 +39,7 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
         contexto = None
     if contexto is None:
         flash("Inventário ou personagem não encontrado.", "erro")
-        destino = "mestre.jogadores" if modo_mestre else "jogadores.dashboard"
+        destino = "mestre.dashboard" if modo_mestre else "jogadores.dashboard"
         return redirect(url_for(destino))
     return render_template(
         "jogador/inventario.html",
@@ -47,7 +47,7 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
         personagem=contexto.personagem,
         modo_mestre=modo_mestre,
         voltar_url=(
-            url_for("mestre.jogadores")
+            url_for("mestre.dashboard")
             if modo_mestre
             else url_for("jogadores.dashboard")
         ),

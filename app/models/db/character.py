@@ -22,6 +22,10 @@ class Personagem(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
         UniqueConstraint("usuario_id", "campanha_id", name="usuario_campanha"),
         CheckConstraint("nivel > 0", name="nivel_positivo"),
         CheckConstraint("pokedolares >= 0", name="pokedolares_nao_negativos"),
+        CheckConstraint(
+            "ordem_painel IS NULL OR ordem_painel > 0",
+            name="ordem_painel_positiva",
+        ),
     )
 
     usuario_id: Mapped[uuid.UUID] = mapped_column(
@@ -62,6 +66,7 @@ class Personagem(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     )
     beneficios_habilidades: Mapped[str | None] = mapped_column(Text)
     anotacoes: Mapped[str | None] = mapped_column(Text)
+    ordem_painel: Mapped[int | None] = mapped_column(Integer)
 
     usuario: Mapped[Usuario] = relationship(back_populates="personagens")
     campanha: Mapped[Campanha] = relationship(back_populates="personagens")

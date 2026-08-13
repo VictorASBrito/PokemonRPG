@@ -285,6 +285,7 @@ class CampanhaImporter:
             (item.campanha_id, item.usuario_id): item
             for item in self._todos(CampanhaMembro)
         }
+        proxima_ordem_por_campanha: dict[uuid.UUID, int] = {}
 
         for jogador in self.fontes.jogadores:
             legado_id = str(jogador.get("id") or "")
@@ -333,6 +334,10 @@ class CampanhaImporter:
             personagem.beneficios_habilidades = treinador.get("beneficios_habilidades") or None
             personagem.anotacoes = treinador.get("anotacoes") or None
             personagem.ativo = True
+            if personagem.ordem_painel is None:
+                proxima_ordem = proxima_ordem_por_campanha.get(campanha.id, 0) + 1
+                proxima_ordem_por_campanha[campanha.id] = proxima_ordem
+                personagem.ordem_painel = proxima_ordem
             criado_em = data_hora(jogador.get("criado_em"))
             atualizado_em = data_hora(jogador.get("atualizado_em"))
             if criado_em:

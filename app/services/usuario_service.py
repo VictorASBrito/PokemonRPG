@@ -163,6 +163,15 @@ def criar_jogador_postgresql(
         atributos_config.get("saude", {}).get("valor_inicial", 1)
     )
 
+    proxima_ordem_painel = int(
+        db.session.execute(
+            select(func.coalesce(func.max(Personagem.ordem_painel), 0) + 1).where(
+                Personagem.campanha_id == campanha.id,
+                Personagem.ativo.is_(True),
+            )
+        ).scalar_one()
+    )
+
     usuario = Usuario(
         login=login_normalizado,
         nome=nome,
@@ -178,6 +187,7 @@ def criar_jogador_postgresql(
         pokedolares=0,
         pv_atual=saude_inicial
         * int(regras_personagem.get("pv_por_ponto_saude", 10)),
+        ordem_painel=proxima_ordem_painel,
         ativo=True,
     )
     membro = CampanhaMembro(

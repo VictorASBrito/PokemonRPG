@@ -102,3 +102,86 @@
     .painel-mestre-cabecalho { flex-direction: column; }
     .painel-jogador-identidade { align-items: flex-start; }
 }
+
+/* Ordem manual da sessão */
+.painel-mestre-ordem-ajuda {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border-color: #c9d5e6;
+    background: #f7faff;
+}
+.painel-mestre-ordem-ajuda[hidden] { display: none; }
+.painel-mestre-ordem-ajuda p { margin: 4px 0 0; color: var(--texto-suave); }
+.painel-jogador-identidade-wrap { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.painel-jogador-identidade-link { color: inherit; text-decoration: none; border-radius: 12px; }
+.painel-jogador-identidade-link:hover h2 { color: var(--primaria); }
+.painel-ordem-controle {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    flex: 0 0 auto;
+}
+.painel-ordem-controle button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-weight: 850;
+}
+.painel-ordem-controle button:disabled { opacity: .35; cursor: not-allowed; }
+.painel-ordem-numero {
+    min-width: 34px;
+    color: var(--primaria);
+    font-weight: 900;
+    text-align: center;
+}
+.painel-ordem-arrastar {
+    color: var(--texto-suave);
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: grab;
+    user-select: none;
+}
+.modo-ordenacao .painel-ordem-controle { display: flex; }
+.modo-ordenacao .painel-jogador-card { cursor: grab; border-color: #c5d1e1; }
+.modo-ordenacao .painel-jogador-card.arrastando { opacity: .48; transform: scale(.995); }
+.modo-ordenacao .painel-jogador-links { opacity: .55; }
+
+/* Atributos do personagem ao lado dos PV */
+.painel-jogador-atributos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    align-content: stretch;
+}
+.painel-atributo-personagem {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    background: #f7f9fc;
+}
+.painel-atributo-personagem span { color: var(--texto-suave); font-size: .78rem; font-weight: 700; }
+.painel-atributo-personagem strong { font-size: 1.08rem; }
+
+@media (max-width: 980px) {
+    .painel-jogador-identidade-wrap { align-items: flex-start; }
+    .painel-jogador-atributos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+    .painel-mestre-ordem-ajuda { flex-direction: column; align-items: flex-start; }
+    .painel-jogador-identidade-wrap { width: 100%; }
+    .painel-jogador-atributos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .modo-ordenacao .painel-jogador-identidade-wrap { flex-direction: column; }
+}

@@ -281,16 +281,22 @@ As buscas de espécie/forma e de golpes dentro da ficha de Pokémon deixaram de 
 
 ## Painel geral do mestre
 
-`/mestre/dashboard` agora é a central de acompanhamento da sessão. O painel exibe:
+`/mestre/dashboard` é a central da sessão. Além dos dados já existentes, esta versão adiciona:
 
-- resumo de jogadores, Pokémon, equipe, Box e alertas;
-- pesquisa dinâmica por jogador, treinador, classe, origem ou Pokémon;
-- filtro para jogadores com alertas;
-- PV e Pokédolares do treinador;
-- equipe completa com imagem, tipos, PV, status e item carregado;
-- atalhos para ficha, equipe, inventário e Box;
-- ajustes rápidos de PV de treinadores e Pokémon, registrados no histórico de alterações.
+- ordem manual e persistente dos jogadores para a primeira etapa do assistente de combate;
+- arrastar e setas para reorganizar a sequência;
+- atributos do personagem ao lado dos PV;
+- prévia do painel exatamente a partir do mesmo template usado pelo jogador;
+- retorno das telas de ficha, equipe, Box e inventário diretamente ao painel do mestre.
 
-Esta etapa não exige migration nova. A revisão do banco continua sendo `d94c7ab20e51 (head)`.
+A ordem usa a coluna `personagens.ordem_painel`, adicionada pela migration `e6b19d2a4c73`.
 
-A suíte atual possui **42 testes automatizados aprovados**.
+Para atualizar:
+
+```powershell
+flask --app app.py db upgrade
+flask --app app.py db current
+pytest -q
+```
+
+A revisão esperada é `e6b19d2a4c73 (head)` e a suíte desta versão possui **46 testes automatizados aprovados**. Consulte `PAINEL_MESTRE.md` para os detalhes.

@@ -47,7 +47,7 @@ def _carregar(referencia: str):
 def _render_equipe(contexto, *, modo_mestre: bool):
     jogador_id = str(contexto.personagem.id)
     if modo_mestre:
-        voltar_url = url_for("mestre.jogadores")
+        voltar_url = url_for("mestre.dashboard")
         editar_endpoint = "pokemons.editar_mestre"
         boxes_url = url_for("boxes.boxes_mestre", jogador_id=jogador_id)
     else:
@@ -339,7 +339,7 @@ def equipe_mestre(jogador_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
         flash("Jogador não encontrado.", "erro")
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _render_equipe(contexto, modo_mestre=True)
 
 
@@ -350,7 +350,7 @@ def equipe_mestre(jogador_id: str):
 def novo_mestre(jogador_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _novo(contexto, modo_mestre=True)
 
 
@@ -361,7 +361,7 @@ def novo_mestre(jogador_id: str):
 def editar_mestre(jogador_id: str, pokemon_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _editar(contexto, pokemon_id, modo_mestre=True)
 
 
@@ -372,5 +372,5 @@ def editar_mestre(jogador_id: str, pokemon_id: str):
 def excluir_mestre(jogador_id: str, pokemon_id: str):
     contexto = _carregar(jogador_id)
     if contexto is None:
-        return redirect(url_for("mestre.jogadores"))
+        return redirect(url_for("mestre.dashboard"))
     return _excluir(contexto, pokemon_id, modo_mestre=True)
