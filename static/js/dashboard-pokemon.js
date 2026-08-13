@@ -24,6 +24,7 @@
     const voltarGrade = ({ manterFoco = true } = {}) => {
         const anterior = foco;
         grade.classList.remove('dashboard-pokemon-modo-foco');
+        document.body.classList.remove('dashboard-foco-aberto');
         cards.forEach((card) => {
             card.classList.remove('pokemon-dashboard-em-foco', 'pokemon-dashboard-lateral');
             definirAcessibilidade(card, false);
@@ -39,6 +40,7 @@
 
         foco = card;
         grade.classList.add('dashboard-pokemon-modo-foco');
+        document.body.classList.add('dashboard-foco-aberto');
         cards.forEach((item) => {
             const ativo = item === card;
             item.classList.toggle('pokemon-dashboard-em-foco', ativo);

@@ -67,3 +67,7 @@ junto ao backup do PostgreSQL.
 - Removido o bloco textual “Equipe ativa / Pokémon / X de 6 espaços ocupados”.
 - A grade da equipe começa no topo útil da página.
 - Cartões, retratos, ficha lateral e espaços vazios receberam uma versão mais compacta para tentar manter as duas fileiras da equipe e as informações do personagem dentro da primeira dobra em desktops comuns.
+
+## Dashboard expandido sem rolagem (desktop)
+
+No modo de foco, o dashboard agora utiliza toda a primeira dobra da janela. O retrato ocupa a coluna esquerda do cartão principal; resumo, atributos atuais, informações, golpes e ações ficam compactados na coluna direita. A página bloqueia a rolagem enquanto o foco está aberto em desktop, e até cinco companheiros permanecem visíveis na lateral. Em notebooks de menor altura, uma media query reduz escala e espaçamentos sem esconder os dados principais.
