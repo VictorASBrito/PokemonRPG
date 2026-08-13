@@ -206,16 +206,25 @@
 }
 :root[data-theme="dark"] .pokemon-dashboard-vazio strong { color: #e9edf3; }
 
-/* Sprites/ilustrações continuam em uma área clara, como no tema claro. */
+/* Retratos Pokémon seguem a mesma hierarquia escura dos cartões.
+   O brilho radial é sutil: destaca sprites transparentes sem criar um bloco branco. */
 :root[data-theme="dark"] .box-pokemon-imagem-wrap,
 :root[data-theme="dark"] .pokemon-imagem-wrap,
 :root[data-theme="dark"] .retrato-pokemon-dashboard,
 :root[data-theme="dark"] .forma-admin-imagem,
-:root[data-theme="dark"] .preview-imagem,
+:root[data-theme="dark"] .painel-pokemon-imagem,
+:root[data-theme="dark"] .preview-imagem {
+    background:
+        radial-gradient(circle at 50% 48%, rgba(93, 111, 135, .22) 0 18%, rgba(34, 44, 56, .12) 42%, transparent 70%),
+        var(--superficie-suave);
+    border-color: var(--borda);
+}
+
+/* Pré-visualizações de itens também evitam o clarão branco, mas ficam um nível acima do fundo. */
 :root[data-theme="dark"] .preview-imagem-item,
 :root[data-theme="dark"] .item-admin-imagem {
-    background: linear-gradient(145deg, #f5f7fa, #e8edf3);
-    border-color: #d4dbe4;
+    background: var(--superficie-suave);
+    border-color: var(--borda);
 }
 
 :root[data-theme="dark"] .box-pokemon-principal:hover,
@@ -316,6 +325,8 @@
 
 :root[data-theme="dark"] progress,
 :root[data-theme="dark"] progress::-webkit-progress-bar { background: #323d4b; }
+:root[data-theme="dark"] progress::-webkit-progress-value { background: #45ad72; }
+:root[data-theme="dark"] progress::-moz-progress-bar { background: #45ad72; }
 
 :root[data-theme="dark"] .barra-salvar,
 :root[data-theme="dark"] .barra-acoes-catalogo,

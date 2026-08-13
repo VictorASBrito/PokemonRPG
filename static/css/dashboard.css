@@ -459,9 +459,20 @@
     min-height: 150px;
 }
 
+.pokemon-dashboard-card .retrato-pokemon-dashboard {
+    width: 100%;
+    overflow: hidden;
+}
+
 .pokemon-dashboard-card .retrato-pokemon-dashboard img {
-    width: 142px;
-    height: 142px;
+    width: min(132px, 88%);
+    height: 132px;
+    max-width: 100%;
+}
+
+/* Na grade 3 x 2 o retrato nunca pode invadir a coluna de nome/vida. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-topo {
+    grid-template-columns: minmax(118px, 34%) minmax(0, 1fr);
 }
 
 .pokemon-dashboard-detalhes-expandidos {
@@ -490,7 +501,8 @@
     grid-row: 1 / span 6;
     min-height: 690px;
     padding: 22px;
-    cursor: zoom-out;
+    cursor: default;
+    user-select: text;
     border-color: color-mix(in srgb, var(--primaria) 38%, var(--borda));
     box-shadow: 0 20px 46px rgba(16, 24, 40, .16);
 }
@@ -745,6 +757,18 @@
     font-size: .76rem;
 }
 
+.pokemon-dashboard-botoes-expandidos {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+}
+
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-topo,
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-detalhes-expandidos {
+    user-select: text;
+}
+
 /* Cartões laterais no modo de foco. */
 .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral {
     grid-column: 2;
@@ -873,5 +897,6 @@
     .pokemon-dashboard-golpe-detalhado dl { justify-content: start; }
     .pokemon-dashboard-golpe-detalhado dl div { text-align: left; }
     .pokemon-dashboard-acoes-expandidas { align-items: stretch; flex-direction: column; }
+    .pokemon-dashboard-botoes-expandidos { width: 100%; flex-direction: column; }
     .pokemon-dashboard-acoes-expandidas .botao { width: 100%; }
 }

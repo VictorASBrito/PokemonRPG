@@ -50,3 +50,12 @@ junto ao backup do PostgreSQL.
 - Clicar em um Pokémon no dashboard não abre mais a edição imediatamente. O cartão passa para o modo de foco, ocupa a maior área da equipe e mostra atributos atuais, bases, natureza, gênero, status, item, dados de defesa, golpes detalhados e anotações.
 - Os demais Pokémon são reorganizados em uma coluna compacta à direita. Clicar em outro Pokémon troca o foco; clicar novamente no Pokémon em foco ou pressionar `Esc` retorna à grade normal.
 - A edição continua acessível por um botão explícito dentro da visualização expandida.
+
+
+## Ajuste de contraste, retratos e densidade da equipe
+
+- O modo escuro não usa mais fundos claros nos retratos de Pokémon; sprites ficam sobre uma superfície escura com brilho radial sutil.
+- O dashboard mantém a equipe em grade 3x2 e corrige a largura do retrato para impedir sobreposição com nome/PV.
+- No modo expandido, o cartão principal deixa de recolher por clique. O retorno ocorre pelo botão **Recolher** ou pela tecla `Esc`, permitindo selecionar e copiar informações.
+- A tela de Equipe utiliza até 6 Pokémon por linha no desktop.
+- A Equipe ativa dentro da Box e a própria Box utilizam até 6 cartões por linha no desktop, com quebra responsiva em telas menores.

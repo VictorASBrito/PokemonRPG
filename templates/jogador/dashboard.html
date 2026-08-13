@@ -276,8 +276,11 @@
                         {% endif %}
 
                         <div class="pokemon-dashboard-acoes-expandidas">
-                            <span>Clique novamente neste Pokémon para voltar à equipe completa.</span>
-                            <a class="botao botao-secundario botao-link" href="{{ pokemon_dashboard_url }}" data-dashboard-pokemon-edit>Editar Pokémon</a>
+                            <span>Use “Recolher” ou pressione Esc para voltar à equipe completa.</span>
+                            <div class="pokemon-dashboard-botoes-expandidos">
+                                <button class="botao botao-secundario" type="button" data-dashboard-pokemon-collapse>Recolher</button>
+                                <a class="botao botao-secundario botao-link" href="{{ pokemon_dashboard_url }}" data-dashboard-pokemon-edit>Editar Pokémon</a>
+                            </div>
                         </div>
                     </div>
                 </article>

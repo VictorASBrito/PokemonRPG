@@ -39,12 +39,15 @@ def test_dashboard_pokemon_tem_grade_3x2_e_modo_foco_interativo() -> None:
     assert "data-dashboard-pokemon-card" in template
     assert "pokemon-dashboard-detalhes-expandidos" in template
     assert "Editar Pokémon" in template
+    assert "data-dashboard-pokemon-collapse" in template
     assert "dashboard-pokemon.js" in template
     assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in css
     assert ".dashboard-pokemon-modo-foco" in css
     assert ".pokemon-dashboard-em-foco" in css
     assert ".pokemon-dashboard-lateral" in css
     assert "destacar(card)" in js
+    assert "if (foco === card) return" in js
+    assert "data-dashboard-pokemon-collapse" in js
     assert "evento.key === 'Escape'" in js
 
 
@@ -58,3 +61,23 @@ def test_modo_escuro_corrige_contraste_dos_slots_e_cartoes() -> None:
     assert '.pokemon-dashboard-vazio' in css
     assert '.pokemon-imagem-wrap' in css
     assert '.box-pokemon-imagem-wrap' in css
+
+
+def test_equipes_e_box_usam_ate_seis_colunas_no_desktop() -> None:
+    raiz = Path(__file__).resolve().parents[1]
+    pokemon_css = (raiz / "static" / "css" / "pokemon.css").read_text(encoding="utf-8")
+    boxes_css = (raiz / "static" / "css" / "boxes.css").read_text(encoding="utf-8")
+
+    assert ".grade-equipe" in pokemon_css
+    assert "grid-template-columns: repeat(6, minmax(0, 1fr))" in pokemon_css
+    assert ".grade-box-pokemons" in boxes_css
+    assert "grid-template-columns: repeat(6, minmax(0, 1fr))" in boxes_css
+
+
+def test_modo_escuro_nao_cria_fundo_claro_nos_retratos_pokemon() -> None:
+    raiz = Path(__file__).resolve().parents[1]
+    css = (raiz / "static" / "css" / "tema.css").read_text(encoding="utf-8")
+
+    assert "Retratos Pokémon seguem a mesma hierarquia escura" in css
+    assert "radial-gradient(circle at 50% 48%" in css
+    assert "var(--superficie-suave)" in css

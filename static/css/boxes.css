@@ -77,8 +77,8 @@
 
 .grade-box-pokemons {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
     margin-top: 22px;
 }
 
@@ -110,15 +110,15 @@
 
 .box-pokemon-imagem-wrap {
     position: relative;
-    min-height: 130px;
+    min-height: 116px;
     display: grid;
     place-items: center;
     background: linear-gradient(145deg, #f8fafc, #edf1f6);
     border-radius: 11px;
 }
 .box-pokemon-imagem-wrap img {
-    width: 118px;
-    height: 118px;
+    width: 106px;
+    height: 106px;
     object-fit: contain;
     filter: drop-shadow(0 10px 10px rgba(16, 24, 40, .14));
 }
@@ -149,7 +149,7 @@
 }
 
 .slot-box-vazio {
-    min-height: 265px;
+    min-height: 238px;
     display: grid;
     place-items: center;
     align-content: center;
@@ -172,10 +172,14 @@
 
 [hidden] { display: none !important; }
 
-@media (max-width: 1050px) {
-    .grade-box-pokemons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1280px) {
+    .grade-box-pokemons { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .filtros-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .campo-filtro-nome { grid-column: span 2; }
+}
+
+@media (max-width: 960px) {
+    .grade-box-pokemons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px) {

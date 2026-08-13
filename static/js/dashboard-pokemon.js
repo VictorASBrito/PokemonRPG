@@ -9,8 +9,16 @@
 
     const definirAcessibilidade = (card, expandido) => {
         card.setAttribute('aria-expanded', expandido ? 'true' : 'false');
+        card.classList.toggle('pokemon-dashboard-detalhes-abertos', expandido);
+
         const detalhes = card.querySelector('.pokemon-dashboard-detalhes-expandidos');
         if (detalhes) detalhes.setAttribute('aria-hidden', expandido ? 'false' : 'true');
+
+        const nome = card.querySelector('.nome-pokemon-dashboard h3')?.textContent?.trim() || 'Pokémon';
+        card.setAttribute(
+            'aria-label',
+            expandido ? `Detalhes expandidos de ${nome}` : `Expandir detalhes de ${nome}`,
+        );
     };
 
     const voltarGrade = ({ manterFoco = true } = {}) => {
@@ -25,10 +33,9 @@
     };
 
     const destacar = (card) => {
-        if (foco === card) {
-            voltarGrade();
-            return;
-        }
+        // O cartão principal deixa de funcionar como botão depois de aberto.
+        // Isso permite selecionar/copiar texto e analisar os dados sem recolher por acidente.
+        if (foco === card) return;
 
         foco = card;
         grade.classList.add('dashboard-pokemon-modo-foco');
@@ -39,7 +46,6 @@
             definirAcessibilidade(item, ativo);
         });
 
-        // Mantém o início do cartão principal visível sem deslocar toda a página.
         requestAnimationFrame(() => {
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
@@ -48,16 +54,27 @@
     cards.forEach((card) => {
         card.addEventListener('click', (evento) => {
             if (evento.target.closest('a, button, input, select, textarea, label')) return;
+            if (foco === card) return;
             destacar(card);
         });
 
         card.addEventListener('keydown', (evento) => {
             if (evento.target.closest('a, button, input, select, textarea')) return;
+            if (foco === card) return;
             if (evento.key === 'Enter' || evento.key === ' ') {
                 evento.preventDefault();
                 destacar(card);
             }
         });
+
+        const botaoRecolher = card.querySelector('[data-dashboard-pokemon-collapse]');
+        if (botaoRecolher) {
+            botaoRecolher.addEventListener('click', (evento) => {
+                evento.preventDefault();
+                evento.stopPropagation();
+                if (foco === card) voltarGrade({ manterFoco: true });
+            });
+        }
     });
 
     document.addEventListener('keydown', (evento) => {
