@@ -300,3 +300,7 @@ pytest -q
 ```
 
 A revisão esperada é `e6b19d2a4c73 (head)` e a suíte desta versão possui **46 testes automatizados aprovados**. Consulte `PAINEL_MESTRE.md` para os detalhes.
+
+## Refinamento visual e fotos de perfil
+
+O layout operacional agora é fluido em telas largas, possui alternância persistente entre tema claro/escuro, utiliza a Pokébola oficial fornecida ao projeto na marca e permite upload de foto do personagem pela ficha. Consulte `REFINAMENTO_FRONTEND.md`.

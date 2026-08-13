@@ -4,13 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block titulo %}Pokémon RPG{% endblock %}</title>
+    <script>
+        (() => {
+            const chave = 'pokemon-rpg-tema';
+            let salvo = null;
+            try { salvo = localStorage.getItem(chave); } catch (_erro) { salvo = null; }
+            const tema = salvo === 'dark' || salvo === 'light'
+                ? salvo
+                : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.dataset.theme = tema;
+        })();
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/geral.css') }}">
     {% block estilos %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/refinamento.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tema.css') }}">
 </head>
 <body>
     <header class="topo">
         <a class="marca" href="{{ url_for('inicio') }}">
-            <span class="marca-simbolo">◉</span>
+            <img class="marca-pokebola" src="{{ url_for('static', filename='img/pokebola.png') }}" alt="" aria-hidden="true">
             Pokémon RPG
         </a>
 
@@ -36,6 +49,10 @@
             </nav>
 
             <div class="usuario-topo">
+                <button class="tema-toggle" id="tema-toggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Alternar tema">
+                    <span class="tema-toggle-icone" aria-hidden="true">◐</span>
+                    <span class="tema-toggle-texto">Tema</span>
+                </button>
                 {% if modo_preview_mestre|default(false) %}
                     <span>{{ nome_jogador }}</span>
                     <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url or url_for('mestre.dashboard') }}">Sair da prévia</a>
@@ -59,6 +76,7 @@
         {% block conteudo %}{% endblock %}
     </main>
 
+    <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

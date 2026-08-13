@@ -1,0 +1,45 @@
+/* Refinamento global de densidade visual. Carregado após os estilos de cada página. */
+.conteudo {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 18px clamp(12px, 1.6vw, 28px) 56px;
+}
+
+/* Cabeçalhos hero repetiam a navegação e consumiam a primeira dobra da tela. */
+.cabecalho-pagina.cabecalho-com-acoes,
+.cabecalho-dashboard {
+    min-height: 0;
+    margin: 0 0 10px;
+    justify-content: flex-end;
+}
+.cabecalho-pagina.cabecalho-com-acoes > div:first-child,
+.cabecalho-dashboard > div:first-child {
+    display: none;
+}
+.cabecalho-pagina.cabecalho-com-acoes .acoes-cabecalho,
+.cabecalho-pagina.cabecalho-com-acoes > .botao,
+.cabecalho-dashboard .acoes-dashboard,
+.painel-mestre-acoes-topo {
+    margin-left: auto;
+}
+
+.painel-mestre-cabecalho { margin-bottom: 10px; }
+.painel-mestre-metricas { margin-bottom: 12px; }
+.painel-mestre-filtros { margin-bottom: 12px; }
+.painel-mestre-jogadores { gap: 12px; }
+.painel-jogador-card { padding: 18px; }
+
+@media (min-width: 1440px) {
+    .conteudo { padding-left: 24px; padding-right: 24px; }
+    .painel-equipe-compacta { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+    .painel-pokemon-card { min-width: 0; }
+    .painel-pokemon-link { padding: 9px; }
+    .painel-pokemon-imagem { width: 44px; height: 44px; flex-basis: 44px; }
+}
+
+@media (max-width: 640px) {
+    .conteudo { padding: 12px 9px 48px; }
+    .cabecalho-pagina.cabecalho-com-acoes,
+    .cabecalho-dashboard { margin-bottom: 8px; }
+}

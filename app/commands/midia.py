@@ -5,7 +5,7 @@ from flask import Blueprint
 from sqlalchemy import select
 
 from app.extensions import db
-from app.models.db import FormaPokemon, Item
+from app.models.db import FormaPokemon, Item, Personagem
 from app.services.upload_service import (
     caminho_imagem_local,
     contar_referencias_imagem,
@@ -26,6 +26,9 @@ def _urls_catalogo() -> set[str]:
     for item in db.session.execute(select(Item.imagem_url)).scalars():
         if item:
             urls.add(item)
+    for foto in db.session.execute(select(Personagem.foto_url)).scalars():
+        if foto:
+            urls.add(foto)
     for normal, shiny in db.session.execute(
         select(FormaPokemon.imagem_url, FormaPokemon.imagem_shiny_url)
     ):

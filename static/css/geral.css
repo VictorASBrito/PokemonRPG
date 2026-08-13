@@ -16,6 +16,7 @@
     --aviso: #fff7dd;
     --sombra: 0 12px 30px rgba(16, 24, 40, 0.08);
     --sombra-suave: 0 4px 14px rgba(16, 24, 40, 0.06);
+    --largura-conteudo: 100%;
 }
 
 html { scroll-behavior: smooth; }
@@ -34,7 +35,7 @@ button { color: inherit; }
 
 .topo {
     min-height: 68px;
-    padding: 0 32px;
+    padding: 0 clamp(14px, 2vw, 30px);
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
@@ -56,16 +57,12 @@ button { color: inherit; }
     white-space: nowrap;
 }
 
-.marca-simbolo {
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    color: white;
-    background: var(--primaria);
-    border: 4px solid #20252d;
-    border-radius: 50%;
-    font-size: 0.75rem;
+.marca-pokebola {
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+    flex: 0 0 31px;
+    filter: drop-shadow(0 2px 2px rgba(16, 24, 40, .18));
 }
 
 .navegacao-principal {
@@ -95,10 +92,31 @@ button { color: inherit; }
 }
 .usuario-topo form { margin: 0; }
 
+.tema-toggle {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: var(--texto);
+    background: var(--superficie-suave);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 760;
+}
+.tema-toggle:hover { border-color: var(--primaria); }
+.tema-toggle-icone { font-size: 1.05rem; line-height: 1; }
+.tema-toggle-texto { font-size: .78rem; }
+
 .conteudo {
-    width: min(1180px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: 40px 0 84px;
+    width: var(--largura-conteudo);
+    max-width: none;
+    margin: 0;
+    padding: 24px clamp(14px, 2vw, 30px) 64px;
 }
 
 .painel-login {
@@ -110,7 +128,7 @@ button { color: inherit; }
 .login-cartao { width: min(440px, 100%); }
 
 .cartao {
-    padding: 28px;
+    padding: 22px;
     background: var(--superficie);
     border: 1px solid var(--borda);
     border-radius: 18px;
@@ -373,6 +391,32 @@ code {
     font-size: 0.9em;
 }
 
+
+/* Layout operacional: usa toda a tela e evita cabeçalhos hero repetitivos. */
+.cabecalho-pagina.cabecalho-com-acoes,
+.cabecalho-dashboard {
+    min-height: 0;
+    margin-bottom: 12px;
+    justify-content: flex-end;
+}
+.cabecalho-pagina.cabecalho-com-acoes > div:first-child,
+.cabecalho-dashboard > div:first-child {
+    display: none;
+}
+.cabecalho-pagina.cabecalho-com-acoes .acoes-cabecalho,
+.cabecalho-dashboard .acoes-dashboard {
+    margin-left: auto;
+}
+.cartao-indicador-pokebola {
+    padding: 0;
+    background: transparent;
+}
+.cartao-indicador-pokebola img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
 @media (max-width: 900px) {
     .topo { grid-template-columns: auto 1fr; gap: 16px; }
     .navegacao-principal { display: none; }
@@ -384,8 +428,8 @@ code {
 
 @media (max-width: 640px) {
     .topo { padding: 0 16px; }
-    .usuario-topo > span { display: none; }
-    .conteudo { padding-top: 24px; width: min(100% - 20px, 1180px); }
+    .usuario-topo > span, .tema-toggle-texto { display: none; }
+    .conteudo { padding: 16px 10px 52px; width: 100%; }
     .cabecalho-com-acoes { flex-direction: column; }
     .cabecalho-com-acoes .botao { width: 100%; }
     .grade-duas-colunas,

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import io
+import uuid
 from pathlib import Path
 
 from sqlalchemy import select
@@ -193,3 +194,47 @@ def test_substituicao_preserva_upload_compartilhado_por_duplicacao(app_db, clien
         assert copia.imagem_url == url_original
         assert arquivo_original.is_file(), "A cópia ainda referencia a imagem original."
         assert _arquivo_local(app_db, item.imagem_url).is_file()
+
+
+def test_jogador_pode_enviar_foto_do_perfil(app_db, client_db) -> None:
+    resposta = client_db.post("/login", data={"login": "bartz-db", "senha": "abc123"})
+    assert resposta.status_code == 302
+
+    resposta = client_db.post(
+        "/jogador/ficha",
+        data={
+            "nome": "Bartz",
+            "foto_url": "",
+            "foto_arquivo": (io.BytesIO(PNG_1X1), "perfil.png"),
+            "nivel": "48",
+            "idade": "24",
+            "genero": "Masculino",
+            "origem": "Atleta",
+            "classe": "Treinador(a)",
+            "estilo_combate": "Agressivo",
+            "numeros_shiny": "7",
+            "pokedolares": "300",
+            "pv_atual": "30",
+            "atributo_fisico": "1",
+            "atributo_destreza": "1",
+            "atributo_saude": "3",
+            "atributo_conhecimento": "1",
+            "atributo_comunicacao": "1",
+            "atributo_espirito": "1",
+            "beneficios_habilidades": "",
+            "anotacoes": "",
+        },
+    )
+    assert resposta.status_code == 302
+
+    from app.models.db import Personagem
+    with app_db.app_context():
+        personagem = db.session.get(Personagem, uuid.UUID(app_db.config["TEST_IDS"]["personagem"]))
+        assert personagem is not None
+        assert personagem.foto_url is not None
+        assert personagem.foto_url.startswith("/static/uploads/perfis/")
+        assert _arquivo_local(app_db, personagem.foto_url).is_file()
+
+    dashboard = client_db.get("/jogador/dashboard")
+    assert dashboard.status_code == 200
+    assert "/static/uploads/perfis/" in dashboard.get_data(as_text=True)

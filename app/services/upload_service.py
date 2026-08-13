@@ -158,11 +158,13 @@ def contar_referencias_imagem(url: str | None) -> int:
     if not url:
         return 0
     # Imports locais evitam ciclos entre os serviços e os modelos.
+    from app.models.db.character import Personagem
     from app.models.db.inventory import Insignia, Item
     from app.models.db.pokemon_catalog import FormaPokemon, TipoPokemon
 
     total = 0
     total += int(db.session.scalar(select(func.count(Item.id)).where(Item.imagem_url == url)) or 0)
+    total += int(db.session.scalar(select(func.count(Personagem.id)).where(Personagem.foto_url == url)) or 0)
     total += int(
         db.session.scalar(
             select(func.count(FormaPokemon.id)).where(

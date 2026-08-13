@@ -3,6 +3,7 @@
         {url: '#imagem_url', arquivo: '#imagem_arquivo', preview: '#preview-normal', remover: 'input[name="remover_imagem"]'},
         {url: '#imagem_shiny_url', arquivo: '#imagem_shiny_arquivo', preview: '#preview-shiny', remover: 'input[name="remover_imagem_shiny"]'},
         {url: '#imagem_url', arquivo: '#imagem_arquivo', preview: '#preview-item', remover: 'input[name="remover_imagem"]'},
+        {url: '#foto_url', arquivo: '#foto_arquivo', preview: '#preview-perfil', remover: 'input[name="remover_foto"]', placeholder: '#preview-perfil-placeholder'},
     ];
 
     const previewsConfigurados = new Set();
@@ -34,14 +35,22 @@
                 origem = inputUrl?.value?.trim() || '';
             }
             imagem.src = origem;
+            imagem.hidden = !origem;
             imagem.style.display = origem ? 'block' : 'none';
+            const placeholder = configuracao.placeholder ? document.querySelector(configuracao.placeholder) : null;
+            if (placeholder) placeholder.hidden = Boolean(origem);
         };
 
         inputUrl?.addEventListener('input', atualizar);
         inputArquivo?.addEventListener('change', atualizar);
         inputRemover?.addEventListener('change', atualizar);
         imagem.addEventListener('error', () => {
-            if (!inputArquivo?.files?.[0]) imagem.style.display = 'none';
+            if (!inputArquivo?.files?.[0]) {
+                imagem.style.display = 'none';
+                imagem.hidden = true;
+                const placeholder = configuracao.placeholder ? document.querySelector(configuracao.placeholder) : null;
+                if (placeholder) placeholder.hidden = false;
+            }
         });
         window.addEventListener('beforeunload', liberarObjeto, {once: true});
         atualizar();

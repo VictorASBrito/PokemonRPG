@@ -104,6 +104,8 @@ def ficha():
                 personagem=contexto.personagem,
                 formulario=request.form,
                 regras=contexto.regras,
+                arquivo_foto=request.files.get("foto_arquivo"),
+                remover_foto=request.form.get("remover_foto") == "1",
                 usuario_responsavel_id=session.get("usuario_id"),
             )
             if erros:

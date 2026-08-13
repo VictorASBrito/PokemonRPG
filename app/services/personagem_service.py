@@ -6,6 +6,8 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Iterable
 
+from werkzeug.datastructures import FileStorage
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
@@ -27,6 +29,11 @@ from app.models.db import (
 )
 from app.services.importacao.utils import slug, uuid_legado
 from app.services.json_service import ler_json
+from app.services.upload_service import (
+    ErroUploadImagem,
+    excluir_imagem_local,
+    preparar_imagem_formulario,
+)
 
 
 @dataclass(slots=True)
@@ -531,12 +538,26 @@ def atualizar_ficha_personagem(
     personagem: Personagem,
     formulario: Any,
     regras: dict[str, Any],
+    arquivo_foto: FileStorage | None = None,
+    remover_foto: bool = False,
     usuario_responsavel_id: str | uuid.UUID | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
     candidato, erros = _dto_formulario(personagem, formulario, regras)
     if erros:
         return candidato, erros
 
+    try:
+        imagem = preparar_imagem_formulario(
+            arquivo=arquivo_foto,
+            url_informada=candidato["treinador"].get("foto_url"),
+            remover=remover_foto,
+            subpasta="perfis",
+            url_atual=personagem.foto_url,
+        )
+    except ErroUploadImagem as erro:
+        return candidato, [str(erro)]
+
+    candidato["treinador"]["foto_url"] = imagem.url or ""
     anterior = personagem_para_jogador(personagem, regras)
     treinador = candidato["treinador"]
     personagem.nome = treinador["nome"]
@@ -599,7 +620,16 @@ def atualizar_ficha_personagem(
             dados_novos=novo,
         )
     )
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        if imagem.upload_novo:
+            excluir_imagem_local(imagem.upload_novo, somente_se_orfa=False)
+        raise
+
+    if imagem.url_anterior_substituida:
+        excluir_imagem_local(imagem.url_anterior_substituida, somente_se_orfa=True)
     return novo, []
 
 

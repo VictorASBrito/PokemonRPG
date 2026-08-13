@@ -427,3 +427,11 @@
 @media (max-width: 700px) {
     .preview-jogador-mestre { flex-direction: column; align-items: flex-start; }
 }
+
+/* Refinamento de densidade para telas largas. */
+@media (min-width: 1280px) {
+    .dashboard-jogador { grid-template-columns: minmax(270px, 310px) minmax(0, 1fr); gap: 18px; }
+    .grade-pokemons-dashboard { grid-template-columns: repeat(auto-fit, minmax(370px, 1fr)); gap: 14px; }
+    .coluna-treinador { gap: 14px; }
+    .pokemon-dashboard-card { padding: 15px; }
+}

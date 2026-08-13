@@ -18,7 +18,7 @@
     <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
 </section>
 
-<form method="post" action="{{ salvar_url }}" id="form-ficha" data-pv-por-saude="{{ regras.get('pv_por_ponto_saude', 10) }}">
+<form method="post" enctype="multipart/form-data" action="{{ salvar_url }}" id="form-ficha" data-pv-por-saude="{{ regras.get('pv_por_ponto_saude', 10) }}">
     <section class="cartao secao-ficha">
         <div class="titulo-secao">
             <div>
@@ -34,10 +34,25 @@
                 <input id="nome" name="nome" value="{{ treinador.get('nome', '') }}" maxlength="80" required>
             </div>
 
-            <div class="campo campo-largo">
-                <label for="foto_url">Foto do personagem</label>
-                <input id="foto_url" name="foto_url" type="url" value="{{ treinador.get('foto_url', '') }}" maxlength="500" placeholder="https://exemplo.com/imagem.png">
-                <small>Use a URL de uma imagem. Quando estiver vazio, o painel exibirá um avatar com a inicial do personagem.</small>
+            <div class="campo campo-largo campo-foto-perfil">
+                <div class="foto-perfil-editor">
+                    <div class="preview-foto-perfil">
+                        <img id="preview-perfil" src="{{ treinador.get('foto_url', '') }}" alt="Prévia da foto do personagem" {% if not treinador.get('foto_url') %}hidden{% endif %}>
+                        <span id="preview-perfil-placeholder" {% if treinador.get('foto_url') %}hidden{% endif %}>{{ (treinador.get('nome') or 'T')[:1]|upper }}</span>
+                    </div>
+                    <div class="foto-perfil-campos">
+                        <label for="foto_arquivo">Foto do personagem</label>
+                        <input id="foto_arquivo" name="foto_arquivo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+                        <small>Envie PNG, JPG/JPEG, WEBP ou GIF com até 8 MB.</small>
+                        <details class="foto-url-opcional">
+                            <summary>Usar imagem por URL</summary>
+                            <input id="foto_url" name="foto_url" type="text" value="{{ treinador.get('foto_url', '') }}" maxlength="500" placeholder="https://exemplo.com/imagem.png">
+                        </details>
+                        {% if treinador.get('foto_url') %}
+                        <label class="alternador-linha remover-imagem-perfil"><input type="checkbox" name="remover_foto" value="1"><span>Remover foto atual</span></label>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
             <div class="campo">
@@ -236,5 +251,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/uploads.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ficha.js') }}"></script>
 {% endblock %}
