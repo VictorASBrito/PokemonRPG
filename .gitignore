@@ -11,3 +11,6 @@ logs/*.json
 static/uploads/*
 !static/uploads/.gitkeep
 
+
+# Binário local opcional do Cloudflare Tunnel
+cloudflared.exe

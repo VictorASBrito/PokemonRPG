@@ -58,6 +58,7 @@
                     <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url or url_for('mestre.dashboard') }}">Sair da prévia</a>
                 {% else %}
                     <span>{{ session.get('nome') }}</span>
+                    <a class="botao botao-secundario botao-link" href="{{ url_for('auth.trocar_senha') }}">Senha</a>
                     <form action="{{ url_for('auth.logout') }}" method="post">
                         <button class="botao botao-secundario" type="submit">Sair</button>
                     </form>

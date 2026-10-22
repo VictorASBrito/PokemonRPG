@@ -1428,3 +1428,403 @@
         display: none;
     }
 }
+
+
+/* --------------------------------------------------------------------------
+   Padronização de proporções da grade Pokémon (modo normal)
+
+   Uma ficha com quatro golpes e outra sem golpes devem manter exatamente
+   a mesma geometria. O modo expandido tem regras próprias e NÃO é afetado
+   por estes seletores. As dimensões dos retratos, barras, atributos e espaços
+   vazios seguem os mesmos limites dentro de cada breakpoint.
+   -------------------------------------------------------------------------- */
+.dashboard-jogador {
+    min-width: 0;
+}
+
+.coluna-treinador,
+.coluna-equipe,
+.grade-pokemons-dashboard,
+.nomes-treinador,
+.nome-pokemon-dashboard > div,
+.dados-pokemon-dashboard {
+    min-width: 0;
+}
+
+.nomes-treinador h2,
+.nomes-treinador strong {
+    overflow-wrap: anywhere;
+}
+
+/* Progresso sempre proporcional à área do respectivo cartão. Antes o
+   elemento nativo mantinha uma largura fixa e deixava espaço sem uso. */
+.dashboard-jogador .vida-treinador progress,
+.dashboard-jogador .vida-pokemon-dashboard progress {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 9px;
+    margin: 0;
+    border: 0;
+    border-radius: 999px;
+    accent-color: #45ad72;
+}
+
+/* A caixa de atributos do treinador também mantém as células alinhadas. */
+.dashboard-jogador .lista-atributos-treinador {
+    grid-auto-rows: minmax(52px, auto);
+}
+.dashboard-jogador .atributo-treinador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+.dashboard-jogador .atributo-treinador span {
+    max-width: 100%;
+}
+
+/* Base: linhas com alturas uniformes, mesmo se os Pokémon tiverem nomes ou
+   quantidades de golpes diferentes. Nas resoluções mais estreitas, cresce
+   naturalmente em vez de cortar informações. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) {
+    align-items: stretch;
+    grid-auto-rows: minmax(250px, auto);
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    margin: 0;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card:not(.pokemon-dashboard-vazio) {
+    display: flex;
+    flex-direction: column;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-topo {
+    flex: 0 0 auto;
+    align-items: stretch;
+    grid-template-columns: 112px minmax(0, 1fr);
+    min-height: 112px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard {
+    box-sizing: border-box;
+    width: 112px;
+    height: 112px;
+    min-height: 112px;
+    min-width: 0;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    object-fit: contain;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .dados-pokemon-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .nome-pokemon-dashboard {
+    min-width: 0;
+    gap: 5px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .nome-pokemon-dashboard h3 {
+    max-width: 100%;
+    font-size: clamp(.93rem, 1.1vw, 1.13rem);
+    line-height: 1.2;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .nome-pokemon-dashboard > strong {
+    font-size: .67rem;
+    padding: 4px 6px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .vida-pokemon-dashboard,
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .tipos-pokemon-dashboard {
+    margin-top: 0;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .vida-pokemon-dashboard {
+    width: 100%;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .tipos-pokemon-dashboard {
+    min-height: 19px;
+    align-items: center;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: start;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .bloco-pokemon-dashboard {
+    min-width: 0;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .bloco-pokemon-dashboard h4 {
+    margin: 0 0 6px;
+    white-space: nowrap;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(34px, 1fr));
+    gap: 4px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon div {
+    display: flex;
+    min-height: 34px;
+    min-width: 0;
+    padding: 3px 2px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon span {
+    font-size: .57rem;
+    line-height: 1.1;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon strong {
+    font-size: .79rem;
+    line-height: 1.15;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 20px;
+    gap: 5px;
+    padding: 3px 5px;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard span {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard small {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 44%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+    display: grid;
+    place-items: center;
+    align-content: center;
+}
+
+/* Em um desktop com três colunas, cada um dos seis espaços tem a mesma
+   altura, inclusive os vazios. Duas fileiras cabem na área útil da página. */
+@media (min-width: 1181px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-rows: clamp(255px, 30dvh, 285px);
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+        min-height: 0;
+    }
+}
+
+/* O topo continua legível quando duas colunas recebem menos largura. */
+@media (min-width: 641px) and (max-width: 1180px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card {
+        min-height: 260px;
+    }
+}
+
+/* Tablet / celular: uma coluna sem altura forçada nem textos cortados. */
+@media (max-width: 640px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) {
+        grid-auto-rows: auto;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card:not(.pokemon-dashboard-vazio) {
+        min-height: 0;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+        min-height: 130px;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-topo {
+        grid-template-columns: 92px minmax(0, 1fr);
+        min-height: 92px;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard {
+        width: 92px;
+        height: 92px;
+        min-height: 92px;
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+   Grade uniforme até o limite inferior da ficha do treinador
+
+   Na visão normal de desktop, a equipe tem sempre duas fileiras equivalentes,
+   com três Pokémon por linha. O bloco de atributos e os quatro golpes usam a
+   mesma área vertical: duas linhas de atributos versus quatro slots de golpes.
+   No foco o layout detalhado mantém suas regras anteriores.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1181px) {
+    body:not(.dashboard-foco-aberto) .dashboard-jogador {
+        min-height: max(650px, calc(100dvh - 196px));
+        align-items: stretch;
+    }
+
+    body:not(.dashboard-foco-aberto) .coluna-treinador {
+        align-content: stretch;
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    body:not(.dashboard-foco-aberto) .painel-atributos-treinador {
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:not(.dashboard-foco-aberto) .lista-atributos-treinador {
+        flex: 1 1 auto;
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+    }
+
+    body:not(.dashboard-foco-aberto) .coluna-equipe {
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+        min-height: 0;
+    }
+
+    body:not(.dashboard-foco-aberto) .grade-pokemons-dashboard {
+        flex: 1 1 auto;
+        min-height: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: minmax(0, 1fr);
+        align-content: stretch;
+    }
+}
+
+/* Todos os cartões seguem a altura de sua célula, inclusive vazios. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card,
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card:not(.pokemon-dashboard-vazio) {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cada cartão distribui toda a altura restante igualmente entre os blocos de
+   atributos e golpes; os quatro movimentos nunca mudam as dimensões do card. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .bloco-pokemon-dashboard {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .bloco-pokemon-dashboard h4 {
+    flex: 0 0 auto;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard {
+    flex: 1 1 auto;
+    display: grid;
+    min-height: 0;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* A posição continua visível mesmo quando não há golpe cadastrado. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > .golpe-dashboard-vazio {
+    justify-content: center;
+    border: 1px dashed var(--borda);
+    background: var(--superficie-suave);
+}
+
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > .golpe-dashboard-vazio span {
+    color: var(--texto-suave);
+    font-weight: 500;
+    font-style: italic;
+    font-size: .65rem;
+}
+
+/* A ficha expandida também mostra as quatro posições, sem remover os dados
+   detalhados dos golpes existentes. */
+.pokemon-dashboard-golpe-detalhado.pokemon-dashboard-golpe-vazio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--borda);
+    background: var(--superficie-suave);
+}
+
+.pokemon-dashboard-golpe-detalhado.pokemon-dashboard-golpe-vazio > span {
+    color: var(--texto-suave);
+    font-style: italic;
+    font-size: .75rem;
+}
+
+/* Em telas reduzidas o conteúdo não deve ser cortado para simular uma altura
+   fixa: a equipe empilha os cartões e conserva os quatro slots acessíveis. */
+@media (max-width: 1180px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card,
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+        height: auto;
+        min-height: 270px;
+        overflow: visible;
+    }
+
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+        min-height: 120px;
+    }
+
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
+        min-height: 22px;
+    }
+}
+
+@media (max-width: 640px) {
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
+        min-height: 150px;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+        min-height: 0;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
+        min-height: 26px;
+    }
+}

@@ -16,6 +16,21 @@ class Config:
         upload_imagem_max_bytes = int(
             os.getenv("POKEMON_RPG_UPLOAD_IMAGEM_MAX_BYTES", str(8 * 1024 * 1024))
         )
+        teste_remoto = os.getenv("POKEMON_RPG_TESTE_REMOTO", "").strip().lower() in {
+            "1", "true", "sim", "yes"
+        }
+        # Um túnel rápido publica um subdomínio novo de trycloudflare.com a cada sessão.
+        # O modo local não restringe hosts para preservar os testes e ferramentas existentes.
+        hosts_adicionais = [
+            host.strip()
+            for host in os.getenv("POKEMON_RPG_HOSTS_ADICIONAIS", "").split(",")
+            if host.strip()
+        ]
+        hosts_permitidos = (
+            ["127.0.0.1", "localhost", ".trycloudflare.com", *hosts_adicionais]
+            if teste_remoto
+            else None
+        )
 
         app.config.update(
             SECRET_KEY=os.getenv(
@@ -36,4 +51,7 @@ class Config:
             CAMPANHA_PADRAO=os.getenv("POKEMON_RPG_CAMPANHA", "ankar"),
             SESSION_COOKIE_HTTPONLY=True,
             SESSION_COOKIE_SAMESITE="Lax",
+            SESSION_COOKIE_SECURE=teste_remoto,
+            PREFERRED_URL_SCHEME="https" if teste_remoto else "http",
+            TRUSTED_HOSTS=hosts_permitidos,
         )

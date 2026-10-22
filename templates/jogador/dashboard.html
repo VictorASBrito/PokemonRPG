@@ -110,6 +110,7 @@
                 {% set calculos = item.get('calculos', {}) %}
                 {% set totais = calculos.get('totais', {}) %}
                 {% set bases = calculos.get('bases', {}) %}
+                {% set golpes_pokemon = calculos.get('golpes') or [] %}
                 {% set pv_maximo = totais.get('pv', 0) %}
                 {% set pv_atual = pokemon.get('pv_atual', pv_maximo) %}
                 {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome', 'Pokémon') %}
@@ -139,8 +140,8 @@
                         <div class="dados-pokemon-dashboard">
                             <div class="nome-pokemon-dashboard">
                                 <div>
-                                    <span>{{ especie.get('nome', 'Pokémon') }}</span>
-                                    <h3>{{ nome_exibicao }}</h3>
+                                    <span title="{{ especie.get('nome', 'Pokémon') }}">{{ especie.get('nome', 'Pokémon') }}</span>
+                                    <h3 title="{{ nome_exibicao }}">{{ nome_exibicao }}</h3>
                                 </div>
                                 <strong>Nv. {{ calculos.get('nivel', treinador.get('nivel', 1)) }}</strong>
                             </div>
@@ -183,13 +184,17 @@
                         <section class="bloco-pokemon-dashboard">
                             <h4>Golpes</h4>
                             <div class="golpes-pokemon-dashboard">
-                                {% for golpe in calculos.get('golpes', []) %}
-                                    <div>
-                                        <span>{{ golpe.get('nome') }}</span>
-                                        <small>{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}</small>
-                                    </div>
-                                {% else %}
-                                    <p>Nenhum golpe registrado.</p>
+                                {# Quatro slots fixos, inclusive quando há menos golpes cadastrados. #}
+                                {% for indice_golpe in range(4) %}
+                                    {% if indice_golpe < golpes_pokemon|length %}
+                                        {% set golpe = golpes_pokemon[indice_golpe] %}
+                                        <div class="golpe-dashboard-preenchido">
+                                            <span title="{{ golpe.get('nome') }}">{{ golpe.get('nome') }}</span>
+                                            <small title="{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}">{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}</small>
+                                        </div>
+                                    {% else %}
+                                        <div class="golpe-dashboard-vazio"><span>Sem golpe definido</span></div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </section>
@@ -229,20 +234,23 @@
                         <section class="pokemon-dashboard-painel-detalhe pokemon-dashboard-golpes-detalhados">
                             <span class="rotulo">Golpes equipados</span>
                             <div class="pokemon-dashboard-lista-golpes-detalhados">
-                                {% for golpe in calculos.get('golpes', []) %}
-                                    <div class="pokemon-dashboard-golpe-detalhado">
-                                        <div>
-                                            <strong>{{ golpe.get('nome') }}</strong>
-                                            <span>{{ golpe.get('tipo', '—') }} · {{ golpe.get('categoria', '—') }}</span>
+                                {% for indice_golpe in range(4) %}
+                                    {% if indice_golpe < golpes_pokemon|length %}
+                                        {% set golpe = golpes_pokemon[indice_golpe] %}
+                                        <div class="pokemon-dashboard-golpe-detalhado">
+                                            <div>
+                                                <strong>{{ golpe.get('nome') }}</strong>
+                                                <span>{{ golpe.get('tipo', '—') }} · {{ golpe.get('categoria', '—') }}</span>
+                                            </div>
+                                            <dl>
+                                                <div><dt>Dano</dt><dd>{{ golpe.get('dano') or 'Estado' }}</dd></div>
+                                                <div><dt>Precisão</dt><dd>{{ golpe.get('precisao_texto') or '—' }}</dd></div>
+                                                <div><dt>Prioridade</dt><dd>{{ golpe.get('prioridade', 0) }}</dd></div>
+                                            </dl>
                                         </div>
-                                        <dl>
-                                            <div><dt>Dano</dt><dd>{{ golpe.get('dano') or 'Estado' }}</dd></div>
-                                            <div><dt>Precisão</dt><dd>{{ golpe.get('precisao_texto') or '—' }}</dd></div>
-                                            <div><dt>Prioridade</dt><dd>{{ golpe.get('prioridade', 0) }}</dd></div>
-                                        </dl>
-                                    </div>
-                                {% else %}
-                                    <p class="texto-suave">Nenhum golpe registrado.</p>
+                                    {% else %}
+                                        <div class="pokemon-dashboard-golpe-detalhado pokemon-dashboard-golpe-vazio"><span>Sem golpe definido</span></div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </section>

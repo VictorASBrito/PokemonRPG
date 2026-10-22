@@ -304,3 +304,22 @@ A revisão esperada é `e6b19d2a4c73 (head)` e a suíte desta versão possui **4
 ## Refinamento visual e fotos de perfil
 
 O layout operacional agora é fluido em telas largas, possui alternância persistente entre tema claro/escuro, utiliza a Pokébola oficial fornecida ao projeto na marca e permite upload de foto do personagem pela ficha. Consulte `REFINAMENTO_FRONTEND.md`.
+
+
+## Teste remoto com jogadores (Cloudflare Tunnel)
+
+O projeto inclui um modo de compartilhamento temporário com **Waitress** e
+**Cloudflare Quick Tunnel protegido por e-mail**. Não exige abrir portas no roteador.
+
+Em dois terminais PowerShell, na raiz do projeto:
+
+```powershell
+# Terminal 1
+.\scripts\1_servidor_teste.ps1
+
+# Terminal 2: use os emails dos jogadores convidados
+.\scripts\2_tunel_cloudflare.ps1 -Emails "jogador1@exemplo.com","jogador2@exemplo.com"
+```
+
+Veja [TESTES_REMOTOS_CLOUDFLARE.md](TESTES_REMOTOS_CLOUDFLARE.md) antes de
+compartilhar o link, principalmente as observações de segurança e backup.

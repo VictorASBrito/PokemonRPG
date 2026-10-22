@@ -1,0 +1,54 @@
+IMPORTAÇÃO DAS NOVE FICHAS — ANKAR
+=================================
+Os dados foram extraídos de nove planilhas recebidas em 22/10/2026.
+Nove contas preparadas, 54 Pokémon na equipe, 155 na Box, 109 linhas de inventário.
+O PostgreSQL local do mestre não está acessível por esta conversa: o comando
+abaixo deve ser executado no computador em que o banco está configurado.
+
+Antes de gravar:
+  flask --app app.py jogadores-planilhas importar
+Para gravar:
+  flask --app app.py jogadores-planilhas importar --aplicar
+
+Logins e personagens:
+  tuts  → Power
+  manu  → Astrid
+  braz  → Erivaldo Jr
+  jao   → Juliano lima
+  nanda → Bili
+  lucas → Chelle
+  jare  → Bartz
+  vini  → Priscilla
+  mari  → Claire François
+
+Senha inicial: 12345; troca obrigatória no primeiro login.
+
+Ajustes confirmados pelo mestre em 22/10/2026:
+  - Jão: o primeiro Pokémon é Scolipede; na planilha consta "Mega?" por lore.
+    Apelido "Yoda" preservado; identificação original mantida no JSON de origem.
+  - Manu: números Shiny = 1, 12, 20, 26, 37, 45, 60, 80, 82, 100.
+    PV preparado = 30, pois veio em branco na planilha.
+  - Vini: números Shiny = 4, 75, 14, 36, 97, 5, 35, 42, 76, 17.
+  - Mari: PV atual 30 mantido, como solicitado (na planilha 30/24).
+
+Pendências para conferir na simulação:
+  - Confirmar correspondências de formas, naturezas e golpes no PostgreSQL local.
+  - Não é possível confirmar aqui se todos os nomes de espécies, naturezas e
+    golpes correspondem ao catálogo do PostgreSQL local. A simulação os mostrará.
+  - Logins/personagens que já existam no banco são preservados, sem sobrescrita.
+
+Os scripts do Cloudflare foram mantidos sem a exigência de e-mail, conforme
+solicitado. O servidor_teste.py contém a correção do nome "aplicativo".
+
+REVISAO FINAL ANTES DA GRAVACAO:
+  - Manu: Bulbasaur (Vínculo) terá forma própria no PostgreSQL ao aplicar,
+    com base 70/9/9/12/11/9, tipos Grama/Veneno e imagens fornecidas.
+    Os extras 236 e 6% foram preservados sem interpretação de regra.
+  - Braz: 6 naturezas da Box atualizadas.
+  - Nanda: 20 naturezas da Box atualizadas. Axew, Prinplup e Simipour Shiny.
+  - Lucas: 12 naturezas da Box atualizadas. Corsola Shiny.
+  - Vini: 12 naturezas da Box atualizadas.
+  - Mari: PV atual 30, PV máximo calculado 30, sem aviso anterior.
+  - Manu: PV 30 vindo de campo ausente continua sinalizado.
+  - A forma Bulbasaur (Vínculo) é criada na transação da ficha de Manu,
+    sem qualquer alteração na forma normal Bulbasaur.

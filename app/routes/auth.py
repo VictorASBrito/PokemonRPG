@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from functools import wraps
+import hmac
+import secrets
+import uuid
 from typing import Callable, TypeVar
 from urllib.parse import urljoin, urlparse
 
@@ -18,6 +21,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.services.auth_service import autenticar_usuario
+from app.services.senha_service import gerar_hash_senha, verificar_senha
+from app.models.db import Usuario
 
 auth_bp = Blueprint("auth", __name__)
 F = TypeVar("F", bound=Callable)
@@ -100,6 +105,11 @@ def login():
         session["personagem_id"] = (
             str(resultado.personagem.id) if resultado.personagem is not None else None
         )
+        # A senha 12345 foi solicitada apenas como credencial temporária.
+        # Jogadores devem trocá-la no primeiro acesso público.
+        if usuario.perfil == "jogador" and senha == "12345":
+            session["deve_alterar_senha"] = True
+            return redirect(url_for("auth.trocar_senha"))
         destino = _destino_seguro(request.args.get("proxima"))
         return redirect(destino or url_for("inicio"))
 
@@ -112,3 +122,33 @@ def logout():
     session.clear()
     flash("Sessão encerrada.", "sucesso")
     return redirect(url_for("auth.login"))
+
+
+@auth_bp.route("/conta/senha", methods=["GET", "POST"])
+@login_obrigatorio
+def trocar_senha():
+    """Permite trocar a senha pessoal, inclusive no primeiro acesso."""
+    token = session.setdefault("troca_senha_token", secrets.token_urlsafe(32))
+    if request.method == "POST":
+        enviado = request.form.get("csrf_token", "")
+        if not hmac.compare_digest(token, enviado):
+            flash("Formulário expirado. Atualize a página e tente novamente.", "erro")
+            return render_template("conta/trocar_senha.html", token=token), 400
+        atual = request.form.get("senha_atual", "")
+        nova = request.form.get("senha_nova", "")
+        confirmar = request.form.get("confirmar_senha", "")
+        usuario = db.session.get(Usuario, uuid.UUID(session["usuario_id"]))
+        if usuario is None or not verificar_senha(atual, usuario.senha_hash):
+            flash("Senha atual incorreta.", "erro")
+        elif len(nova) < 10 or nova == "12345":
+            flash("Escolha uma senha nova com pelo menos 10 caracteres.", "erro")
+        elif nova != confirmar:
+            flash("A confirmação da senha não corresponde.", "erro")
+        else:
+            usuario.senha_hash = gerar_hash_senha(nova)
+            db.session.commit()
+            session.pop("deve_alterar_senha", None)
+            session.pop("troca_senha_token", None)
+            flash("Sua senha foi atualizada com sucesso.", "sucesso")
+            return redirect(url_for("inicio"))
+    return render_template("conta/trocar_senha.html", token=token)

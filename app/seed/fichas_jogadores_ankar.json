@@ -1,0 +1,2950 @@
+{
+  "campanha": "ankar",
+  "senha_padrao": "12345",
+  "jogadores": [
+    {
+      "arquivo": "Ficha Tuts - Pokemon.xlsx",
+      "login": "tuts",
+      "nome_jogador": "Tuts",
+      "identificacao_planilha": "Elliot Guido Santan",
+      "personagem": {
+        "nome": "Power",
+        "idade": 18,
+        "origem": "Atleta",
+        "estilo_combate": "Tático",
+        "classe": "Detetive",
+        "nivel": 40,
+        "numeros_shiny": [
+          69
+        ],
+        "pokedolares": 98,
+        "pv_atual": 30,
+        "atributos": {
+          "fisico": 3,
+          "destreza": 3,
+          "saude": 3,
+          "conhecimento": 5,
+          "comunicacao": 4,
+          "espirito": 2
+        },
+        "beneficios_habilidades": "Todos os testes com base de conhecimento ou comunicação podem ser feitos novamente"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Nuzleaf",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Precipitado",
+          "item": "",
+          "pv_atual": 112,
+          "golpes": [
+            "Soco Enganador",
+            "Lâmina De Folha",
+            "Cortador De Ar",
+            "Pulso Sombrio"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Joltik",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 138,
+          "golpes": [
+            "Onda De Trovão",
+            "Zumbido De Inseto"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Lanturn",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "pv_atual": 211,
+          "golpes": []
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Lycanroc (Meia-noite)",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "pv_atual": 142,
+          "golpes": []
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Medicham",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "pv_atual": 104,
+          "golpes": [
+            "Psíquico",
+            "Bola Sombria",
+            "Soco Empoderador",
+            "Soco Projétil"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Druddigon",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "pv_atual": 136,
+          "golpes": [
+            "Garra De Dragão",
+            "Garras Afiadas",
+            "Mega Soco",
+            "Terremoto"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Farfetch'd",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Panpour",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Meowth",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Wynaut",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Rattata (Alola)",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Krabby",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Descuidado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Gulpin",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Joltik",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Spinarak",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Modesto",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Skiddo",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Ursaring",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Teddiursa",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Lotad",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Slowpoke",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Binacle",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Chinchou",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Magikarp",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Seadra",
+          "genero": "♂",
+          "shiny": true,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Remoraid",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Snover",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Meditite",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Bagon",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Nosepass",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Druddigon",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Scatterbug",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Frillish",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Piplup",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Lycanroc (Meia-noite)",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "",
+          "item": "",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Poke Bolas",
+          "quantidade": 15
+        },
+        {
+          "nome": "Poção",
+          "quantidade": 1
+        },
+        {
+          "nome": "Elixir",
+          "quantidade": 1
+        },
+        {
+          "nome": "Antídoto",
+          "quantidade": 1
+        },
+        {
+          "nome": "Despertador",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cura Queimaduras",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cura Congelamento",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cura Paralisia",
+          "quantidade": 1
+        },
+        {
+          "nome": "Caneta",
+          "quantidade": 1
+        },
+        {
+          "nome": "Papel",
+          "quantidade": 5
+        },
+        {
+          "nome": "Isqueiro",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "quantidade": 1
+        },
+        {
+          "nome": "Vara de pesca",
+          "quantidade": 1
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Manu - Pokemon.xlsx",
+      "login": "manu",
+      "nome_jogador": "Manu",
+      "identificacao_planilha": "Manu",
+      "personagem": {
+        "nome": "Astrid",
+        "idade": 16,
+        "origem": "Paranormal",
+        "estilo_combate": "Vigoroso",
+        "classe": "Rastreador(a)",
+        "nivel": 42,
+        "numeros_shiny": [
+          1,
+          12,
+          20,
+          26,
+          37,
+          45,
+          60,
+          80,
+          82,
+          100
+        ],
+        "pokedolares": 2364,
+        "pv_atual": 30,
+        "atributos": {
+          "fisico": 3,
+          "destreza": 4,
+          "saude": 3,
+          "conhecimento": 4,
+          "comunicacao": 2,
+          "espirito": 4
+        },
+        "beneficios_habilidades": "Por se especializar no \nrastreamento dos Pokémon, aumenta a \nchance de encontrar Pokémon Shiny, de \nforma que ao invés de escolher apenas 1 \nnúmero, escolherá 10.\n\nanel, colar ou bracelete que \najuda a não perder o controle dos poderes."
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Luxray",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "pv_atual": 171,
+          "golpes": [
+            "Mastigada",
+            "Ataque Selvagem",
+            "Presa De Gelo",
+            "Rugir"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Kricketune",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": true,
+          "natureza": "Precipitado",
+          "item": "",
+          "pv_atual": 180,
+          "golpes": [
+            "Rosnadura",
+            "Talho Noturno",
+            "Bote",
+            "Quebra-Telha"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Ninetales",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Moderado",
+          "item": "",
+          "pv_atual": 0,
+          "golpes": [
+            "Rajada De Fogo",
+            "Raio Solar",
+            "Pulso Sombrio",
+            "Dia Ensolarado"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Duraludon",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "",
+          "pv_atual": 138,
+          "golpes": [
+            "Canhão De Flash",
+            "Garra De Dragão",
+            "Lança-Chamas",
+            "Hiper Raio"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Bulbasaur (Vínculo)",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "pv_atual": 183,
+          "golpes": [
+            "Bomba De Lodo",
+            "Giga Dreno",
+            "Síntese",
+            "Geoforça"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Snover",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "pv_atual": 129,
+          "golpes": [
+            "Folha Mágica",
+            "Neve Em Pó",
+            "Raio Congelante",
+            "Mega Dreno"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Meowth",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": [
+            "Rosnadura",
+            "Fingimento",
+            "Fintar"
+          ]
+        },
+        {
+          "especie": "Riolu",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "golpes": [
+            "Dança Das Espadas",
+            "Meteoro Esmagador",
+            "Corpo-A-Corpo",
+            "Soco Projétil"
+          ]
+        },
+        {
+          "especie": "Floatzel",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "",
+          "golpes": [
+            "Soco De Gelo",
+            "Pulso D'água",
+            "Mastigada",
+            "Quebra-Telha"
+          ]
+        },
+        {
+          "especie": "Loudred",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": [
+            "Surfar",
+            "Explosão Sônica",
+            "Rajada De Fogo",
+            "Terremoto"
+          ]
+        },
+        {
+          "especie": "Solrock",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Heracross",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": [
+            "Megachifre",
+            "Deslize De Pedras",
+            "Dança Das Espadas",
+            "Quebra-Telha"
+          ]
+        },
+        {
+          "especie": "Gumshoos",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Vespiquen",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Fomantis",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Donphan",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "golpes": [
+            "Terremoto",
+            "Descansar",
+            "Giro Rápido",
+            "Deslize De Pedras"
+          ]
+        },
+        {
+          "especie": "Steenee",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Duskull",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Tangela",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Surskit",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Wurmple",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Burmy (Planta)",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Wurmple",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Shellos",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Marshtomp",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Koffing",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Carnivine",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Carnivine",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Exeggcute",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Wishiwashi (Sozinho)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Hoothoot",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Espurr",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Descuidado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Shuppet",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Nickit",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Chingling",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Zubat",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Bunnelby",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Bunnelby",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Ledyba",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Polteageist",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Moderado",
+          "item": "",
+          "golpes": [
+            "Bola Sombria",
+            "Giga Dreno",
+            "Quebra Concha",
+            "Pulso Sombrio"
+          ]
+        },
+        {
+          "especie": "Jynx",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Vanillite",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Weedle",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Colar",
+          "quantidade": 1
+        },
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Pokéball",
+          "quantidade": 10
+        },
+        {
+          "nome": "Greatball",
+          "quantidade": 6
+        },
+        {
+          "nome": "Ultraball",
+          "quantidade": 1
+        },
+        {
+          "nome": "Premier Ball",
+          "quantidade": 2
+        },
+        {
+          "nome": "Elixir",
+          "quantidade": 1
+        },
+        {
+          "nome": "Despertador",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cantil pequeno",
+          "quantidade": 1
+        },
+        {
+          "nome": "Corda simples (2m)",
+          "quantidade": 1
+        },
+        {
+          "nome": "Faca pequena",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "quantidade": 1
+        },
+        {
+          "nome": "Antídoto",
+          "quantidade": 1
+        },
+        {
+          "nome": "Frutas",
+          "quantidade": 9
+        },
+        {
+          "nome": "Poção",
+          "quantidade": 3
+        }
+      ],
+      "avisos": [
+        "PV atual em branco na planilha; usado valor inicial com base no atributo Saúde."
+      ]
+    },
+    {
+      "arquivo": "Ficha Braz - Pokemon.xlsx",
+      "login": "braz",
+      "nome_jogador": "Braz",
+      "identificacao_planilha": "Braz",
+      "personagem": {
+        "nome": "Erivaldo Jr",
+        "idade": 15,
+        "origem": "Nerd",
+        "estilo_combate": "Vigoroso",
+        "classe": "Pesquisador(a)",
+        "nivel": 44,
+        "numeros_shiny": [
+          87
+        ],
+        "pokedolares": 495,
+        "pv_atual": 26,
+        "atributos": {
+          "fisico": 3,
+          "destreza": 3,
+          "saude": 4,
+          "conhecimento": 7,
+          "comunicacao": 3,
+          "espirito": 1
+        },
+        "beneficios_habilidades": "Os testes para criar, acessar ou \nmanipular qualquer tecnologia, caso \nfalhem, podem ser rolados uma segunda \nvez (sem ter nenhuma consequência pela \nprimeira falha).\n\npor se especializar em como os \nPokémon funcionam, os golpes aprendidos \npor todos os seus Pokémon acontecem 2 \nníveis de antecedência, por exemplo, se o \nseu Pokémon aprenderia um golpe no nível \n5, aprenderá no 3."
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Talonflame",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "",
+          "pv_atual": 167,
+          "golpes": [
+            "Acrobático",
+            "Ataque Rápido",
+            "Ataque De Chamas",
+            "Brasa"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Sandshrew (Alola)",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 94,
+          "golpes": [
+            "Caco De Gelo",
+            "Descansar",
+            "Anel D'água"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Azumarill",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "pv_atual": 210,
+          "golpes": [
+            "Jogo Duro",
+            "Aqua Cauda",
+            "Ricochetear",
+            "Anel D'água"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Poliwrath",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "pv_atual": 0,
+          "golpes": [
+            "Soco Dinâmico",
+            "Hipnóse",
+            "Soco De Gelo",
+            "Surfar"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Joltik",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "pv_atual": 94,
+          "golpes": [
+            "Bola Elétrica",
+            "Onda De Trovão",
+            "Picada",
+            "Eletroteia"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Pangoro",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "pv_atual": 216,
+          "golpes": [
+            "Soco Dinâmico",
+            "Mastigada",
+            "Lançamento Circular",
+            "Talho"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Koffing",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "Quieto",
+          "golpes": [
+            "Investida",
+            "Gás Venenoso",
+            "Poluição"
+          ]
+        },
+        {
+          "especie": "Swablu",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Peculiar",
+          "item": "Peculiar",
+          "golpes": []
+        },
+        {
+          "especie": "Bergmite",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "Tímido",
+          "golpes": []
+        },
+        {
+          "especie": "Sandshrew (Alola)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": []
+        },
+        {
+          "especie": "Dewgong",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "Quieto",
+          "golpes": []
+        },
+        {
+          "especie": "Chinchou",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "Gentil",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Poké bolas",
+          "quantidade": 14
+        },
+        {
+          "nome": "Poção",
+          "quantidade": 6
+        },
+        {
+          "nome": "Incubadora Comúm",
+          "quantidade": 1
+        },
+        {
+          "nome": "Ultra Bola",
+          "quantidade": 3
+        },
+        {
+          "nome": "Ameixas",
+          "quantidade": 22
+        },
+        {
+          "nome": "Limão",
+          "quantidade": 4
+        },
+        {
+          "nome": "Maçã Vermelha",
+          "quantidade": 12
+        },
+        {
+          "nome": "Fruta Amarga",
+          "quantidade": 2
+        },
+        {
+          "nome": "Cereja",
+          "quantidade": 1
+        },
+        {
+          "nome": "Premier Ball",
+          "quantidade": 1
+        },
+        {
+          "nome": "colar",
+          "quantidade": 2
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Jão - Pokemon.xlsx",
+      "login": "jao",
+      "nome_jogador": "Jão",
+      "identificacao_planilha": "Jão",
+      "personagem": {
+        "nome": "Juliano lima",
+        "idade": 17,
+        "origem": "Artista",
+        "estilo_combate": "Tático",
+        "classe": "Criador(a)",
+        "nivel": 40,
+        "numeros_shiny": [
+          67
+        ],
+        "pokedolares": 1601,
+        "pv_atual": 8,
+        "atributos": {
+          "fisico": 3,
+          "destreza": 4,
+          "saude": 2,
+          "conhecimento": 4,
+          "comunicacao": 2,
+          "espirito": 3
+        },
+        "beneficios_habilidades": "amizade (Bônus de Espirito) e cura dobrados"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Scolipede",
+          "apelido": "Yoda",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "pv_atual": 138,
+          "golpes": [
+            "Venochoque",
+            "Terremoto",
+            "Deslize De Pedras",
+            "Megachifre"
+          ],
+          "identificacao_origem": "Mega?"
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Floatzel",
+          "apelido": "Tsunami",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "pv_atual": 4,
+          "golpes": [
+            "Raio Congelante",
+            "Aqua Jato",
+            "Poder Oculto",
+            "Jato D'água"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Dragonair",
+          "apelido": "jake long",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Modesto",
+          "item": "",
+          "pv_atual": 105,
+          "golpes": [
+            "Dança Do Dragão",
+            "Sonambulismo",
+            "Ultraje",
+            "Descansar"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Duskull",
+          "apelido": "Wither",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "",
+          "pv_atual": 31,
+          "golpes": [
+            "Fogo-Fátuo",
+            "Substituição",
+            "Bola Sombria",
+            "Sombra Noturna"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Conkeldurr",
+          "apelido": "Trembolono",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "pv_atual": 177,
+          "golpes": [
+            "Soco Dreno",
+            "Soco Estonteante",
+            "Derrubada",
+            "Deslize De Pedras"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Sandshrew (Alola)",
+          "apelido": "Gelatu",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "pv_atual": 77,
+          "golpes": [
+            "Arranhão"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Castform",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Orbeetle",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Clobbopus",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "golpes": [
+            "Soco Dinâmico",
+            "Vingança",
+            "Soco Empoderador",
+            "Soco Dreno"
+          ]
+        },
+        {
+          "especie": "Sneasel",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Amaura",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Shellos",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "combee",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Vanillite",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "pokedex",
+          "quantidade": 22
+        },
+        {
+          "nome": "elixir",
+          "quantidade": 3
+        },
+        {
+          "nome": "antidoto",
+          "quantidade": 3
+        },
+        {
+          "nome": "despertador",
+          "quantidade": 3
+        },
+        {
+          "nome": "cura queima",
+          "quantidade": 3
+        },
+        {
+          "nome": "cura congela",
+          "quantidade": 3
+        },
+        {
+          "nome": "cura paralisia",
+          "quantidade": 1
+        },
+        {
+          "nome": "pokebola",
+          "quantidade": 17
+        },
+        {
+          "nome": "great ball",
+          "quantidade": 10
+        },
+        {
+          "nome": "ultra ball",
+          "quantidade": 5
+        },
+        {
+          "nome": "frutas",
+          "quantidade": 35
+        },
+        {
+          "nome": "kit cozinha",
+          "quantidade": 1
+        },
+        {
+          "nome": "focil desconhecido",
+          "quantidade": 1
+        },
+        {
+          "nome": "pedra do sol",
+          "quantidade": 1
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Nanda - Pokemon.xlsx",
+      "login": "nanda",
+      "nome_jogador": "Nanda",
+      "identificacao_planilha": "Mago",
+      "personagem": {
+        "nome": "Bili",
+        "idade": 16,
+        "origem": "Nerd",
+        "estilo_combate": "Tático",
+        "classe": "Criador(a)",
+        "nivel": 40,
+        "numeros_shiny": [
+          19
+        ],
+        "pokedolares": 200,
+        "pv_atual": 20,
+        "atributos": {
+          "fisico": 2,
+          "destreza": 3,
+          "saude": 2,
+          "conhecimento": 6,
+          "comunicacao": 3,
+          "espirito": 2
+        },
+        "beneficios_habilidades": "os testes para criar, acessar ou\nmanipular qualquer tecnologia, caso\nfalhem, podem ser rolados uma segunda\nvez (sem ter nenhuma consequência pela\nprimeira falha).\n\npor se especializar nos \ncuidados dos Pokémon, todos os efeitos de \nitens de cura e aumento de amizade são \ndobrados;"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Hawlucha",
+          "apelido": "Muchalucha",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 137,
+          "golpes": [
+            "Empoleirar",
+            "Ás Dos Ares",
+            "Detectar",
+            "Submissão"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Ampharos",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 146,
+          "golpes": [
+            "Pulso Do Dragão",
+            "Canhão Zap",
+            "Descansar",
+            "Soco Trovoada"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Gyarados",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "pv_atual": 20,
+          "golpes": [
+            "Arranhão",
+            "Lambida",
+            "Golpes De Fúria",
+            "Jato D'água"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Darmanitan (Galar Normal)",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 177,
+          "golpes": [
+            "Nevasca",
+            "Tambor Máximo",
+            "Estaca De Gelo",
+            "Avalanche"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Fraxure",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": true,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 138,
+          "golpes": [
+            "Mastigada",
+            "Proteção",
+            "Garra De Dragão",
+            "Pancada Dupla"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Chesnaught",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "pv_atual": 140,
+          "golpes": [
+            "Chicote De Vinha",
+            "Braço De Agulha",
+            "Morder",
+            "Semente Sanguessuga"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Weezing",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "Calmo",
+          "golpes": [
+            "Investida",
+            "Cortina De Fumaça",
+            "Gás Venenoso"
+          ]
+        },
+        {
+          "especie": "Ampharos",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": [
+            "Troca Elétrica",
+            "Pulso Do Dragão",
+            "Sonambulismo"
+          ]
+        },
+        {
+          "especie": "Grimer",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "Relaxado",
+          "golpes": []
+        },
+        {
+          "especie": "Glameow",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": []
+        },
+        {
+          "especie": "Golem",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "Tímido",
+          "golpes": [
+            "Terremoto",
+            "Explosão",
+            "Soco Enganador"
+          ]
+        },
+        {
+          "especie": "Skitty",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "Valente",
+          "golpes": []
+        },
+        {
+          "especie": "Snom",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "Atrevido",
+          "golpes": []
+        },
+        {
+          "especie": "Loudred",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "Cuidadoso",
+          "golpes": []
+        },
+        {
+          "especie": "Drampa",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "Calmo",
+          "golpes": []
+        },
+        {
+          "especie": "Axew",
+          "genero": "",
+          "shiny": true,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": [
+            "Dança Do Dragão",
+            "Garra De Dragão",
+            "Presa Venenosa"
+          ]
+        },
+        {
+          "especie": "Persian (Alola)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "Corajoso",
+          "golpes": []
+        },
+        {
+          "especie": "Prinplup",
+          "genero": "",
+          "shiny": true,
+          "natureza": "Tímido",
+          "item": "Tímido",
+          "golpes": []
+        },
+        {
+          "especie": "Cubchoo",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "Ousado",
+          "golpes": []
+        },
+        {
+          "especie": "Seismitoad",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "Desobediente",
+          "golpes": []
+        },
+        {
+          "especie": "Chewtle",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "Relaxado",
+          "golpes": []
+        },
+        {
+          "especie": "Grapploct",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": []
+        },
+        {
+          "especie": "Darmanitan (Galar Normal)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Modesto",
+          "item": "Modesto",
+          "golpes": []
+        },
+        {
+          "especie": "Gyarados",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "Desobediente",
+          "golpes": []
+        },
+        {
+          "especie": "Simipour",
+          "genero": "",
+          "shiny": true,
+          "natureza": "Corajoso",
+          "item": "Corajoso",
+          "golpes": []
+        },
+        {
+          "especie": "Sandile",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Precipitado",
+          "item": "Precipitado",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Pokebola",
+          "quantidade": 21
+        },
+        {
+          "nome": "Poção",
+          "quantidade": 1
+        },
+        {
+          "nome": "Elixir",
+          "quantidade": 1
+        },
+        {
+          "nome": "Antidoto",
+          "quantidade": 1
+        },
+        {
+          "nome": "Despertador",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cantil",
+          "quantidade": 1
+        },
+        {
+          "nome": "Corda Simples",
+          "quantidade": 1
+        },
+        {
+          "nome": "Faca Pequena",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "quantidade": 1
+        },
+        {
+          "nome": "Ultra pokebola",
+          "quantidade": 1
+        },
+        {
+          "nome": "Grande Bola",
+          "quantidade": 5
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Lucas - Pokemon.xlsx",
+      "login": "lucas",
+      "nome_jogador": "Lucas",
+      "identificacao_planilha": "Luquinhas",
+      "personagem": {
+        "nome": "Chelle",
+        "idade": 17,
+        "origem": "Cozinheiro(a)",
+        "estilo_combate": "Tático",
+        "classe": "Criador(a)",
+        "nivel": 42,
+        "numeros_shiny": [
+          48
+        ],
+        "pokedolares": 2055,
+        "pv_atual": 30,
+        "atributos": {
+          "fisico": 3,
+          "destreza": 5,
+          "saude": 3,
+          "conhecimento": 3,
+          "comunicacao": 3,
+          "espirito": 3
+        },
+        "beneficios_habilidades": "Por se especializar nos cuidados dos Pokémon, todos os efeitos de itens de cura e aumento de amizade são dobrados;\n\nkit de cozinha (1)"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Espeon",
+          "apelido": "Éle Ésse Dê",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "pv_atual": 111,
+          "golpes": [
+            "Olhos Ternos",
+            "Ataque Rápido",
+            "Feixe Psíquico",
+            "Estrela Cadente"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Audino",
+          "apelido": "Caipirinha",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "pv_atual": 181,
+          "golpes": [
+            "Pancada",
+            "Jogo Limpo",
+            "Voz Desarmante",
+            "Cabeçada Zen"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Minun",
+          "apelido": "Tequilinha",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Precipitado",
+          "item": "",
+          "pv_atual": 107,
+          "golpes": [
+            "Faísca",
+            "Onda De Trovão",
+            "Ataque Rápido",
+            "Imitador"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Umbreon",
+          "apelido": "Menine",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "pv_atual": 175,
+          "golpes": [
+            "Pulso Sombrio",
+            "Ataque Rápido",
+            "Raio Da Confusão",
+            "Desmantelar"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Axew",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 29,
+          "golpes": [
+            "Arranhão",
+            "Garra De Dragão",
+            "Morder",
+            "Mastigada"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Druddigon",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "pv_atual": 140,
+          "golpes": [
+            "Terremoto",
+            "Rocha Veloz",
+            "Tóxico",
+            "Cauda Do Dragão"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Sealeo",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Swablu",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Descuidado",
+          "item": "Descuidado",
+          "golpes": []
+        },
+        {
+          "especie": "Seadra",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Moderado",
+          "item": "Moderado",
+          "golpes": []
+        },
+        {
+          "especie": "Corsola",
+          "genero": "",
+          "shiny": true,
+          "natureza": "Dócil",
+          "item": "Dócil",
+          "golpes": []
+        },
+        {
+          "especie": "Sneasel",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "Relaxado",
+          "golpes": []
+        },
+        {
+          "especie": "Seel",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "Desobediente",
+          "golpes": []
+        },
+        {
+          "especie": "Smoochum",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Descuidado",
+          "item": "Descuidado",
+          "golpes": []
+        },
+        {
+          "especie": "Bergmite",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "Dócil",
+          "golpes": []
+        },
+        {
+          "especie": "Ralts",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "Quieto",
+          "golpes": []
+        },
+        {
+          "especie": "Meowth (Galar)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": []
+        },
+        {
+          "especie": "Carnivine",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Relaxado",
+          "item": "Relaxado",
+          "golpes": []
+        },
+        {
+          "especie": "Electabuzz",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "Calmo",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "pokebola",
+          "quantidade": 12
+        },
+        {
+          "nome": "poção",
+          "quantidade": 2
+        },
+        {
+          "nome": "elixir",
+          "quantidade": 2
+        },
+        {
+          "nome": "antidoto",
+          "quantidade": 1
+        },
+        {
+          "nome": "despertador",
+          "quantidade": 1
+        },
+        {
+          "nome": "cura congelamento",
+          "quantidade": 1
+        },
+        {
+          "nome": "cura paralisia",
+          "quantidade": 1
+        },
+        {
+          "nome": "Ultra Bola",
+          "quantidade": 3
+        },
+        {
+          "nome": "frutas douradas",
+          "quantidade": 1
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Jaré - Pokemon.xlsx",
+      "login": "jare",
+      "nome_jogador": "Jaré",
+      "identificacao_planilha": "Jaré",
+      "personagem": {
+        "nome": "Bartz",
+        "idade": 17,
+        "origem": "Cozinheiro(a)",
+        "estilo_combate": "Agressivo",
+        "classe": "Pesquisador(a)",
+        "nivel": 40,
+        "numeros_shiny": [
+          24
+        ],
+        "pokedolares": 491,
+        "pv_atual": 30,
+        "atributos": {
+          "fisico": 2,
+          "destreza": 4,
+          "saude": 2,
+          "conhecimento": 6,
+          "comunicacao": 2,
+          "espirito": 2
+        },
+        "beneficios_habilidades": "por se especializar em como os  Pokémon funcionam, os golpes aprendidos  por todos os seus Pokémon acontecem 2  níveis de antecedência, por exemplo, se o  seu Pokémon aprenderia um golpe no nível  5, aprenderá no 3;"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Torterra",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Calmo",
+          "item": "",
+          "pv_atual": 170,
+          "golpes": [
+            "Tempestade De Folhas",
+            "Terreno De Plantas",
+            "Síntese",
+            "Terremoto"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Empoleon",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "pv_atual": 141,
+          "golpes": [
+            "Jato D'água",
+            "Defesa De Ferro",
+            "Canhão De Flash",
+            "Aqua Cauda"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Sneasel",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "pv_atual": 101,
+          "golpes": [
+            "Soco De Gelo",
+            "Jogo Sujo",
+            "Estaca De Gelo",
+            "Agilidade"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Lombre",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "pv_atual": 104,
+          "golpes": [
+            "Mangual",
+            "Força Da Natureza",
+            "Mega Dreno",
+            "Jato de Bolhas"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Morpeko (Satisfeito)",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "pv_atual": 134,
+          "golpes": [
+            "Aura Anelar",
+            "Trovão",
+            "Trama Maldosa",
+            "Soco Trovoada"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Swablu",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "",
+          "pv_atual": 73,
+          "golpes": [
+            "Voz Desarmante",
+            "Sopro de Dragão",
+            "Canção",
+            "Proteção De Algodão"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Gorebyss",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Fomantis",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Piplup",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Piplup",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Spheal",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Peculiar",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Cubchoo",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Gigalith",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Trapinch",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "poké bolas",
+          "quantidade": 2
+        },
+        {
+          "nome": "poções",
+          "quantidade": 3
+        },
+        {
+          "nome": "incubadora comum",
+          "quantidade": 1
+        },
+        {
+          "nome": "novelo de lã",
+          "quantidade": 1
+        },
+        {
+          "nome": "Flor Roxa",
+          "quantidade": 1
+        },
+        {
+          "nome": "Picareta",
+          "quantidade": 1
+        },
+        {
+          "nome": "Pedra de Fogo",
+          "quantidade": 2
+        },
+        {
+          "nome": "ultra bola",
+          "quantidade": 2
+        },
+        {
+          "nome": "Bola Grande",
+          "quantidade": 2
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Vini - Pokemon.xlsx",
+      "login": "vini",
+      "nome_jogador": "Vini",
+      "identificacao_planilha": "Vini",
+      "personagem": {
+        "nome": "Priscilla",
+        "idade": 15,
+        "origem": "Pescador(a)",
+        "estilo_combate": "Resistente",
+        "classe": "Rastreador(a)",
+        "nivel": 40,
+        "numeros_shiny": [
+          4,
+          75,
+          14,
+          36,
+          97,
+          5,
+          35,
+          42,
+          76,
+          17
+        ],
+        "pokedolares": 20,
+        "pv_atual": 24,
+        "atributos": {
+          "fisico": 4,
+          "destreza": 4,
+          "saude": 3,
+          "conhecimento": 4,
+          "comunicacao": 2,
+          "espirito": 2
+        },
+        "beneficios_habilidades": ""
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Pikipek",
+          "apelido": "Don Piko I",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "",
+          "pv_atual": 141,
+          "golpes": [
+            "Bico Broca",
+            "Supersônico",
+            "Terremoto",
+            "Pássaro Bravo"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Meowstic (Macho)",
+          "apelido": "Meowstic",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "pv_atual": 134,
+          "golpes": [
+            "Feixe Psíquico",
+            "Folha Mágica",
+            "Olhar Malvado",
+            "Mãozinha"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Tsareena",
+          "apelido": "Larina",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "",
+          "pv_atual": 113,
+          "golpes": [
+            "Folha Mágica",
+            "Aroma Doce",
+            "Pisotear",
+            "Folha Navalha"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Piplup",
+          "apelido": "Buby",
+          "genero": "♂",
+          "shiny": true,
+          "natureza": "Tímido",
+          "item": "",
+          "pv_atual": 109,
+          "golpes": [
+            "Nevoeiro",
+            "Salmoura",
+            "Redemoinho",
+            "Contra-Ataque"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Gyarados",
+          "apelido": "Wave",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "pv_atual": 20,
+          "golpes": [
+            "Mastigada",
+            "Salmoura",
+            "Presa De Gelo",
+            "Dança Da Chuva"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Greninja",
+          "apelido": "Blueninja",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Reservado",
+          "item": "",
+          "pv_atual": 113,
+          "golpes": [
+            "Jato D'água",
+            "Trama Maldosa",
+            "Raio Congelante",
+            "Pulso Sombrio"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Clamperl",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "Ingênuo",
+          "golpes": []
+        },
+        {
+          "especie": "Applin",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "Inflexível",
+          "golpes": []
+        },
+        {
+          "especie": "Carvanha",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Atrevido",
+          "item": "Atrevido",
+          "golpes": []
+        },
+        {
+          "especie": "Carnivine",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "Apressado",
+          "golpes": []
+        },
+        {
+          "especie": "Weepinbell",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Tímido",
+          "item": "Tímido",
+          "golpes": []
+        },
+        {
+          "especie": "Vulpix (Alola)",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "Gentil",
+          "golpes": []
+        },
+        {
+          "especie": "Scatterbug",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Cuidadoso",
+          "item": "Cuidadoso",
+          "golpes": []
+        },
+        {
+          "especie": "Tangela",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Ousado",
+          "item": "Ousado",
+          "golpes": []
+        },
+        {
+          "especie": "Vanillite",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "Sério",
+          "golpes": []
+        },
+        {
+          "especie": "Poliwhirl",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "Ingênuo",
+          "golpes": []
+        },
+        {
+          "especie": "Floatzel",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "Corajoso",
+          "golpes": []
+        },
+        {
+          "especie": "Skrelp",
+          "genero": "",
+          "shiny": false,
+          "natureza": "Modesto",
+          "item": "Modesto",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Vara (P)",
+          "quantidade": 1
+        },
+        {
+          "nome": "Iscas (P)",
+          "quantidade": 7
+        },
+        {
+          "nome": "Iscas (N)",
+          "quantidade": 5
+        },
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Pokebolas",
+          "quantidade": 3
+        },
+        {
+          "nome": "Elixir",
+          "quantidade": 1
+        },
+        {
+          "nome": "Antídoto",
+          "quantidade": 1
+        },
+        {
+          "nome": "Despertador",
+          "quantidade": 1
+        },
+        {
+          "nome": "Cantil pequeno",
+          "quantidade": 1
+        },
+        {
+          "nome": "Faca pequena",
+          "quantidade": 1
+        },
+        {
+          "nome": "Lanterna",
+          "quantidade": 1
+        },
+        {
+          "nome": "Colar Quebrado",
+          "quantidade": 1
+        },
+        {
+          "nome": "Fruta",
+          "quantidade": 8
+        },
+        {
+          "nome": "UltraBall",
+          "quantidade": 1
+        },
+        {
+          "nome": "GreatBall",
+          "quantidade": 1
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "arquivo": "Ficha Mari - Pokemon.xlsx",
+      "login": "mari",
+      "nome_jogador": "Mari",
+      "identificacao_planilha": "Mari",
+      "personagem": {
+        "nome": "Claire François",
+        "idade": 16,
+        "origem": "Herdeiro(a)",
+        "estilo_combate": "Tático",
+        "classe": "Colecionador(a)",
+        "nivel": 40,
+        "numeros_shiny": [
+          34
+        ],
+        "pokedolares": 3510,
+        "pv_atual": 30,
+        "atributos": {
+          "fisico": 1,
+          "destreza": 4,
+          "saude": 3,
+          "conhecimento": 4,
+          "comunicacao": 4,
+          "espirito": 2
+        },
+        "beneficios_habilidades": "Brasão da família - broche\n\nAumento em 30% para pegar pokemon"
+      },
+      "equipe": [
+        {
+          "posicao_origem": 1,
+          "especie": "Pupitar",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "pv_atual": 101,
+          "golpes": [
+            "Terremoto",
+            "Mastigada",
+            "Deslize De Pedras",
+            "Dança Do Dragão"
+          ]
+        },
+        {
+          "posicao_origem": 2,
+          "especie": "Ampharos",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "pv_atual": 132,
+          "golpes": [
+            "Choque Do Trovão",
+            "Pulso Do Dragão",
+            "Raio Da Confusão",
+            "Descarga"
+          ]
+        },
+        {
+          "posicao_origem": 3,
+          "especie": "Shelgon",
+          "apelido": null,
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Ingênuo",
+          "item": "",
+          "pv_atual": 97,
+          "golpes": [
+            "Mastigada",
+            "Presa De Fogo",
+            "Garra De Dragão",
+            "Dança Do Dragão"
+          ]
+        },
+        {
+          "posicao_origem": 4,
+          "especie": "Grapploct",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "pv_atual": 34,
+          "golpes": [
+            "Soco Dreno",
+            "Golpe De Caratê",
+            "Aqua Jato",
+            "Proteção"
+          ]
+        },
+        {
+          "posicao_origem": 5,
+          "especie": "Primarina",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "pv_atual": 0,
+          "golpes": [
+            "Voz Desarmante",
+            "Surfar",
+            "Bola Sombria",
+            "Descansar"
+          ]
+        },
+        {
+          "posicao_origem": 6,
+          "especie": "Sandslash (Alola)",
+          "apelido": null,
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "pv_atual": 70,
+          "golpes": [
+            "Dança Das Espadas",
+            "Cabeça De Ferro",
+            "Deslize De Pedras",
+            "Terremoto"
+          ]
+        }
+      ],
+      "box": [
+        {
+          "especie": "Clobbopus",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Desobediente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Sinistea",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Natu",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Meowth",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Precipitado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Litwick",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Apressado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Glameow",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Descuidado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Rattata",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Exeggcute",
+          "genero": "Ø",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Scatterbug",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Precipitado",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Popplio",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Grapploct",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Corajoso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Piplup",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Chinchou",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Gentil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Duskull",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Modesto",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Spheal",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Shellder",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Dócil",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Darumaka (Galar)",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Valente",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Vanillite",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Travesso",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Ralts",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Delibird",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Inflexível",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Sandygast",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Quieto",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Skrelp",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Alegre",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Meditite",
+          "genero": "♂",
+          "shiny": false,
+          "natureza": "Sério",
+          "item": "",
+          "golpes": []
+        },
+        {
+          "especie": "Sharpedo",
+          "genero": "♀",
+          "shiny": false,
+          "natureza": "Solitário",
+          "item": "",
+          "golpes": []
+        }
+      ],
+      "inventario": [
+        {
+          "nome": "Pokedex",
+          "quantidade": 1
+        },
+        {
+          "nome": "Poke Bolas",
+          "quantidade": 50
+        },
+        {
+          "nome": "Grande Bola",
+          "quantidade": 14
+        },
+        {
+          "nome": "Mega pedra",
+          "quantidade": 1
+        },
+        {
+          "nome": "Frutas",
+          "quantidade": 23
+        },
+        {
+          "nome": "Ultra bola",
+          "quantidade": 5
+        },
+        {
+          "nome": "chaveirinho de areia",
+          "quantidade": 1
+        },
+        {
+          "nome": "brinco dourado",
+          "quantidade": 1
+        }
+      ],
+      "avisos": []
+    }
+  ],
+  "formas_personalizadas": {
+    "Bulbasaur (Vínculo)": {
+      "especie": "Bulbasaur",
+      "categoria": "personalizada",
+      "tipos": [
+        "Grama",
+        "Veneno"
+      ],
+      "atributos_base": {
+        "pv": 70,
+        "ataque": 9,
+        "defesa": 9,
+        "ataque_especial": 12,
+        "defesa_especial": 11,
+        "velocidade": 9
+      },
+      "imagem_url": "https://raw.githubusercontent.com/VictorASBrito/RPG_POKEMON/refs/heads/main/WhatsApp%20Image%202025-12-13%20at%2014.10.21.jpeg",
+      "imagem_shiny_url": "https://raw.githubusercontent.com/VictorASBrito/RPG_POKEMON/refs/heads/main/WhatsApp%20Image%202025-12-13%20at%2014.10.21.jpeg",
+      "dados_adicionais_originais": [
+        "236",
+        "6%"
+      ],
+      "observacoes": "Forma especial fornecida pelo mestre para Astrid (Manu)."
+    }
+  }
+}

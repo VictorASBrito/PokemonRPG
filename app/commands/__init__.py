@@ -6,6 +6,7 @@ from app.commands.pokemon import pokemon_cli
 from app.commands.catalogo import catalogo_cli
 from app.commands.inventario import inventario_cli
 from app.commands.midia import midia_cli
+from app.commands.planilhas_jogadores import planilhas_jogadores_cli
 
 __all__ = [
     "banco_cli",
@@ -16,4 +17,5 @@ __all__ = [
     "catalogo_cli",
     "inventario_cli",
     "midia_cli",
+    "planilhas_jogadores_cli",
 ]
