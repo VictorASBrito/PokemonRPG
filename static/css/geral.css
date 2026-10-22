@@ -442,3 +442,7 @@ code {
     .barra-acoes-formulario { flex-direction: column-reverse; }
     .barra-acoes-formulario .botao { width: 100%; }
 }
+
+/* Ação rápida de nível na listagem administrativa. */
+.lista-jogadores .formulario-nivel-mestre { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+.lista-jogadores .formulario-nivel-mestre input[type="number"] { width: 5.25rem; padding: .48rem .55rem; }

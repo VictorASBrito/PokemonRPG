@@ -14,7 +14,7 @@ from flask import (
     session,
     url_for,
 )
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
@@ -27,6 +27,7 @@ from app.services.painel_mestre_service import (
 from app.services.personagem_service import (
     atualizar_ficha_personagem,
     carregar_contexto_ficha,
+    definir_nivel_personagem_pelo_mestre,
 )
 from app.services.pokemon_db_service import (
     carregar_contexto_pokemon,
@@ -73,6 +74,7 @@ def dashboard():
         resumo=painel.resumo,
         jogadores=painel.jogadores,
         fonte_dados="PostgreSQL",
+        nivel_csrf_token=session.setdefault("perfil_csrf", secrets.token_urlsafe(32)),
     )
 
 
@@ -245,6 +247,51 @@ def novo_jogador():
     return render_template("mestre/novo_jogador.html", dados={})
 
 
+@mestre_bp.post("/jogadores/<jogador_id>/nivel")
+@perfil_obrigatorio("mestre")
+def alterar_nivel_jogador(jogador_id: str):
+    """Ajuste isolado do nível: não força o salvamento de toda a ficha."""
+    token = session.get("perfil_csrf", "")
+    recebido = request.form.get("csrf_token", "")
+    if not token or not hmac.compare_digest(token, recebido):
+        return ("Formulário inválido. Atualize o painel do mestre.", 400)
+
+    destino = request.form.get("voltar", "dashboard")
+    if destino == "ficha":
+        retorno = url_for("mestre.ficha_jogador", jogador_id=jogador_id)
+    elif destino == "jogadores":
+        retorno = url_for("mestre.jogadores")
+    else:
+        retorno = url_for("mestre.dashboard")
+
+    try:
+        nivel = int(request.form.get("nivel", ""))
+    except (ValueError, TypeError):
+        flash("Informe um nível inteiro válido.", "erro")
+        return redirect(retorno)
+    try:
+        resultado = definir_nivel_personagem_pelo_mestre(
+            personagem_id=jogador_id,
+            campanha_codigo=_campanha_codigo(),
+            nivel=nivel,
+            responsavel_id=session["usuario_id"],
+        )
+    except ValueError as erro:
+        db.session.rollback()
+        flash(str(erro), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao ajustar nível pelo mestre.")
+        flash("Não foi possível atualizar o nível no PostgreSQL.", "erro")
+    else:
+        if resultado is None:
+            flash("Personagem não encontrado nesta campanha.", "erro")
+        else:
+            nome, nivel_salvo = resultado
+            flash(f"Nível de {nome} atualizado para {nivel_salvo}.", "sucesso")
+    return redirect(retorno)
+
+
 @mestre_bp.post("/usuarios/<usuario_id>/perfil")
 @perfil_obrigatorio("mestre")
 def alterar_perfil(usuario_id: str):
@@ -261,6 +308,18 @@ def alterar_perfil(usuario_id: str):
     except ValueError as erro:
         db.session.rollback()
         flash(str(erro), "erro")
+    except IntegrityError as erro:
+        db.session.rollback()
+        current_app.logger.exception("Falha de integridade ao atualizar nível de acesso.")
+        nome_constraint = getattr(getattr(erro.orig, "diag", None), "constraint_name", "")
+        if nome_constraint == "ck_usuarios_perfil_valido":
+            flash(
+                "O PostgreSQL ainda não permite o perfil Tester. "
+                "Atualize o esquema com: flask --app app.py db upgrade",
+                "erro",
+            )
+        else:
+            flash("Não foi possível alterar o nível de acesso.", "erro")
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao atualizar nível de acesso.")
@@ -372,6 +431,7 @@ def ficha_jogador(jogador_id: str):
                 voltar_url=url_for("mestre.dashboard"),
                 salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
                 fonte_ficha="PostgreSQL",
+                nivel_csrf_token=session.setdefault("perfil_csrf", secrets.token_urlsafe(32)),
             ), 503
 
         if erros:
@@ -389,4 +449,5 @@ def ficha_jogador(jogador_id: str):
         voltar_url=url_for("mestre.dashboard"),
         salvar_url=url_for("mestre.ficha_jogador", jogador_id=jogador_id),
         fonte_ficha="PostgreSQL",
+        nivel_csrf_token=session.setdefault("perfil_csrf", secrets.token_urlsafe(32)),
     )

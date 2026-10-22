@@ -633,6 +633,68 @@ def atualizar_ficha_personagem(
     return novo, []
 
 
+
+def definir_nivel_personagem_pelo_mestre(
+    *,
+    personagem_id: str,
+    campanha_codigo: str,
+    nivel: int,
+    responsavel_id: str,
+) -> tuple[str, int] | None:
+    """Altera só o nível; evita invalidar a ficha por campos legados não editados.
+
+    A autorização do mestre pertence à rota. O personagem é sempre limitado
+    à campanha corrente e o nível respeita as regras ativas do PostgreSQL.
+    """
+    try:
+        identificador = uuid.UUID(str(personagem_id))
+        responsavel = uuid.UUID(str(responsavel_id))
+    except (ValueError, TypeError) as erro:
+        raise ValueError("Identificador de personagem ou mestre inválido.") from erro
+
+    from app.models.db import Usuario
+
+    gestor = db.session.get(Usuario, responsavel)
+    if gestor is None or not gestor.ativo or gestor.perfil not in {"administrador", "mestre"}:
+        raise ValueError("Somente um mestre ativo pode alterar o nível de outro personagem.")
+
+    personagem = db.session.execute(
+        select(Personagem)
+        .join(Campanha, Campanha.id == Personagem.campanha_id)
+        .where(
+            Personagem.id == identificador,
+            Personagem.ativo.is_(True),
+            Campanha.codigo == campanha_codigo,
+            Campanha.ativo.is_(True),
+        )
+        .with_for_update()
+    ).scalar_one_or_none()
+    if personagem is None:
+        return None
+
+    regras = carregar_regras_personagem(personagem.campanha_id)
+    minimo = int(regras.get("nivel_minimo", 1))
+    maximo = int(regras.get("nivel_maximo", 100))
+    if not minimo <= nivel <= maximo:
+        raise ValueError(f"O nível deve estar entre {minimo} e {maximo}.")
+
+    anterior = int(personagem.nivel)
+    if anterior != nivel:
+        personagem.nivel = nivel
+        db.session.add(
+            HistoricoAlteracao(
+                usuario_id=responsavel,
+                entidade="personagem",
+                registro_id=personagem.id,
+                acao="ajustar_nivel",
+                dados_anteriores={"nivel": anterior},
+                dados_novos={"nivel": nivel},
+            )
+        )
+        db.session.commit()
+    return personagem.nome, nivel
+
+
 def preparar_configuracoes_ficha(
     *,
     data_dir: str | Path,

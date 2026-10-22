@@ -44,6 +44,13 @@
                 <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
                 <a class="botao botao-primario botao-link" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Box</a>
                 {% if usuario.get('id') %}
+                    <form method="post" action="{{ url_for('mestre.alterar_nivel_jogador', jogador_id=jogador.get('id')) }}" class="campo formulario-nivel-mestre">
+                        <input type="hidden" name="voltar" value="jogadores">
+                        <input type="hidden" name="csrf_token" value="{{ perfil_csrf_token }}">
+                        <label for="nivel-{{ jogador.get('id') }}">Nível do personagem</label>
+                        <input id="nivel-{{ jogador.get('id') }}" name="nivel" type="number" min="1" max="100" step="1" value="{{ treinador.get('nivel', 1) }}" required>
+                        <button class="botao botao-secundario" type="submit">Atualizar nível</button>
+                    </form>
                     <form method="post" action="{{ url_for('mestre.alterar_perfil', usuario_id=usuario.get('id')) }}" class="campo">
                         <input type="hidden" name="csrf_token" value="{{ perfil_csrf_token }}">
                         <label for="perfil-{{ usuario.get('id') }}">Permissões</label>

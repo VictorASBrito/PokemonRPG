@@ -18,6 +18,19 @@
     <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
 </section>
 
+{% if modo_mestre %}
+<section class="cartao ajuste-nivel-independente" aria-label="Alterar nível do treinador sem modificar os demais campos">
+    <form method="post" class="formulario-nivel-mestre" action="{{ url_for('mestre.alterar_nivel_jogador', jogador_id=jogador.get('id')) }}">
+        <input type="hidden" name="csrf_token" value="{{ nivel_csrf_token }}">
+        <input type="hidden" name="voltar" value="ficha">
+        <label for="nivel-rapido-ficha">Alterar apenas o nível</label>
+        <input type="number" name="nivel" id="nivel-rapido-ficha" min="{{ regras.get('nivel_minimo', 1) }}" max="{{ regras.get('nivel_maximo', 100) }}" step="1" value="{{ treinador.get('nivel', 1) }}" required>
+        <button type="submit" class="botao botao-primario">Atualizar nível</button>
+        <small>Atualiza o nível compartilhado dos Pokémon sem validar ou modificar o resto da ficha.</small>
+    </form>
+</section>
+{% endif %}
+
 <form method="post" enctype="multipart/form-data" action="{{ salvar_url }}" id="form-ficha" data-pv-por-saude="{{ regras.get('pv_por_ponto_saude', 10) }}">
     <section class="cartao secao-ficha">
         <div class="titulo-secao">
@@ -62,8 +75,8 @@
 
             <div class="campo">
                 <label for="nivel">Nível do jogador</label>
-                <input id="nivel" name="nivel" type="number" min="{{ regras.get('nivel_minimo', 1) }}" max="{{ regras.get('nivel_maximo', 100) }}" value="{{ treinador.get('nivel', regras.get('nivel_inicial', 1)) }}" required>
-                <small>Este nível será usado automaticamente por todos os Pokémon da ficha.</small>
+                <input id="nivel" name="nivel" type="number" min="{{ regras.get('nivel_minimo', 1) }}" max="{{ regras.get('nivel_maximo', 100) }}" value="{{ treinador.get('nivel', regras.get('nivel_inicial', 1)) }}" {% if modo_mestre %}readonly{% endif %} required>
+                <small>{% if modo_mestre %}Use “Alterar apenas o nível” acima para atualizar sem depender das validações dos outros campos.{% else %}Este nível será usado automaticamente por todos os Pokémon da ficha.{% endif %}</small>
             </div>
 
             <div class="campo">

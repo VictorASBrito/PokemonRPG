@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import click
 from flask import Blueprint, current_app
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 
 from app.extensions import db
 from app.models.db import Campanha, CampanhaMembro, Personagem, Usuario
@@ -73,4 +73,27 @@ def verificar() -> None:
             "Jogadores sem personagem: " + ", ".join(jogadores_sem_personagem)
         )
         raise click.ClickException("Foram encontrados vínculos incompletos.")
+    # Além do modelo ORM, confirme a restrição que está realmente ativa no
+    # PostgreSQL. Uma revisão Alembic registrada não garante que esta CHECK
+    # não tenha sido restaurada manualmente com os perfis antigos.
+    if db.engine.dialect.name == "postgresql":
+        restricoes = db.session.execute(text("""
+            SELECT conname, pg_get_constraintdef(oid) AS definicao
+            FROM pg_constraint
+            WHERE conrelid = 'usuarios'::regclass AND contype = 'c'
+        """)).all()
+        restricoes_perfil = [
+            (nome, definicao) for nome, definicao in restricoes
+            if "perfil" in str(definicao).lower()
+        ]
+        if not restricoes_perfil or any(
+            "'tester'" not in str(definicao).lower()
+            for _, definicao in restricoes_perfil
+        ):
+            raise click.ClickException(
+                "A restrição de perfil no PostgreSQL ainda bloqueia Tester "
+                "(ou está ausente). Execute: flask --app app.py db upgrade"
+            )
+        click.echo("Restrição de usuários: Tester permitido no PostgreSQL.")
+
     click.echo("Autenticação e vínculos estão consistentes.")

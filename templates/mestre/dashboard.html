@@ -103,6 +103,12 @@
                 </a>
             </div>
             <div class="painel-jogador-links">
+                <form method="post" class="formulario-nivel-mestre" action="{{ url_for('mestre.alterar_nivel_jogador', jogador_id=jogador.get('id')) }}">
+                    <input type="hidden" name="csrf_token" value="{{ nivel_csrf_token }}">
+                    <label for="nivel-painel-{{ jogador.get('id') }}">Nível</label>
+                    <input type="number" id="nivel-painel-{{ jogador.get('id') }}" name="nivel" min="1" max="100" step="1" value="{{ jogador.get('nivel', 1) }}" required>
+                    <button class="botao botao-secundario" type="submit">Salvar nível</button>
+                </form>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.preview_jogador', jogador_id=jogador.get('id')) }}">Prévia do jogador</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.ficha_jogador', jogador_id=jogador.get('id')) }}">Ficha</a>
                 <a class="botao botao-secundario botao-link" href="{{ url_for('pokemons.equipe_mestre', jogador_id=jogador.get('id')) }}">Equipe</a>

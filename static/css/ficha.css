@@ -218,3 +218,9 @@
     .foto-perfil-editor { grid-template-columns: 1fr; }
     .preview-foto-perfil { margin: 0 auto; }
 }
+
+/* Controle isolado de nível para o mestre (fora do formulário completo). */
+.ajuste-nivel-independente { margin-bottom: .65rem; }
+.ajuste-nivel-independente .formulario-nivel-mestre { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; }
+.ajuste-nivel-independente input[type="number"] { width: 5.5rem; }
+.ajuste-nivel-independente small { flex-basis: 100%; }

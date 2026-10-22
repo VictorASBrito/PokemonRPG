@@ -346,3 +346,9 @@ Instruções em `PERFIS_E_PERMISSOES.md`.
 - As permissões são consultadas no PostgreSQL a cada acesso ao formulário e operação de gravação.
 
 Não há migração de banco nesta atualização. Execute `pytest -q` após substituir os arquivos.
+
+
+## Reparação de permissões Tester no PostgreSQL
+
+Se alterar um perfil para Tester provocar `ck_usuarios_perfil_valido`, consulte
+`CORRECAO_PERFIL_TESTER_POSTGRESQL.md` e execute `flask --app app.py db upgrade`.

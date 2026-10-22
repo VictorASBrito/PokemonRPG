@@ -185,3 +185,18 @@
     .painel-jogador-atributos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .modo-ordenacao .painel-jogador-identidade-wrap { flex-direction: column; }
 }
+
+/* Ajuste do nível pelo mestre sem depender do formulário completo da ficha. */
+.formulario-nivel-mestre {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    flex-wrap: wrap;
+}
+.formulario-nivel-mestre label { font-size: .79rem; font-weight: 700; }
+.formulario-nivel-mestre input[type="number"] {
+    width: 5.25rem;
+    min-width: 0;
+    padding: .48rem .55rem;
+}
+.formulario-nivel-mestre .botao { white-space: nowrap; }
