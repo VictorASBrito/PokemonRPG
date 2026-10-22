@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
 {% block titulo %}Equipe de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
@@ -67,7 +68,7 @@
 
             <div class="chips chips-tipos">
                 {% for tipo in especie.get('tipos', []) %}
-                    <span class="chip tipo-chip">{{ tipo }}</span>
+                    {{ selo_tipo(tipo) }}
                 {% endfor %}
                 {% if pokemon.get('status', 'Nenhum') != 'Nenhum' %}
                     <span class="chip chip-status">{{ pokemon.get('status') }}</span>

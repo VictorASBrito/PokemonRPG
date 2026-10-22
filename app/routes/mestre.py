@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import hmac
+import secrets
+
 from flask import (
     Blueprint,
     current_app,
@@ -31,6 +34,7 @@ from app.services.pokemon_db_service import (
 )
 from app.services.usuario_service import (
     alterar_atividade_usuario,
+    alterar_perfil_usuario,
     criar_jogador_postgresql,
     listar_jogadores_campanha,
 )
@@ -164,10 +168,12 @@ def jogadores():
             fonte_dados="PostgreSQL",
         ), 503
 
+    token = session.setdefault("perfil_csrf", secrets.token_urlsafe(32))
     return render_template(
         "mestre/jogadores.html",
         jogadores=lista,
         fonte_dados="PostgreSQL",
+        perfil_csrf_token=token,
     )
 
 
@@ -194,14 +200,17 @@ def novo_jogador():
         login = request.form.get("login", "").strip().lower()
         senha = request.form.get("senha", "")
         confirmar_senha = request.form.get("confirmar_senha", "")
+        perfil = request.form.get("perfil", "jogador")
         erros = _validar_novo_jogador(nome, login, senha, confirmar_senha)
+        if perfil not in {"jogador", "tester"}:
+            erros.append("Escolha um perfil Jogador ou Tester.")
 
         if erros:
             for erro in erros:
                 flash(erro, "erro")
             return render_template(
                 "mestre/novo_jogador.html",
-                dados={"nome": nome, "login": login},
+                dados={"nome": nome, "login": login, "perfil": perfil},
             ), 400
 
         try:
@@ -210,6 +219,7 @@ def novo_jogador():
                 nome=nome,
                 login=login,
                 senha=senha,
+                perfil=perfil,
             )
         except SQLAlchemyError:
             db.session.rollback()
@@ -217,14 +227,14 @@ def novo_jogador():
             flash("Não foi possível cadastrar o jogador no banco de dados.", "erro")
             return render_template(
                 "mestre/novo_jogador.html",
-                dados={"nome": nome, "login": login},
+                dados={"nome": nome, "login": login, "perfil": perfil},
             ), 503
         except ValueError as erro:
             db.session.rollback()
             flash(str(erro), "erro")
             return render_template(
                 "mestre/novo_jogador.html",
-                dados={"nome": nome, "login": login},
+                dados={"nome": nome, "login": login, "perfil": perfil},
             ), 400
 
         flash(f"Jogador {nome} criado com sucesso no PostgreSQL.", "sucesso")
@@ -233,6 +243,34 @@ def novo_jogador():
         )
 
     return render_template("mestre/novo_jogador.html", dados={})
+
+
+@mestre_bp.post("/usuarios/<usuario_id>/perfil")
+@perfil_obrigatorio("mestre")
+def alterar_perfil(usuario_id: str):
+    token = session.get("perfil_csrf", "")
+    recebido = request.form.get("csrf_token", "")
+    if not token or not hmac.compare_digest(token, recebido):
+        return ("Formulário de permissões inválido. Atualize a página.", 400)
+    try:
+        usuario = alterar_perfil_usuario(
+            usuario_id, request.form.get("perfil", ""),
+            campanha_codigo=_campanha_codigo(),
+            responsavel_id=str(session.get("usuario_id", "")),
+        )
+    except ValueError as erro:
+        db.session.rollback()
+        flash(str(erro), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao atualizar nível de acesso.")
+        flash("Não foi possível alterar o nível de acesso.", "erro")
+    else:
+        if usuario is None:
+            flash("Conta não encontrada nesta campanha.", "erro")
+        else:
+            flash(f"Acesso de {usuario.nome} atualizado: {usuario.perfil}.", "sucesso")
+    return redirect(url_for("mestre.jogadores"))
 
 
 @mestre_bp.post("/usuarios/<usuario_id>/atividade")

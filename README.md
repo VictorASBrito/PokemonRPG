@@ -323,3 +323,26 @@ Em dois terminais PowerShell, na raiz do projeto:
 
 Veja [TESTES_REMOTOS_CLOUDFLARE.md](TESTES_REMOTOS_CLOUDFLARE.md) antes de
 compartilhar o link, principalmente as observações de segurança e backup.
+
+
+## Perfis de acesso para testes da campanha
+
+- **Administrador/Mestre:** mantém as funções administrativas existentes.
+- **Tester:** pode criar Pokémon novos em sua própria Box; não gera itens.
+- **Jogador:** não cria Pokémon novos nem gera itens; pode gerenciar os que já possui.
+
+O mestre altera os perfis em **Jogadores → Permissões**. Novas contas e contas
+importadas começam como Jogador. A nova migration
+`3a8e5c71d902_papel_tester_permissoes.py` é obrigatória antes de selecionar Tester.
+Instruções em `PERFIS_E_PERMISSOES.md`.
+
+
+## Ajuste de permissões: Tester edita todos os campos do Pokémon
+
+- **Admin/Mestre:** mantém acesso completo e pode editar Pokémon de todos os personagens.
+- **Tester:** cria Pokémon exclusivamente na própria Box e pode editar espécie/forma, gênero, natureza, Shiny, apelido, PV, status, golpes, bônus e anotações de seus Pokémon. Não recebe permissões administrativas nem para gerar itens.
+- **Jogador:** edita apenas apelido, PV, status, golpes, bônus e anotações; espécie/forma, gênero, natureza e Shiny permanecem somente leitura.
+- Itens carregados, independentemente do perfil, são equipados/retirados pelo inventário, preservando a contagem das unidades.
+- As permissões são consultadas no PostgreSQL a cada acesso ao formulário e operação de gravação.
+
+Não há migração de banco nesta atualização. Execute `pytest -q` após substituir os arquivos.

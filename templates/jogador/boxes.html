@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
 {% block titulo %}Box de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
@@ -60,7 +61,7 @@
                 <strong>{{ nome_exibicao }}</strong>
                 <span>Nv. {{ calculos.nivel }} · PV {{ pokemon.get('pv_atual', 0) }}/{{ calculos.totais.pv }}</span>
                 <div class="chips chips-compactos">
-                    {% for tipo in especie.get('tipos', []) %}<span class="chip tipo-chip">{{ tipo }}</span>{% endfor %}
+                    {% for tipo in especie.get('tipos', []) %}{{ selo_tipo(tipo) }}{% endfor %}
                     {% if pokemon.get('status', 'Nenhum') != 'Nenhum' %}<span class="chip chip-status">{{ pokemon.get('status') }}</span>{% endif %}
                 </div>
             </div>
@@ -91,7 +92,7 @@
     <div>
         <p class="rotulo">Armazenamento Pokémon</p>
         <h1>Box de {{ treinador.get('nome') or 'Treinador' }}</h1>
-        <p class="texto-suave">A campanha utiliza uma Box única com {{ limite_box }} espaços. Novos Pokémon são criados somente nos espaços vazios abaixo.</p>
+        <p class="texto-suave">A campanha utiliza uma Box única com {{ limite_box }} espaços. {% if pode_criar_pokemon %}Novos Pokémon são criados somente nos espaços vazios abaixo.{% else %}Pokémon novos são entregues pelo mestre; você pode organizar sua equipe e sua Box.{% endif %}</p>
     </div>
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
@@ -170,10 +171,17 @@
             {{ cartao_pokemon(registro, 'box') }}
         {% endfor %}
         {% for _ in range(limite_box - ocupados) %}
-            <a class="slot-box-vazio" data-box-slot-vazio href="{{ novo_pokemon_url() }}">
-                <span>＋</span>
-                <small>Criar Pokémon</small>
-            </a>
+            {% if pode_criar_pokemon %}
+                <a class="slot-box-vazio" data-box-slot-vazio href="{{ novo_pokemon_url() }}">
+                    <span>＋</span>
+                    <small>Criar Pokémon</small>
+                </a>
+            {% else %}
+                <div class="slot-box-vazio slot-box-bloqueado" data-box-slot-vazio aria-label="Espaço vazio">
+                    <span>＋</span>
+                    <small>Espaço vazio</small>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 </section>

@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
 {% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
@@ -159,7 +160,7 @@
 
                             <div class="tipos-pokemon-dashboard">
                                 {% for tipo in especie.get('tipos', []) %}
-                                    <span>{{ tipo }}</span>
+                                    {{ selo_tipo(tipo) }}
                                 {% endfor %}
                                 {% if pokemon.get('status') and pokemon.get('status') != 'Nenhum' %}
                                     <span class="status-pokemon-dashboard">{{ pokemon.get('status') }}</span>
@@ -237,16 +238,12 @@
                                 {% for indice_golpe in range(4) %}
                                     {% if indice_golpe < golpes_pokemon|length %}
                                         {% set golpe = golpes_pokemon[indice_golpe] %}
-                                        <div class="pokemon-dashboard-golpe-detalhado">
-                                            <div>
-                                                <strong>{{ golpe.get('nome') }}</strong>
-                                                <span>{{ golpe.get('tipo', '—') }} · {{ golpe.get('categoria', '—') }}</span>
+                                        <div class="pokemon-dashboard-golpe-detalhado" title="{{ golpe.get('nome') }} — {{ golpe.get('categoria', '—') }} | Dano: {{ golpe.get('dano') or 'Estado' }} | Precisão: {{ golpe.get('precisao_texto') or '—' }} | Prioridade: {{ golpe.get('prioridade', 0) }}">
+                                            <strong class="pokemon-dashboard-golpe-nome">{{ golpe.get('nome') }}</strong>
+                                            <div class="pokemon-dashboard-golpe-resumo">
+                                                {{ selo_tipo(golpe.get('tipo', '—')) }}
+                                                <small>{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('precisao_texto') or '—' }} · P{{ golpe.get('prioridade', 0) }}</small>
                                             </div>
-                                            <dl>
-                                                <div><dt>Dano</dt><dd>{{ golpe.get('dano') or 'Estado' }}</dd></div>
-                                                <div><dt>Precisão</dt><dd>{{ golpe.get('precisao_texto') or '—' }}</dd></div>
-                                                <div><dt>Prioridade</dt><dd>{{ golpe.get('prioridade', 0) }}</dd></div>
-                                            </dl>
                                         </div>
                                     {% else %}
                                         <div class="pokemon-dashboard-golpe-detalhado pokemon-dashboard-golpe-vazio"><span>Sem golpe definido</span></div>

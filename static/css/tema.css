@@ -28,9 +28,8 @@
 :root[data-theme="dark"] .chip,
 :root[data-theme="dark"] .painel-jogador-contadores span,
 :root[data-theme="dark"] .painel-pokemon-imagem,
-:root[data-theme="dark"] .painel-pokemon-tipos span,
 :root[data-theme="dark"] .tipo-chip,
-:root[data-theme="dark"] .tipos-pokemon-dashboard span { background: #252d3a; color: var(--texto); }
+:root[data-theme="dark"] .tipos-pokemon-dashboard .status-pokemon-dashboard { background: #252d3a; color: var(--texto); }
 :root[data-theme="dark"] .botao-secundario:hover { background: #303948; }
 :root[data-theme="dark"] .controle-pv-rapido button,
 :root[data-theme="dark"] .painel-pokemon-card,
@@ -293,10 +292,8 @@
 }
 :root[data-theme="dark"] .botao-remover:hover { background: #5a2931; }
 
-:root[data-theme="dark"] .tipos-pokemon-dashboard span,
 :root[data-theme="dark"] .tipo-chip,
 :root[data-theme="dark"] .chip-tipo,
-:root[data-theme="dark"] .painel-pokemon-tipos span,
 :root[data-theme="dark"] .chip {
     color: #e8edf4;
     background: #2b3644;

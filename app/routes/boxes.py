@@ -14,6 +14,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+from app.services.permissoes_service import pode_criar_pokemon
 from app.services.pokemon_db_service import (
     BOX_ID,
     box_detalhada_db,
@@ -66,6 +67,7 @@ def _render_boxes(contexto, *, modo_mestre: bool):
 
     return render_template(
         "jogador/boxes.html",
+        pode_criar_pokemon=(modo_mestre or pode_criar_pokemon(session.get("usuario_id"))),
         jogador=contexto.jogador,
         equipe=equipe,
         box=box,

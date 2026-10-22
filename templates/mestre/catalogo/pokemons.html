@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 {% block titulo %}Pokémon do catálogo | Pokémon RPG{% endblock %}
 {% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
@@ -30,7 +31,7 @@
     </div>
     <div class="forma-admin-conteudo">
         <div class="forma-admin-topo"><div><small>#{{ forma.especie.numero or '—' }} · {{ forma.categoria|capitalize }}</small><h2>{{ forma.nome }}</h2><p>{{ forma.especie.nome }}</p></div></div>
-        <div class="chips-tipos">{% for relacao in forma.tipos|sort(attribute='posicao') %}<span class="chip-tipo">{{ relacao.tipo.nome }}</span>{% endfor %}</div>
+        <div class="chips-tipos">{% for relacao in forma.tipos|sort(attribute='posicao') %}{{ selo_tipo(relacao.tipo.nome) }}{% endfor %}</div>
         <code>{{ forma.codigo }}</code>
         <div class="acoes-card"><a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar</a><form method="post" action="{{ url_for('catalogo_admin.atividade_pokemon', forma_id=forma.id) }}"><input type="hidden" name="ativo" value="{{ '0' if forma.ativo else '1' }}"><button class="botao botao-secundario" type="submit">{{ 'Desativar' if forma.ativo else 'Reativar' }}</button></form></div>
     </div>

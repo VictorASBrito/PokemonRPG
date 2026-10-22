@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 {% block titulo %}Golpes do catálogo | Pokémon RPG{% endblock %}
 {% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
@@ -32,7 +33,7 @@
     <div class="golpe-admin-topo">
         <div>
             <div class="chips-tipos">
-                <span class="chip-tipo">{{ golpe.tipo.nome if golpe.tipo else 'Sem tipo' }}</span>
+                {{ selo_tipo(golpe.tipo.nome) if golpe.tipo else 'Sem tipo' }}
                 <span class="chip-tipo">{{ golpe.categoria.nome }}</span>
                 {% if golpe.personalizado %}<span class="chip-tipo chip-personalizado">Personalizado</span>{% endif %}
                 {% if not golpe.ativo %}<span class="chip-tipo chip-inativo">Inativo</span>{% endif %}

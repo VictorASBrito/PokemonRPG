@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
 {% block titulo %}{{ pokemon.get('apelido') or especie.get('nome') }} | Pokémon RPG{% endblock %}
@@ -30,7 +31,7 @@
                 alt="{{ nome_exibicao }}"
             >
             <div class="chips chips-centralizados">
-                {% for tipo in especie.get('tipos', []) %}<span class="chip tipo-chip">{{ tipo }}</span>{% endfor %}
+                {% for tipo in especie.get('tipos', []) %}{{ selo_tipo(tipo) }}{% endfor %}
             </div>
             <span class="texto-suave texto-centralizado">Catálogo #{{ especie.get('ordem_catalogo') }}</span>
         </div>
@@ -39,8 +40,12 @@
             <div class="grade-formulario grade-tres-colunas">
                 <div class="campo campo-duas-colunas">
                     <label for="especie_nome">Espécie ou forma</label>
+                    {% if pode_editar_identidade %}
                     <input id="especie_nome" name="especie_nome" list="catalogo-especies" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}" value="{{ especie.get('nome') }}" autocomplete="off" required>
-                    <small>Alterar a espécie recalcula todos os atributos, servindo também para evoluções.</small>
+                    <small>Alterar a espécie recalcula os atributos.</small>
+                    {% else %}
+                    <div class="campo-calculado campo-protegido"><strong>{{ especie.get('nome') }}</strong></div>
+                    {% endif %}
                 </div>
                 <div class="campo">
                     <label for="apelido">Apelido</label>
@@ -53,24 +58,36 @@
                 </div>
                 <div class="campo">
                     <label for="genero">Gênero</label>
+                    {% if pode_editar_identidade %}
                     <select id="genero" name="genero">
                         {% for genero in regras.get('generos', []) %}<option value="{{ genero }}" {% if pokemon.get('genero') == genero %}selected{% endif %}>{{ genero }}</option>{% endfor %}
                     </select>
+                    {% else %}
+                    <div class="campo-calculado campo-protegido"><strong>{{ pokemon.get('genero') or 'Ø' }}</strong></div>
+                    {% endif %}
                 </div>
                 <div class="campo campo-checkbox">
                     <label for="shiny">Variação</label>
+                    {% if pode_editar_identidade %}
                     <label class="alternador">
                         <input id="shiny" name="shiny" type="checkbox" value="1" {% if pokemon.get('shiny') %}checked{% endif %}>
                         <span>Pokémon Shiny</span>
                     </label>
+                    {% else %}
+                    <div class="campo-calculado campo-protegido"><strong>{{ 'Shiny' if pokemon.get('shiny') else 'Normal' }}</strong></div>
+                    {% endif %}
                 </div>
                 <div class="campo">
                     <label for="natureza">Natureza</label>
+                    {% if pode_editar_identidade %}
                     <select id="natureza" name="natureza">
                         {% for natureza in regras.get('naturezas', []) %}
                             <option value="{{ natureza.get('nome') }}" {% if pokemon.get('natureza') == natureza.get('nome') %}selected{% endif %}>{{ natureza.get('nome') }}</option>
                         {% endfor %}
                     </select>
+                    {% else %}
+                    <div class="campo-calculado campo-protegido"><strong>{{ pokemon.get('natureza') or 'Não definida' }}</strong></div>
+                    {% endif %}
                 </div>
                 <div class="campo">
                     <label for="status">Status</label>
@@ -89,7 +106,7 @@
         </div>
     </section>
 
-    <datalist id="catalogo-especies"></datalist>
+    {% if pode_editar_identidade %}<datalist id="catalogo-especies"></datalist>{% endif %}
     <datalist id="catalogo-golpes"></datalist>
 
     <section class="cartao secao-pokemon">

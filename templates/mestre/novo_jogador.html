@@ -23,6 +23,13 @@
         </div>
 
         <div class="campo">
+            <label for="perfil">Nível de acesso</label>
+            <select id="perfil" name="perfil" required>
+                <option value="jogador" {% if dados.get('perfil', 'jogador') == 'jogador' %}selected{% endif %}>Jogador — sem criar Pokémon ou itens</option>
+                <option value="tester" {% if dados.get('perfil') == 'tester' %}selected{% endif %}>Tester — pode criar Pokémon na própria Box</option>
+            </select>
+        </div>
+        <div class="campo">
             <label for="senha">Senha inicial</label>
             <input id="senha" name="senha" type="password" minlength="6" autocomplete="new-password" required>
         </div>

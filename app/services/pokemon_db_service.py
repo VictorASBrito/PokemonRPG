@@ -852,6 +852,7 @@ def atualizar_pokemon_formulario(
     pokemon_id: str,
     formulario: Any,
     usuario_responsavel_id: str | uuid.UUID | None,
+    permitir_identidade: bool = False,
 ) -> tuple[dict[str, Any] | None, list[str]]:
     pokemon = _buscar_pokemon_contexto(contexto.personagem.id, pokemon_id, bloquear=True)
     if pokemon is None:
@@ -859,27 +860,35 @@ def atualizar_pokemon_formulario(
     antes = _snapshot(pokemon)
     erros: list[str] = []
 
-    forma = buscar_forma(str(formulario.get("especie_nome", "")))
-    if forma is None:
-        erros.append("Selecione uma espécie ou forma existente no banco.")
-    else:
-        pokemon.forma_pokemon_id = forma.id
+    # A autorização também fica no serviço, não só no formulário/rota.
+    # Campos omitidos por usuários comuns não podem apagar dados existentes.
+    campos_restritos = ("especie_nome", "genero", "natureza", "shiny")
+    if not permitir_identidade and any(campo in formulario for campo in campos_restritos):
+        db.session.rollback()
+        return None, ["Apenas Admin/Mestre ou Tester pode alterar espécie, gênero, natureza ou Shiny."]
+    if permitir_identidade:
+        forma = buscar_forma(str(formulario.get("especie_nome", "")))
+        if forma is None:
+            erros.append("Selecione uma espécie ou forma existente no banco.")
+        else:
+            pokemon.forma_pokemon_id = forma.id
 
-    genero = str(formulario.get("genero", "Ø")).strip() or "Ø"
-    if genero not in contexto.regras.get("generos", []):
-        erros.append("Selecione um gênero disponível na configuração atual.")
-    else:
-        pokemon.genero = genero
+        genero = str(formulario.get("genero", "Ø")).strip() or "Ø"
+        if genero not in contexto.regras.get("generos", []):
+            erros.append("Selecione um gênero disponível na configuração atual.")
+        else:
+            pokemon.genero = genero
 
-    natureza_nome = str(formulario.get("natureza", "")).strip()
-    natureza = _buscar_por_nome(Natureza, natureza_nome) if natureza_nome else None
-    if natureza_nome and natureza is None:
-        erros.append("Selecione uma natureza disponível no banco.")
-    else:
-        pokemon.natureza_id = natureza.id if natureza else None
+        natureza_nome = str(formulario.get("natureza", "")).strip()
+        natureza = _buscar_por_nome(Natureza, natureza_nome) if natureza_nome else None
+        if natureza_nome and natureza is None:
+            erros.append("Selecione uma natureza disponível no banco.")
+        else:
+            pokemon.natureza_id = natureza.id if natureza else None
+
+        pokemon.shiny = formulario.get("shiny") == "1"
 
     pokemon.apelido = str(formulario.get("apelido", "")).strip() or None
-    pokemon.shiny = formulario.get("shiny") == "1"
     pokemon.anotacoes = str(formulario.get("anotacoes", "")).strip() or None
 
     # Itens equipados são alterados exclusivamente pela tela de inventário.

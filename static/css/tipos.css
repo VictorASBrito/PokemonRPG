@@ -1,0 +1,90 @@
+/* Tipos do Pokémon RPG: mini-etiquetas desenhadas em CSS.
+   A imagem enviada é uma referência de forma, borda e paleta, não um sprite.
+   Estas cores são próprias de cada tipo e NÃO dependem do tema claro/escuro. */
+.etiqueta-tipo,
+.tipos-pokemon-dashboard .etiqueta-tipo,
+.painel-pokemon-tipos .etiqueta-tipo,
+.chips-tipos .etiqueta-tipo {
+    display: inline-flex;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    max-width: 100%;
+    min-width: 0;
+    height: 20px;
+    padding: 0 9px;
+    border: 1px solid rgba(15, 23, 42, .82);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,.26), transparent 52%, rgba(0,0,0,.13)), var(--tipo-cor, #66768b);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 -1px 0 rgba(0,0,0,.19), 0 0 0 1px rgba(255,255,255,.19);
+    color: var(--tipo-texto, #fff);
+    font-size: 10px;
+    font-weight: 850;
+    line-height: 1;
+    letter-spacing: .015em;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0,0,0,.27);
+    vertical-align: middle;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+/* Paleta por tipo, inspirada nas etiquetas da referência. */
+.etiqueta-tipo--normal { --tipo-cor: #8b8f93; }
+.etiqueta-tipo--fire { --tipo-cor: #e1532f; }
+.etiqueta-tipo--water { --tipo-cor: #3286c5; }
+.etiqueta-tipo--electric { --tipo-cor: #f2cc48; --tipo-texto: #252011; text-shadow: none; }
+.etiqueta-tipo--grass { --tipo-cor: #67b14b; --tipo-texto: #132e13; text-shadow: none; }
+.etiqueta-tipo--ice { --tipo-cor: #9bdeeb; --tipo-texto: #1e3a48; text-shadow: none; }
+.etiqueta-tipo--fighting { --tipo-cor: #ad5431; }
+.etiqueta-tipo--poison { --tipo-cor: #9945a0; }
+.etiqueta-tipo--ground { --tipo-cor: #d0af69; --tipo-texto: #3d301a; text-shadow: none; }
+.etiqueta-tipo--flying { --tipo-cor: #8599e6; --tipo-texto: #212b50; text-shadow: none; }
+.etiqueta-tipo--psychic { --tipo-cor: #e15c83; --tipo-texto: #401a29; text-shadow: none; }
+.etiqueta-tipo--bug { --tipo-cor: #a7ba3a; --tipo-texto: #27330d; text-shadow: none; }
+.etiqueta-tipo--rock { --tipo-cor: #bca96b; --tipo-texto: #3d3318; text-shadow: none; }
+.etiqueta-tipo--ghost { --tipo-cor: #6c619f; }
+.etiqueta-tipo--dragon { --tipo-cor: #755cbd; }
+.etiqueta-tipo--dark { --tipo-cor: #55473f; }
+.etiqueta-tipo--steel { --tipo-cor: #a5abb8; --tipo-texto: #222d3d; text-shadow: none; }
+.etiqueta-tipo--fairy { --tipo-cor: #e3a3d4; --tipo-texto: #462844; text-shadow: none; }
+.etiqueta-tipo--personalizado { --tipo-cor: #66768b; }
+
+/* Selos sempre discretos e alinhados em qualquer lugar do sistema. */
+.tipos-pokemon-dashboard,
+.chips-tipos,
+.chips.chips-compactos,
+.painel-pokemon-tipos {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Variações de densidade, sem perder legibilidade. */
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .tipos-pokemon-dashboard .etiqueta-tipo {
+    height: 18px;
+    padding-inline: 7px;
+    font-size: 9px;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .tipos-pokemon-dashboard .etiqueta-tipo,
+.painel-pokemon-tipos .etiqueta-tipo {
+    height: 17px;
+    padding-inline: 6px;
+    font-size: 9px;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .tipos-pokemon-dashboard .etiqueta-tipo {
+    height: 22px;
+    padding-inline: 10px;
+    font-size: 11px;
+}
+.pokemon-dashboard-golpe-resumo .etiqueta-tipo {
+    height: 17px;
+    padding-inline: 6px;
+    font-size: 9px;
+}
+@media (max-width: 680px) {
+    .etiqueta-tipo { height: 19px; padding-inline: 7px; font-size: 10px; }
+}

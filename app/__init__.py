@@ -21,6 +21,8 @@ def create_app() -> Flask:
     )
 
     Config(raiz).aplicar(app)
+    from app.services.tipos_visual import tipo_visual
+    app.jinja_env.filters["tipo_visual"] = tipo_visual
 
     db.init_app(app)
     migrate.init_app(app, db)

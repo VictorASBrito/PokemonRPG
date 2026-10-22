@@ -19,7 +19,7 @@ class Usuario(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     __tablename__ = "usuarios"
     __table_args__ = (
         CheckConstraint(
-            "perfil IN ('administrador', 'mestre', 'jogador')",
+            "perfil IN ('administrador', 'mestre', 'tester', 'jogador')",
             name="perfil_valido",
         ),
     )

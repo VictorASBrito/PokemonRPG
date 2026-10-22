@@ -69,7 +69,7 @@ def autenticar_usuario(
 
     # Mestres importados são associados à campanha. Jogadores precisam de
     # vínculo e personagem para acessar as telas da campanha.
-    if usuario.perfil == "jogador" and (campanha is None or membro is None):
+    if usuario.perfil in {"jogador", "tester"} and (campanha is None or membro is None or personagem is None):
         return None
 
     return ResultadoAutenticacao(

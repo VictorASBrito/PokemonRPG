@@ -32,6 +32,7 @@
                     <span class="chip">PV {{ treinador.get('pv_atual', 0) }}/{{ treinador.get('pv_maximo', 0) }}</span>
                     <span class="chip">₽ {{ treinador.get('pokedolares', 0) }}</span>
                     <span class="chip">Equipe {{ jogador.get('equipe', [])|length }}/6</span>
+                    <span class="chip">{{ 'Tester' if usuario.get('perfil') == 'tester' else 'Jogador' }}</span>
                     {% if usuario %}
                         <span class="chip">{{ 'Acesso ativo' if usuario.get('ativo', true) else 'Acesso desativado' }}</span>
                     {% endif %}
@@ -43,6 +44,15 @@
                 <a class="botao botao-secundario botao-link" href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
                 <a class="botao botao-primario botao-link" href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Box</a>
                 {% if usuario.get('id') %}
+                    <form method="post" action="{{ url_for('mestre.alterar_perfil', usuario_id=usuario.get('id')) }}" class="campo">
+                        <input type="hidden" name="csrf_token" value="{{ perfil_csrf_token }}">
+                        <label for="perfil-{{ usuario.get('id') }}">Permissões</label>
+                        <select id="perfil-{{ usuario.get('id') }}" name="perfil" aria-label="Nível de acesso de {{ usuario.get('nome') }}">
+                            <option value="jogador" {% if usuario.get('perfil') != 'tester' %}selected{% endif %}>Jogador</option>
+                            <option value="tester" {% if usuario.get('perfil') == 'tester' %}selected{% endif %}>Tester</option>
+                        </select>
+                        <button class="botao botao-secundario" type="submit">Salvar perfil</button>
+                    </form>
                     <form method="post" action="{{ url_for('mestre.atividade_usuario', usuario_id=usuario.get('id')) }}">
                         <input type="hidden" name="ativo" value="{{ '0' if usuario.get('ativo', true) else '1' }}">
                         <button class="botao botao-secundario" type="submit">

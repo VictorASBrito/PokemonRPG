@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
 {% block titulo %}Painel do Mestre | Pokémon RPG{% endblock %}
@@ -156,7 +157,7 @@
                     <div class="painel-pokemon-info">
                         <strong>{{ pokemon.get('nome') }}</strong>
                         {% if pokemon.get('nome') != pokemon.get('especie') %}<small>{{ pokemon.get('especie') }}</small>{% endif %}
-                        <div class="painel-pokemon-tipos">{% for tipo in pokemon.get('tipos', []) %}<span>{{ tipo }}</span>{% endfor %}</div>
+                        <div class="painel-pokemon-tipos">{% for tipo in pokemon.get('tipos', []) %}{{ selo_tipo(tipo) }}{% endfor %}</div>
                     </div>
                 </a>
                 <div class="painel-pokemon-vida">

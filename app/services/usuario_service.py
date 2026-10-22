@@ -119,6 +119,7 @@ def listar_jogadores_campanha(
                     "nome": personagem.usuario.nome,
                     "login": personagem.usuario.login,
                     "ativo": personagem.usuario.ativo,
+                    "perfil": personagem.usuario.perfil,
                 },
                 "treinador": {
                     "nome": personagem.nome,
@@ -143,7 +144,11 @@ def criar_jogador_postgresql(
     nome: str,
     login: str,
     senha: str,
+    perfil: str = "jogador",
 ) -> JogadorCriado:
+    from app.services.permissoes_service import PERFIS_PERMITIDOS_GESTAO
+    if perfil not in PERFIS_PERMITIDOS_GESTAO:
+        raise ValueError("O perfil inicial deve ser Jogador ou Tester.")
     campanha = obter_campanha(campanha_codigo)
     if campanha is None:
         raise ValueError("A campanha configurada não foi encontrada no PostgreSQL.")
@@ -176,7 +181,7 @@ def criar_jogador_postgresql(
         login=login_normalizado,
         nome=nome,
         senha_hash=gerar_hash_senha(senha),
-        perfil="jogador",
+        perfil=perfil,
         ativo=True,
     )
     personagem = Personagem(
@@ -234,8 +239,59 @@ def alterar_atividade_usuario(usuario_id: str, ativo: bool) -> Usuario | None:
         return None
 
     usuario = db.session.get(Usuario, identificador)
-    if usuario is None or usuario.perfil != "jogador":
+    if usuario is None or usuario.perfil not in {"jogador", "tester"}:
         return None
     usuario.ativo = ativo
     db.session.commit()
+    return usuario
+
+
+def alterar_perfil_usuario(
+    usuario_id: str, perfil: str, *, campanha_codigo: str, responsavel_id: str
+) -> Usuario | None:
+    """Mestre só pode alternar usuários da própria campanha entre Jogador/Tester."""
+    from app.models.db import HistoricoAlteracao
+    from app.services.permissoes_service import PERFIS_PERMITIDOS_GESTAO, PERFIS_MESTRE
+    if perfil not in PERFIS_PERMITIDOS_GESTAO:
+        raise ValueError("Apenas os perfis Jogador e Tester podem ser atribuídos aqui.")
+    try:
+        identificador = uuid.UUID(usuario_id)
+        responsavel = uuid.UUID(responsavel_id)
+    except (ValueError, TypeError):
+        raise ValueError("Usuário inválido.")
+    campanha = obter_campanha(campanha_codigo)
+    if campanha is None:
+        raise ValueError("Campanha não encontrada.")
+    gestor = db.session.get(Usuario, responsavel)
+    if gestor is None or not gestor.ativo or gestor.perfil not in PERFIS_MESTRE:
+        raise ValueError("Somente o mestre pode alterar níveis de acesso.")
+    vinculo_gestor = db.session.scalar(select(CampanhaMembro.id).where(
+        CampanhaMembro.usuario_id == gestor.id,
+        CampanhaMembro.campanha_id == campanha.id,
+        CampanhaMembro.papel == "mestre",
+    ))
+    if not vinculo_gestor and gestor.perfil != "administrador":
+        raise ValueError("O mestre não está vinculado a esta campanha.")
+    usuario = db.session.get(Usuario, identificador)
+    if usuario is None or usuario.perfil not in PERFIS_PERMITIDOS_GESTAO:
+        return None
+    membro = db.session.scalar(select(CampanhaMembro.id).where(
+        CampanhaMembro.usuario_id == usuario.id,
+        CampanhaMembro.campanha_id == campanha.id,
+        CampanhaMembro.papel == "jogador",
+    ))
+    if membro is None:
+        return None
+    anterior = usuario.perfil
+    if anterior != perfil:
+        usuario.perfil = perfil
+        db.session.add(HistoricoAlteracao(
+            usuario_id=responsavel,
+            entidade="usuario",
+            registro_id=usuario.id,
+            acao="alterar_perfil",
+            dados_anteriores={"perfil": anterior},
+            dados_novos={"perfil": perfil},
+        ))
+        db.session.commit()
     return usuario

@@ -1,0 +1,5 @@
+{# Mini-etiqueta visual: a imagem de referência inspira o estilo, não é embutida. #}
+{% macro selo_tipo(tipo) -%}
+{%- set visual = tipo|tipo_visual -%}
+<span class="etiqueta-tipo etiqueta-tipo--{{ visual.codigo }}" title="Tipo {{ visual.nome }}">{{ visual.nome }}</span>
+{%- endmacro %}

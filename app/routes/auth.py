@@ -45,9 +45,15 @@ def perfil_obrigatorio(perfil: str):
         def wrapper(*args, **kwargs):
             if not session.get("usuario_id"):
                 return redirect(url_for("auth.login"))
-            if session.get("perfil") != perfil:
+            from app.services.permissoes_service import (
+                PERFIS_JOGADOR, PERFIS_MESTRE, perfil_usuario_atual,
+            )
+            nivel_banco = perfil_usuario_atual(session.get("usuario_id"))
+            permitidos = PERFIS_MESTRE if perfil == "mestre" else PERFIS_JOGADOR
+            if session.get("perfil") != perfil or nivel_banco not in permitidos:
                 flash("Seu usuário não possui acesso a essa área.", "erro")
-                return redirect(url_for("inicio"))
+                session.clear()
+                return redirect(url_for("auth.login"))
             return view(*args, **kwargs)
 
         return wrapper  # type: ignore[return-value]
@@ -99,6 +105,7 @@ def login():
         session["usuario_id"] = str(usuario.id)
         session["nome"] = usuario.nome
         session["perfil"] = resultado.perfil_sessao
+        session["perfil_conta"] = usuario.perfil
         session["campanha_id"] = (
             str(resultado.campanha.id) if resultado.campanha is not None else None
         )
@@ -107,7 +114,7 @@ def login():
         )
         # A senha 12345 foi solicitada apenas como credencial temporária.
         # Jogadores devem trocá-la no primeiro acesso público.
-        if usuario.perfil == "jogador" and senha == "12345":
+        if usuario.perfil in {"jogador", "tester"} and senha == "12345":
             session["deve_alterar_senha"] = True
             return redirect(url_for("auth.trocar_senha"))
         destino = _destino_seguro(request.args.get("proxima"))

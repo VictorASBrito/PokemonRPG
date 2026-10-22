@@ -219,6 +219,9 @@ def ajustar_quantidade_item(
     usuario_id: str | uuid.UUID | None,
     campanha_id: str | uuid.UUID | None = None,
 ) -> None:
+    from app.services.permissoes_service import pode_gerar_item
+    if not pode_gerar_item(usuario_id):
+        raise ValueError("Apenas o mestre pode gerar itens ou ajustar quantidades.")
     personagem_uuid = _uuid(personagem_id)
     item_uuid = _uuid(item_id)
     if not personagem_uuid or not item_uuid:
@@ -267,6 +270,9 @@ def adicionar_item(
     usuario_id: str | uuid.UUID | None,
     campanha_id: str | uuid.UUID | None = None,
 ) -> None:
+    from app.services.permissoes_service import pode_gerar_item
+    if not pode_gerar_item(usuario_id):
+        raise ValueError("Apenas o mestre pode gerar itens ou ajustar quantidades.")
     personagem_uuid = _uuid(personagem_id)
     item_uuid = _uuid(item_id)
     quantidade_int = _inteiro(quantidade, padrao=0)

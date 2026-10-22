@@ -98,7 +98,7 @@ class CampanhaImporter:
     @staticmethod
     def _perfil(valor: Any) -> str:
         perfil = str(valor or "jogador").strip().lower()
-        return perfil if perfil in {"administrador", "mestre", "jogador"} else "jogador"
+        return perfil if perfil in {"administrador", "mestre", "tester", "jogador"} else "jogador"
 
     def importar_campanhas(self) -> None:
         existentes = {item.codigo: item for item in self._todos(Campanha)}
@@ -358,7 +358,7 @@ class CampanhaImporter:
                     )
                 )
                 self.resumo.criado("campanha_membros")
-            elif membro.papel != "jogador" and usuario.perfil == "jogador":
+            elif membro.papel != "jogador" and usuario.perfil in {"jogador", "tester"}:
                 membro.papel = "jogador"
                 self.resumo.atualizado("campanha_membros")
 

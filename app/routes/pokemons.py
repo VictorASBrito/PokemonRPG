@@ -15,6 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import login_obrigatorio, perfil_obrigatorio
+from app.services.permissoes_service import pode_criar_pokemon, pode_editar_identidade_pokemon
 from app.services.pokemon_db_service import (
     BOX_ID,
     buscar_forma,
@@ -168,13 +169,20 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         flash("Pokémon não encontrado na ficha deste jogador.", "erro")
         return redirect(voltar_url)
 
+    pode_editar_identidade = pode_editar_identidade_pokemon(session.get("usuario_id"))
+    # Nunca aceitar campos bloqueados vindos de HTML adulterado ou POST manual.
     if request.method == "POST":
+        if not pode_editar_identidade and any(
+            campo in request.form for campo in ("especie_nome", "genero", "natureza", "shiny")
+        ):
+            return ("Apenas Admin/Mestre ou Tester pode alterar espécie, gênero, natureza ou Shiny.", 403)
         try:
             _, erros = atualizar_pokemon_formulario(
                 contexto=contexto,
                 pokemon_id=pokemon_id,
                 formulario=request.form,
                 usuario_responsavel_id=session.get("usuario_id"),
+                permitir_identidade=pode_editar_identidade,
             )
         except SQLAlchemyError:
             db.session.rollback()
@@ -222,6 +230,7 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         regras=contexto.regras,
         golpes_selecionados=golpes_formulario(pokemon_model, limite_golpes),
         modo_mestre=modo_mestre,
+        pode_editar_identidade=pode_editar_identidade,
         estilo_combate=contexto.personagem.estilo_combate or "",
         retorno=retorno,
         voltar_url=voltar_url,
@@ -308,6 +317,9 @@ def equipe_jogador():
 @pokemons_bp.route("/jogador/equipe/novo", methods=["GET", "POST"])
 @perfil_obrigatorio("jogador")
 def novo_jogador():
+    # Nunca confiar apenas no botão: POST direto e sessão antiga também bloqueados.
+    if not pode_criar_pokemon(session.get("usuario_id")):
+        return ("Apenas contas Tester ou Admin podem criar Pokémon na Box.", 403)
     contexto = _carregar(str(session.get("personagem_id", "")))
     if contexto is None:
         flash("Sua ficha ainda não foi vinculada a este usuário.", "erro")

@@ -196,3 +196,11 @@
     .campo-filtro-nome { grid-column: auto; }
     .slot-box-vazio { min-height: 150px; }
 }
+
+/* Slots informativos não aparentam ser botões para o perfil Jogador. */
+.slot-box-bloqueado, .slot-box-bloqueado:hover {
+    cursor: default;
+    color: var(--texto-suave, #98a2b3);
+    border-color: #7e8797;
+    background: transparent;
+}
