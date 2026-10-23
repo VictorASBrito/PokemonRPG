@@ -18,7 +18,7 @@
 {% set atributos_salvos = treinador.get('atributos', {}) %}
 {% set numeros_shiny = treinador.get('numeros_shiny', []) %}
 {% if modo_preview_mestre|default(false) %}
-<section class="cartao preview-jogador-mestre" role="status">
+<section class="cartao preview-jogador-mestre ui-card" role="status">
     <div>
         <strong>Visualização como jogador</strong>
         <span>Esta é a mesma página usada por {{ nome_jogador }}. Os atalhos foram mantidos seguros para o acesso do mestre.</span>
@@ -30,7 +30,7 @@
 
 <div class="dashboard-jogador">
     <aside class="coluna-treinador">
-        <section class="cartao painel-identidade">
+        <section class="cartao painel-identidade ui-card">
             <div class="foto-treinador-wrap">
                 {% if treinador.get('foto_url') %}
                     <img
@@ -83,7 +83,7 @@
             </dl>
         </section>
 
-        <section class="cartao painel-atributos-treinador">
+        <section class="cartao painel-atributos-treinador ui-card">
             <div class="titulo-painel-lateral">
                 <div>
                     <p class="rotulo">Personagem</p>
@@ -104,7 +104,7 @@
     </aside>
 
     <main class="coluna-equipe">
-        <section class="grade-pokemons-dashboard" data-dashboard-pokemon-grid aria-label="Equipe Pokémon">
+        <section class="grade-pokemons-dashboard ui-grade" data-dashboard-pokemon-grid aria-label="Equipe Pokémon">
             {% for item in equipe %}
                 {% set pokemon = item.get('pokemon', {}) %}
                 {% set especie = item.get('especie', {}) %}

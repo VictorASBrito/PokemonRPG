@@ -15,9 +15,9 @@
 </section>
 
 <form id="catalogo-item-form" class="formulario-catalogo" method="post" enctype="multipart/form-data">
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>1</span><h2>Identificação</h2></div><p>Dados usados no catálogo, no inventário e nas pesquisas.</p></div>
-    <div class="grade-formulario grade-tres-colunas">
+    <div class="grade-formulario grade-tres-colunas ui-grade">
         <div class="campo"><label for="nome">Nome</label><input id="nome" name="nome" required maxlength="180" value="{{ dados.get('nome', item.nome if item else '') }}"></div>
         <div class="campo"><label for="codigo">Código</label><input id="codigo" name="codigo" maxlength="140" value="{{ dados.get('codigo', item.codigo if item else '') }}" placeholder="Gerado pelo nome"></div>
         <div class="campo"><label for="preco">Preço em Pokédolares</label><input id="preco" name="preco" type="number" min="0" max="999999999" value="{{ dados.get('preco', item.preco if item else 0) }}"></div>
@@ -38,9 +38,9 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>2</span><h2>Propriedades de uso</h2></div><p>Controle como o item aparece e pode ser manipulado pelos jogadores.</p></div>
-    <div class="grade-alternadores-item">
+    <div class="grade-alternadores-item ui-grade">
         <label class="alternador-card"><input type="checkbox" name="consumivel" value="1" {% if dados.get('consumivel') == '1' or (not dados and item and item.consumivel) %}checked{% endif %}><span><strong>Consumível</strong><small>Pode ser usado e descontado do inventário.</small></span></label>
         <label class="alternador-card"><input type="checkbox" name="equipavel" value="1" {% if dados.get('equipavel') == '1' or (not dados and item and item.equipavel) %}checked{% endif %}><span><strong>Equipável</strong><small>Pode ser carregado por um Pokémon.</small></span></label>
         <label class="alternador-card"><input type="checkbox" name="uso_em_batalha" value="1" {% if dados.get('uso_em_batalha') == '1' or (not dados and item and item.uso_em_batalha) %}checked{% endif %}><span><strong>Uso em batalha</strong><small>Pode aparecer nas ações futuras do combate.</small></span></label>
@@ -48,7 +48,7 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>3</span><h2>Editor visual de efeitos</h2></div><p>Os efeitos ficam estruturados no PostgreSQL e prontos para automações futuras.</p></div>
     <div class="editor-efeitos-toolbar">
         <div class="campo"><label for="novo-tipo-efeito-item">Novo efeito</label><select id="novo-tipo-efeito-item">{% for valor, nome in tipos_efeito %}<option value="{{ valor }}">{{ nome }}</option>{% endfor %}</select></div>
@@ -70,16 +70,16 @@
 <template id="efeito-item-card-template">
 <article class="efeito-card">
     <div class="efeito-card-cabecalho"><div class="campo"><label>Tipo de efeito</label><select class="efeito-item-tipo" data-campo="tipo">{% for valor, nome in tipos_efeito %}<option value="{{ valor }}">{{ nome }}</option>{% endfor %}</select></div><button class="botao botao-perigo efeito-item-remover" type="button">Remover</button></div>
-    <div class="grade-formulario grade-tres-colunas efeito-item-comum">
+    <div class="grade-formulario grade-tres-colunas efeito-item-comum ui-grade">
         <div class="campo"><label>Alvo</label><select data-campo="alvo">{% for valor, nome in alvos_efeito %}<option value="{{ valor }}">{{ nome }}</option>{% endfor %}</select></div>
         <div class="campo campo-largo"><label>Observação</label><input data-campo="observacao" maxlength="500" placeholder="Detalhes opcionais"></div>
     </div>
     <div class="efeito-campos-item" data-para="texto"><div class="campo"><label>Descrição do efeito</label><textarea data-campo="texto" rows="3"></textarea></div></div>
-    <div class="efeito-campos-item bloco-condicional-oculto" data-para="recuperar_pv"><div class="grade-formulario grade-duas-colunas"><div class="campo"><label>Modo</label><select data-campo="operacao">{% for valor, nome in operacoes %}<option value="{{ valor }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number" min="1"></div><div class="campo campo-largo"><label>Expressão de dados</label><input data-campo="expressao" placeholder="Ex.: 4d8+10"></div></div></div>
-    <div class="efeito-campos-item bloco-condicional-oculto" data-para="remover_status"><div class="grade-formulario grade-duas-colunas"><div class="campo"><label>Status específico</label><select data-campo="status_id"><option value="">Qualquer status</option>{% for status in opcoes.status %}<option value="{{ status.id }}">{{ status.nome }}</option>{% endfor %}</select></div><label class="alternador-linha campo"><input data-campo="todos" type="checkbox"><span>Remover todos os status</span></label></div></div>
-    <div class="efeito-campos-item bloco-condicional-oculto" data-para="alterar_atributo"><div class="grade-formulario grade-tres-colunas"><div class="campo"><label>Atributo</label><select data-campo="atributo">{% for atributo in opcoes.atributos %}<option value="{{ atributo.codigo }}">{{ atributo.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Operação</label><select data-campo="operacao"><option value="fixo">Valor fixo</option><option value="percentual">Percentual</option></select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number"></div></div></div>
+    <div class="efeito-campos-item bloco-condicional-oculto" data-para="recuperar_pv"><div class="grade-formulario grade-duas-colunas ui-grade"><div class="campo"><label>Modo</label><select data-campo="operacao">{% for valor, nome in operacoes %}<option value="{{ valor }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number" min="1"></div><div class="campo campo-largo"><label>Expressão de dados</label><input data-campo="expressao" placeholder="Ex.: 4d8+10"></div></div></div>
+    <div class="efeito-campos-item bloco-condicional-oculto" data-para="remover_status"><div class="grade-formulario grade-duas-colunas ui-grade"><div class="campo"><label>Status específico</label><select data-campo="status_id"><option value="">Qualquer status</option>{% for status in opcoes.status %}<option value="{{ status.id }}">{{ status.nome }}</option>{% endfor %}</select></div><label class="alternador-linha campo"><input data-campo="todos" type="checkbox"><span>Remover todos os status</span></label></div></div>
+    <div class="efeito-campos-item bloco-condicional-oculto" data-para="alterar_atributo"><div class="grade-formulario grade-tres-colunas ui-grade"><div class="campo"><label>Atributo</label><select data-campo="atributo">{% for atributo in opcoes.atributos %}<option value="{{ atributo.codigo }}">{{ atributo.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Operação</label><select data-campo="operacao"><option value="fixo">Valor fixo</option><option value="percentual">Percentual</option></select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number"></div></div></div>
     <div class="efeito-campos-item bloco-condicional-oculto" data-para="causar_dano"><div class="campo"><label>Expressão de dano</label><input data-campo="expressao" placeholder="Ex.: 2d12"></div></div>
-    <div class="efeito-campos-item bloco-condicional-oculto" data-para="modificar_calculo"><div class="grade-formulario grade-tres-colunas"><div class="campo"><label>Chave do cálculo</label><input data-campo="chave" placeholder="Ex.: dano_tipo"></div><div class="campo"><label>Operação</label><select data-campo="operacao"><option value="percentual">Percentual</option><option value="fixo">Valor fixo</option></select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number"></div><div class="campo"><label>Tipo afetado</label><select data-campo="tipo_id"><option value="">Todos</option>{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}">{{ tipo.nome }}</option>{% endfor %}</select></div></div></div>
+    <div class="efeito-campos-item bloco-condicional-oculto" data-para="modificar_calculo"><div class="grade-formulario grade-tres-colunas ui-grade"><div class="campo"><label>Chave do cálculo</label><input data-campo="chave" placeholder="Ex.: dano_tipo"></div><div class="campo"><label>Operação</label><select data-campo="operacao"><option value="percentual">Percentual</option><option value="fixo">Valor fixo</option></select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number"></div><div class="campo"><label>Tipo afetado</label><select data-campo="tipo_id"><option value="">Todos</option>{% for tipo in opcoes.tipos %}<option value="{{ tipo.id }}">{{ tipo.nome }}</option>{% endfor %}</select></div></div></div>
     <div class="efeito-campos-item bloco-condicional-oculto" data-para="evolucao"><div class="campo"><label>Requisito ou observação</label><textarea data-campo="requisito" rows="3"></textarea></div></div>
     <div class="efeito-campos-item bloco-condicional-oculto" data-para="mega_evolucao"><div class="campo"><label>Requisito ou observação</label><textarea data-campo="requisito" rows="3"></textarea></div></div>
 </article>

@@ -100,7 +100,7 @@
     </div>
 </section>
 
-<section class="resumo-boxes cartao">
+<section class="resumo-boxes cartao ui-card">
     <div class="metrica-box"><strong>{{ equipe|length }}/{{ limite_equipe }}</strong><span>Equipe ativa</span></div>
     <div class="metrica-box"><strong>{{ ocupados }}/{{ limite_box }}</strong><span>Espaços ocupados</span></div>
     <div class="metrica-box"><strong>{{ limite_box - ocupados }}</strong><span>Espaços disponíveis</span></div>
@@ -115,7 +115,7 @@
         </div>
         <span class="contador-ocupacao">{{ equipe|length }}/{{ limite_equipe }}</span>
     </div>
-    <div class="grade-box-pokemons grade-equipe-boxes">
+    <div class="grade-box-pokemons grade-equipe-boxes ui-grade">
         {% for registro in equipe %}
             {{ cartao_pokemon(registro, 'equipe') }}
         {% endfor %}

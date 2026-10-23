@@ -22,17 +22,17 @@
 </section>
 
 <section class="painel-mestre-metricas" aria-label="Resumo da campanha">
-    <article class="cartao metrica-mestre">
+    <article class="cartao metrica-mestre ui-card">
         <span>Jogadores</span>
         <strong>{{ resumo.get('jogadores', 0) }}</strong>
         <small>treinadores ativos</small>
     </article>
-    <article class="cartao metrica-mestre">
+    <article class="cartao metrica-mestre ui-card">
         <span>Pokémon</span>
         <strong>{{ resumo.get('pokemons', 0) }}</strong>
         <small>{{ resumo.get('equipe', 0) }} na equipe · {{ resumo.get('box', 0) }} na Box</small>
     </article>
-    <article class="cartao metrica-mestre {% if resumo.get('alertas', 0) %}metrica-alerta{% endif %}">
+    <article class="cartao metrica-mestre {% if resumo.get('alertas', 0) %}metrica-alerta{% endif %} ui-card">
         <span>Alertas</span>
         <strong>{{ resumo.get('alertas', 0) }}</strong>
         <small>situações que merecem atenção</small>
@@ -44,7 +44,7 @@
     </a>
 </section>
 
-<section class="cartao painel-mestre-filtros" aria-label="Pesquisa de jogadores">
+<section class="cartao painel-mestre-filtros ui-card" aria-label="Pesquisa de jogadores">
     <div class="campo painel-mestre-pesquisa">
         <label for="pesquisa-painel-mestre">Pesquisar na campanha</label>
         <input id="pesquisa-painel-mestre" type="search" placeholder="Jogador, treinador, classe ou Pokémon" autocomplete="off">
@@ -190,7 +190,7 @@
 </section>
 <p id="painel-mestre-sem-resultados" class="cartao estado-vazio" hidden>Nenhum jogador corresponde à pesquisa atual.</p>
 {% else %}
-<section class="cartao estado-vazio">
+<section class="cartao estado-vazio ui-card">
     <div class="estado-vazio-icone">＋</div>
     <h2>Nenhum jogador cadastrado</h2>
     <p>Cadastre o primeiro jogador para começar a acompanhar a campanha pelo painel.</p>

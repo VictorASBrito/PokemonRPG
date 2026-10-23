@@ -10,7 +10,7 @@ import unicodedata
 from collections.abc import Iterable
 from typing import Any
 
-VERSAO_INTERFACE = "bw7-assets-botoes-20261022"
+VERSAO_INTERFACE = "ui2-alinhamento-inventario-20261023"
 
 BOLSAS = (
     {"codigo": "cura", "nome": "Cura", "icone": "icon-cura-hq.png", "arte": "bag-cura.png", "descricao": "Poções, remédios e itens de recuperação."},
@@ -70,10 +70,22 @@ def bolsa_item(item: Any) -> str:
 
 
 def preparar_itens(inventario: Iterable[Any]) -> list[dict[str, Any]]:
-    return [
-        {"registro": registro, "item": registro.item, "bolsa": bolsa_item(registro.item)}
-        for registro in inventario
-    ]
+    """Entrega a classificação visível junto do nome da bolsa.
+
+    Assim o catálogo legado não mostra "Item avulso" sob a aba de Cura.
+    A categoria original do item permanece intacta no banco.
+    """
+    nomes = {bolsa["codigo"]: bolsa["nome"] for bolsa in BOLSAS}
+    resultado = []
+    for registro in inventario:
+        codigo = bolsa_item(registro.item)
+        resultado.append({
+            "registro": registro,
+            "item": registro.item,
+            "bolsa": codigo,
+            "bolsa_nome": nomes.get(codigo, "Avulsos"),
+        })
+    return resultado
 
 
 def preparar_equipe(pokemons: Iterable[Any], personagem: Any) -> list[dict[str, Any]]:

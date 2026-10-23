@@ -21,7 +21,7 @@
     </div>
 </section>
 
-<section class="resumo-equipe cartao">
+<section class="resumo-equipe cartao ui-card">
     <div>
         <span class="numero-equipe">{{ equipe|length }}/{{ limite }}</span>
         <div>
@@ -36,7 +36,7 @@
     </div>
 </section>
 
-<section class="grade-equipe espacamento-topo">
+<section class="grade-equipe espacamento-topo ui-grade">
     {% for registro in equipe %}
         {% set pokemon = registro.pokemon %}
         {% set especie = registro.especie %}

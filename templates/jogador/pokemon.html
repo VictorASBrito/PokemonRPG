@@ -21,7 +21,7 @@
 
 <form method="post" action="{{ salvar_url }}" id="form-pokemon">
     <input type="hidden" name="retorno" value="{{ retorno }}">
-    <section class="cartao painel-pokemon">
+    <section class="cartao painel-pokemon ui-card">
         <div class="retrato-pokemon">
             <img
                 id="imagem-pokemon"
@@ -37,7 +37,7 @@
         </div>
 
         <div class="dados-principais-pokemon">
-            <div class="grade-formulario grade-tres-colunas">
+            <div class="grade-formulario grade-tres-colunas ui-grade">
                 <div class="campo campo-duas-colunas">
                     <label for="especie_nome">Espécie ou forma</label>
                     {% if pode_editar_identidade %}
@@ -109,7 +109,7 @@
     {% if pode_editar_identidade %}<datalist id="catalogo-especies"></datalist>{% endif %}
     <datalist id="catalogo-golpes"></datalist>
 
-    <section class="cartao secao-pokemon">
+    <section class="cartao secao-pokemon ui-card">
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Cálculo automático</p>
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <div class="grade-atributos-pokemon">
+        <div class="grade-atributos-pokemon ui-grade">
             {% for atributo in regras.get('atributos', []) %}
                 {% set atributo_id = atributo.get('id') %}
                 <article class="atributo-pokemon-card {% if atributo_id == 'pv' %}atributo-recurso{% endif %}">
@@ -139,7 +139,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-pokemon">
+    <section class="cartao secao-pokemon ui-card">
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Ajustes particulares</p>
@@ -147,7 +147,7 @@
                 <p class="texto-suave">Use estes campos para itens, vantagens narrativas ou regras próprias da campanha. Podem receber valores negativos.</p>
             </div>
         </div>
-        <div class="grade-bonus-pokemon">
+        <div class="grade-bonus-pokemon ui-grade">
             {% for atributo in regras.get('atributos', []) %}
                 <div class="campo">
                     <label for="bonus_{{ atributo.get('id') }}">{{ atributo.get('nome') }}</label>
@@ -157,7 +157,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-pokemon secao-movimentos">
+    <section class="cartao secao-pokemon secao-movimentos ui-card">
         {% set limite_golpes = regras.get('limites', {}).get('golpes_por_pokemon', 4)|int %}
         <div class="titulo-secao-pokemon">
             <div>
@@ -213,7 +213,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-pokemon">
+    <section class="cartao secao-pokemon ui-card">
         <div class="campo">
             <label for="anotacoes">Anotações</label>
             <textarea id="anotacoes" name="anotacoes" rows="5" placeholder="Personalidade, habilidades especiais, história ou observações da campanha...">{{ pokemon.get('anotacoes', '') }}</textarea>

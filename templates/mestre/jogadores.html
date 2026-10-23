@@ -18,7 +18,7 @@
     {% for jogador in jogadores %}
         {% set treinador = jogador.get('treinador', {}) %}
         {% set usuario = jogador.get('usuario', {}) %}
-        <article class="cartao jogador-cartao">
+        <article class="cartao jogador-cartao ui-card">
             <div class="avatar-inicial">{{ (treinador.get('nome') or '?')[0]|upper }}</div>
             <div class="jogador-resumo">
                 <h2>{{ treinador.get('nome') or 'Treinador sem nome' }}</h2>
@@ -72,7 +72,7 @@
     {% endfor %}
 </section>
 {% else %}
-<section class="cartao estado-vazio">
+<section class="cartao estado-vazio ui-card">
     <div class="estado-vazio-icone">＋</div>
     <h2>Nenhum jogador cadastrado</h2>
     <p class="texto-suave">Crie o primeiro acesso no PostgreSQL para começar a preencher as fichas da campanha.</p>

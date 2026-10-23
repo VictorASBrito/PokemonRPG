@@ -15,9 +15,9 @@
 </section>
 
 <form id="catalogo-golpe-form" class="formulario-catalogo" method="post">
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>1</span><h2>Identificação</h2></div><p>Nome, código, tipo e categoria usados em todo o sistema.</p></div>
-    <div class="grade-formulario grade-tres-colunas">
+    <div class="grade-formulario grade-tres-colunas ui-grade">
         <div class="campo"><label for="nome">Nome</label><input id="nome" name="nome" required maxlength="180" value="{{ dados.get('nome', golpe.nome if golpe else '') }}"></div>
         <div class="campo"><label for="codigo">Código</label><input id="codigo" name="codigo" maxlength="140" value="{{ dados.get('codigo', golpe.codigo if golpe else '') }}" placeholder="Gerado pelo nome"></div>
         <label class="alternador-linha campo"><input type="checkbox" name="personalizado" value="1" {% if dados.get('personalizado') == '1' or (not dados and golpe and golpe.personalizado) or modo == 'novo' %}checked{% endif %}><span>Golpe personalizado da campanha</span></label>
@@ -26,9 +26,9 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>2</span><h2>Dados de combate</h2></div><p>PP não é utilizado nesta campanha.</p></div>
-    <div class="grade-formulario grade-tres-colunas">
+    <div class="grade-formulario grade-tres-colunas ui-grade">
         <div class="campo"><label for="expressao_dano">Expressão de dano</label><input id="expressao_dano" name="expressao_dano" maxlength="80" value="{{ dados.get('expressao_dano', golpe.expressao_dano if golpe and golpe.expressao_dano else '') }}" placeholder="Ex.: 4d6 ou 2d8+3"><small>Deixe vazio para golpes de estado ou sem dano direto.</small></div>
         <div class="campo"><label for="precisao">Precisão (%)</label><input id="precisao" name="precisao" type="number" min="0" max="100" step="0.01" value="{{ dados.get('precisao', golpe.precisao if golpe and golpe.precisao is not none else '') }}"><small>Vazio representa precisão não aplicável ou automática.</small></div>
         <div class="campo"><label for="prioridade">Prioridade</label><input id="prioridade" name="prioridade" type="number" min="-20" max="20" value="{{ dados.get('prioridade', golpe.prioridade if golpe else 0) }}"></div>
@@ -36,7 +36,7 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>3</span><h2>Editor visual de efeitos</h2></div><p>Combine efeitos automatizáveis e textos narrativos sem escrever JSON.</p></div>
     <input id="efeitos_json" name="efeitos_json" type="hidden">
     <div class="editor-efeitos-toolbar">
@@ -59,17 +59,17 @@
         <div class="campo"><label>Tipo de efeito</label><select data-campo="tipo" class="efeito-tipo">{% for codigo, nome in tipos_efeito %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div>
         <button class="botao botao-secundario efeito-remover" type="button">Remover</button>
     </div>
-    <div class="grade-formulario grade-tres-colunas efeito-comum">
+    <div class="grade-formulario grade-tres-colunas efeito-comum ui-grade">
         <div class="campo"><label>Alvo</label><select data-campo="alvo">{% for codigo, nome in alvos_efeito %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div>
         <div class="campo"><label>Chance (%)</label><input data-campo="chance" type="number" min="0" max="100" step="0.01" value="100"></div>
         <div class="campo"><label>Observação opcional</label><input data-campo="observacao" maxlength="500" placeholder="Detalhe para o mestre"></div>
     </div>
     <div class="efeito-campos" data-para="texto"><div class="campo"><label>Texto do efeito</label><textarea data-campo="texto" maxlength="2000" placeholder="Descreva exatamente o que o golpe faz."></textarea></div></div>
-    <div class="efeito-campos" data-para="aplicar_status"><div class="grade-formulario grade-duas-colunas"><div class="campo"><label>Status</label><select data-campo="status_id"><option value="">Selecione</option>{% for status in opcoes.status %}<option value="{{ status.id }}">{{ status.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Duração opcional</label><input data-campo="duracao" maxlength="80" placeholder="Ex.: 3 turnos"></div></div></div>
-    <div class="efeito-campos" data-para="alterar_atributo"><div class="grade-formulario grade-tres-colunas"><div class="campo"><label>Atributo</label><select data-campo="atributo"><option value="">Selecione</option>{% for atributo in opcoes.atributos %}<option value="{{ atributo.codigo }}">{{ atributo.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Operação</label><select data-campo="operacao">{% for codigo, nome in operacoes_atributo %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number" step="0.001" placeholder="Ex.: -0,10 ou -1"></div></div></div>
+    <div class="efeito-campos" data-para="aplicar_status"><div class="grade-formulario grade-duas-colunas ui-grade"><div class="campo"><label>Status</label><select data-campo="status_id"><option value="">Selecione</option>{% for status in opcoes.status %}<option value="{{ status.id }}">{{ status.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Duração opcional</label><input data-campo="duracao" maxlength="80" placeholder="Ex.: 3 turnos"></div></div></div>
+    <div class="efeito-campos" data-para="alterar_atributo"><div class="grade-formulario grade-tres-colunas ui-grade"><div class="campo"><label>Atributo</label><select data-campo="atributo"><option value="">Selecione</option>{% for atributo in opcoes.atributos %}<option value="{{ atributo.codigo }}">{{ atributo.nome }}</option>{% endfor %}</select></div><div class="campo"><label>Operação</label><select data-campo="operacao">{% for codigo, nome in operacoes_atributo %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo"><label>Valor</label><input data-campo="valor" type="number" step="0.001" placeholder="Ex.: -0,10 ou -1"></div></div></div>
     <div class="efeito-campos" data-para="dano_adicional"><div class="campo"><label>Expressão do dano adicional</label><input data-campo="expressao" maxlength="80" placeholder="Ex.: 1d6"></div></div>
-    <div class="efeito-campos" data-para="cura"><div class="grade-formulario grade-tres-colunas"><div class="campo"><label>Modo de recuperação</label><select data-campo="modo" class="cura-modo">{% for codigo, nome in modos_cura %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo cura-valor"><label>Valor</label><input data-campo="valor" type="number" min="0" step="0.001" placeholder="Ex.: 50"></div><div class="campo cura-expressao"><label>Expressão de cura</label><input data-campo="expressao" maxlength="80" placeholder="Ex.: 2d6"></div></div></div>
-    <div class="efeito-campos" data-para="multiplos_ataques"><div class="grade-formulario grade-duas-colunas"><div class="campo"><label>Mínimo de ataques</label><input data-campo="minimo" type="number" min="2" max="20" value="2"></div><div class="campo"><label>Máximo de ataques</label><input data-campo="maximo" type="number" min="2" max="20" value="5"></div></div></div>
+    <div class="efeito-campos" data-para="cura"><div class="grade-formulario grade-tres-colunas ui-grade"><div class="campo"><label>Modo de recuperação</label><select data-campo="modo" class="cura-modo">{% for codigo, nome in modos_cura %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div><div class="campo cura-valor"><label>Valor</label><input data-campo="valor" type="number" min="0" step="0.001" placeholder="Ex.: 50"></div><div class="campo cura-expressao"><label>Expressão de cura</label><input data-campo="expressao" maxlength="80" placeholder="Ex.: 2d6"></div></div></div>
+    <div class="efeito-campos" data-para="multiplos_ataques"><div class="grade-formulario grade-duas-colunas ui-grade"><div class="campo"><label>Mínimo de ataques</label><input data-campo="minimo" type="number" min="2" max="20" value="2"></div><div class="campo"><label>Máximo de ataques</label><input data-campo="maximo" type="number" min="2" max="20" value="5"></div></div></div>
     <div class="efeito-campos" data-para="condicao"><div class="campo"><label>Condição especial</label><textarea data-campo="descricao" maxlength="2000" placeholder="Ex.: o dano dobra quando o usuário não carrega item."></textarea></div></div>
 </article>
 </template>

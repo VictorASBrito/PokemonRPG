@@ -8,7 +8,7 @@
 </section>
 
 <form id="catalogo-forma-form" class="formulario-catalogo" method="post" enctype="multipart/form-data" data-simulacao-url="{{ url_for('catalogo_admin.simular_pokemon') }}">
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>1</span><h2>Espécie</h2></div><p>Dados compartilhados entre todas as formas da mesma espécie.</p></div>
     {% if modo == 'novo' %}
     <label class="alternador-linha"><input id="nova_especie" type="checkbox" name="nova_especie" value="1" {% if dados.get('nova_especie') == '1' %}checked{% endif %}><span>Criar uma nova espécie</span></label>
@@ -25,9 +25,9 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>2</span><h2>Forma Pokémon</h2></div><p>Nome, categoria, imagens e tipos desta forma específica.</p></div>
-    <div class="grade-formulario grade-tres-colunas">
+    <div class="grade-formulario grade-tres-colunas ui-grade">
         <div class="campo"><label for="forma_nome">Nome da forma</label><input id="forma_nome" name="forma_nome" required value="{{ dados.get('forma_nome', forma.nome if forma else '') }}"></div>
         <div class="campo"><label for="forma_codigo">Código</label><input id="forma_codigo" name="forma_codigo" value="{{ dados.get('forma_codigo', forma.codigo if forma else '') }}" placeholder="Gerado pelo nome"></div>
         <div class="campo"><label for="categoria">Categoria</label><select id="categoria" name="categoria">{% for codigo, nome in categorias %}<option value="{{ codigo }}" {% if dados.get('categoria', forma.categoria if forma else 'normal') == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
@@ -54,17 +54,17 @@
     </div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>3</span><h2>Atributos base</h2></div><p>Os campos são gerados a partir dos atributos ativos no banco.</p></div>
-    <div class="grade-atributos-admin">
+    <div class="grade-atributos-admin ui-grade">
     {% set valores_atributos = {} %}{% if forma %}{% for item in forma.atributos_base %}{% set _ = valores_atributos.update({item.atributo.codigo: item.valor_base}) %}{% endfor %}{% endif %}
     {% for atributo in opcoes.atributos %}<div class="campo"><label for="atributo_{{ atributo.codigo }}">{{ atributo.nome }}</label><input class="campo-atributo-base" id="atributo_{{ atributo.codigo }}" name="atributo_{{ atributo.codigo }}" data-codigo="{{ atributo.codigo }}" type="number" min="0" step="{{ '0.001' if atributo.tipo_valor == 'decimal' else '1' }}" value="{{ dados.get('atributo_' ~ atributo.codigo, valores_atributos.get(atributo.codigo, 0)) }}"></div>{% endfor %}
     </div>
 </section>
 
-<section class="cartao secao-formulario simulador-forma">
+<section class="cartao secao-formulario simulador-forma ui-card">
     <div class="secao-titulo"><div><span>4</span><h2>Prévia dos atributos</h2></div><p>Simulação com as mesmas regras aplicadas às fichas dos jogadores.</p></div>
-    <div class="grade-formulario grade-tres-colunas">
+    <div class="grade-formulario grade-tres-colunas ui-grade">
         <div class="campo"><label for="simulacao-nivel">Nível</label><input id="simulacao-nivel" type="number" min="1" max="999" value="50"></div>
         <div class="campo"><label for="simulacao-natureza">Natureza</label><select id="simulacao-natureza"><option value="">Sem natureza</option>{% for natureza in opcoes.naturezas %}<option value="{{ natureza.id }}">{{ natureza.nome }}</option>{% endfor %}</select></div>
         <div class="campo"><label for="simulacao-estilo">Estilo de combate</label><select id="simulacao-estilo"><option value="">Sem estilo</option>{% for estilo in opcoes.estilos %}<option value="{{ estilo }}">{{ estilo }}</option>{% endfor %}</select></div>

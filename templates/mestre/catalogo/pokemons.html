@@ -11,7 +11,7 @@
     </div>
 </section>
 
-<form class="cartao filtros-catalogo" method="get" action="{{ url_for('catalogo_admin.pokemons') }}" data-pesquisa-dinamica data-resultados="#resultados-pokemons">
+<form class="cartao filtros-catalogo ui-card" method="get" action="{{ url_for('catalogo_admin.pokemons') }}" data-pesquisa-dinamica data-resultados="#resultados-pokemons">
     <div class="campo filtro-pesquisa"><label for="q">Pesquisa</label><input id="q" name="q" type="search" autocomplete="off" value="{{ filtros.q }}" placeholder="Nome, espécie ou código"></div>
     <div class="campo"><label for="categoria">Categoria</label><select id="categoria" name="categoria"><option value="">Todas</option>{% for codigo, nome in categorias %}<option value="{{ codigo }}" {% if filtros.categoria == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
     <div class="campo"><label for="tipo_id">Tipo</label><select id="tipo_id" name="tipo_id"><option value="">Todos</option>{% for tipo in tipos %}<option value="{{ tipo.id }}" {% if filtros.tipo_id == tipo.id|string %}selected{% endif %}>{{ tipo.nome }}</option>{% endfor %}</select></div>
@@ -22,9 +22,9 @@
 <div id="resultados-pokemons" data-pesquisa-resultados aria-live="polite">
 {% if pagina and pagina.itens %}
 <p class="resultado-contagem">{{ pagina.total }} forma(s) encontrada(s).</p>
-<section class="grade-formas-admin">
+<section class="grade-formas-admin ui-grade">
 {% for forma in pagina.itens %}
-<article class="cartao forma-admin-card {% if not forma.ativo %}registro-inativo{% endif %}">
+<article class="cartao forma-admin-card {% if not forma.ativo %}registro-inativo{% endif %} ui-card">
     <div class="forma-admin-imagem">
         {% if forma.imagem_url %}<img src="{{ forma.imagem_url }}" alt="{{ forma.nome }}" loading="lazy">{% else %}<span>{{ forma.nome[:1] }}</span>{% endif %}
         {% if not forma.ativo %}<span class="selo-inativo">Inativa</span>{% endif %}
@@ -44,7 +44,7 @@
     {% if pagina.tem_proxima %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons', pagina=pagina.pagina+1, q=filtros.q, categoria=filtros.categoria, situacao=filtros.situacao, tipo_id=filtros.tipo_id) }}">Próxima →</a>{% endif %}
 </nav>
 {% else %}
-<section class="cartao estado-vazio"><h2>Nenhuma forma encontrada</h2><p>Altere os filtros ou crie uma nova forma Pokémon.</p></section>
+<section class="cartao estado-vazio ui-card"><h2>Nenhuma forma encontrada</h2><p>Altere os filtros ou crie uma nova forma Pokémon.</p></section>
 {% endif %}
 </div>
 {% endblock %}

@@ -22,8 +22,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/seletor-visual.css') }}">
     {% block estilos_finais %}{% endblock %}
+    {# Design system carregado por último para estabilizar todas as telas. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui1-20261023') }}">
 </head>
-<body>
+<body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
+    <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
     <header class="topo">
         <a class="marca" href="{{ url_for('inicio') }}">
             <img class="marca-pokebola" src="{{ url_for('static', filename='img/pokebola.png') }}" alt="" aria-hidden="true">
@@ -70,7 +73,7 @@
         {% endif %}
     </header>
 
-    <main class="conteudo">
+    <main class="conteudo" id="conteudo-principal" tabindex="-1">
         {% with mensagens = get_flashed_messages(with_categories=true) %}
             {% for categoria, mensagem in mensagens %}
                 <div class="alerta alerta-{{ categoria }}" role="alert">{{ mensagem }}</div>

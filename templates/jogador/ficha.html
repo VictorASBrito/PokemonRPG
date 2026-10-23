@@ -19,7 +19,7 @@
 </section>
 
 {% if modo_mestre %}
-<section class="cartao ajuste-nivel-independente" aria-label="Alterar nível do treinador sem modificar os demais campos">
+<section class="cartao ajuste-nivel-independente ui-card" aria-label="Alterar nível do treinador sem modificar os demais campos">
     <form method="post" class="formulario-nivel-mestre" action="{{ url_for('mestre.alterar_nivel_jogador', jogador_id=jogador.get('id')) }}">
         <input type="hidden" name="csrf_token" value="{{ nivel_csrf_token }}">
         <input type="hidden" name="voltar" value="ficha">
@@ -32,7 +32,7 @@
 {% endif %}
 
 <form method="post" enctype="multipart/form-data" action="{{ salvar_url }}" id="form-ficha" data-pv-por-saude="{{ regras.get('pv_por_ponto_saude', 10) }}">
-    <section class="cartao secao-ficha">
+    <section class="cartao secao-ficha ui-card">
         <div class="titulo-secao">
             <div>
                 <p class="rotulo">Identidade</p>
@@ -41,7 +41,7 @@
             <span class="selo-versao">Regras {{ regras.get('versao', 'custom') }}</span>
         </div>
 
-        <div class="grade-formulario grade-tres-colunas">
+        <div class="grade-formulario grade-tres-colunas ui-grade">
             <div class="campo campo-duas-colunas">
                 <label for="nome">Nome do personagem</label>
                 <input id="nome" name="nome" value="{{ treinador.get('nome', '') }}" maxlength="80" required>
@@ -127,7 +127,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-ficha">
+    <section class="cartao secao-ficha ui-card">
         <div class="titulo-secao">
             <div>
                 <p class="rotulo">Características</p>
@@ -139,7 +139,7 @@
             </div>
         </div>
 
-        <div class="grade-atributos">
+        <div class="grade-atributos ui-grade">
             {% for atributo in regras.get('atributos', []) %}
                 <div class="atributo-cartao {% if atributo.get('id') == 'saude' %}atributo-saude{% endif %}">
                     <label for="atributo_{{ atributo.get('id') }}">{{ atributo.get('nome') }}</label>
@@ -157,7 +157,7 @@
             {% endfor %}
         </div>
 
-        <div class="grade-formulario grade-duas-colunas bloco-pv">
+        <div class="grade-formulario grade-duas-colunas bloco-pv ui-grade">
             <div class="campo">
                 <label for="pv_atual">PV atuais</label>
                 <input id="pv_atual" name="pv_atual" type="number" value="{{ treinador.get('pv_atual', treinador.get('pv_maximo', 0)) }}">
@@ -171,7 +171,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-ficha">
+    <section class="cartao secao-ficha ui-card">
         <div class="titulo-secao">
             <div>
                 <p class="rotulo">Recursos</p>
@@ -179,7 +179,7 @@
             </div>
         </div>
 
-        <div class="grade-formulario grade-duas-colunas">
+        <div class="grade-formulario grade-duas-colunas ui-grade">
             <div class="campo">
                 <label for="beneficios_habilidades">Benefícios e habilidades</label>
                 <textarea id="beneficios_habilidades" name="beneficios_habilidades" rows="7" placeholder="Habilidades de classe, benefícios da origem e efeitos permanentes.">{{ treinador.get('beneficios_habilidades', '') }}</textarea>
@@ -191,7 +191,7 @@
         </div>
     </section>
 
-    <section class="cartao secao-ficha">
+    <section class="cartao secao-ficha ui-card">
         <div class="titulo-secao">
             <div>
                 <p class="rotulo">Mochila</p>
@@ -213,7 +213,7 @@
         {% endif %}
     </section>
 
-    <section class="cartao secao-ficha">
+    <section class="cartao secao-ficha ui-card">
         <div class="titulo-secao">
             <div>
                 <p class="rotulo">Conquistas</p>
@@ -222,7 +222,7 @@
             <button class="botao botao-secundario" type="button" id="adicionar-insignea">Adicionar insígnia</button>
         </div>
 
-        <div class="grade-insigneas" id="lista-insigneas">
+        <div class="grade-insigneas ui-grade" id="lista-insigneas">
             {% set insigneas = jogador.get('insigneas', []) %}
             {% for insignea in insigneas if insignea.get('nome') %}
                 <div class="insignea-editavel">

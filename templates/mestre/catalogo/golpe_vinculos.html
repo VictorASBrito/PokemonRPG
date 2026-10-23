@@ -8,7 +8,7 @@
     <div class="acoes-cabecalho"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.editar_golpe', golpe_id=golpe.id) }}">Editar golpe</a><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.golpes') }}">Lista de golpes</a></div>
 </section>
 
-<section class="cartao secao-formulario">
+<section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>1</span><h2>Vínculos atuais</h2></div><p>{{ vinculos|length }} método(s) configurado(s).</p></div>
     {% if vinculos %}
     <div class="lista-vinculos-golpe">
@@ -33,13 +33,13 @@
     {% else %}<div class="efeitos-vazio"><strong>Nenhuma forma vinculada.</strong><span>Use a pesquisa abaixo para adicionar o primeiro vínculo.</span></div>{% endif %}
 </section>
 
-<section class="cartao secao-formulario espacamento-topo">
+<section class="cartao secao-formulario espacamento-topo ui-card">
     <div class="secao-titulo"><div><span>2</span><h2>Adicionar forma</h2></div><p>Pesquise pelo nome da espécie, forma ou código.</p></div>
     <form class="pesquisa-vinculos" method="get" action="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}" data-pesquisa-dinamica data-resultados="#resultados-vinculos"><div class="campo"><label for="q">Pesquisa</label><input id="q" name="q" type="search" autocomplete="off" value="{{ termo }}" placeholder="Ex.: Charizard ou charizard-mega-x"></div><button class="botao botao-primario" type="submit">Pesquisar</button><a class="botao botao-secundario botao-link" data-pesquisa-limpar href="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}">Limpar</a></form>
 
     <div id="resultados-vinculos" data-pesquisa-resultados aria-live="polite">
     {% if pagina and pagina.itens %}
-    <div class="grade-formas-vinculo">
+    <div class="grade-formas-vinculo ui-grade">
     {% for forma in pagina.itens %}
     <form method="post" class="forma-vinculo-card">
         <input type="hidden" name="forma_pokemon_id" value="{{ forma.id }}">

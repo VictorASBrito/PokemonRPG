@@ -1,0 +1,277 @@
+/* Pokémon RPG · UI System 1.0
+   Carregado APÓS estilos específicos. Centraliza padrões responsivos e corrige
+   estouros sem alterar regras, fluxos, endpoints ou posicionamento de formulários.
+   Alterações locais devem preferir variáveis e classes ui-* deste arquivo. */
+:root {
+  --ui-radius-xs: 8px;
+  --ui-radius-sm: 11px;
+  --ui-radius-md: 16px;
+  --ui-radius-lg: 22px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 20px;
+  --ui-space-6: 24px;
+  --ui-focus: #c62828;
+  --ui-ring: rgba(198, 40, 40, .22);
+  --ui-campo: #fff;
+  --ui-campo-texto: #1f2937;
+  --ui-campo-borda: #c5cfde;
+  --ui-fundo-controle: #edf1f6;
+  --ui-surface-raised: #fff;
+  --ui-sombra: 0 4px 18px rgba(16,24,40,.08);
+}
+:root[data-theme="dark"] {
+  --ui-focus: #ff7575;
+  --ui-ring: rgba(255, 117, 117, .26);
+  --ui-campo: #121b27;
+  --ui-campo-texto: #f4f7ff;
+  --ui-campo-borda: #425169;
+  --ui-fundo-controle: #273444;
+  --ui-surface-raised: #1b2736;
+  --ui-sombra: 0 5px 22px rgba(0,0,0,.3);
+}
+html { min-width: 320px; }
+body.app-shell { min-width: 320px; }
+body.app-shell img, body.app-shell svg, body.app-shell video { max-width: 100%; }
+body.app-shell img { object-position: center; }
+body.app-shell .conteudo { min-width: 0; }
+/* Explicitly preserve browser native hidden semantics, including JS filters. */
+body.app-shell [hidden] { display: none !important; }
+body.app-shell :is(input, select, textarea, button) { max-width: 100%; }
+body.app-shell :is(input, select, textarea) { min-width: 0; }
+body.app-shell :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+  border-color: var(--ui-campo-borda);
+}
+body.app-shell :is(input, select, textarea):focus-visible,
+body.app-shell :is(button, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+}
+body.app-shell :is(button, .botao, [role="button"]) { touch-action: manipulation; }
+body.app-shell .botao { display: inline-flex; justify-content: center; align-items: center; gap: 7px; text-align: center; }
+body.app-shell .botao-secundario { background: var(--ui-fundo-controle); border: 1px solid var(--borda); }
+body.app-shell .cartao, body.app-shell .ui-card { min-width: 0; max-width: 100%; }
+body.app-shell .cartao { border-radius: var(--ui-radius-md); }
+body.app-shell .campo, body.app-shell .ui-formulario { min-width: 0; }
+body.app-shell .campo > :is(input, select, textarea, .seletor-visual) { min-width: 0; max-width: 100%; }
+body.app-shell :is(.grade-cartoes, .grade-formulario, .ui-grade,
+  .grade-formas-admin, .grade-itens-admin, .grade-golpes-admin,
+  .grade-equipe, .grade-box-pokemons, .painel-mestre-metricas,
+  .painel-jogador-resumo, .painel-equipe-compacta,
+  .catalogo-resumo, .resultado-simulacao, .grade-atributos-admin,
+  .dashboard-jogador, .grade-pokemons-dashboard) { min-width: 0; max-width: 100%; }
+body.app-shell :is(.grade-cartoes, .grade-formulario, .ui-grade,
+  .grade-formas-admin, .grade-itens-admin, .grade-golpes-admin,
+  .grade-equipe, .grade-box-pokemons, .painel-mestre-metricas,
+  .painel-jogador-resumo, .painel-equipe-compacta,
+  .catalogo-resumo, .resultado-simulacao, .grade-atributos-admin,
+  .dashboard-jogador, .grade-pokemons-dashboard) > * { min-width: 0; }
+body.app-shell .ui-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+body.app-shell table { border-collapse: collapse; }
+body.app-shell :is(h1, h2, h3, h4) { text-wrap: pretty; }
+body.app-shell :is(.texto-suave, small, p) { overflow-wrap: break-word; }
+
+/* Main navigation: prevent the entire site becoming unnavigable below 900px. */
+body.app-shell .topo { min-width: 0; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(10px, 1.3vw, 24px); }
+body.app-shell .navegacao-principal { min-width: 0; }
+body.app-shell .usuario-topo { min-width: 0; justify-content: flex-end; gap: 9px; }
+body.app-shell .usuario-topo > span { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+body.app-shell .navegacao-principal a { white-space: nowrap; }
+body.app-shell .navegacao-principal a[aria-current="page"] {
+  color: var(--texto);
+  background: var(--superficie-suave);
+}
+body.app-shell .skip-content {
+  position: fixed; top: -200px; left: 12px; z-index: 100;
+  padding: 10px 14px; background: var(--superficie); color: var(--texto);
+  border: 2px solid var(--primaria); border-radius: 10px;
+}
+body.app-shell .skip-content:focus { top: 10px; }
+
+/* Harmonized forms, cards and catalog controls across both themes. */
+body.app-shell .formulario :is(input, select, textarea),
+body.app-shell .formulario-catalogo :is(input, select, textarea),
+body.app-shell .filtros-catalogo :is(input, select),
+body.app-shell .filtros-boxes :is(input, select),
+body.app-shell .formulario-nivel-mestre input,
+body.app-shell .ui-formulario :is(input, select, textarea) {
+  background: var(--ui-campo); color: var(--ui-campo-texto);
+  border-color: var(--ui-campo-borda);
+}
+body.app-shell :is(.filtros-catalogo, .filtros-golpes, .filtros-boxes) { min-width: 0; }
+body.app-shell :is(.filtros-catalogo, .filtros-golpes, .filtros-boxes) > * { min-width: 0; }
+body.app-shell :is(.filtros-catalogo, .filtros-golpes, .filtros-boxes) .acoes-filtros { flex-wrap: wrap; }
+body.app-shell :is(.forma-admin-conteudo, .item-admin-conteudo, .golpe-admin-card, .secao-formulario) { min-width: 0; }
+body.app-shell :is(.forma-admin-conteudo, .item-admin-conteudo, .golpe-admin-card) :is(h2, p, code) { overflow-wrap: anywhere; }
+body.app-shell .forma-admin-imagem img { width: 100%; max-height: 100%; object-fit: contain; }
+body.app-shell .golpe-admin-topo > * { min-width: 0; }
+body.app-shell .golpe-metricas { min-width: 0; }
+body.app-shell .barra-flutuante, body.app-shell .barra-salvar-pokemon { max-width: 100%; }
+
+/* Team and box cards: stable six-column desktop grid where space permits. */
+body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons {
+  min-width: 0; grid-auto-flow: row; align-items: stretch;
+}
+body.app-shell :is(.pokemon-cartao, .box-pokemon-card, .slot-box-vazio, .pokemon-vazio) {
+  min-width: 0; max-width: 100%;
+}
+body.app-shell :is(.box-pokemon-info, .pokemon-info, .pokemon-topo, .pokemon-resumo) { min-width: 0; }
+body.app-shell :is(.box-pokemon-imagem-wrap, .pokemon-imagem-wrap, .retrato-pokemon) img {
+  max-width: 100%; object-fit: contain;
+}
+body.app-shell .box-pokemon-info > strong { text-overflow: ellipsis; }
+
+/* Master panel: metadata cannot force cards or HP bars past their grid area. */
+body.app-shell .painel-jogador-card { min-width: 0; }
+body.app-shell .painel-jogador-topo, body.app-shell .painel-jogador-resumo,
+body.app-shell .painel-jogador-identidade-wrap, body.app-shell .painel-jogador-identidade,
+body.app-shell .painel-jogador-links, body.app-shell .painel-pokemon-info { min-width: 0; max-width: 100%; }
+body.app-shell .painel-jogador-links { row-gap: 8px; }
+body.app-shell .painel-jogador-identidade h2,
+body.app-shell .painel-jogador-identidade p { overflow-wrap: anywhere; }
+body.app-shell .painel-recurso progress, body.app-shell .painel-pokemon-vida progress {
+  max-width: 100%; display: block;
+}
+body.app-shell .painel-jogador-atributos > * { min-width: 0; }
+body.app-shell .painel-atributo-personagem span { min-width: 0; overflow-wrap: anywhere; }
+body.app-shell .painel-pokemon-info > :is(strong, small) { max-width: 100%; }
+
+/* Player panel: fixed stat/move grid, protected from very long move names. */
+body.app-shell .coluna-treinador, body.app-shell .coluna-equipe,
+body.app-shell .pokemon-dashboard-card, body.app-shell .conteudo-pokemon-dashboard,
+body.app-shell .bloco-pokemon-dashboard { min-width: 0; }
+body.app-shell .pokemon-dashboard-topo > *, body.app-shell .pokemon-dashboard-golpes-detalhados > * { min-width: 0; }
+body.app-shell .golpes-pokemon-dashboard > div,
+body.app-shell .atributos-base-pokemon > div { min-width: 0; }
+body.app-shell .golpes-pokemon-dashboard :is(span, strong, small) { overflow: hidden; text-overflow: ellipsis; }
+body.app-shell .retrato-pokemon-dashboard img { width: 100%; height: 100%; max-height: 100%; object-fit: contain; }
+
+/* Inventory: eliminate long names / HP bars spilling beyond Pokémon cards. */
+body.app-shell .inventario-nds { min-width: 0; }
+body.app-shell .inventario-nds-equipe,
+body.app-shell .inventario-nds-equipe-lista,
+body.app-shell .inventario-nds-treinador-pokemon,
+body.app-shell .inventario-nds-bag,
+body.app-shell .inventario-nds-paineis,
+body.app-shell .inventario-nds-card { min-width: 0; max-width: 100%; }
+body.app-shell .inventario-nds-equipe-lista {
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+body.app-shell .inventario-nds-treinador-pokemon {
+  width: 100%; grid-template-columns: clamp(54px, 4.4vw, 74px) minmax(0, 1fr);
+  gap: 10px; padding: 8px 10px; overflow: hidden;
+}
+body.app-shell .inventario-nds-treinador-foto {
+  width: clamp(54px, 4.4vw, 74px); height: clamp(54px, 4.4vw, 74px);
+  min-width: 0; flex-shrink: 1; border-radius: 16px;
+}
+body.app-shell .inventario-nds-treinador-info { min-width: 0; width: 100%; }
+body.app-shell .inventario-nds-treinador-topo { width: 100%; min-width: 0; gap: 3px; }
+body.app-shell .inventario-nds-treinador-nome { width: 100%; min-width: 0; align-items: start; gap: 6px; }
+body.app-shell .inventario-nds-treinador-nome strong {
+  display: -webkit-box; min-width: 0; flex: 1 1 auto;
+  overflow: hidden; text-overflow: ellipsis; white-space: normal;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-height: 1.24;
+  overflow-wrap: anywhere; font-size: clamp(.82rem, .95vw, 1rem);
+}
+body.app-shell .inventario-nds-treinador-nome small { flex: 0 0 auto; font-size: .78rem; }
+body.app-shell .inventario-nds-treinador-hp { min-width: 0; display: block; font-size: .83rem; }
+body.app-shell .inventario-nds-treinador-barra {
+  display: block; width: 100%; max-width: 100%; min-width: 0; height: 8px;
+}
+body.app-shell .inventario-nds-treinador-barra > span { max-width: 100%; }
+body.app-shell .inventario-nds-item-titulo,
+body.app-shell .inventario-nds-linha-conteudo,
+body.app-shell .inventario-nds-toolbar-metas { min-width: 0; }
+body.app-shell .inventario-nds-linha-nome { overflow-wrap: anywhere; }
+body.app-shell .inventario-nds-equipados form > div { min-width: 0; flex: 1 1 auto; }
+body.app-shell .inventario-nds-equipados summary { overflow-wrap: anywhere; }
+body.app-shell .inventario-nds-equipe-rodape span { min-width: 0; white-space: normal; flex-wrap: wrap; }
+body.app-shell .inventario-nds-equipe-rodape small { overflow-wrap: anywhere; }
+/* Empty state belongs directly below search, instead of being vertically centered. */
+body.app-shell .inventario-nds-sem-itens { align-self: start; }
+body.app-shell .inventario-nds-lista { align-content: start; grid-auto-rows: max-content; }
+body.app-shell .inventario-nds-linha { min-width: 0; }
+body.app-shell .inventario-nds-linha-botao { min-width: 0; }
+body.app-shell .inventario-nds-form { min-width: 0; }
+body.app-shell .inventario-nds-form label { min-width: 0; }
+body.app-shell .inventario-nds .inventario-nds-form :is(input, select) { width: 100%; min-width: 0; }
+body.app-shell .inventario-nds-detalhe { min-width: 0; }
+
+/* Accessibility: keyboard, inactive controls, and reduced motion. */
+body.app-shell :is(button, a, [role="button"]):disabled { cursor: not-allowed; opacity: .56; }
+body.app-shell :is(input, select, textarea):disabled { opacity: .66; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body.app-shell *, body.app-shell *::before, body.app-shell *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* Screen sizes: keep navigation present; collapse forms before horizontal overflow. */
+@media (max-width: 1450px) {
+  body.app-shell .inventario-nds-treinador-pokemon { gap: 8px; padding: 7px 8px; }
+  body.app-shell .painel-jogador-resumo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  body.app-shell .filtros-golpes { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  body.app-shell .filtros-golpes .filtro-pesquisa { grid-column: 1 / -1; }
+}
+@media (max-width: 1200px) {
+  body.app-shell .painel-jogador-resumo { grid-template-columns: 1fr; }
+  body.app-shell .painel-jogador-atributos { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  body.app-shell .inventario-nds-equipe-lista { overflow-x: hidden; }
+}
+@media (max-width: 900px) {
+  body.app-shell .topo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'brand account' 'nav nav';
+    gap: 2px 12px; padding-top: 8px; padding-bottom: 5px;
+  }
+  body.app-shell .marca { grid-area: brand; min-width: 0; font-size: 1rem; }
+  body.app-shell .usuario-topo { grid-area: account; }
+  body.app-shell .navegacao-principal {
+    grid-area: nav; display: flex; max-width: 100%; gap: 4px;
+    overflow-x: auto; scrollbar-width: thin; overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch; padding-bottom: 2px;
+  }
+  body.app-shell .navegacao-principal a { flex: 0 0 auto; padding: 8px 10px; font-size: .88rem; }
+  body.app-shell .usuario-topo > span { display: none; }
+  body.app-shell .painel-jogador-topo { flex-wrap: wrap; }
+  body.app-shell .painel-jogador-links { justify-content: flex-start; }
+  body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  body.app-shell .filtros-catalogo, body.app-shell .filtros-boxes { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  body.app-shell .campo-filtro-nome, body.app-shell .filtro-pesquisa { grid-column: 1 / -1; }
+}
+@media (max-width: 650px) {
+  body.app-shell .conteudo { padding-left: 12px; padding-right: 12px; }
+  body.app-shell .marca-pokebola { width: 27px; height: 27px; flex-basis: 27px; }
+  body.app-shell .usuario-topo { gap: 5px; }
+  body.app-shell .usuario-topo .botao { padding: 8px 9px; font-size: .79rem; }
+  body.app-shell .tema-toggle { padding: 0 9px; min-width: 36px; }
+  body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  body.app-shell .filtros-catalogo, body.app-shell .filtros-boxes { grid-template-columns: 1fr; }
+  body.app-shell .campo-filtro-nome, body.app-shell .filtro-pesquisa { grid-column: auto; }
+  body.app-shell .barra-flutuante, body.app-shell .barra-salvar-pokemon { inset-inline: 0; flex-wrap: wrap; }
+  body.app-shell .painel-jogador-identidade { width: 100%; }
+  body.app-shell .painel-jogador-identidade-wrap { min-width: 0; }
+  body.app-shell .painel-jogador-atributos { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  body.app-shell .inventario-nds-treinador-pokemon {
+    grid-template-columns: 66px minmax(0,1fr); padding: 9px 10px;
+  }
+  body.app-shell .inventario-nds-treinador-foto { width: 66px; height: 66px; }
+}
+@media (max-width: 430px) {
+  body.app-shell .marca { font-size: .87rem; gap: 6px; }
+  body.app-shell .topo { padding-inline: 9px; }
+  body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons { grid-template-columns: 1fr; }
+  body.app-shell .painel-ordem-controle { flex-wrap: wrap; }
+}
+/* Account pages share the same form and surface tokens. */
+body.app-shell .conta-senha-painel {
+  width: min(540px,100%); margin: 24px auto; padding: 24px;
+}
+body.app-shell .conta-senha-formulario { display: grid; gap: 15px; }

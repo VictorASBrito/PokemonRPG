@@ -112,7 +112,7 @@
                                 </span>
                                 <span class="inventario-nds-linha-conteudo">
                                     <span class="inventario-nds-linha-nome">{{ item.nome }}</span>
-                                    <span class="inventario-nds-linha-meta">{{ item.categoria.nome if item.categoria else 'Item avulso' }}</span>
+                                    <span class="inventario-nds-linha-meta">{{ linha.bolsa_nome }}</span>
                                 </span>
                                 <span class="inventario-nds-linha-quantidade">× {{ linha.registro.quantidade }}</span>
                             </button>
@@ -134,7 +134,7 @@
                             </span>
                             <div class="inventario-nds-item-titulo">
                                 <h2>{{ item.nome }}</h2>
-                                <small>{{ item.categoria.nome if item.categoria else 'Item avulso' }}</small>
+                                <small>{{ linha.bolsa_nome }}</small>
                                 <div class="inventario-nds-etiquetas">
                                     {% if item.consumivel %}<span>Consumível</span>{% endif %}
                                     {% if item.equipavel %}<span>Equipável</span>{% endif %}

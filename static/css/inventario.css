@@ -1010,3 +1010,76 @@
   .inventario-nds-aba img { width: 26px; height: 26px; }
   .inventario-nds-voltar { min-height: 46px; }
 }
+
+
+/* UI2 — Alinhamento da mochila com as duas colunas de conteúdo.
+   A barra de abas mantém o tamanho dos botões; Voltar fica na extrema direita.
+   O resumo usa EXATAMENTE o mesmo grid dos painéis logo abaixo. */
+@media (min-width: 981px) {
+  .inventario-nds-bag {
+    --inventario-colunas: minmax(0, .95fr) minmax(0, 1.25fr);
+    --inventario-espaco-colunas: 16px;
+  }
+
+  .inventario-nds-toolbar-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inventario-nds-abas {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    width: max-content;
+    max-width: 100%;
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .inventario-nds-aba {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 135px;
+  }
+
+  .inventario-nds-voltar {
+    margin-left: auto;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .inventario-nds-toolbar-resumo,
+  .inventario-nds-paineis {
+    display: grid;
+    grid-template-columns: var(--inventario-colunas);
+    column-gap: var(--inventario-espaco-colunas);
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inventario-nds-resumo-bolsa,
+  .inventario-nds-toolbar-counter,
+  .inventario-nds-coluna-lista,
+  .inventario-nds-coluna-detalhes {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .inventario-nds-toolbar-counter {
+    justify-self: stretch;
+  }
+}
+
+/* Não deixar o justify-content herdado do antigo flex encolher as linhas
+   internas quando .inventario-nds-toolbar passa a ser grid. */
+.inventario-nds-toolbar {
+  width: 100%;
+  min-width: 0;
+  justify-content: stretch;
+  grid-template-columns: minmax(0, 1fr);
+}
