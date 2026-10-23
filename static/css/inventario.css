@@ -1,43 +1,1012 @@
-.inventario-resumo { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:20px; }
-.resumo-inventario { padding:20px; }
-.resumo-inventario strong,.resumo-inventario span { display:block; }
-.resumo-inventario strong { font-size:1.8rem; color:var(--primaria); }
-.resumo-inventario span { margin-top:4px; color:var(--texto-suave); }
-.inventario-adicionar,.inventario-pesquisa { margin-bottom:20px; }
-.titulo-inventario-secao { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:18px; }
-.titulo-inventario-secao h2 { margin:0; }
-.grade-adicionar-item { display:grid; grid-template-columns:1fr 130px auto; align-items:end; gap:12px; }
-.inventario-pesquisa { display:grid; grid-template-columns:1fr auto; align-items:end; gap:20px; padding:20px; }
-.filtros-inventario { justify-content:flex-end; }
-.filtro-inventario { border:0; cursor:pointer; }
-.filtro-inventario.ativo { color:white; background:var(--primaria); }
-.grade-inventario { display:grid; gap:18px; }
-.inventario-item { padding:22px; }
-.inventario-item-topo { display:grid; grid-template-columns:72px 1fr auto; gap:16px; align-items:start; }
-.inventario-item-imagem { width:72px; height:72px; display:grid; place-items:center; overflow:hidden; border:1px solid var(--borda); border-radius:16px; background:var(--superficie-suave); font-size:1.6rem; }
-.inventario-item-imagem img { width:100%; height:100%; object-fit:contain; }
-.inventario-item-identificacao h2 { margin:9px 0 4px; }
-.inventario-item-identificacao p { margin:0; color:var(--texto-suave); }
-.chip-destaque { color:var(--primaria); background:var(--primaria-suave); }
-.quantidade-destaque { min-width:88px; padding:13px; border:1px solid var(--borda); border-radius:13px; background:var(--superficie-suave); text-align:center; }
-.quantidade-destaque small,.quantidade-destaque strong { display:block; }
-.quantidade-destaque small { color:var(--texto-suave); }
-.quantidade-destaque strong { margin-top:2px; font-size:1.5rem; }
-.detalhes-efeitos { margin-top:16px; color:var(--texto-suave); }
-.detalhes-efeitos summary { cursor:pointer; font-weight:750; }
-.detalhes-efeitos pre { max-height:240px; overflow:auto; padding:12px; border-radius:10px; background:#111827; color:#e5e7eb; white-space:pre-wrap; }
-.acoes-inventario-item { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:18px; padding-top:18px; border-top:1px solid var(--borda); }
-.acao-inventario { display:grid; grid-template-columns:1fr auto; align-items:end; gap:10px; padding:12px; border:1px solid var(--borda); border-radius:12px; background:var(--superficie-suave); }
-.acao-inventario label { display:flex; flex-direction:column; gap:6px; font-weight:700; }
-.acao-inventario.compacta label { display:grid; grid-template-columns:1fr 90px; align-items:center; }
-.acao-inventario.compacta input { min-width:0; }
-.acao-inventario.transferir { grid-template-columns:1fr 110px auto; }
-.inventario-subcabecalho { margin-top:34px; }
-.grade-equipados { display:grid; gap:12px; }
-.pokemon-equipado { display:grid; grid-template-columns:1fr 1fr auto; align-items:center; gap:16px; padding:18px 22px; }
-.pokemon-equipado div span,.item-equipado-nome small { display:block; margin-top:3px; color:var(--texto-suave); }
-.estado-vazio-menor { min-height:140px; }
-.inventario-sem-resultados { min-height:160px; margin-top:18px; }
-[hidden] { display:none !important; }
-@media(max-width:900px){.inventario-resumo{grid-template-columns:1fr}.acoes-inventario-item{grid-template-columns:1fr}.inventario-pesquisa{grid-template-columns:1fr}.filtros-inventario{justify-content:flex-start}.pokemon-equipado{grid-template-columns:1fr auto}.item-equipado-nome{grid-column:1}}
-@media(max-width:650px){.grade-adicionar-item,.inventario-item-topo,.acao-inventario,.acao-inventario.transferir,.pokemon-equipado{grid-template-columns:1fr}.inventario-item-imagem{width:58px;height:58px}.quantidade-destaque{text-align:left}.titulo-inventario-secao{flex-direction:column}.acao-inventario.compacta label{grid-template-columns:1fr}.pokemon-equipado form .botao{width:100%}}
+/* Inventário inspirado em Pokémon BW, mas integrado ao visual do site. */
+.inventario-nds {
+  --inv-bg: linear-gradient(180deg, #0e1725 0%, #09111c 100%);
+  --inv-surface: linear-gradient(180deg, rgba(20, 31, 48, .96), rgba(12, 21, 33, .96));
+  --inv-surface-soft: rgba(25, 36, 54, .92);
+  --inv-stroke: rgba(115, 145, 193, .18);
+  --inv-text: #edf4ff;
+  --inv-muted: #9db2d0;
+  --inv-accent: #65d38a;
+  --inv-accent-2: #7ce0ff;
+  --inv-shadow: 0 18px 48px rgba(0, 0, 0, .38);
+  --bag-glow: rgba(101, 211, 138, .22);
+  --bag-line: rgba(101, 211, 138, .4);
+  display: grid;
+  grid-template-columns: minmax(310px, 360px) minmax(0, 1fr);
+  gap: 20px;
+  width: 100%;
+  min-height: calc(100dvh - 138px);
+  color: var(--inv-text);
+}
+.inventario-nds * { box-sizing: border-box; }
+.inventario-nds [hidden] { display: none !important; }
+
+.inventario-nds-equipe,
+.inventario-nds-bag,
+.inventario-nds-card,
+.inventario-nds-area-mestre {
+  border: 1px solid var(--inv-stroke);
+  box-shadow: var(--inv-shadow);
+}
+
+.inventario-nds-equipe {
+  background: var(--inv-surface);
+  border-radius: 24px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: calc(100dvh - 138px);
+}
+
+.inventario-nds-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 6px 14px;
+  border-bottom: 1px solid rgba(140, 171, 215, .16);
+}
+.inventario-nds-logo-bags {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(33, 47, 70, .9), rgba(12, 19, 31, .92));
+  border: 1px solid rgba(134, 161, 199, .18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 10px 24px rgba(0,0,0,.24);
+}
+.inventario-nds-logo-bag {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .28));
+}
+.inventario-nds-logo-copy strong {
+  display: block;
+  font-size: 2rem;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+.inventario-nds-logo-copy small {
+  display: block;
+  color: var(--inv-muted);
+  margin-top: 4px;
+  font-size: .95rem;
+}
+
+.inventario-nds-equipe-lista {
+  display: grid;
+  gap: 14px;
+}
+.inventario-nds-treinador-pokemon {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 98px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(33, 46, 66, .9), rgba(20, 30, 47, .95));
+  border: 1px solid rgba(135, 163, 202, .2);
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.inventario-nds-treinador-foto {
+  width: 86px;
+  height: 86px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, rgba(130, 171, 231, .28), transparent 50%), linear-gradient(180deg, rgba(28, 40, 59, .98), rgba(15, 23, 38, .96));
+  border: 1px solid rgba(148, 179, 220, .18);
+}
+.inventario-nds-treinador-foto img {
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+}
+.inventario-nds-treinador-info {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.inventario-nds-treinador-topo {
+  display: grid;
+  gap: 8px;
+}
+.inventario-nds-treinador-nome {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+.inventario-nds-treinador-nome strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.05rem;
+}
+.inventario-nds-treinador-nome small,
+.inventario-nds-treinador-hp {
+  color: var(--inv-muted);
+  font-size: .88rem;
+  white-space: nowrap;
+}
+.inventario-nds-treinador-barra {
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255,255,255,.04);
+}
+.inventario-nds-treinador-barra > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #49c36d, #7ae49c);
+}
+.inventario-nds-equipe-vazia {
+  padding: 26px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  color: var(--inv-muted);
+  text-align: center;
+}
+
+.inventario-nds-equipados {
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(146, 176, 220, .16);
+}
+.inventario-nds-equipados summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--inv-text);
+}
+.inventario-nds-equipados form {
+  margin-top: 10px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+}
+.inventario-nds-equipados form strong,
+.inventario-nds-equipados form small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inventario-nds-equipados form small { color: var(--inv-muted); font-size: .82rem; }
+.inventario-nds-equipados button {
+  min-height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.08);
+  color: var(--inv-text);
+  font-weight: 800;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.inventario-nds-equipe-rodape {
+  margin-top: auto;
+  display: grid;
+  gap: 6px;
+  padding: 14px 8px 2px;
+  border-top: 1px solid rgba(140, 171, 215, .16);
+  color: var(--inv-muted);
+  font-size: .92rem;
+}
+.inventario-nds-equipe-rodape span { display: flex; gap: 6px; }
+.inventario-nds-equipe-rodape strong { color: var(--inv-text); }
+.inventario-nds-equipe-rodape small { line-height: 1.35; }
+
+.inventario-nds-bag {
+  position: relative;
+  min-width: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(13, 20, 33, .98), rgba(9, 15, 25, .98));
+  padding: 22px;
+  isolation: isolate;
+}
+.inventario-nds-bag::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 88% 18%, var(--bag-glow) 0, transparent 22%),
+    radial-gradient(circle at 72% 70%, rgba(124, 224, 255, .08) 0, transparent 20%);
+  pointer-events: none;
+}
+.inventario-nds-bag::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: 90px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  border: 20px solid rgba(255,255,255,.025);
+  pointer-events: none;
+}
+.inventario-nds-bag[data-aba="cura"] { --bag-glow: rgba(103, 211, 143, .28); --bag-line: rgba(103, 211, 143, .42); }
+.inventario-nds-bag[data-aba="pokebolas"] { --bag-glow: rgba(129, 165, 255, .24); --bag-line: rgba(129, 165, 255, .42); }
+.inventario-nds-bag[data-aba="frutas"] { --bag-glow: rgba(210, 155, 255, .22); --bag-line: rgba(210, 155, 255, .4); }
+.inventario-nds-bag[data-aba="chave"] { --bag-glow: rgba(245, 181, 85, .22); --bag-line: rgba(245, 181, 85, .42); }
+.inventario-nds-bag[data-aba="avulsos"] { --bag-glow: rgba(120, 255, 222, .18); --bag-line: rgba(120, 255, 222, .36); }
+
+.inventario-nds-toolbar,
+.inventario-nds-paineis,
+.inventario-nds-area-mestre { position: relative; z-index: 1; }
+
+.inventario-nds-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.inventario-nds-toolbar-main {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+.inventario-nds-abas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.inventario-nds-aba {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.045);
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.inventario-nds-aba img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: brightness(0) invert(1) opacity(.92);
+}
+.inventario-nds-aba:hover,
+.inventario-nds-aba:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.08);
+  border-color: var(--bag-line);
+  outline: none;
+}
+.inventario-nds-aba[aria-pressed="true"] {
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  border-color: var(--bag-line);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.03), 0 0 22px var(--bag-glow);
+}
+.inventario-nds-resumo-bolsa {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  min-height: 110px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(23, 36, 57, .92), rgba(15, 26, 43, .92));
+  border: 1px solid rgba(255,255,255,.06);
+}
+.inventario-nds-resumo-bag-artes {
+  width: 100%;
+  min-height: 84px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: radial-gradient(circle at center, rgba(255,255,255,.06), transparent 65%);
+}
+.inventario-nds-resumo-bag-artes img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,.34));
+}
+.inventario-nds-toolbar-metas {
+  display: grid;
+  gap: 6px;
+}
+.inventario-nds-toolbar-label {
+  color: var(--inv-muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-weight: 700;
+  font-size: .72rem;
+}
+.inventario-nds-toolbar-metas strong {
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+.inventario-nds-toolbar-metas span {
+  color: var(--inv-muted);
+  font-size: .97rem;
+  line-height: 1.45;
+}
+.inventario-nds-toolbar-side {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.inventario-nds-toolbar-counter {
+  min-width: 116px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  text-align: right;
+}
+.inventario-nds-toolbar-counter small {
+  display: block;
+  color: var(--inv-muted);
+  font-size: .78rem;
+}
+.inventario-nds-toolbar-counter strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.45rem;
+}
+.inventario-nds-voltar {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 800;
+  color: var(--inv-text);
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.06);
+}
+.inventario-nds-voltar:hover { background: rgba(255,255,255,.1); }
+
+.inventario-nds-paineis {
+  display: grid;
+  grid-template-columns: minmax(350px, .95fr) minmax(0, 1.25fr);
+  gap: 18px;
+  align-items: start;
+}
+.inventario-nds-card {
+  background: linear-gradient(180deg, rgba(20, 31, 48, .94), rgba(13, 22, 35, .96));
+  border-radius: 24px;
+  padding: 18px;
+}
+.inventario-nds-card-lista {
+  min-height: min(72dvh, 760px);
+  display: grid;
+  align-content: start;
+}
+.inventario-nds-card-detalhes {
+  min-height: min(72dvh, 760px);
+}
+.inventario-nds-busca-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 800;
+  color: var(--inv-text);
+}
+.inventario-nds .inventario-nds-busca {
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: rgba(10, 18, 30, .95) !important;
+  border: 1px solid rgba(131, 163, 206, .22) !important;
+  color: var(--inv-text) !important;
+  font-size: .98rem;
+}
+.inventario-nds .inventario-nds-busca::placeholder { color: #7f95b3 !important; }
+
+.inventario-nds-lista {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  max-height: min(62dvh, 650px);
+  min-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.inventario-nds-lista::-webkit-scrollbar { width: 10px; }
+.inventario-nds-lista::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.12);
+  border-radius: 999px;
+}
+.inventario-nds-linha-botao {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 12px 58px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 72px;
+  padding: 10px 14px;
+  text-align: left;
+  color: var(--inv-text);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.035);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.inventario-nds-linha-botao:hover,
+.inventario-nds-linha-botao:focus-visible {
+  border-color: var(--bag-line);
+  background: rgba(255,255,255,.055);
+  transform: translateY(-1px);
+  outline: none;
+}
+.inventario-nds-linha-botao[aria-pressed="true"] {
+  background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.06));
+  border-color: var(--bag-line);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.03), 0 0 22px var(--bag-glow);
+}
+.inventario-nds-indicador {
+  width: 6px;
+  height: 40px;
+  border-radius: 999px;
+  background: transparent;
+}
+.inventario-nds-linha-botao[aria-pressed="true"] .inventario-nds-indicador {
+  background: linear-gradient(180deg, var(--inv-accent), var(--inv-accent-2));
+}
+.inventario-nds-linha-foto {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(31, 45, 68, .95), rgba(17, 26, 41, .95));
+  border: 1px solid rgba(146, 176, 220, .16);
+}
+.inventario-nds-linha-foto img { width: 82%; height: 82%; object-fit: contain; }
+.inventario-nds-linha-conteudo {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.inventario-nds-linha-nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.inventario-nds-linha-meta {
+  color: var(--inv-muted);
+  font-size: .84rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inventario-nds-linha-quantidade {
+  white-space: nowrap;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  font-weight: 900;
+}
+.inventario-nds-sem-itens {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  color: var(--inv-muted);
+  text-align: center;
+}
+
+.inventario-nds-detalhe {
+  display: grid;
+  gap: 16px;
+}
+.inventario-nds-item-cabecalho {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+.inventario-nds-item-imagem {
+  width: 78px;
+  height: 78px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(31, 45, 68, .95), rgba(17, 26, 41, .95));
+  border: 1px solid rgba(146, 176, 220, .16);
+}
+.inventario-nds-item-imagem img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+.inventario-nds-item-imagem > span { font-size: 2rem; }
+.inventario-nds-item-titulo { min-width: 0; }
+.inventario-nds-item-titulo h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.inventario-nds-item-titulo small {
+  display: block;
+  margin-top: 5px;
+  color: var(--inv-muted);
+  font-size: .94rem;
+}
+.inventario-nds-item-quantidade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.08);
+  font-size: 1.08rem;
+}
+.inventario-nds-etiquetas {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.inventario-nds-etiquetas span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(101, 211, 138, .14);
+  border: 1px solid rgba(101, 211, 138, .24);
+  color: #c8ffd9;
+  font-size: .8rem;
+  font-weight: 800;
+}
+.inventario-nds-item-descricao {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  color: #d8e5f7;
+  line-height: 1.55;
+}
+.inventario-nds-efeitos {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.inventario-nds-efeitos summary { cursor: pointer; font-weight: 800; }
+.inventario-nds-efeitos pre {
+  margin: 10px 0 0;
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: #dce6f6;
+}
+.inventario-nds-operacoes {
+  display: grid;
+  gap: 12px;
+}
+.inventario-nds-form {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.inventario-nds-form label {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 6px;
+  color: var(--inv-muted);
+  font-weight: 700;
+  font-size: .88rem;
+}
+.inventario-nds .inventario-nds-form input,
+.inventario-nds .inventario-nds-form select,
+.inventario-nds-area-mestre input {
+  min-height: 42px;
+  width: 100%;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(131, 163, 206, .22);
+  background: rgba(10, 18, 30, .92) !important;
+  color: var(--inv-text) !important;
+}
+.inventario-nds .inventario-nds-form input[type=number] { max-width: 120px; }
+.inventario-nds-acao {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(101, 211, 138, .24);
+  background: rgba(101, 211, 138, .16);
+  color: #d5ffe4;
+  font-weight: 900;
+  cursor: pointer;
+}
+.inventario-nds-acao:hover { background: rgba(101, 211, 138, .24); }
+.inventario-nds-acao-sec {
+  border-color: rgba(124, 224, 255, .24);
+  background: rgba(124, 224, 255, .14);
+  color: #d8f8ff;
+}
+.inventario-nds-observacao {
+  margin: 0;
+  color: var(--inv-muted);
+  font-size: .88rem;
+  line-height: 1.45;
+}
+.inventario-nds-placeholder {
+  min-height: 440px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--inv-muted);
+}
+.inventario-nds-placeholder-icone {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  font-size: 2rem;
+}
+
+.inventario-nds-area-mestre {
+  margin-top: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(18, 29, 45, .96), rgba(12, 22, 36, .96));
+  padding: 14px 16px;
+}
+.inventario-nds-area-mestre summary {
+  cursor: pointer;
+  font-weight: 900;
+}
+.inventario-nds-area-mestre form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px auto;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (max-width: 1450px) {
+  .inventario-nds { grid-template-columns: minmax(280px, 320px) minmax(0, 1fr); }
+  .inventario-nds-paineis { grid-template-columns: minmax(320px, .95fr) minmax(0, 1.15fr); }
+}
+@media (max-width: 1200px) {
+  .inventario-nds { grid-template-columns: minmax(0, 1fr); }
+  .inventario-nds-equipe { min-height: auto; }
+  .inventario-nds-equipe-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .inventario-nds-toolbar { flex-direction: column; }
+  .inventario-nds-toolbar-side { width: 100%; justify-content: space-between; }
+}
+@media (max-width: 980px) {
+  .inventario-nds-paineis { grid-template-columns: minmax(0, 1fr); }
+  .inventario-nds-card-lista,
+  .inventario-nds-card-detalhes { min-height: auto; }
+  .inventario-nds-placeholder { min-height: 220px; }
+}
+@media (max-width: 760px) {
+  .inventario-nds { gap: 14px; }
+  .inventario-nds-equipe-lista { grid-template-columns: 1fr; }
+  .inventario-nds-treinador-pokemon { grid-template-columns: 74px minmax(0,1fr); min-height: 88px; }
+  .inventario-nds-treinador-foto { width: 74px; height: 74px; }
+  .inventario-nds-toolbar-main { width: 100%; }
+  .inventario-nds-resumo-bolsa { grid-template-columns: 84px minmax(0,1fr); }
+  .inventario-nds-resumo-bag-artes img { width: 68px; height: 68px; }
+  .inventario-nds-item-cabecalho { grid-template-columns: 64px minmax(0,1fr); }
+  .inventario-nds-item-quantidade { justify-self: start; }
+  .inventario-nds-form { flex-direction: column; align-items: stretch; }
+  .inventario-nds .inventario-nds-form input[type=number] { max-width: none; }
+  .inventario-nds-area-mestre form { grid-template-columns: 1fr; }
+}
+@media (max-width: 540px) {
+  .inventario-nds-equipe,
+  .inventario-nds-bag,
+  .inventario-nds-card,
+  .inventario-nds-area-mestre { border-radius: 18px; }
+  .inventario-nds-bag { padding: 16px; }
+  .inventario-nds-abas { gap: 8px; }
+  .inventario-nds-aba { width: 46px; height: 46px; }
+  .inventario-nds-linha-botao { grid-template-columns: 10px 50px minmax(0,1fr); }
+  .inventario-nds-linha-quantidade { grid-column: 2 / -1; justify-self: end; }
+}
+
+/* ================================================================
+   BW6: painel de mochila alinhado, viewport compacto e ícones nítidos.
+   Sem interferir com outras páginas do RPG.
+   ================================================================ */
+@media (min-width: 1200px) and (min-height: 760px) {
+  /* Remove o espaço que fazia surgir scroll no documento inteiro. */
+  body:has(.inventario-nds) .conteudo {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  body:has(.inventario-nds) {
+    overflow-y: hidden;
+  }
+  .inventario-nds {
+    height: calc(100dvh - 92px);
+    min-height: 0;
+    overflow: hidden;
+    grid-template-columns: minmax(320px, 350px) minmax(0, 1fr);
+    gap: 16px;
+  }
+  .conteudo:has(.alerta) .inventario-nds {
+    height: calc(100dvh - 160px);
+  }
+  .inventario-nds-equipe {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    padding: 16px;
+    gap: 12px;
+  }
+  .inventario-nds-equipe-lista {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    gap: 9px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 1px 3px 1px 0;
+  }
+  .inventario-nds-treinador-pokemon {
+    flex: 1 1 96px;
+    min-height: 88px;
+    max-height: 132px;
+  }
+  .inventario-nds-logo { flex-shrink: 0; padding-bottom: 10px; }
+  .inventario-nds-equipe-rodape { flex-shrink: 0; }
+  .inventario-nds-bag {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .inventario-nds-toolbar { flex: 0 0 auto; }
+  .inventario-nds-paineis {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    align-items: stretch;
+  }
+  .inventario-nds-coluna-lista,
+  .inventario-nds-coluna-detalhes {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .inventario-nds-card-lista,
+  .inventario-nds-card-detalhes {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    padding: 16px;
+  }
+  .inventario-nds-lista {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    margin-top: 10px;
+    overflow-y: auto;
+    align-content: start;
+  }
+  .inventario-nds-card-detalhes {
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .inventario-nds-placeholder {
+    flex: 1;
+    min-height: 0;
+  }
+  .inventario-nds-area-mestre {
+    flex: 0 0 auto;
+    max-height: 170px;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+}
+
+/* A linha das abas fica acima de DOIS painéis com a mesma altura. */
+.inventario-nds-toolbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.inventario-nds-toolbar-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+.inventario-nds-abas {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  min-width: 0;
+  gap: 10px;
+  width: 100%;
+  padding: 3px 0;
+}
+.inventario-nds-aba {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  height: 58px;
+  padding: 7px 14px 7px 8px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: .94rem;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+.inventario-nds-aba-icone {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .05);
+}
+.inventario-nds-aba img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  image-rendering: auto;
+  filter: none;
+  opacity: .98;
+}
+.inventario-nds-aba[aria-pressed="true"] .inventario-nds-aba-icone {
+  background: rgba(255,255,255,.12);
+  box-shadow: 0 0 16px var(--bag-glow);
+}
+.inventario-nds-aba-nome {
+  color: var(--inv-text);
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inventario-nds-toolbar-resumo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 12px;
+  align-items: stretch;
+}
+.inventario-nds-resumo-bolsa {
+  height: 100px;
+  min-height: 100px;
+  padding: 10px 14px;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 14px;
+  border-radius: 20px;
+  border-color: var(--bag-line);
+}
+.inventario-nds-resumo-bag-artes { min-height: 70px; }
+.inventario-nds-resumo-bag-artes img { width: 66px; height: 68px; object-fit: contain; image-rendering: pixelated; }
+.inventario-nds-toolbar-metas { gap: 3px; }
+.inventario-nds-toolbar-metas strong { font-size: 1.24rem; }
+.inventario-nds-toolbar-metas span {
+  font-size: .86rem;
+  line-height: 1.2;
+  max-width: 85ch;
+}
+.inventario-nds-toolbar-counter {
+  width: 100%;
+  height: 100px;
+  min-height: 100px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(23, 36, 57, .92), rgba(15, 26, 43, .92));
+  border: 1px solid var(--bag-line);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.015);
+}
+.inventario-nds-toolbar-counter small {
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.inventario-nds-toolbar-counter strong {
+  font-size: 1.85rem;
+  margin: 0;
+  color: var(--inv-text);
+  line-height: 1;
+}
+.inventario-nds-voltar {
+  flex-shrink: 0;
+  min-height: 50px;
+}
+.inventario-nds-equipe-rodape {
+  margin-top: auto;
+  padding: 12px 4px 2px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.inventario-nds-equipe-rodape span {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  font-size: .77rem;
+  white-space: nowrap;
+}
+.inventario-nds-equipe-rodape small {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: .7rem;
+}
+
+/* Layout fluido: telas compactas continuam acessíveis, sem conteúdo cortado. */
+@media (max-width: 1199px), (max-height: 759px) {
+  body:has(.inventario-nds) { overflow-y: auto; }
+  .inventario-nds { height: auto; min-height: 0; overflow: visible; }
+  .inventario-nds-equipe { min-height: auto; overflow: visible; }
+  .inventario-nds-card-lista,
+  .inventario-nds-card-detalhes { height: auto; min-height: 280px; }
+  .inventario-nds-lista { max-height: 420px; min-height: 100px; }
+}
+@media (max-width: 760px) {
+  .inventario-nds-toolbar-resumo { grid-template-columns: minmax(0, 1fr); }
+  .inventario-nds-resumo-bolsa,
+  .inventario-nds-toolbar-counter { min-height: 92px; height: 92px; }
+  .inventario-nds-toolbar-top { align-items: flex-start; }
+  .inventario-nds-abas {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    gap: 8px;
+  }
+  .inventario-nds-aba { width: auto; min-width: max-content; height: 46px; min-height: 46px; padding: 5px 9px 5px 5px; font-size: .81rem; }
+  .inventario-nds-aba-icone { width: 32px; height: 32px; flex-basis: 32px; }
+  .inventario-nds-aba img { width: 26px; height: 26px; }
+  .inventario-nds-voltar { min-height: 46px; }
+}

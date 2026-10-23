@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+from app.services.inventario_apresentacao import BOLSAS, VERSAO_INTERFACE, preparar_equipe, preparar_itens
 from app.services.inventario_service import (
     adicionar_item,
     ajustar_quantidade_item,
@@ -41,8 +42,12 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
         flash("Inventário ou personagem não encontrado.", "erro")
         destino = "mestre.dashboard" if modo_mestre else "jogadores.dashboard"
         return redirect(url_for(destino))
-    return render_template(
+    resposta = make_response(render_template(
         "jogador/inventario.html",
+        versao_inventario=VERSAO_INTERFACE,
+        bolsas=BOLSAS,
+        itens_visuais=preparar_itens(contexto.inventario),
+        equipe_visual=preparar_equipe(contexto.pokemons, contexto.personagem),
         contexto=contexto,
         personagem=contexto.personagem,
         modo_mestre=modo_mestre,
@@ -51,7 +56,10 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
             if modo_mestre
             else url_for("jogadores.dashboard")
         ),
-    )
+    ))
+    resposta.headers["X-PokemonRPG-Inventario"] = VERSAO_INTERFACE
+    resposta.headers["Cache-Control"] = "no-store"
+    return resposta
 
 
 def _executar(operacao, *, retorno: str, sucesso: str, **kwargs):
