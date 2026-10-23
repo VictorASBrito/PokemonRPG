@@ -1140,6 +1140,7 @@ def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
 
 
 def pesquisar_golpes_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, Any]]:
+    """Devolve os metadados visuais para uma prévia sem salvar o Pokémon."""
     from app.services.tipos_visual import tipo_visual
 
     termo = str(termo or "").strip()[:100]
@@ -1154,19 +1155,26 @@ def pesquisar_golpes_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
     golpes = list(db.session.execute(
         consulta.order_by(func.lower(Golpe.nome)).limit(max(1, min(int(limite), 50)))
     ).scalars())
-    return [
-        {
-            "valor": golpe.nome,
-            "rotulo": golpe.nome,
+    resultado: list[dict[str, Any]] = []
+    for golpe in golpes:
+        dados = _golpe_para_dict(golpe)
+        tipo = tipo_visual(dados["tipo"]) if golpe.tipo else None
+        resultado.append({
+            "valor": dados["nome"],
+            "rotulo": dados["nome"],
             "detalhe": " · ".join(parte for parte in [
-                golpe.categoria.nome if golpe.categoria else "",
-                golpe.expressao_dano or "Sem dano",
-            ] if parte),
-            "tipos": [tipo_visual(golpe.tipo.nome)] if golpe.tipo else [],
-            "imagem": "",  # Golpes não possuem coluna de imagem no catálogo.
-        }
-        for golpe in golpes
-    ]
+                dados["categoria"], dados["dano"] or "Sem dano",
+            ] if parte and parte != "—"),
+            "tipos": [tipo] if tipo else [],
+            "imagem": "",  # O catálogo não possui imagens de golpes.
+            "tipo": dados["tipo"],
+            "categoria": dados["categoria"],
+            "dano": dados["dano"] or "—",
+            "precisao_texto": dados["precisao_texto"],
+            "prioridade": dados["prioridade"],
+            "efeito": dados["efeito"],
+        })
+    return resultado
 
 
 def pesquisar_itens_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, Any]]:

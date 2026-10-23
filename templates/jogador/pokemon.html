@@ -157,39 +157,60 @@
         </div>
     </section>
 
-    <section class="cartao secao-pokemon">
+    <section class="cartao secao-pokemon secao-movimentos">
+        {% set limite_golpes = regras.get('limites', {}).get('golpes_por_pokemon', 4)|int %}
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Movimentos</p>
                 <h2>Golpes</h2>
-                <p class="texto-suave">Registre apenas os movimentos disponíveis, sem controle de quantidade de usos.</p>
+                <p class="texto-suave">As informações são exibidas ao selecionar o golpe. Use Salvar Pokémon para confirmar a alteração.</p>
             </div>
-            <span class="contador-golpes">{{ pokemon.get('golpes', [])|length }}/{{ regras.get('limites', {}).get('golpes_por_pokemon', 4) }}</span>
+            <span class="contador-golpes" id="contador-golpes" aria-live="polite">{{ pokemon.get('golpes', [])|length }}/{{ limite_golpes }}</span>
         </div>
 
-        <div class="tabela-golpes tabela-golpes-simples">
+        <div class="tabela-golpes tabela-golpes-simples" id="bloco-golpes-edicao">
             <div class="linha-golpe cabecalho-golpes">
                 <span>Golpe</span><span>Tipo / categoria</span><span>Dano</span><span>Precisão</span>
             </div>
-            {% for golpe in golpes_selecionados %}
-                <div class="linha-golpe">
-                    <input name="golpe_nome" list="catalogo-golpes" data-autocomplete-url="{{ url_for('pokemons.autocomplete_golpes') }}" data-seletor-visual="golpe" value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe" autocomplete="off">
-                    <span>{{ (golpe.get('tipo', '—') ~ ' / ' ~ golpe.get('categoria', '—')) if golpe.get('nome') else '—' }}</span>
-                    <span>{{ golpe.get('dano', '—') if golpe.get('nome') else '—' }}</span>
-                    <span>{{ golpe.get('precisao_texto', '—') if golpe.get('nome') else '—' }}</span>
+            {% for indice in range(limite_golpes) %}
+                {% set golpe = golpes_selecionados[indice] if indice < golpes_selecionados|length else {} %}
+                {% set definido = golpe.get('nome') %}
+                <div class="linha-golpe linha-golpe-editavel" data-golpe-slot data-slot-index="{{ indice }}">
+                    <input name="golpe_nome" list="catalogo-golpes"
+                        data-autocomplete-url="{{ url_for('pokemons.autocomplete_golpes') }}"
+                        data-seletor-visual="golpe" data-golpe-input
+                        value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe"
+                        aria-label="Golpe {{ indice + 1 }}" autocomplete="off">
+                    <div class="golpe-meta">
+                        <div class="golpe-meta-tipo" data-golpe-tipo>
+                            {% if definido and golpe.get('tipo') %}
+                                {{ selo_tipo(golpe.get('tipo')) }}
+                            {% else %}
+                                <span class="golpe-vazio-meta">Sem tipo</span>
+                            {% endif %}
+                        </div>
+                        <span class="golpe-meta-categoria" data-golpe-categoria>{{ golpe.get('categoria', '—') if definido else '—' }}</span>
+                    </div>
+                    <span class="golpe-valor" data-golpe-dano>{{ golpe.get('dano') or '—' if definido else '—' }}</span>
+                    <span class="golpe-valor" data-golpe-precisao>{{ golpe.get('precisao_texto') or '—' if definido else '—' }}</span>
                 </div>
             {% endfor %}
         </div>
-        {% if calculos.golpes %}
-            <div class="efeitos-golpes">
-                {% for golpe in calculos.golpes %}
-                    <details>
-                        <summary>{{ golpe.get('nome') }} · Precisão {{ golpe.get('precisao_texto', '—') }}</summary>
-                        <p>{{ golpe.get('efeito') or 'Sem descrição cadastrada.' }}</p>
-                    </details>
-                {% endfor %}
-            </div>
-        {% endif %}
+
+        <div class="efeitos-golpes efeitos-golpes-grade" id="efeitos-golpes-edicao" aria-label="Prévia de golpes">
+            {% for indice in range(limite_golpes) %}
+                {% set golpe = golpes_selecionados[indice] if indice < golpes_selecionados|length else {} %}
+                {% set definido = golpe.get('nome') %}
+                <article class="efeito-golpe-card{{ ' efeito-golpe-card-vazio' if not definido else '' }}"
+                         data-golpe-efeito-card data-slot-index="{{ indice }}">
+                    <div class="efeito-golpe-card-topo">
+                        <strong data-golpe-efeito-nome>{{ golpe.get('nome') if definido else 'Sem golpe definido' }}</strong>
+                        <small data-golpe-efeito-precisao>{{ 'Precisão ' ~ (golpe.get('precisao_texto') or '—') if definido else 'Slot ' ~ (indice + 1) }}</small>
+                    </div>
+                    <p data-golpe-efeito-texto>{{ golpe.get('efeito') or 'Sem descrição cadastrada.' if definido else 'Selecione um golpe para visualizar os detalhes.' }}</p>
+                </article>
+            {% endfor %}
+        </div>
     </section>
 
     <section class="cartao secao-pokemon">

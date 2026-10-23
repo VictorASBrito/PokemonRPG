@@ -55,3 +55,23 @@ def test_itens_somente_para_mestre(client_db):
     assert client_db.get('/api/catalogo/itens?q=baga').status_code in (302, 401, 403)
     client_db.post('/login', data={'login':'bartz-db', 'senha':'abc123'})
     assert client_db.get('/api/catalogo/itens?q=baga').status_code in (302, 401, 403)
+
+
+def test_busca_golpes_retorna_detalhes_para_previa_sem_salvar(app_db, client_db):
+    _login_mestre(client_db)
+    itens = client_db.get('/api/catalogo/golpes?q=chamas').get_json()['itens']
+    golpe = next(item for item in itens if item['valor'] == 'Ataque de Chamas')
+    assert {'tipo', 'categoria', 'dano', 'precisao_texto', 'prioridade', 'efeito'} <= set(golpe)
+    assert golpe['tipos'] and golpe['tipos'][0]['nome']
+
+
+def test_ficha_de_movimentos_utiliza_previa_nos_quatro_slots(app_db, client_db):
+    _login_mestre(client_db)
+    # Os templates não dependem de nomes predefinidos no catálogo de golpes.
+    from pathlib import Path
+    template = (Path(__file__).resolve().parents[1] / 'templates/jogador/pokemon.html').read_text(encoding='utf-8')
+    assert 'data-golpe-efeito-card' in template
+    assert 'data-golpe-slot' in template
+    assert 'data-seletor-visual="golpe"' in template
+    assert 'efeitos-golpes-grade' in template
+    assert 'Sem golpe definido' in template

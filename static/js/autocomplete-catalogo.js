@@ -86,6 +86,9 @@
             if (alvo) alvo.value = String(item.valor || '');
             campo.setCustomValidity('');
             fechar();
+            campo.dispatchEvent(new CustomEvent('catalogo:selecionado', {
+                bubbles: true, detail: { item },
+            }));
             campo.dispatchEvent(new Event('change', { bubbles: true }));
             campo.focus({ preventScroll: true });
         };
