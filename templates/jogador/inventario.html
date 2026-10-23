@@ -24,7 +24,11 @@
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.itens') }}">Abrir catálogo</a>
     </div>
     <form class="grade-adicionar-item" method="post" action="{{ url_for('inventario.adicionar_mestre', personagem_id=personagem.id) }}">
-        <div class="campo"><label for="novo_item_id">Item</label><select id="novo_item_id" name="item_id" required><option value="">Selecione</option>{% for item in contexto.catalogo %}<option value="{{ item.id }}">{{ item.nome }}{% if item.categoria %} · {{ item.categoria.nome }}{% endif %}</option>{% endfor %}</select></div>
+        <div class="campo"><label for="novo_item_id_busca">Item</label>
+            <input id="novo_item_id_busca" type="search" data-autocomplete-url="{{ url_for('pokemons.autocomplete_itens') }}" data-seletor-visual="item" data-seletor-alvo="novo_item_id" placeholder="Pesquisar item por nome" autocomplete="off" required>
+            <input id="novo_item_id" name="item_id" type="hidden">
+            <small>Escolha um item da lista para confirmar a seleção.</small>
+        </div>
         <div class="campo"><label for="nova_quantidade">Quantidade</label><input id="nova_quantidade" name="quantidade" type="number" min="1" max="999999" value="1" required></div>
         <button class="botao botao-primario" type="submit">Adicionar</button>
     </form>
@@ -119,4 +123,4 @@
 {% endfor %}
 </section>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/inventario.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script><script src="{{ url_for('static', filename='js/inventario.js') }}"></script>{% endblock %}

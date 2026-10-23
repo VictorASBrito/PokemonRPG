@@ -25,6 +25,7 @@ from app.services.pokemon_db_service import (
     golpes_formulario,
     pesquisar_formas_autocomplete,
     pesquisar_golpes_autocomplete,
+    pesquisar_itens_autocomplete,
     total_formas_ativas,
     registro_detalhado,
     remover_pokemon_db,
@@ -299,6 +300,18 @@ def autocomplete_golpes():
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao pesquisar golpes para autocomplete.")
+        return jsonify({"itens": []}), 503
+    return jsonify({"itens": itens})
+
+
+@pokemons_bp.get("/api/catalogo/itens")
+@perfil_obrigatorio("mestre")
+def autocomplete_itens():
+    try:
+        itens = pesquisar_itens_autocomplete(request.args.get("q", ""), limite=20)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao pesquisar itens para seleção visual.")
         return jsonify({"itens": []}), 503
     return jsonify({"itens": itens})
 

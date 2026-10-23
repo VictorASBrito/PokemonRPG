@@ -14,6 +14,7 @@ from app.models.db import (
     Atributo,
     Campanha,
     CategoriaGolpe,
+    CategoriaItem,
     ConjuntoRegras,
     EspeciePokemon,
     FormaPokemon,
@@ -1100,11 +1101,18 @@ def total_formas_ativas() -> int:
     return int(db.session.scalar(select(func.count(FormaPokemon.id)).where(FormaPokemon.ativo.is_(True))) or 0)
 
 
-def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, str]]:
-    termo = str(termo or "").strip()
+def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, Any]]:
+    """Resultados enriquecidos para a busca visual, sem carregar todo o catálogo."""
+    from app.services.tipos_visual import tipo_visual
+
+    termo = str(termo or "").strip()[:100]
     consulta = (
         select(FormaPokemon)
         .join(EspeciePokemon, EspeciePokemon.id == FormaPokemon.especie_id)
+        .options(
+            selectinload(FormaPokemon.especie),
+            selectinload(FormaPokemon.tipos).selectinload(FormaPokemonTipo.tipo),
+        )
         .where(FormaPokemon.ativo.is_(True), EspeciePokemon.ativo.is_(True))
     )
     if termo:
@@ -1116,51 +1124,73 @@ def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
                 func.lower(EspeciePokemon.nome).like(padrao),
             )
         )
-    formas = list(
-        db.session.execute(
-            consulta.order_by(func.lower(FormaPokemon.nome)).limit(max(1, min(int(limite), 50)))
-        ).scalars()
-    )
+    formas = list(db.session.execute(
+        consulta.order_by(func.lower(FormaPokemon.nome)).limit(max(1, min(int(limite), 50)))
+    ).scalars())
     return [
         {
             "valor": forma.nome,
             "rotulo": forma.nome,
-            "detalhe": f"{forma.especie.nome} · {forma.codigo}",
+            "detalhe": f"{forma.especie.nome} · {forma.categoria.title()}",
+            "imagem": forma.imagem_url or "",
+            "tipos": [tipo_visual(rel.tipo.nome) for rel in sorted(forma.tipos, key=lambda item: item.posicao)],
         }
         for forma in formas
     ]
 
 
-def pesquisar_golpes_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, str]]:
-    termo = str(termo or "").strip()
-    consulta = select(Golpe).where(Golpe.ativo.is_(True))
+def pesquisar_golpes_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, Any]]:
+    from app.services.tipos_visual import tipo_visual
+
+    termo = str(termo or "").strip()[:100]
+    consulta = select(Golpe).options(
+        selectinload(Golpe.tipo), selectinload(Golpe.categoria)
+    ).where(Golpe.ativo.is_(True))
     if termo:
         padrao = f"%{termo.lower()}%"
         consulta = consulta.where(
-            or_(
-                func.lower(Golpe.nome).like(padrao),
-                func.lower(Golpe.codigo).like(padrao),
-            )
+            or_(func.lower(Golpe.nome).like(padrao), func.lower(Golpe.codigo).like(padrao))
         )
-    golpes = list(
-        db.session.execute(
-            consulta.order_by(func.lower(Golpe.nome)).limit(max(1, min(int(limite), 50)))
-        ).scalars()
-    )
+    golpes = list(db.session.execute(
+        consulta.order_by(func.lower(Golpe.nome)).limit(max(1, min(int(limite), 50)))
+    ).scalars())
     return [
         {
             "valor": golpe.nome,
             "rotulo": golpe.nome,
-            "detalhe": " · ".join(
-                parte
-                for parte in [
-                    golpe.tipo.nome if golpe.tipo else "",
-                    golpe.categoria.nome if golpe.categoria else "",
-                ]
-                if parte
-            ),
+            "detalhe": " · ".join(parte for parte in [
+                golpe.categoria.nome if golpe.categoria else "",
+                golpe.expressao_dano or "Sem dano",
+            ] if parte),
+            "tipos": [tipo_visual(golpe.tipo.nome)] if golpe.tipo else [],
+            "imagem": "",  # Golpes não possuem coluna de imagem no catálogo.
         }
         for golpe in golpes
+    ]
+
+
+def pesquisar_itens_autocomplete(termo: str, *, limite: int = 20) -> list[dict[str, Any]]:
+    termo = str(termo or "").strip()[:100]
+    consulta = select(Item).options(selectinload(Item.categoria)).where(Item.ativo.is_(True))
+    if termo:
+        padrao = f"%{termo.lower()}%"
+        consulta = consulta.where(or_(
+            func.lower(Item.nome).like(padrao),
+            func.lower(Item.codigo).like(padrao),
+            Item.categoria.has(func.lower(CategoriaItem.nome).like(padrao)),
+        ))
+    itens = list(db.session.execute(
+        consulta.order_by(func.lower(Item.nome)).limit(max(1, min(int(limite), 50)))
+    ).scalars())
+    return [
+        {
+            "valor": str(item.id),
+            "rotulo": item.nome,
+            "detalhe": item.categoria.nome if item.categoria else "Sem categoria",
+            "imagem": item.imagem_url or "",
+            "tags": (["Consumível"] if item.consumivel else []) + (["Equipável"] if item.equipavel else []),
+        }
+        for item in itens
     ]
 
 

@@ -41,7 +41,7 @@
                 <div class="campo campo-duas-colunas">
                     <label for="especie_nome">Espécie ou forma</label>
                     {% if pode_editar_identidade %}
-                    <input id="especie_nome" name="especie_nome" list="catalogo-especies" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}" value="{{ especie.get('nome') }}" autocomplete="off" required>
+                    <input id="especie_nome" name="especie_nome" list="catalogo-especies" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}" data-seletor-visual="pokemon" value="{{ especie.get('nome') }}" autocomplete="off" required>
                     <small>Alterar a espécie recalcula os atributos.</small>
                     {% else %}
                     <div class="campo-calculado campo-protegido"><strong>{{ especie.get('nome') }}</strong></div>
@@ -173,7 +173,7 @@
             </div>
             {% for golpe in golpes_selecionados %}
                 <div class="linha-golpe">
-                    <input name="golpe_nome" list="catalogo-golpes" data-autocomplete-url="{{ url_for('pokemons.autocomplete_golpes') }}" value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe" autocomplete="off">
+                    <input name="golpe_nome" list="catalogo-golpes" data-autocomplete-url="{{ url_for('pokemons.autocomplete_golpes') }}" data-seletor-visual="golpe" value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe" autocomplete="off">
                     <span>{{ (golpe.get('tipo', '—') ~ ' / ' ~ golpe.get('categoria', '—')) if golpe.get('nome') else '—' }}</span>
                     <span>{{ golpe.get('dano', '—') if golpe.get('nome') else '—' }}</span>
                     <span>{{ golpe.get('precisao_texto', '—') if golpe.get('nome') else '—' }}</span>

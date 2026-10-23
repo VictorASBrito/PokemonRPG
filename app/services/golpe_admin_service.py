@@ -17,6 +17,7 @@ from app.models.db import (
     CategoriaGolpe,
     EspeciePokemon,
     FormaPokemon,
+    FormaPokemonTipo,
     FormaPokemonGolpe,
     Golpe,
     HistoricoAlteracao,
@@ -645,7 +646,7 @@ def listar_formas_para_vinculo(
     consulta = (
         select(FormaPokemon)
         .where(FormaPokemon.ativo.is_(True))
-        .options(selectinload(FormaPokemon.especie))
+        .options(selectinload(FormaPokemon.especie), selectinload(FormaPokemon.tipos).selectinload(FormaPokemonTipo.tipo))
         .join(FormaPokemon.especie)
     )
     termo = termo.strip()
@@ -678,7 +679,8 @@ def vinculos_golpe(golpe: Golpe) -> list[FormaPokemonGolpe]:
             select(FormaPokemonGolpe)
             .where(FormaPokemonGolpe.golpe_id == golpe.id)
             .options(
-                selectinload(FormaPokemonGolpe.forma_pokemon).selectinload(FormaPokemon.especie)
+                selectinload(FormaPokemonGolpe.forma_pokemon).selectinload(FormaPokemon.especie),
+                selectinload(FormaPokemonGolpe.forma_pokemon).selectinload(FormaPokemon.tipos).selectinload(FormaPokemonTipo.tipo),
             )
             .order_by(FormaPokemonGolpe.metodo, FormaPokemonGolpe.nivel_requerido)
         ).scalars()

@@ -1,3 +1,4 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 {% block titulo %}Formas de {{ golpe.nome }} | Pokémon RPG{% endblock %}
 {% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
@@ -16,7 +17,10 @@
         <form method="post" action="{{ url_for('catalogo_admin.vinculos_do_golpe', golpe_id=golpe.id) }}" class="grade-vinculo-form">
             <input type="hidden" name="vinculo_id" value="{{ vinculo.id }}">
             <input type="hidden" name="forma_pokemon_id" value="{{ vinculo.forma_pokemon_id }}">
-            <div class="vinculo-forma"><strong>{{ vinculo.forma_pokemon.nome }}</strong><small>{{ vinculo.forma_pokemon.especie.nome }} · {{ vinculo.forma_pokemon.codigo }}</small></div>
+            <div class="vinculo-forma vinculo-identidade">
+                <div class="vinculo-miniatura">{% if vinculo.forma_pokemon.imagem_url %}<img src="{{ vinculo.forma_pokemon.imagem_url }}" alt="" loading="lazy">{% else %}<span>◈</span>{% endif %}</div>
+                <div class="vinculo-descricao"><strong>{{ vinculo.forma_pokemon.nome }}</strong><small>{{ vinculo.forma_pokemon.especie.nome }} · {{ vinculo.forma_pokemon.codigo }}</small><div class="chips-tipos">{% for rel in vinculo.forma_pokemon.tipos %}{{ selo_tipo(rel.tipo.nome) }}{% endfor %}</div></div>
+            </div>
             <div class="campo"><label>Método</label><select name="metodo">{% for codigo, nome in metodos %}<option value="{{ codigo }}" {% if vinculo.metodo == codigo %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
             <div class="campo"><label>Nível</label><input name="nivel_requerido" type="number" min="1" max="999" value="{{ vinculo.nivel_requerido or '' }}"></div>
             <div class="campo"><label>Observações</label><input name="observacoes" value="{{ vinculo.observacoes or '' }}"></div>
@@ -39,7 +43,10 @@
     {% for forma in pagina.itens %}
     <form method="post" class="forma-vinculo-card">
         <input type="hidden" name="forma_pokemon_id" value="{{ forma.id }}">
-        <div><strong>{{ forma.nome }}</strong><small>{{ forma.especie.nome }} · {{ forma.codigo }}</small></div>
+        <div class="vinculo-forma vinculo-identidade">
+                <div class="vinculo-miniatura">{% if forma.imagem_url %}<img src="{{ forma.imagem_url }}" alt="" loading="lazy">{% else %}<span>◈</span>{% endif %}</div>
+                <div class="vinculo-descricao"><strong>{{ forma.nome }}</strong><small>{{ forma.especie.nome }} · {{ forma.codigo }}</small><div class="chips-tipos">{% for rel in forma.tipos %}{{ selo_tipo(rel.tipo.nome) }}{% endfor %}</div></div>
+            </div>
         <div class="campo"><label>Método</label><select name="metodo">{% for codigo, nome in metodos %}<option value="{{ codigo }}">{{ nome }}</option>{% endfor %}</select></div>
         <div class="campo"><label>Nível</label><input name="nivel_requerido" type="number" min="1" max="999" value="1"></div>
         <div class="campo"><label>Observação</label><input name="observacoes" placeholder="Opcional"></div>
