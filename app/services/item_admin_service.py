@@ -47,6 +47,8 @@ OPERACOES_ITEM = (
     ("dados", "Expressão de dados"),
 )
 
+PRECO_MAXIMO_ITEM = 999_999_999  # Mesmo limite do formulário HTML.
+
 
 @dataclass(slots=True)
 class PaginaItens:
@@ -96,6 +98,23 @@ def _inteiro(valor: Any, *, padrao: int = 0) -> int:
 
 def _bool_form(valor: Any) -> bool:
     return str(valor or "").strip().lower() in {"1", "true", "on", "sim"}
+
+
+def _validar_preco_item(valor: Any, erros: list[str]) -> int:
+    """Não converter silenciosamente um preço malformado para zero."""
+    texto = str(valor if valor is not None else "").strip()
+    if not texto:
+        return 0
+    try:
+        preco = int(texto)
+    except (TypeError, ValueError):
+        erros.append("O preço deve ser um número inteiro em Pokédolares.")
+        return 0
+    if preco < 0:
+        erros.append("O preço não pode ser negativo.")
+    elif preco > PRECO_MAXIMO_ITEM:
+        erros.append(f"O preço não pode ultrapassar {PRECO_MAXIMO_ITEM} Pokédolares.")
+    return preco
 
 
 def _auditar(
@@ -424,9 +443,7 @@ def _validar_dados(
         erros.append("Já existe um item com esse código.")
 
     categoria_id = _categoria_do_formulario(formulario, erros)
-    preco = _inteiro(formulario.get("preco"), padrao=0)
-    if preco < 0:
-        erros.append("O preço não pode ser negativo.")
+    preco = _validar_preco_item(formulario.get("preco"), erros)
     efeitos, erros_efeitos = _validar_efeitos(_texto(formulario.get("efeitos_json"), 50000))
     erros.extend(erros_efeitos)
     return {

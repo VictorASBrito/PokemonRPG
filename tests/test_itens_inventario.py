@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 
+import pytest
 from sqlalchemy import select
 
 from app.extensions import db
@@ -109,6 +110,74 @@ def test_catalogo_cria_edita_duplica_e_desativa_item(app_db, client_db) -> None:
     with app_db.app_context():
         copia = db.session.get(Item, copia.id)
         assert copia is not None and copia.ativo is True
+
+
+@pytest.mark.parametrize(
+    ("preco", "mensagem"),
+    [
+        ("invalido", "O preço deve ser um número inteiro"),
+        ("12.5", "O preço deve ser um número inteiro"),
+        ("1000000000", "O preço não pode ultrapassar"),
+        ("-1", "O preço não pode ser negativo"),
+    ],
+)
+def test_catalogo_nao_cadastra_item_com_preco_invalido(
+    app_db, client_db, preco: str, mensagem: str
+) -> None:
+    _login_mestre(client_db)
+    with app_db.app_context():
+        categoria = db.session.execute(
+            select(CategoriaItem).where(CategoriaItem.codigo == "bagas")
+        ).scalar_one()
+        categoria_id = str(categoria.id)
+
+    resposta = client_db.post(
+        "/mestre/catalogo/itens/novo",
+        data={
+            "nome": "Item para validar preço",
+            "codigo": "item-validacao-preco",
+            "categoria_id": categoria_id,
+            "preco": preco,
+            "efeitos_json": '{"versao": 1, "efeitos": []}',
+        },
+    )
+    assert resposta.status_code == 200
+    assert mensagem in resposta.get_data(as_text=True)
+    with app_db.app_context():
+        assert db.session.execute(
+            select(Item).where(Item.codigo == "item-validacao-preco")
+        ).scalar_one_or_none() is None
+
+
+def test_edicao_invalida_preserva_remocao_dos_efeitos_na_tela(app_db, client_db) -> None:
+    _login_mestre(client_db)
+    with app_db.app_context():
+        item = db.session.execute(
+            select(Item).where(Item.codigo == "baga-laranja")
+        ).scalar_one()
+        item_id = str(item.id)
+        categoria_id = str(item.categoria_id)
+        assert item.efeitos["efeitos"]
+
+    resposta = client_db.post(
+        f"/mestre/catalogo/itens/{item_id}/editar",
+        data={
+            "nome": "Baga Laranja",
+            "codigo": "baga-laranja",
+            "categoria_id": categoria_id,
+            "preco": "valor-invalido",
+            "consumivel": "1",
+            "equipavel": "1",
+            "efeitos_json": '{"versao": 1, "efeitos": []}',
+        },
+    )
+    texto = resposta.get_data(as_text=True)
+    assert resposta.status_code == 200
+    assert "O preço deve ser um número inteiro" in texto
+    assert 'id="efeitos-item-iniciais" type="application/json">[]</script>' in texto
+    with app_db.app_context():
+        item = db.session.get(Item, uuid.UUID(item_id))
+        assert item is not None and item.efeitos["efeitos"]
 
 
 def test_fluxo_inventario_adiciona_equipa_usa_desequipa_e_transfere(app_db, client_db) -> None:

@@ -179,3 +179,10 @@ pokemons
 personagens
 historico_alteracoes
 ```
+
+## Revisão incremental do cadastro — 23/10/2026
+
+- No salvamento do catálogo, o backend passa a rejeitar preço não inteiro, negativo ou acima de 999.999.999 Pokédolares, mantendo preço em branco como zero.
+- Se todos os efeitos forem removidos durante a edição, uma falha de validação em outro campo não deve repor os efeitos antigos no editor. O banco segue inalterado até um envio válido.
+- Os cenários de regressão estão em `tests/test_itens_inventario.py` e **ainda precisam de execução integrada em ambiente com Flask instalado**.
+- Nenhuma migration foi adicionada. Esta revisão não altera itens já existentes nem corrige inconsistências armazenadas no banco de produção.

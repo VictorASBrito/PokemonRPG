@@ -742,7 +742,9 @@ def editar_item(item_id: str):
         _restaurar_url_apos_upload_falho(dados, imagens, ["imagem_url"])
         for erro in erros:
             flash(erro, "erro")
-        efeitos_iniciais = _efeitos_enviados() or efeitos_iniciais
+        # Uma lista vazia enviada significa que o mestre removeu todos os efeitos.
+        # Não restaurar os antigos quando outra validação falhar (ex.: preço).
+        efeitos_iniciais = _efeitos_enviados()
 
     return render_template(
         "mestre/catalogo/item_form.html",
