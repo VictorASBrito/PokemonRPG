@@ -1129,6 +1129,9 @@ def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
     ).scalars())
     return [
         {
+            # O campo "valor" permanece o nome para os formulários já existentes;
+            # "id" é o UUID estável usado pelo formulário de capturáveis.
+            "id": str(forma.id),
             "valor": forma.nome,
             "rotulo": forma.nome,
             "detalhe": f"{forma.especie.nome} · {forma.categoria.title()}",

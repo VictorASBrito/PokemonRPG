@@ -25,6 +25,7 @@ from app.models.db import (
     PersonagemItem, Pokemon, PokemonGolpe, TipoPokemon, Usuario,
 )
 from app.services.importacao.utils import slug
+from app.services.reparo_natureza_importada import campo_item_repetido_da_natureza
 from app.services.senha_service import gerar_hash_senha
 from app.services.usuario_service import obter_campanha
 
@@ -194,6 +195,13 @@ def _validar_registro(dados: dict[str, Any], catalogos: dict[str, Any],
                 )
             if pokemon.get("natureza") and not procurar(catalogos["naturezas"], pokemon["natureza"]):
                 alertas.append(f"{pokemon['especie']}: natureza não encontrada: {pokemon['natureza']}.")
+            if pokemon.get("item") and campo_item_repetido_da_natureza(
+                pokemon["item"], pokemon.get("natureza")
+            ):
+                alertas.append(
+                    f"{pokemon['especie']}: o campo item repete a natureza '{pokemon['item']}'; "
+                    "será ignorado durante a importação."
+                )
             for golpe in pokemon.get("golpes", []):
                 if not procurar(catalogos["golpes"], golpe):
                     alertas.append(f"{pokemon['especie']}: golpe não encontrado: {golpe}.")
@@ -277,7 +285,16 @@ def _gravar_jogador(dados: dict[str, Any], campanha, catalogos: dict[str, Any],
                 continue
             natureza = procurar(catalogos["naturezas"], registro.get("natureza", ""))
             item_carregado = None
-            if registro.get("item"):
+            if registro.get("item") and campo_item_repetido_da_natureza(
+                registro["item"], registro.get("natureza")
+            ):
+                # Erro comprovado nos JSON das fichas originais: a natureza foi
+                # repetida na coluna de item. Não criar/equipar um item fictício.
+                warnings.append(
+                    f"{registro['especie']}: ignorado item '{registro['item']}' "
+                    "por coincidir com a natureza do Pokémon."
+                )
+            elif registro.get("item"):
                 item_carregado = _item(registro["item"], catalogos, itens_novos, equipavel=True)
                 # Um item já existente não é modificado sem autorização.
                 if not item_carregado.equipavel:

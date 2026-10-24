@@ -3,12 +3,19 @@ from __future__ import annotations
 import click
 from flask import Blueprint
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.models.db import (
     Atributo,
     CategoriaGolpe,
     CategoriaItem,
+    Campanha,
+    HistoricoAlteracao,
+    Natureza,
+    Personagem,
+    PersonagemItem,
+    Pokemon,
     EspeciePokemon,
     FormaPokemon,
     FormaPokemonAtributo,
@@ -16,10 +23,16 @@ from app.models.db import (
     FormaPokemonTipo,
     Golpe,
     Item,
+    StatusCondicao,
     TipoPokemon,
 )
 from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, efeitos_para_editor
 from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
+from app.services.auditoria_itens_service import auditar_itens
+from app.services.reparo_natureza_importada import (
+    campo_item_repetido_da_natureza,
+    elegivel_para_desvincular,
+)
 
 catalogo_cli = Blueprint("catalogo_cli", __name__)
 
@@ -174,3 +187,157 @@ def verificar() -> None:
             click.echo(f"- ... e mais {len(problemas_itens) - 50} problema(s).", err=True)
         raise click.ClickException("Foram encontradas inconsistências no catálogo de itens.")
     click.echo("Catálogo de itens está consistente no PostgreSQL.")
+
+
+@catalogo_group.command("auditar-itens")
+@click.option(
+    "--todos",
+    is_flag=True,
+    help="Exibe todos os achados, em vez dos primeiros 50.",
+)
+def auditar_itens_comando(todos: bool) -> None:
+    """Auditoria detalhada e SOMENTE LEITURA do catálogo de itens PostgreSQL.
+
+    Não apaga, atualiza, importa ou normaliza registros. Erros encerram
+    com código diferente de zero; avisos exigem conferência humana.
+    """
+    categorias = list(db.session.execute(select(CategoriaItem)).scalars())
+    itens = list(db.session.execute(select(Item)).scalars())
+    status_ativos = set(
+        str(valor)
+        for valor in db.session.execute(
+            select(StatusCondicao.id).where(StatusCondicao.ativo.is_(True))
+        ).scalars()
+    )
+    atributos_ativos = set(
+        db.session.execute(
+            select(Atributo.codigo).where(Atributo.ativo.is_(True))
+        ).scalars()
+    )
+    tipos_ativos = set(
+        str(valor)
+        for valor in db.session.execute(
+            select(TipoPokemon.id).where(TipoPokemon.ativo.is_(True))
+        ).scalars()
+    )
+    resultado = auditar_itens(
+        (
+            {
+                "codigo": item.codigo,
+                "nome": item.nome,
+                "categoria_id": item.categoria_id,
+                "preco": item.preco,
+                "ativo": item.ativo,
+                "consumivel": item.consumivel,
+                "equipavel": item.equipavel,
+                "uso_em_batalha": item.uso_em_batalha,
+                "efeitos": item.efeitos,
+            }
+            for item in itens
+        ),
+        (
+            {"id": categoria.id, "codigo": categoria.codigo,
+             "nome": categoria.nome, "ativo": categoria.ativo}
+            for categoria in categorias
+        ),
+        status_ativos=status_ativos,
+        atributos_ativos=atributos_ativos,
+        tipos_ativos=tipos_ativos,
+    )
+    click.echo(
+        f"Auditoria (somente leitura): {resultado.total_itens} item(ns) "
+        f"({resultado.ativos} ativo(s)), {resultado.total_categorias} categoria(s)."
+    )
+    click.echo("Quantidade de itens por categoria:")
+    for categoria, quantidade in resultado.categorias.items():
+        click.echo(f"  {categoria}: {quantidade}")
+    click.echo(f"Resultado: {resultado.erros} erro(s), {resultado.avisos} aviso(s).")
+    achados = resultado.achados if todos else resultado.achados[:50]
+    for achado in achados:
+        click.echo(
+            f"- [{achado.nivel.upper()}] {achado.codigo}: {achado.mensagem}",
+            err=True,
+        )
+    if len(resultado.achados) > len(achados):
+        click.echo(
+            f"- ... {len(resultado.achados) - len(achados)} achado(s) oculto(s); "
+            "execute com --todos para ver tudo.", err=True
+        )
+    if resultado.erros:
+        raise click.ClickException(
+            "Foram encontrados erros no catálogo. A auditoria não modificou o banco."
+        )
+    if resultado.avisos:
+        click.echo("Sem erros automáticos; avisos precisam de revisão humana.")
+    else:
+        click.echo("Nenhuma inconsistência identificada pelas verificações implementadas.")
+
+
+@catalogo_group.command("revisar-naturezas-importadas")
+@click.option(
+    "--aplicar", is_flag=True,
+    help="Desvincula APENAS equipamentos fictícios identificados; padrão é simulação.",
+)
+def revisar_naturezas_importadas(aplicar: bool) -> None:
+    """Verifica o erro da importação de fichas que equipou naturezas como itens.
+
+    O reparo é restrito à campanha Ankar e a itens criados pelo importador,
+    sem categoria/efeitos/preço e sem unidades registradas em inventários.
+    Não apaga itens nem modifica quantidades, naturezas ou personagens.
+    """
+    equipados = list(db.session.execute(
+        select(Pokemon)
+        .join(Pokemon.personagem)
+        .join(Personagem.campanha)
+        .where(Campanha.codigo == "ankar", Pokemon.item_equipado_id.is_not(None))
+        .options(selectinload(Pokemon.item_equipado), selectinload(Pokemon.natureza))
+    ).scalars())
+    ids_inventario = set(db.session.execute(select(PersonagemItem.item_id)).scalars())
+    candidatos = []
+    suspeitos_nao_elegiveis = []
+    for pokemon in equipados:
+        item = pokemon.item_equipado
+        natureza = pokemon.natureza
+        if item is None or natureza is None:
+            continue
+        if not campo_item_repetido_da_natureza(item.nome, natureza.nome):
+            continue
+        if elegivel_para_desvincular(
+            codigo_item=item.codigo, nome_item=item.nome,
+            nome_natureza=natureza.nome, personalizado=item.personalizado,
+            equipavel=item.equipavel, categoria_id=item.categoria_id,
+            preco=item.preco, consumivel=item.consumivel,
+            uso_em_batalha=item.uso_em_batalha, efeitos=item.efeitos,
+            aparece_em_inventario=item.id in ids_inventario,
+        ):
+            candidatos.append((pokemon, item))
+        else:
+            suspeitos_nao_elegiveis.append(item.codigo)
+
+    click.echo(f"Equipamentos vinculados na campanha Ankar: {len(equipados)}.")
+    click.echo(f"Naturezas importadas elegíveis à correção: {len(candidatos)}.")
+    click.echo(f"Coincidências não elegíveis, mantidas para revisão: {len(suspeitos_nao_elegiveis)}.")
+    from collections import Counter
+    for nome_item, quantidade in sorted(Counter(item.nome for _, item in candidatos).items()):
+        click.echo(f"  {nome_item}: {quantidade} vínculo(s)")
+    if suspeitos_nao_elegiveis:
+        click.echo("Registros ignorados por segurança: " + ", ".join(sorted(set(suspeitos_nao_elegiveis))))
+    if not aplicar:
+        click.echo("SIMULAÇÃO: nenhuma alteração no banco. Faça backup e revise os resultados antes de usar --aplicar.")
+        return
+    if not candidatos:
+        click.echo("Nenhuma mudança necessária; banco preservado.")
+        return
+    for pokemon, item in candidatos:
+        db.session.add(HistoricoAlteracao(
+            usuario_id=None, entidade="pokemon", registro_id=pokemon.id,
+            acao="correcao_importacao",
+            dados_anteriores={"item_equipado_id": str(item.id), "codigo_item": item.codigo},
+            dados_novos={"item_equipado_id": None, "motivo": "natureza_repetida_como_item_na_ficha"},
+        ))
+        pokemon.item_equipado_id = None
+    db.session.commit()
+    click.echo(
+        f"Corrigidos {len(candidatos)} vínculo(s) em uma transação; "
+        "itens do catálogo e inventários não foram modificados."
+    )

@@ -45,12 +45,14 @@
                     <a href="{{ url_for('mestre.dashboard') }}">Painel</a>
                     <a href="{{ url_for('mestre.jogadores') }}">Jogadores</a>
                     <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
+                    <a href="{{ url_for('capturas.campo_mestre') }}">Capturáveis</a>
                 {% else %}
                     <a href="{{ url_for('jogadores.dashboard') }}">Painel</a>
                     <a href="{{ url_for('jogadores.ficha') }}">Minha ficha</a>
                     <a href="{{ url_for('pokemons.equipe_jogador') }}">Equipe</a>
                     <a href="{{ url_for('boxes.boxes_jogador') }}">Boxes</a>
                     <a href="{{ url_for('inventario.inventario_jogador') }}">Inventário</a>
+                    <a href="{{ url_for('capturas.campo_jogador') }}">Capturáveis</a>
                 {% endif %}
             </nav>
 

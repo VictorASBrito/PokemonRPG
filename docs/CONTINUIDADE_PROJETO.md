@@ -1,9 +1,9 @@
 # Pokémon RPG — Prompt mestre e contexto de continuidade
 
 > **Fonte de verdade de contexto para os próximos chats e colaboradores.**  
-> **Versão:** 1.1 — **Data da revisão:** 23/10/2026.  
+> **Versão:** 1.2 — **Data da revisão:** 23/10/2026.  
 > **Base examinada:** `PokemonRPG.zip`, ramo Git `feature/att-frontend`, commit `9517d8a` (23/10/2026).  
-> **Escopo desta versão:** revisão incremental da validação de cadastro/edição de itens, testes de regressão e documentação. Correção ainda não validada com Flask em execução.
+> **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 ## 1. Missão e instrução para o próximo assistente
 
@@ -197,6 +197,10 @@ Novos testes de regressão estão em `tests/test_itens_inventario.py`. **Valida�
 
 **Próximo passo:** em ambiente com dependências instaladas, executar `pytest -q tests/test_itens_inventario.py`, reproduzir o fluxo real de criação e edição no navegador (inclusive upload e efeitos), e depois executar `flask --app app.py catalogo verificar` e `flask --app app.py inventario verificar` antes de auditar dados. Não houve migration.
 
+### Resultado registrado da correção anterior — 23/10/2026
+
+O usuário relatou **`9 passed in 10.86s`** após executar os testes recomendados para a revisão do cadastro de itens. Esse resultado veio da instalação do usuário; **não foi reexecutado neste ambiente de análise**. A execução manual no navegador e o catálogo PostgreSQL da campanha permanecem por conferir.
+
 ### Etapa B — Auditar catálogo e banco de itens
 
 Após estabilizar o formulário:
@@ -206,7 +210,15 @@ Após estabilizar o formulário:
 - Confrontar categorias e itens com o capítulo 16 do manual e as adaptações Ankar, sem sobrescrever customizações.
 - Executar diagnósticos do catálogo/inventário antes de aplicar qualquer correção em massa; proteger dados reais com backup e alterações reversíveis.
 
-**Situação:** revisão prevista; dados reais do PostgreSQL não foram auditados.
+**Situação (23/10/2026):** nova ferramenta de diagnóstico implementada no código, sem escrita no banco. A auditoria real dos registros continua **pendente** até que o usuário execute o comando no seu PostgreSQL e compartilhe o resultado.
+
+**Novo comando:** `flask --app app.py catalogo auditar-itens` (usar `--todos` para listar todos os achados). Verifica estrutura/versionamento dos efeitos, referências internas, categorias, códigos equivalentes, preços e suspeitas de duplicatas. **Erros** produzem saída diferente de zero; **avisos** não bloqueiam o processo e exigem análise humana. Não faz update, delete, importação ou migration. Para a parte de inventário/equipamentos, executar também `flask --app app.py inventario verificar`.
+
+**Arquivos desta entrega:** `app/services/auditoria_itens_service.py`, `app/commands/catalogo.py`, `tests/test_auditoria_itens.py`, documentação em `docs/`.
+
+**Testes nesta revisão:** oito verificações isoladas da lógica de auditoria passaram; compilação Python passou. Testes integrados dependentes de Flask não executados neste ambiente (as dependências não estão disponíveis). Os seis novos cenários de pytest devem ser validados pelo usuário.
+
+**Não inferir cobertura do manual:** o diagnóstico é de integridade de dados e estrutura, não certifica que todos os itens da edição 2.5 estão no catálogo nem que seus efeitos/preços correspondem ao livro. Comparação semântica exige os dados reais e critérios próprios de Ankar.
 
 ### Etapa C — Geração visual de Pokémon / atribuição pelo mestre
 
@@ -278,3 +290,62 @@ Sempre que uma etapa do projeto terminar, atualizar **no mesmo conjunto de alter
 ---
 
 **Documentos técnicos existentes úteis:** `README.md`, `ORGANIZACAO_PROJETO.md`, `ALTERACOES_CAMPANHA.md`, `BANCO_DE_DADOS.md`, `PERFIS_E_PERMISSOES.md`, `PERMISSOES_POKEMON_E_TIPOS.md`, `ITENS_INVENTARIO.md`, `CATALOGO_ADMIN.md`, `PAINEL_MESTRE.md`, `ALINHAMENTO_INVENTARIO_UI2.md`.
+
+## 12. Andamento — 23/10/2026: importação de naturezas como equipamento
+
+**Confirmado nos dados de origem:** a última saída da auditoria, enviada pelo mestre, apontou inúmeros avisos de itens `importado-ficha-*` sem categoria; `inventario verificar` confirmou 110 registros, 456 unidades e 48 itens equipados consistentes em termos referenciais. A análise do JSON das nove fichas identificou **49 referências preenchidas de `item` que são literalmente iguais à `natureza` do próprio Pokémon** (21 naturezas distintas). Essa é uma falha na preparação/importação de dados legados, não uma categoria que deva ser criada.
+
+**Alterações disponíveis em pacote incremental:** o importador agora ignora `item == natureza` com aviso, e o comando `flask --app app.py catalogo revisar-naturezas-importadas` faz simulação de vínculos suspeitos exclusivamente na campanha Ankar. Somente `--aplicar` remove as referências elegíveis e registra histórico, sem alterar unidades de inventário e sem apagar itens do catálogo. Consulte `docs/ITENS_INVENTARIO.md` para os critérios restritivos de segurança e as instruções.
+
+**Situação:** código preparado; 3 testes unitários puros passaram; testes integrados e execução em PostgreSQL pelo mestre PENDENTES. O número de 49 é do seed original e **não** deve ser confundido com os 48 vínculos atualmente relatados no banco. Não sugerir limpeza em massa, deleção de natureza ou categorização automática desses pseudoitens. Itens genuínos sem categoria continuarão exigindo revisão manual. Nenhuma migration nesta etapa.
+
+**Próximo passo recomendado:** mestre executar `python -m pytest -q tests/test_reparo_natureza_importada.py tests/test_auditoria_itens.py` e `flask --app app.py catalogo revisar-naturezas-importadas` (SEM `--aplicar`) e enviar resultados. Só após confirmar os candidatos deve decidir pela aplicação. Em seguida, auditoria e classificação conservadora dos itens realmente válidos, antes do módulo de geração de Pokémon.
+
+
+## Atualização — Capturáveis em campo
+
+- Implementada a primeira versão do módulo de capturáveis em campo.
+- O mestre pode registrar até 15 Pokémon capturáveis por campanha.
+- Cada registro guarda a forma do Pokémon e qual personagem o encontrou.
+- A tela do jogador exibe nome, sprite e tipos dos Pokémon disponíveis.
+- A tela do mestre permite adicionar e remover capturáveis, preparando a futura etapa de atribuição/captura.
+
+### Etapa 05.1 — Correção de auditoria dos capturáveis (23/10/2026)
+
+O módulo de até 15 capturáveis foi adicionado na Etapa 05, usando a tabela `pokemons_capturaveis` (migration `6f355a4d5b2e`). O usuário executou `tests/test_capturaveis_campo.py`, obtendo `2 failed, 1 passed` devido à tentativa de criar `HistoricoAlteracao` com campos inexistentes `entidade_id`/`detalhes`. A correção alinha o serviço ao modelo vigente (`registro_id`, `dados_anteriores`, `dados_novos`) na criação e remoção de capturáveis e adiciona verificações de regressão do histórico. **Sem nova migration.** Sintaxe Python verificada neste ambiente; integração Flask pendente de reexecução na máquina do usuário.
+
+**Próxima ação:** reexecutar `python -m pytest -q tests/test_capturaveis_campo.py`, confirmar funcionamento do campo do mestre/jogador; a atribuição definitiva à Box é etapa futura.
+
+
+### Atualização 05.2 — Correção de seleção de espécie no campo
+
+O autocomplete de formas tem dois valores distintos: `valor` (nome exibido, compatibilidade com formulários existentes) e `id` (UUID da forma, usado no campo oculto `forma_id` ao adicionar capturáveis). A UI compartilhada deve preencher o ID para `tipo === 'pokemon'` quando houver campo oculto; itens continuam usando `valor`. O serviço de criação mantém compatibilidade limitada com envios antigos em que `forma_id` e `forma_nome` continham o mesmo nome válido. Sem nova migration. A correção 05.1 do histórico continua necessária.
+
+**Estado dos testes:** usuário relatou aprovação dos testes 05.1. Novos testes 05.2 aguardam execução no ambiente local. Próximos passos: confirmar adição real pela tela, revisar apresentação e evoluir para atribuição à Box.
+
+### Atualização 05.3 — Remoção segura e renumeração (23/10/2026)
+
+Com vários capturáveis, a remoção falhava por conflito da restrição UNIQUE `(campanha_id, ordem)` do PostgreSQL. A etapa 05.3 introduz renumeração em duas fases, ambas na mesma transação: liberar as posições sobreviventes com `NULL` e `flush`, depois definir `1..N` e `flush`. As mutações agora bloqueiam a campanha no PostgreSQL para reduzir conflitos concorrentes entre adicionar/remover. A remoção mantém inativo o registro retirado, o histórico e os dados do Pokémon. Nenhuma migration nova.
+
+**Status:** pacote corretivo pronto; validação integrada e teste manual no PostgreSQL do usuário pendentes. **Verificar:** `python -m pytest -q tests/test_capturaveis_campo.py`, depois remover um capturável do meio da lista e conferir as posições.
+
+### Validação confirmada pelo mestre — Etapa 05.3 (23/10/2026)
+
+**Status: FUNCIONALIDADE DE EXIBIÇÃO/GERENCIAMENTO DE CAPTURÁVEIS VALIDADA NA INSTALAÇÃO DO USUÁRIO.** Após instalar a correção 05.3, o mestre confirmou: “Ótimo, está funcionando corretamente agora”. A confirmação sucede erros reais de seleção de espécie (corrigidos em 05.2), persistência de histórico (05.1) e remoção/reordenação sob restrição UNIQUE (05.3). Os capturáveis já apareciam em campo antes da correção 05.3. Não afirmar quantidade de testes da 05.3 sem receber nova saída do pytest, nem interpretar a confirmação como validação da atribuição à Box, que ainda não foi implementada.
+
+**Próximo desenvolvimento:** atribuição pelo mestre de um capturável à Box de um jogador, preservando forma, natureza e gênero gerados, com garantia de não duplicidade, verificação de capacidade da Box, permissões e histórico. Usar ZIP atualizado para preservar quaisquer alterações locais. A experiência de tentativa de captura é uma fase distinta a definir.
+
+
+## Etapa 06 — Atribuição de capturáveis à Box (23/10/2026)
+
+**Status: IMPLEMENTADO NO CÓDIGO; TESTES INTEGRADOS PENDENTES NA MÁQUINA DO USUÁRIO.** Base: ZIP enviado após confirmação do funcionamento da Etapa 05.3.
+
+- O mestre escolhe um capturável e um personagem destinatário ativo da campanha e aciona **Atribuir à Box**.
+- O servidor usa autenticação e autorização já existentes (`perfil_obrigatorio("mestre")`), mais token de formulário dedicado. Jogadores apenas visualizam o campo.
+- O serviço `atribuir_capturavel_box` em `app/services/capturaveis_service.py` bloqueia a campanha para serializar mutações, valida conta ativa de jogador/tester e capacidade da Box, cria um Pokémon na próxima posição e preserva forma/espécie, natureza, sexo e Shiny sem sortear novamente. PV segue o nível compartilhado e as regras do destinatário.
+- A retirada do encontro é atômica com a criação na Box: faz a renumeração em duas fases sem conflito UNIQUE e grava históricos `pokemon` e `pokemon_capturavel` vinculados por IDs. Reenvio não duplica.
+- Arquivos alterados: `app/services/capturaveis_service.py`, `app/routes/capturas.py`, `templates/capturas/mestre.html`, `static/css/capturaveis.css`, `tests/test_capturaveis_atribuicao.py` (novo), `docs/CAPTURAVEIS.md` (novo), e estes documentos de continuidade.
+- **Nenhuma migration nova**; depende da tabela criada na Etapa 05.
+- Verificações locais: compilação Python e análise de sintaxe Jinja; testes Flask integrados ainda não executados por ausência das dependências Flask/Flask-SQLAlchemy neste ambiente. Executar `python -m pytest -q tests/test_capturaveis_campo.py tests/test_capturaveis_atribuicao.py` na instalação do mestre.
+- Atenção: `docs/CAPTURAVEIS.md` é a referência funcional atual; descrições históricas anteriores que chamam a atribuição de "planejada" refletem versões antigas.
+- Próxima fase: testar transferência no PostgreSQL e confirmar na Box; depois decidir sobre tentativa de captura e/ou o painel de batalha de até 16 times.

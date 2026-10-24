@@ -83,7 +83,12 @@
         const selecionar = (item) => {
             nomeSelecionado = String(item.rotulo || item.valor || '');
             campo.value = tipo === 'item' ? nomeSelecionado : String(item.valor || item.rotulo || '');
-            if (alvo) alvo.value = String(item.valor || '');
+            // O autocomplete das formas expõe o nome em "valor", mas o campo
+            // oculto de capturáveis precisa receber seu UUID ("id").
+            // Para itens mantemos o contrato antigo: item.valor já é o ID.
+            if (alvo) alvo.value = String(
+                tipo === 'pokemon' && item.id ? item.id : (item.valor || '')
+            );
             campo.setCustomValidity('');
             fechar();
             campo.dispatchEvent(new CustomEvent('catalogo:selecionado', {

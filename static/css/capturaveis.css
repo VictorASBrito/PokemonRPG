@@ -1,0 +1,180 @@
+
+.capturaveis-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.capturaveis-topo h1 {
+    margin: 0.25rem 0 0.5rem;
+}
+
+.capturaveis-resumo {
+    min-width: 9rem;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--ui-surface, #fff) 70%, transparent);
+}
+
+.capturaveis-resumo strong {
+    display: block;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.capturaveis-layout {
+    display: grid;
+    grid-template-columns: minmax(18rem, 24rem) 1fr;
+    gap: 1.5rem;
+}
+
+.capturaveis-formulario {
+    display: grid;
+    gap: 1rem;
+}
+
+.capturaveis-formulario-card,
+.capturaveis-vazio {
+    align-self: start;
+}
+
+.campo-amplo {
+    grid-column: 1 / -1;
+}
+
+.titulo-secao-lista {
+    margin-bottom: 1rem;
+}
+
+.capturaveis-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+}
+
+.capturavel-card {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+}
+
+.capturavel-card-jogador {
+    text-align: center;
+}
+
+.capturavel-ordem {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.capturavel-imagem {
+    min-height: 8rem;
+    display: grid;
+    place-items: center;
+}
+
+.capturavel-imagem img {
+    max-width: 7rem;
+    max-height: 7rem;
+    image-rendering: pixelated;
+}
+
+.capturavel-imagem-destaque img {
+    max-width: 8rem;
+    max-height: 8rem;
+}
+
+.capturavel-placeholder {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    background: rgba(255,255,255,0.08);
+}
+
+.capturavel-conteudo h2,
+.capturavel-conteudo h3 {
+    margin: 0;
+}
+
+.capturavel-encontrado {
+    margin: 0.35rem 0 0;
+    opacity: 0.85;
+}
+
+.capturavel-tipos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.capturavel-card-jogador .capturavel-tipos {
+    justify-content: center;
+}
+
+.capturavel-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+}
+
+.capturavel-meta div {
+    padding: 0.75rem;
+    border-radius: 0.85rem;
+    background: rgba(255,255,255,0.05);
+}
+
+.capturavel-meta dt {
+    font-size: 0.8rem;
+    opacity: 0.75;
+}
+
+.capturavel-meta dd {
+    margin: 0.25rem 0 0;
+    font-weight: 700;
+}
+
+.capturavel-acoes {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 980px) {
+    .capturaveis-topo,
+    .capturaveis-layout {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+    .capturaveis-resumo {
+        min-width: 0;
+    }
+}
+
+/* Etapa 06: atribuição confirmada pelo mestre em cada card. */
+.capturavel-atribuir-form {
+    display: grid;
+    gap: .55rem;
+    margin-top: auto;
+}
+.capturavel-atribuir-form label {
+    font-weight: 700;
+    font-size: .9rem;
+}
+.capturavel-atribuir-form select {
+    width: 100%;
+    min-width: 0;
+}
+.capturavel-atribuir-form button {
+    width: 100%;
+}

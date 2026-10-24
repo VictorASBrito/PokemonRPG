@@ -16,3 +16,6 @@ Este projeto é **Pokémon RPG — campanha Ankar**. Não recomece a aplicação
 **Divergências cruciais:** nível compartilhado via `personagens.nivel`; experiência individual, amizade, captura automática e consumo de PP não fazem parte do fluxo atual de Ankar. Equipe de até 6 Pokémon; Box única de 100 espaços. Quatro perfis: administrador, mestre, tester e jogador.
 
 **Limite do procedimento:** documentação só avança quando uma nova etapa é efetivamente trabalhada e os arquivos são atualizados; não há atualização automática do repositório sem acesso a ele.
+
+
+**Auditoria de itens (2026-10-23):** antes de corrigir dados no PostgreSQL, use `flask --app app.py catalogo auditar-itens --todos` e `flask --app app.py inventario verificar`. A primeira ferramenta é somente leitura e separa erros de avisos; exige análise humana dos dados da campanha. O usuário confirmou `9 passed in 10.86s` para a correção anterior; novos testes em `tests/test_auditoria_itens.py` precisam ser executados no ambiente Flask. Documentar resultados reais.

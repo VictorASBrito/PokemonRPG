@@ -19,6 +19,53 @@ Copie este modelo ao concluir uma mudança:
 - **Próxima ação:** ...
 ```
 
+## Histórico recente
+
+### 2026-10-23 — Etapa 06: atribuição do encontro à Box
+- **Objetivo:** concluir fluxo de encontro → visualização → atribuição manual pelo mestre.
+- **Status:** IMPLEMENTADO; TESTES FLASK/POSGRESQL PENDENTES.
+- **Código:** `app/services/capturaveis_service.py` — serviço transacional `atribuir_capturavel_box`, com verificação de Box cheia, mesmo gênero, natureza, forma e Shiny, PV pelo nível do destinatário, histórico e reordenação em duas fases; helper de reordenação compartilhado com remoção. `app/routes/capturas.py` — nova rota POST protegida e token; `templates/capturas/mestre.html` — seletor do destinatário em cada card; `static/css/capturaveis.css` — estilos do formulário.
+- **Testes novos:** `tests/test_capturaveis_atribuicao.py`: transferência, preservação de dados, histórico, dupla atribuição, Box cheia, destino inválido e usuário desativado, destinatário diferente de quem encontrou, remoção no meio, sequência de slots, acesso de jogador e token CSRF. Nenhum teste marcado como passado sem execução.
+- **Documentação:** `docs/CAPTURAVEIS.md`, `docs/CONTINUIDADE_PROJETO.md` e `docs/DIARIO_DESENVOLVIMENTO.md`.
+- **Migrations:** nenhuma; reutiliza a tabela `pokemons_capturaveis` existente.
+- **Validação neste ambiente:** compilação dos arquivos Python alterados e parse Jinja de `templates/capturas/mestre.html` passaram. Testes Flask integrados não executados porque as dependências Flask e Flask-SQLAlchemy não estão instaladas aqui.
+- **Próxima ação:** executar `python -m pytest -q tests/test_capturaveis_campo.py tests/test_capturaveis_atribuicao.py` e validar uma atribuição real para a Box; depois avançar para captura opcional ou batalha.
+
+### 2026-10-23 — Correção de remoção/reordenação de capturáveis (Etapa 05.3)
+- **Motivo:** a remoção com vários Pokémon no campo produziu `psycopg.errors.UniqueViolation` na constraint `campanha_ordem_capturavel` (ex.: posição 9).
+- **Causa:** o código atribuía posições consecutivas aos sobreviventes num único flush, enquanto posições antigas ainda estavam ocupadas. A constraint UNIQUE é imediata; a ordem dos UPDATEs não é garantida.
+- **Alteração:** ao remover, todos os capturáveis ativos sobreviventes têm sua posição definida como `NULL` e a remoção é registrada em um primeiro `flush`; em um segundo passo, as posições `1..N` são atribuídas e gravadas, tudo na mesma transação. A criação e a remoção também bloqueiam a linha da campanha (`SELECT ... FOR UPDATE`) no PostgreSQL para serializar alterações de uma mesma campanha.
+- **Testes adicionados:** remoção do quinto entre dez com preservação da ordem e inclusão posterior; remoção do primeiro e do último entre quatro; conferência dos registros do histórico e das posições.
+- **Arquivos:** `app/services/capturaveis_service.py`, `tests/test_capturaveis_campo.py`, `docs/CONTINUIDADE_PROJETO.md` e `docs/DIARIO_DESENVOLVIMENTO.md`.
+- **Migrations:** nenhuma; schema já permite `ordem = NULL` e possui constraint UNIQUE por campanha e posição.
+- **Validação local:** sintaxe Python e teste isolado de duas fases com constraint UNIQUE no SQLite; testes Flask completos dependem do ambiente do usuário.
+- **Próxima ação:** executar `python -m pytest -q tests/test_capturaveis_campo.py`, remover capturável em posição intermediária na interface e confirmar que a lista fica sequencial sem perda de dados.
+
+
+### 2026-10-23 — Correção do histórico de capturáveis (Etapa 05.1)
+- **Motivo:** usuário executou `python -m pytest -q tests/test_capturaveis_campo.py`: `2 failed, 1 passed in 3.93s`. Falhas na criação e remoção por `TypeError: 'entidade_id' is an invalid keyword argument for HistoricoAlteracao`.
+- **Causa:** `app/services/capturaveis_service.py` usava campos de auditoria inexistentes (`entidade_id`, `detalhes`). O modelo real em `app/models/db/audit.py` usa `registro_id`, `dados_anteriores`, `dados_novos`.
+- **Alteração:** ambos os pontos de auditoria de capturáveis passam a usar os campos reais, com instantâneos de criação (`dados_novos`) e remoção (`dados_anteriores`). Acrescentadas asserções de histórico no teste existente para prevenir regressão.
+- **Arquivos atualizados:** `app/services/capturaveis_service.py`, `tests/test_capturaveis_campo.py`, `docs/DIARIO_DESENVOLVIMENTO.md`, `docs/CONTINUIDADE_PROJETO.md`.
+- **Banco de dados:** nenhuma migration e nenhuma alteração direta nos dados; mantém a migration `6f355a4d5b2e` da Etapa 05.
+- **Validação:** `python -m py_compile` passou; testes Flask/SQLAlchemy não executados neste ambiente porque o módulo Flask não está disponível. Os testes da nova versão precisam ser rodados pelo usuário.
+- **Próxima ação:** aplicar pacote incremental, executar `python -m pytest -q tests/test_capturaveis_campo.py`; conferir inclusão, visualização e remoção de capturáveis em navegador.
+
+### 2026-10-23 — Auditoria de integridade do catálogo de itens (somente leitura)
+- **Objetivo:** preparar o diagnóstico de dados reais antes de corrigir itens em massa.
+- **Status:** FERRAMENTA IMPLEMENTADA E TESTADA ISOLADAMENTE; EXECUÇÃO NO POSTGRESQL REAL PENDENTE.
+- **Base:** ZIP atualizado enviado pelo usuário após confirmação de `9 passed in 10.86s` nos testes da etapa anterior.
+- **Arquivos modificados:** `app/commands/catalogo.py`, `app/services/auditoria_itens_service.py` (novo), `tests/test_auditoria_itens.py` (novo), `docs/CONTINUIDADE_PROJETO.md`, `docs/DIARIO_DESENVOLVIMENTO.md`, `docs/ITENS_INVENTARIO.md`, `docs/AGENTS.md`.
+- **Migrations:** nenhuma; nenhum registro de produção alterado.
+- **Decisões:** comando `flask --app app.py catalogo auditar-itens` estritamente de leitura; severidades **ERRO** e **AVISO**; reporte de totais por categoria, códigos equivalentes, possíveis nomes repetidos, preços, JSON de efeitos e vínculos internos; sem normalizar dados do usuário ou restaurar regras desativadas de Ankar.
+- **Testes executados:** 8 cenários isolados em Python para o serviço de auditoria (passaram); compilação de sintaxe Python (passou). **Testes de integração pytest ainda NÃO executados neste ambiente**, devido à ausência das dependências Flask/SQLAlchemy e impossibilidade de instalação. Foram adicionados 6 cenários automatizados para execução na máquina do usuário.
+- **Próxima ação:** rodar `python -m pytest -q tests/test_itens_inventario.py tests/test_auditoria_itens.py`, depois `flask --app app.py catalogo auditar-itens --todos` e `flask --app app.py inventario verificar`. Analisar os resultados antes de qualquer edição de registros. Comparação completa com itens do manual v2.5/Ankar continua pendente.
+
+### 2026-10-23 — Confirmação dos testes da correção do cadastro de itens
+- **Status:** VALIDAÇÃO DE TESTES CONFIRMADA PELO USUÁRIO (`9 passed in 10.86s`).
+- **Fonte:** mensagem do usuário após receber a correção. Esta execução não ocorreu no ambiente de análise e não comprova, por si só, a interface manual ou os dados de produção.
+- **Próxima ação:** iniciar auditoria de itens, mantendo íntegro o banco existente.
+
 ## Histórico recuperado
 
 ### 2026-10-23 — Validação de criação e edição de itens (correção incremental)
@@ -61,3 +108,43 @@ Copie este modelo ao concluir uma mudança:
 | Gerador visual com natureza/sexo e atribuição pelo mestre | Planejado; serviço placeholder | Planejar integração ao modelo Pokémon e à Box |
 | Campo compartilhado com até 16 times | Planejado; rota/serviço placeholder | Projetar arena e sincronização |
 | Atualização de documentação a cada etapa | Procedimento estabelecido | Revisar ao terminar cada implementação |
+
+### 2026-10-23 — Identificação e reparo controlado de naturezas cadastradas como itens
+- **Objetivo:** responder aos avisos da auditoria sem editar ou reclassificar indiscriminadamente o inventário já consistente.
+- **Status:** IMPLEMENTADO NO CÓDIGO; TESTES PUROS PASSARAM; REPARO NO POSTGRESQL DEPENDE DE SIMULAÇÃO E AUTORIZAÇÃO EXPLÍCITA DO MESTRE.
+- **Resultado informado pelo usuário:** `inventario verificar`: 110 registros, 456 unidades, 48 itens equipados; consistência confirmada. Auditoria de itens: avisos `importado-ficha-*` sem categoria, sem erros informados na saída enviada.
+- **Causa encontrada:** 49 campos `item` preenchidos no arquivo JSON congelado das fichas são idênticos às naturezas dos Pokémon; há 21 naturezas distintas representadas nesses campos. São dados de origem, não consulta direta ao banco.
+- **Arquivos alterados:** `app/commands/planilhas_jogadores.py`, `app/commands/catalogo.py`, novo `app/services/reparo_natureza_importada.py`, novo `tests/test_reparo_natureza_importada.py`, `docs/ITENS_INVENTARIO.md`, `docs/DIARIO_DESENVOLVIMENTO.md`, `docs/CONTINUIDADE_PROJETO.md`.
+- **Migrações:** nenhuma. **Dados do PostgreSQL:** nenhum acesso e nenhuma alteração no ambiente de preparação.
+- **Comportamento:** importador ignora valores de item iguais à natureza; novo comando `catalogo revisar-naturezas-importadas` apenas simula por padrão. `--aplicar` exige critérios conservadores e desvincula exclusivamente `Pokemon.item_equipado_id` suspeito da campanha Ankar, com histórico; nunca apaga ou classifica itens.
+- **Testes:** 3 testes de regras puras passaram em execução isolada; `compileall` passou. Testes Flask/SQLite e PostgreSQL ainda não rodaram no ambiente de preparação (Flask ausente). Repetir testes na máquina do mestre.
+- **Pendências:** revisar o resultado da simulação antes de `--aplicar`, registrar contagem de vínculos ajustados, validar novamente o inventário e categorizar itens genuínos após avaliação. A auditoria continuará exibindo avisos dos itens legados sem categoria.
+- **Próxima ação:** solicitar saída de `flask --app app.py catalogo revisar-naturezas-importadas` e resultados de testes; só então avaliar a aplicação opcional e planejar categorização não destrutiva dos restantes.
+
+
+## Atualização — Capturáveis em campo
+
+- Implementada a primeira versão do módulo de capturáveis em campo.
+- O mestre pode registrar até 15 Pokémon capturáveis por campanha.
+- Cada registro guarda a forma do Pokémon e qual personagem o encontrou.
+- A tela do jogador exibe nome, sprite e tipos dos Pokémon disponíveis.
+- A tela do mestre permite adicionar e remover capturáveis, preparando a futura etapa de atribuição/captura.
+
+
+### 2026-10-23 — Correção 05.2: identificador do seletor de Pokémon capturáveis
+- **Problema relatado na tela do mestre:** ao selecionar espécie no autocomplete, o servidor retornava "Selecione uma espécie válida no catálogo." mesmo após a migração e a correção do histórico.
+- **Causa confirmada no código:** o endpoint `/api/catalogo/formas` fornecia apenas `valor` (nome da forma); o seletor compartilhado gravava `valor` no input oculto `forma_id`; o serviço esperava UUID, portanto rejeitava nomes como `Bulbasaur`.
+- **Correção:** o autocomplete passa a incluir `id` com UUID da forma, preservando `valor` como nome para não quebrar outros formulários. O JavaScript utiliza `id` no campo oculto dos Pokémon, e continua utilizando `valor` para itens. No backend, o serviço reconhece o formato legado somente quando `forma_id` e `forma_nome` coincidem e a forma existe no catálogo.
+- **Arquivos alterados:** `app/services/pokemon_db_service.py`, `app/services/capturaveis_service.py`, `static/js/autocomplete-catalogo.js`, `templates/capturas/mestre.html`, `tests/test_capturaveis_campo.py`, documentação.
+- **Verificações no ambiente de preparação:** sintaxe Python e JS; testes integrados Flask pendentes de execução no ambiente local do usuário.
+- **Banco:** nenhuma migration nova; nenhuma atualização direta de dados.
+- **Próxima validação:** `python -m pytest -q tests/test_capturaveis_campo.py tests/test_seletores_visuais.py`, seguido de adição real pelo mestre e visualização no jogador.
+
+### 2026-10-23 — Confirmação em uso real da correção 05.3
+
+- **Status:** CONFIRMADO PELO USUÁRIO como funcionando corretamente após a correção do fluxo de remoção/reordenação dos capturáveis.
+- **Evidência:** mensagem “Ótimo, está funcionando corretamente agora”, posterior à entrega 05.3; a tela de capturáveis já exibia Pokémon antes do reparo.
+- **Mudanças nesta atualização:** somente documentação de continuidade; nenhum código, migration ou banco alterado neste chat.
+- **Testes:** o usuário não compartilhou nesta mensagem a nova saída do pytest; não registrar contagem ou execução adicional.
+- **Resultado consolidado:** seleção de espécie, exibição de capturáveis e remoção/reordenação considerados funcionais pelo mestre no ambiente local.
+- **Próxima etapa:** transferência controlada de capturável para a Box de jogador por ação do mestre, com preservação da natureza/sexo já sorteados e proteção contra dupla atribuição.

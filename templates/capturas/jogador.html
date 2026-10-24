@@ -1,0 +1,52 @@
+{% from "componentes/tipos.html" import selo_tipo %}
+{% extends "base.html" %}
+
+{% block titulo %}Capturáveis em campo | Pokémon RPG{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<section class="capturaveis-topo ui-card">
+    <div>
+        <p class="rotulo">Área do jogador</p>
+        <h1>Pokémon capturáveis em campo</h1>
+        <p>Veja quais Pokémon estão disponíveis no momento e decida se vale a pena tentar capturá-los.</p>
+    </div>
+    <div class="capturaveis-resumo">
+        <strong>{{ capturaveis|length }}/{{ limite }}</strong>
+        <span>visíveis no campo</span>
+    </div>
+</section>
+
+{% if capturaveis %}
+    <section class="capturaveis-grade" aria-label="Lista de Pokémon capturáveis">
+        {% for item in capturaveis %}
+        <article class="capturavel-card ui-card capturavel-card-jogador">
+            <div class="capturavel-imagem capturavel-imagem-destaque">
+                {% if item.imagem %}
+                    <img src="{{ item.imagem }}" alt="{{ item.nome }}">
+                {% else %}
+                    <div class="capturavel-placeholder" aria-hidden="true">◈</div>
+                {% endif %}
+            </div>
+            <div class="capturavel-conteudo">
+                <p class="rotulo">Encontrado por {{ item.encontrado_por }}</p>
+                <h2>{{ item.nome }}</h2>
+                <div class="capturavel-tipos">
+                    {% for tipo in item.tipos %}
+                        {{ selo_tipo(tipo.nome) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+{% else %}
+    <section class="ui-card capturaveis-vazio">
+        <h2>Nenhum Pokémon capturável no momento</h2>
+        <p>Quando um encontro for registrado pelo mestre, os Pokémon disponíveis aparecerão aqui.</p>
+    </section>
+{% endif %}
+{% endblock %}

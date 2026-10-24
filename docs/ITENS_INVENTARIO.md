@@ -186,3 +186,78 @@ historico_alteracoes
 - Se todos os efeitos forem removidos durante a edição, uma falha de validação em outro campo não deve repor os efeitos antigos no editor. O banco segue inalterado até um envio válido.
 - Os cenários de regressão estão em `tests/test_itens_inventario.py` e **ainda precisam de execução integrada em ambiente com Flask instalado**.
 - Nenhuma migration foi adicionada. Esta revisão não altera itens já existentes nem corrige inconsistências armazenadas no banco de produção.
+
+
+## Auditoria avançada, somente leitura — 23/10/2026
+
+Após a confirmação do usuário de **9 testes aprovados em 10,86 s** na etapa de validação de itens, foi acrescentado um comando diagnóstico independente para os registros do catálogo:
+
+```powershell
+flask --app app.py catalogo auditar-itens
+```
+
+Para exibir todos os achados (sem limite de 50):
+
+```powershell
+flask --app app.py catalogo auditar-itens --todos
+```
+
+**O que analisa:** quantidade de itens ativos e por categoria, referências de categorias inexistentes/inativas, códigos equivalentes com diferença de caixa/espaçamento, possíveis nomes repetidos dentro de uma categoria, preços inválidos, JSON de efeitos inválido, formato legado, efeitos com tipo/alvo incorretos e referências a status/atributos/tipos inexistentes ou inativos.
+
+**Como interpretar:**
+
+- `ERRO` indica problema concreto dentro das regras de estrutura/validação do sistema e faz o comando encerrar com erro, **sem alterar dados**.
+- `AVISO` indica suspeita, dado legado ou classificação que pode ser intencional; requer decisão do mestre antes de ajustes.
+- `0 erro(s), 0 aviso(s)` significa apenas que os testes automatizados de integridade passaram, **não** que todos os itens do manual 2.5 estejam presentes nem que cada preço/efeito esteja correto.
+
+O diagnóstico **não acessa arquivos `.env` no relatório**, não executa correção automática, não importa catálogos e não atualiza migrations. Complemente com:
+
+```powershell
+flask --app app.py catalogo verificar
+flask --app app.py inventario verificar
+```
+
+Para validar os testes após aplicar o pacote:
+
+```powershell
+python -m pytest -q tests/test_itens_inventario.py tests/test_auditoria_itens.py
+```
+
+**Estado de execução nesta revisão:** oito testes puros passaram e o Python compilou os arquivos novos; testes integrados Flask estão pendentes no ambiente do desenvolvedor. O PostgreSQL da campanha não foi acessado por este pacote. **Não faça mudanças automáticas nos itens antes de analisar os achados e preservar um backup.**
+
+## Revisão de naturezas importadas como equipamento — 23/10/2026
+
+O resultado executado pelo mestre mostrou **110 registros de inventário, 456 unidades e 48 Pokémon com itens equipados**, com integridade referencial confirmada pelo comando `inventario verificar`.
+
+A auditoria `catalogo auditar-itens --todos` apontou avisos exclusivamente associados a itens sem categoria, com códigos `importado-ficha-*`. A leitura do JSON congelado `app/seed/fichas_jogadores_ankar.json` identificou a causa de um subconjunto: **49 campos `item` de Pokémon repetem exatamente o respectivo valor `natureza`**, representando 21 nomes de naturezas distintos. São dados do pacote de origem, não uma consulta ao PostgreSQL; por isso a contagem de vínculos atuais pode divergir de 49.
+
+**Mudança no importador:** `app/commands/planilhas_jogadores.py` deixa de cadastrar/equipar como item um campo `item` igual ao nome da natureza; registra aviso para a importação. O JSON de origem é preservado para rastreabilidade.
+
+**Diagnóstico e reparo controlado (somente campanha Ankar):**
+
+```powershell
+flask --app app.py catalogo revisar-naturezas-importadas
+```
+
+O comando **simula por padrão** e informa a quantidade de vínculos elegíveis e a quantidade rejeitada por segurança. Um vínculo só será considerado elegível quando **todos** os critérios se verificarem no banco: item criado pelo importador com código `importado-ficha-{slug(nome)}`, mesmo nome que a natureza do Pokémon, personalizado/equipável, sem categoria, preço zero, sem efeito, não consumível, não utilizável em batalha e sem qualquer referência em `personagem_itens`. Vínculos de outras campanhas são ignorados.
+
+Somente após fazer backup, revisar a simulação e aprovar a correção, executar:
+
+```powershell
+flask --app app.py catalogo revisar-naturezas-importadas --aplicar
+```
+
+Ao aplicar, o comando apenas zera `pokemons.item_equipado_id` para os candidatos, registra cada alteração em `historico_alteracoes` e salva todos os vínculos em uma transação. **Não remove/desativa itens do catálogo, não altera naturezas, PV, quantidades ou registros de inventário.** Como os itens continuam no catálogo sem categoria, os avisos de `auditar-itens` continuarão aparecendo: não os esconda nem classifique artificialmente. Eles precisarão de revisão posterior, incluindo os itens genuínos da ficha.
+
+Verifique depois:
+
+```powershell
+flask --app app.py inventario verificar
+flask --app app.py catalogo auditar-itens --todos
+python -m pytest -q tests/test_reparo_natureza_importada.py tests/test_auditoria_itens.py
+```
+
+**Limite da validação:** a análise do JSON de origem e três cenários unitários isolados passaram no ambiente de preparação. O comando Flask e os testes integrados no PostgreSQL **não foram executados** neste ambiente. Em particular, **não execute `jogadores-planilhas importar --aplicar` novamente apenas para corrigir esta falha**; isso não repara a importação existente e pode criar dados desnecessários.
+
+
+> Observação: a implementação de capturáveis em campo foi iniciada em módulo separado e não altera o inventário nesta etapa.
