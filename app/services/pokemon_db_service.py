@@ -1017,6 +1017,13 @@ def mover_pokemon_db(
         ) or 0
         pokemon.localizacao = "box"
         pokemon.posicao = int(ultima_posicao) + 1
+        # Pokémon guardados na Box não permanecem no campo de batalha.
+        from app.models.db import PokemonEmCampo
+        registro_campo = db.session.execute(
+            select(PokemonEmCampo).where(PokemonEmCampo.pokemon_id == pokemon.id)
+        ).scalar_one_or_none()
+        if registro_campo is not None:
+            db.session.delete(registro_campo)
         db.session.flush()
         _compactar_posicoes(contexto.personagem.id, "equipe")
     else:
@@ -1047,6 +1054,13 @@ def remover_pokemon_db(
     pokemon.ativo = False
     pokemon.localizacao = None
     pokemon.posicao = None
+    # Limpeza do campo na mesma transação da remoção da ficha.
+    from app.models.db import PokemonEmCampo
+    registro_campo = db.session.execute(
+        select(PokemonEmCampo).where(PokemonEmCampo.pokemon_id == pokemon.id)
+    ).scalar_one_or_none()
+    if registro_campo is not None:
+        db.session.delete(registro_campo)
     _auditar(
         usuario_id=usuario_responsavel_id,
         pokemon=pokemon,

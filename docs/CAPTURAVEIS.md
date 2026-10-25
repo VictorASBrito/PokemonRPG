@@ -42,6 +42,6 @@ Valide manualmente: gerar vários encontros, atribuir um encontro do meio, verif
 
 ## Próximos desenvolvimentos
 
-- Ação opcional de **tentativa de captura** e suas regras específicas de Ankar, separada da atribuição direta pelo mestre.
+- **Não implementar rolagem automática de captura**: a experiência narrativa dos jogadores é intencional.
 - Atualizações compartilhadas mais imediatas entre navegadores, caso necessário.
 - Painel de Pokémon em campo/batalha com até 16 times.

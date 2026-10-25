@@ -1,0 +1,43 @@
+{% from "componentes/tipos.html" import selo_tipo %}
+<div class="campo-times-grade">
+    {% for time in contexto.times %}
+    <section class="campo-time ui-card{% if time.pokemons %} campo-time-ativo{% else %} campo-time-vazio{% endif %}" aria-label="Time {{ time.numero }}">
+        <header class="campo-time-cabecalho">
+            <h2>Time {{ time.numero }}</h2>
+            <span>{{ time.pokemons|length }} Pokémon</span>
+        </header>
+        {% if time.pokemons %}
+            <div class="campo-time-lista">
+                {% for pokemon in time.pokemons %}
+                <article class="campo-pokemon">
+                    <div class="campo-pokemon-arte">
+                        {% if pokemon.imagem %}
+                            <img src="{{ pokemon.imagem }}" alt="Sprite de {{ pokemon.nome }}" loading="lazy" onerror="this.style.display='none'">
+                        {% else %}
+                            <span class="campo-sprite-vazio" aria-hidden="true">◈</span>
+                        {% endif %}
+                    </div>
+                    <div class="campo-pokemon-info">
+                        <h3>{{ pokemon.nome }}</h3>
+                        {% if pokemon.nome != pokemon.especie %}<small class="campo-especie">{{ pokemon.especie }}</small>{% endif %}
+                        <small class="campo-treinador">{{ pokemon.treinador }}</small>
+                        <div class="campo-pokemon-tipos">
+                            {% for tipo in pokemon.tipos %}{{ selo_tipo(tipo) }}{% endfor %}
+                        </div>
+                        {% if pokemon.shiny %}<span class="campo-shiny">Shiny</span>{% endif %}
+                    </div>
+                    {% if pokemon.pode_retirar %}
+                    <form action="{{ url_for('combates.retirar', pokemon_id=pokemon.id) }}" method="post" class="campo-retirar-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="campo-retirar" title="Retirar {{ pokemon.nome }}" aria-label="Retirar {{ pokemon.nome }} do campo">×</button>
+                    </form>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="campo-time-placeholder">Espaço livre</div>
+        {% endif %}
+    </section>
+    {% endfor %}
+</div>

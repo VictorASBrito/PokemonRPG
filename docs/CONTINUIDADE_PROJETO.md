@@ -349,3 +349,11 @@ Com vários capturáveis, a remoção falhava por conflito da restrição UNIQUE
 - Verificações locais: compilação Python e análise de sintaxe Jinja; testes Flask integrados ainda não executados por ausência das dependências Flask/Flask-SQLAlchemy neste ambiente. Executar `python -m pytest -q tests/test_capturaveis_campo.py tests/test_capturaveis_atribuicao.py` na instalação do mestre.
 - Atenção: `docs/CAPTURAVEIS.md` é a referência funcional atual; descrições históricas anteriores que chamam a atribuição de "planejada" refletem versões antigas.
 - Próxima fase: testar transferência no PostgreSQL e confirmar na Box; depois decidir sobre tentativa de captura e/ou o painel de batalha de até 16 times.
+
+## Etapa 07 — Painel compartilhado de batalha (23/10/2026)
+
+Implementada a primeira versão do **campo compartilhado com até 16 times**. Jogadores colocam ou movem Pokémon da própria equipe; mestre administra todos, pode retirar Pokémon ou limpar a formação. Os times são compartilhados entre navegadores e atualizados por polling a cada 6 segundos. Cada Pokémon ocupa um único time; os registros são persistidos em `pokemons_em_campo`, com auditoria e validação de permissões no servidor. Enviar Pokémon à Box ou excluí-lo da ficha remove sua participação no campo. Arquivos de implementação, instalação, testes e limites: `docs/CAMPO_COMPARTILHADO.md`.
+
+**Decisão expressa do usuário:** não implementar mecânica automática de tentativa de captura. A tentativa é narrativa entre os jogadores, e a atribuição efetiva é administrada pelo mestre.
+
+**Validação:** sintaxe e integridade dos arquivos verificadas; testes integrados a executar no ambiente local. Nova migration `7a1f20d9c405` deve ser aplicada após backup. Próxima etapa opcional: evolução da interface de combate (HP, ações/turnos) e suporte a oponentes NPC independentes, conforme prioridade do usuário.

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block titulo %}Campo de Batalha | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/campo.css') }}">{% endblock %}
+{% block conteudo %}
+<div class="campo-pagina">
+    <section class="campo-cabecalho ui-card">
+        <div>
+            <p class="rotulo">Campo compartilhado · Ankar</p>
+            <h1>Painel de Pokémon em campo</h1>
+            <p>Organize aliados e oponentes em até 16 times. Todos os jogadores visualizam a mesma formação.</p>
+        </div>
+        <div class="campo-resumo" aria-live="polite">
+            <span><strong data-campo-total>{{ contexto.total_pokemons }}</strong> Pokémon</span>
+            <span><strong data-campo-times>{{ contexto.times_ocupados }}</strong> times ativos</span>
+        </div>
+    </section>
+
+    <section class="campo-acoes ui-card" aria-label="Controles do campo">
+        <form action="{{ url_for('combates.posicionar') }}" method="post" class="campo-controles">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="campo-grupo campo-pokemon-select">
+                <label for="pokemon_id">Pokémon da equipe</label>
+                <select id="pokemon_id" name="pokemon_id" required>
+                    <option value="">Selecione um Pokémon</option>
+                    {% for pokemon in contexto.opcoes_pokemon %}
+                        <option value="{{ pokemon.id }}">{{ pokemon.rotulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo-grupo">
+                <label for="time_numero">Time</label>
+                <select id="time_numero" name="time_numero" required>
+                    {% for numero in range(1, 17) %}
+                        <option value="{{ numero }}">Time {{ numero }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="botao botao-primario" type="submit">Colocar / mover</button>
+        </form>
+        {% if mestre %}
+            <form action="{{ url_for('combates.limpar') }}" method="post" data-campo-limpar>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="botao botao-secundario" type="submit">Limpar campo</button>
+            </form>
+        {% endif %}
+    </section>
+    <p class="campo-ajuda">
+        {% if mestre %}Como mestre, você pode posicionar e retirar Pokémon de qualquer treinador.{% else %}Você só pode colocar e retirar Pokémon da sua própria equipe.{% endif %}
+        Pokémon que forem enviados à Box sairão automaticamente do campo.
+    </p>
+    <div class="campo-estado" data-campo-estado data-estado-url="{{ url_for('combates.estado') }}" aria-label="Formação dos times">
+        {% include 'campo/_times.html' %}
+    </div>
+    <p class="campo-atualizacao" data-campo-atualizacao aria-live="polite">Atualização compartilhada a cada 6 segundos.</p>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/campo.js', v='campo-07') }}" defer></script>{% endblock %}

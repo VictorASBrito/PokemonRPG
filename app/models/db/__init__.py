@@ -6,6 +6,7 @@ from app.models.db.attributes import (
 )
 from app.models.db.audit import HistoricoAlteracao
 from app.models.db.capturable import PokemonCapturavel
+from app.models.db.pokemon_battlefield import PokemonEmCampo
 from app.models.db.auth import Campanha, CampanhaMembro, Usuario
 from app.models.db.character import Personagem
 from app.models.db.combat_catalog import (
@@ -60,6 +61,7 @@ __all__ = [
     "PersonagemItem",
     "Pokemon",
     "PokemonCapturavel",
+    "PokemonEmCampo",
     "PokemonBonusAtributo",
     "PokemonGolpe",
     "PokemonStatus",

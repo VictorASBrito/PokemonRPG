@@ -1,0 +1,39 @@
+/* Campo de batalha compartilhado; respeita os temas globais do projeto. */
+.campo-pagina { display: grid; gap: 1.15rem; }
+.campo-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.campo-cabecalho h1 { margin: .25rem 0 .6rem; }
+.campo-cabecalho p:last-child { margin-bottom: 0; }
+.campo-resumo { display: grid; gap: .4rem; white-space: nowrap; }
+.campo-resumo span { display: flex; align-items: baseline; gap: .5rem; }
+.campo-resumo strong { font-size: 1.4rem; }
+.campo-acoes { display: flex; justify-content: space-between; align-items: end; gap: 1.25rem; flex-wrap: wrap; }
+.campo-controles { flex: 1; display: flex; align-items: end; flex-wrap: wrap; gap: 1rem; }
+.campo-grupo { display: grid; gap: .4rem; min-width: 9rem; }
+.campo-pokemon-select { flex: 1; min-width: 13rem; max-width: 34rem; }
+.campo-grupo label { font-size: .9rem; font-weight: 600; }
+.campo-grupo select { max-width: 100%; min-height: 2.8rem; padding: .65rem .8rem; border: 1px solid var(--ui-border, #465268); background: var(--ui-surface, #1b2431); color: inherit; border-radius: .6rem; }
+.campo-ajuda, .campo-atualizacao { margin: 0; opacity: .72; font-size: .88rem; }
+.campo-times-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.campo-time { min-width: 0; padding: 1rem; }
+.campo-time-ativo { border-top: 3px solid var(--ui-primary, #fa4e55); }
+.campo-time-cabecalho { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding-bottom: .8rem; }
+.campo-time-cabecalho h2 { font-size: 1.04rem; margin: 0; }
+.campo-time-cabecalho span { font-size: .76rem; opacity: .75; text-align: right; }
+.campo-time-placeholder { min-height: 3rem; display: grid; place-items: center; border: 1px dashed var(--ui-border, #465268); border-radius: .55rem; opacity: .55; font-size: .85rem; }
+.campo-time-lista { display: grid; gap: .7rem; }
+.campo-pokemon { position: relative; display: flex; align-items: center; gap: .75rem; min-width: 0; padding: .6rem; border-radius: .8rem; background: color-mix(in srgb, currentColor 5%, transparent); }
+.campo-pokemon-arte { width: 4.6rem; height: 4.6rem; display: grid; place-items: center; flex: 0 0 4.6rem; }
+.campo-pokemon-arte img { max-width: 4.5rem; max-height: 4.5rem; image-rendering: pixelated; object-fit: contain; }
+.campo-sprite-vazio { font-size: 2rem; opacity: .5; }
+.campo-pokemon-info { min-width: 0; display: grid; gap: .2rem; flex: 1; }
+.campo-pokemon-info h3 { font-size: .98rem; margin: 0; overflow-wrap: anywhere; padding-right: 1.2rem; }
+.campo-especie, .campo-treinador { font-size: .75rem; opacity: .76; }
+.campo-pokemon-tipos { display: flex; gap: .25rem; flex-wrap: wrap; margin-top: .2rem; }
+.campo-pokemon-tipos .etiqueta-tipo { font-size: .68rem; padding: .18rem .4rem; }
+.campo-shiny { font-size: .72rem; font-weight: 700; }
+.campo-retirar-form { position: absolute; top: .3rem; right: .3rem; }
+.campo-retirar { color: inherit; border: 0; background: transparent; font-size: 1.4rem; line-height: 1; cursor: pointer; padding: .12rem .35rem; border-radius: .35rem; }
+.campo-retirar:hover, .campo-retirar:focus-visible { background: rgba(220,65,65,.18); }
+@media (max-width: 1400px) { .campo-times-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 950px) { .campo-times-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 650px) { .campo-cabecalho { display: grid; } .campo-resumo { display: flex; flex-wrap: wrap; } .campo-times-grade { grid-template-columns: 1fr; } .campo-acoes, .campo-controles { align-items: stretch; } .campo-controles { display: grid; } .campo-pokemon-select { max-width: none; } }

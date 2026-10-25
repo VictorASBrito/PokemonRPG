@@ -35,6 +35,7 @@ def create_app() -> Flask:
     from app.routes.auth import auth_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
     from app.routes.capturas import capturas_bp
+    from app.routes.combates import combates_bp
     from app.routes.boxes import boxes_bp
     from app.routes.jogadores import jogadores_bp
     from app.routes.inventario import inventario_bp
@@ -44,6 +45,7 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(catalogo_admin_bp)
     app.register_blueprint(capturas_bp)
+    app.register_blueprint(combates_bp)
     app.register_blueprint(jogadores_bp)
     app.register_blueprint(inventario_bp)
     app.register_blueprint(mestre_bp)

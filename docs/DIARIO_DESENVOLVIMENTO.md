@@ -148,3 +148,11 @@ Copie este modelo ao concluir uma mudança:
 - **Testes:** o usuário não compartilhou nesta mensagem a nova saída do pytest; não registrar contagem ou execução adicional.
 - **Resultado consolidado:** seleção de espécie, exibição de capturáveis e remoção/reordenação considerados funcionais pelo mestre no ambiente local.
 - **Próxima etapa:** transferência controlada de capturável para a Box de jogador por ação do mestre, com preservação da natureza/sexo já sorteados e proteção contra dupla atribuição.
+
+## Etapa 07 — Painel compartilhado de batalha (23/10/2026)
+
+Implementada a primeira versão do **campo compartilhado com até 16 times**. Jogadores colocam ou movem Pokémon da própria equipe; mestre administra todos, pode retirar Pokémon ou limpar a formação. Os times são compartilhados entre navegadores e atualizados por polling a cada 6 segundos. Cada Pokémon ocupa um único time; os registros são persistidos em `pokemons_em_campo`, com auditoria e validação de permissões no servidor. Enviar Pokémon à Box ou excluí-lo da ficha remove sua participação no campo. Arquivos de implementação, instalação, testes e limites: `docs/CAMPO_COMPARTILHADO.md`.
+
+**Decisão expressa do usuário:** não implementar mecânica automática de tentativa de captura. A tentativa é narrativa entre os jogadores, e a atribuição efetiva é administrada pelo mestre.
+
+**Validação:** sintaxe e integridade dos arquivos verificadas; testes integrados a executar no ambiente local. Nova migration `7a1f20d9c405` deve ser aplicada após backup. Próxima etapa opcional: evolução da interface de combate (HP, ações/turnos) e suporte a oponentes NPC independentes, conforme prioridade do usuário.
