@@ -1,0 +1,34 @@
+{
+  "gerado_em": "2026-10-26T04:44:19.336307+00:00",
+  "total_processado": 3,
+  "completos": 3,
+  "parciais": 0,
+  "sem_atualizacao": 0,
+  "formas": [
+    {
+      "codigo": "eevee-parceiro",
+      "atualizados": [
+        "imagem_shiny_url"
+      ],
+      "representativa": true,
+      "erros": {}
+    },
+    {
+      "codigo": "minior-nucleo",
+      "atualizados": [
+        "imagem_url",
+        "imagem_shiny_url"
+      ],
+      "representativa": true,
+      "erros": {}
+    },
+    {
+      "codigo": "pikachu-parceiro",
+      "atualizados": [
+        "imagem_shiny_url"
+      ],
+      "representativa": true,
+      "erros": {}
+    }
+  ]
+}

@@ -117,4 +117,9 @@ def campo_jogador():
         current_app.logger.exception("Falha ao carregar a lista de capturáveis para o jogador.")
         flash("Não foi possível carregar os Pokémon capturáveis agora.", "erro")
         capturaveis = []
-    return render_template("capturas/jogador.html", capturaveis=capturaveis, limite=15)
+    return render_template(
+        "capturas/jogador.html",
+        capturaveis=capturaveis,
+        limite=15,
+        personagem_id=str(session.get("personagem_id") or ""),
+    )

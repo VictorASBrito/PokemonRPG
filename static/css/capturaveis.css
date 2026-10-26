@@ -1,180 +1,132 @@
+/* Encontros Pokémon · Etapa 08 — mantém os dois temas e o design system do site. */
+.captura-pagina { --captura-raio: 19px; max-width: 1580px; margin: 0 auto; min-width: 0; }
+.captura-cabecalho { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:0 0 23px; }
+.captura-cabecalho h1 { font-size:clamp(1.7rem,2.8vw,2.6rem); letter-spacing:-.035em; line-height:1.14; margin:0 0 9px; }
+.captura-cabecalho p:not(.rotulo) { color:var(--texto-suave); margin:0; max-width:780px; line-height:1.55; }
+.captura-cabecalho .botao { flex-shrink:0; }
+.captura-metricas { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; margin:0 0 22px; }
+.captura-metrica { padding:18px 20px; background:var(--superficie); border:1px solid var(--borda); border-radius:var(--captura-raio); box-shadow:var(--sombra-suave); }
+.captura-metrica span { display:block; font-weight:650; color:var(--texto-suave); font-size:.82rem; }
+.captura-metrica strong { display:block; margin-top:5px; font-size:clamp(1.5rem,2.2vw,2.1rem); font-variant-numeric:tabular-nums; }
+.captura-metrica small { font-size:.87rem; color:var(--texto-suave); }
+.captura-gestao { display:grid; grid-template-columns:minmax(260px,310px) minmax(0,1fr); align-items:start; gap:20px; }
+.captura-criacao { position:sticky; top:92px; padding:22px; border-radius:var(--captura-raio); background:var(--superficie); border:1px solid var(--borda); box-shadow:var(--sombra-suave); }
+.captura-secao-titulo h2,.captura-listagem-titulo h2 { margin:0 0 8px; font-size:1.25rem; }
+.captura-secao-titulo p:not(.rotulo) { margin:0 0 22px; color:var(--texto-suave); font-size:.87rem; line-height:1.5; }
+.capturaveis-formulario { display:grid; gap:17px; }
+.capturaveis-formulario .campo { display:grid; gap:7px; }
+.capturaveis-formulario .campo label { font-weight:750; }
+.capturaveis-formulario input,.capturaveis-formulario select,.captura-filtros input,.captura-filtros select,.capturavel-atribuir-form select,.captura-carrossel-filtros select { width:100%; min-width:0; padding:11px 12px; background:var(--ui-campo,var(--superficie)); color:var(--ui-campo-texto,var(--texto)); border:1px solid var(--ui-campo-borda,var(--borda)); border-radius:10px; }
+.capturaveis-formulario small { color:var(--texto-suave); font-size:.77rem; }
+.captura-previa { display:grid; grid-template-columns:64px minmax(0,1fr); align-items:center; gap:13px; background:var(--superficie-suave); border:1px solid var(--borda); border-radius:13px; padding:10px; }
+.captura-previa-sprite { display:grid; place-items:center; min-height:64px; }
+.captura-previa-sprite img { height:62px; width:62px; object-fit:contain; image-rendering:pixelated; }
+.captura-previa strong { display:block; margin-bottom:5px; }
+.captura-regra-shiny { margin:0; color:var(--texto-suave); font-size:.81rem; line-height:1.5; padding:12px; border:1px dashed var(--borda); border-radius:12px; }
+.captura-adicionar { width:100%; }
+.captura-listagem { min-width:0; }
+.captura-listagem-titulo { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:13px; }
+.captura-listagem-titulo h2 { margin-bottom:0; }
+.captura-contador { display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--borda); border-radius:999px; background:var(--superficie); padding:7px 13px; font-size:.85rem; font-weight:700; white-space:nowrap; }
+.captura-filtros { display:grid; grid-template-columns:minmax(155px,1fr) minmax(155px,1fr) auto; align-items:end; gap:13px; border:1px solid var(--borda); border-radius:var(--captura-raio); padding:13px; margin-bottom:15px; background:var(--superficie); }
+.captura-filtros .campo { display:grid; gap:6px; }
+.captura-filtros label { font-size:.82rem; font-weight:750; }
+.captura-checkbox { display:flex; align-items:center; gap:7px; padding-bottom:11px; white-space:nowrap; cursor:pointer; }
+.captura-checkbox input { width:17px; height:17px; accent-color:var(--primaria); }
+.capturaveis-grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); align-items:stretch; gap:14px; }
+.capturavel-card { display:flex; flex-direction:column; min-width:0; gap:0; padding:0; border:1px solid var(--borda); border-radius:var(--captura-raio); background:var(--superficie); overflow:hidden; box-shadow:var(--sombra-suave); }
+.capturavel-card-shiny { border-color:#c49b39; box-shadow:0 0 0 1px rgba(221,177,76,.28),var(--sombra-suave); }
+.capturavel-visual { position:relative; min-height:140px; display:grid; place-items:center; background:radial-gradient(ellipse at center, var(--superficie) 0%,var(--superficie-suave) 75%); border-bottom:1px solid var(--borda); }
+.capturavel-card-shiny .capturavel-visual { background:radial-gradient(ellipse at 50% 65%, rgba(252,203,100,.2), transparent 70%),var(--superficie-suave); }
+.capturavel-ordem { position:absolute; top:13px; left:14px; color:var(--texto-suave); font-size:.82rem; font-weight:800; }
+.captura-selo-shiny { display:inline-flex; align-items:center; background:#815e1d; color:#fff4c6; border:1px solid #d4a43a; border-radius:999px; font-size:.75rem; font-weight:850; letter-spacing:.02em; padding:5px 10px; }
+.capturavel-visual .captura-selo-shiny { position:absolute; right:10px; top:10px; }
+.capturavel-imagem { display:grid; place-items:center; min-height:130px; }
+.capturavel-imagem img { display:block; max-width:115px; width:auto; height:112px; object-fit:contain; image-rendering:pixelated; }
+.capturavel-placeholder { color:var(--texto-suave); font-size:3rem; }
+.capturavel-conteudo { padding:17px 17px 12px; flex:1; min-width:0; }
+.capturavel-conteudo h3 { margin:0 0 10px; font-size:1.27rem; line-height:1.22; overflow-wrap:anywhere; }
+.captura-tipos { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+.captura-tipos .etiqueta-tipo { height:24px; font-size:11px; padding:0 10px; }
+.capturavel-encontrado { font-size:.82rem; color:var(--texto-suave); margin:12px 0; }
+.capturavel-encontrado strong { color:var(--texto); }
+.capturavel-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:0; }
+.capturavel-meta>div { background:var(--superficie-suave); border:1px solid var(--borda); border-radius:10px; padding:8px; min-width:0; }
+.capturavel-meta dt { font-size:.7rem; color:var(--texto-suave); }
+.capturavel-meta dd { margin:2px 0 0; font-size:.88rem; font-weight:800; overflow-wrap:anywhere; }
+.capturavel-operacoes { display:grid; gap:8px; padding:12px 17px 17px; border-top:1px solid var(--borda); }
+.capturavel-atribuir-form { display:grid; gap:7px; }
+.capturavel-atribuir-form label { font-size:.78rem; font-weight:800; }
+.capturavel-operacoes .botao { width:100%; min-height:38px; }
+.capturavel-acoes { margin:0; }
+.capturavel-acoes .botao { font-size:.82rem; }
+.captura-estado-vazio,.captura-vazio-filtro { padding:40px 25px; text-align:center; background:var(--superficie); border:1px dashed var(--borda); border-radius:var(--captura-raio); }
+.captura-estado-vazio h2,.captura-estado-vazio h3 { margin-top:0; }
+.captura-estado-vazio p { color:var(--texto-suave); margin-bottom:0; }
 
-.capturaveis-topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
+/* Jogador: vitrine única, com alternativa legível quando JS não está ativo. */
+.captura-pagina-jogador { max-width:1220px; }
+.captura-carrossel-filtros { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding:15px; margin-bottom:18px; border:1px solid var(--borda); border-radius:var(--captura-raio); background:var(--superficie); }
+.captura-carrossel-filtros .campo { display:grid; gap:6px; min-width:0; }
+.captura-carrossel-filtros label { font-weight:750; font-size:.85rem; }
+.captura-vitrine { display:grid; grid-template-columns:56px minmax(0,1fr) 56px; gap:10px; align-items:center; }
+.captura-seta { border:1px solid var(--borda); background:var(--superficie); color:var(--texto); border-radius:16px; cursor:pointer; font-size:2.6rem; height:80px; width:56px; line-height:1; box-shadow:var(--sombra-suave); }
+.captura-seta:hover:not(:disabled) { border-color:var(--primaria); color:var(--primaria); }
+.captura-seta:disabled { opacity:.3; cursor:not-allowed; }
+.captura-slides { min-width:0; display:grid; gap:18px; }
+.captura-slide { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); min-height:370px; border:1px solid var(--borda); background:var(--superficie); border-radius:25px; overflow:hidden; box-shadow:var(--sombra); }
+.captura-slide-shiny { border-color:#c49b39; }
+.captura-slide-arte { min-height:350px; position:relative; display:grid; place-items:center; overflow:hidden; background:radial-gradient(circle at center,rgba(146,175,198,.19), transparent 65%),var(--superficie-suave); border-right:1px solid var(--borda); }
+.captura-slide-shiny .captura-slide-arte { background:radial-gradient(circle at 47% 55%,rgba(237,192,84,.32), transparent 72%),var(--superficie-suave); }
+.captura-slide-numeracao { position:absolute; top:19px; left:20px; font-weight:800; font-size:.81rem; color:var(--texto-suave); }
+.captura-slide-arte .captura-selo-shiny { position:absolute; top:14px; right:14px; }
+.captura-slide-arte img { width:min(74%,310px); max-height:290px; height:auto; object-fit:contain; image-rendering:pixelated; filter:drop-shadow(0 14px 10px rgba(23,40,55,.18)); }
+.captura-grande-placeholder { font-size:7rem; color:var(--texto-suave); }
+.captura-slide-informacoes { display:flex; flex-direction:column; align-items:start; justify-content:center; min-width:0; padding:clamp(22px,4vw,50px); }
+.captura-slide-informacoes h2 { font-size:clamp(2rem,4vw,3.3rem); line-height:1.08; letter-spacing:-.05em; margin:15px 0 18px; overflow-wrap:anywhere; }
+.captura-slide-informacoes .etiqueta-tipo { height:28px; padding-inline:14px; font-size:.77rem; }
+.captura-slide-informacoes p { margin:26px 0 0; color:var(--texto-suave); max-width:330px; line-height:1.6; font-size:.94rem; }
+.captura-achado-proprio,.captura-achado-outro { display:inline-flex; padding:7px 12px; border-radius:999px; font-size:.82rem; font-weight:800; }
+.captura-achado-proprio { background:var(--primaria-suave); color:var(--primaria); }
+.captura-achado-outro { background:var(--superficie-suave); border:1px solid var(--borda); color:var(--texto-suave); }
+.captura-navegacao-meta { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--texto-suave); font-size:.85rem; padding:14px 68px 10px; }
+.captura-navegacao-meta [data-carousel-status] { font-weight:800; color:var(--texto); }
+.captura-miniaturas { display:flex; align-items:stretch; overflow-x:auto; scrollbar-width:thin; overscroll-behavior-inline:contain; gap:10px; padding:9px 68px 16px; }
+.captura-miniatura { position:relative; flex:0 0 115px; min-width:0; display:grid; justify-items:center; gap:5px; padding:10px 8px 11px; border:2px solid var(--borda); border-radius:14px; background:var(--superficie); color:var(--texto); cursor:pointer; }
+.captura-miniatura[aria-current="true"] { border-color:var(--primaria); box-shadow:0 0 0 2px var(--ui-ring); }
+.captura-miniatura-arte { height:56px; display:grid; place-items:center; }
+.captura-miniatura img { width:56px; height:56px; object-fit:contain; image-rendering:pixelated; }
+.captura-miniatura strong { display:block; max-width:100%; font-size:.77rem; line-height:1.2; overflow-wrap:anywhere; }
+.captura-miniatura-shiny { position:absolute; top:3px; right:6px; font-size:1rem; color:#c69a34; }
 
-.capturaveis-topo h1 {
-    margin: 0.25rem 0 0.5rem;
+@media (max-width:1100px) {
+  .captura-gestao { grid-template-columns:minmax(235px,290px) minmax(0,1fr); }
+  .captura-filtros { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .captura-checkbox { padding:0 0 4px; }
 }
-
-.capturaveis-resumo {
-    min-width: 9rem;
-    text-align: center;
-    padding: 1rem;
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--ui-surface, #fff) 70%, transparent);
+@media (max-width:780px) {
+  .captura-gestao { grid-template-columns:1fr; }
+  .captura-criacao { position:static; }
+  .captura-metricas { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .captura-cabecalho { align-items:flex-start; flex-wrap:wrap; }
+  .captura-slide { grid-template-columns:1fr; }
+  .captura-slide-arte { min-height:250px; border-right:0; border-bottom:1px solid var(--borda); }
+  .captura-slide-arte img { max-height:220px; width:min(50%,230px); }
+  .captura-slide-informacoes { padding:26px; }
+  .captura-slide-informacoes h2 { margin:12px 0; }
+  .captura-slide-informacoes p { margin:14px 0 0; }
+  .captura-vitrine { grid-template-columns:40px minmax(0,1fr) 40px; gap:6px; }
+  .captura-seta { width:40px; height:62px; font-size:2rem; border-radius:11px; }
+  .captura-navegacao-meta { padding-inline:45px; }
+  .captura-miniaturas { padding-inline:45px; }
 }
-
-.capturaveis-resumo strong {
-    display: block;
-    font-size: 2rem;
-    line-height: 1;
+@media (max-width:520px) {
+  .captura-filtros,.captura-carrossel-filtros { grid-template-columns:1fr; }
+  .captura-slide-arte { min-height:210px; }
+  .captura-slide-arte img { max-height:190px; }
+  .captura-cabecalho h1 { font-size:1.75rem; }
+  .captura-metrica { padding:13px; }
+  .captura-navegacao-meta { flex-direction:column; align-items:flex-start; }
+  .captura-dica { display:none; }
 }
-
-.capturaveis-layout {
-    display: grid;
-    grid-template-columns: minmax(18rem, 24rem) 1fr;
-    gap: 1.5rem;
-}
-
-.capturaveis-formulario {
-    display: grid;
-    gap: 1rem;
-}
-
-.capturaveis-formulario-card,
-.capturaveis-vazio {
-    align-self: start;
-}
-
-.campo-amplo {
-    grid-column: 1 / -1;
-}
-
-.titulo-secao-lista {
-    margin-bottom: 1rem;
-}
-
-.capturaveis-grade {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 1rem;
-}
-
-.capturavel-card {
-    position: relative;
-    display: grid;
-    gap: 1rem;
-}
-
-.capturavel-card-jogador {
-    text-align: center;
-}
-
-.capturavel-ordem {
-    position: absolute;
-    top: 0.9rem;
-    right: 0.9rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    opacity: 0.8;
-}
-
-.capturavel-imagem {
-    min-height: 8rem;
-    display: grid;
-    place-items: center;
-}
-
-.capturavel-imagem img {
-    max-width: 7rem;
-    max-height: 7rem;
-    image-rendering: pixelated;
-}
-
-.capturavel-imagem-destaque img {
-    max-width: 8rem;
-    max-height: 8rem;
-}
-
-.capturavel-placeholder {
-    width: 6rem;
-    height: 6rem;
-    border-radius: 1rem;
-    display: grid;
-    place-items: center;
-    font-size: 2rem;
-    background: rgba(255,255,255,0.08);
-}
-
-.capturavel-conteudo h2,
-.capturavel-conteudo h3 {
-    margin: 0;
-}
-
-.capturavel-encontrado {
-    margin: 0.35rem 0 0;
-    opacity: 0.85;
-}
-
-.capturavel-tipos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-}
-
-.capturavel-card-jogador .capturavel-tipos {
-    justify-content: center;
-}
-
-.capturavel-meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin: 1rem 0 0;
-}
-
-.capturavel-meta div {
-    padding: 0.75rem;
-    border-radius: 0.85rem;
-    background: rgba(255,255,255,0.05);
-}
-
-.capturavel-meta dt {
-    font-size: 0.8rem;
-    opacity: 0.75;
-}
-
-.capturavel-meta dd {
-    margin: 0.25rem 0 0;
-    font-weight: 700;
-}
-
-.capturavel-acoes {
-    display: flex;
-    justify-content: flex-end;
-}
-
-@media (max-width: 980px) {
-    .capturaveis-topo,
-    .capturaveis-layout {
-        grid-template-columns: 1fr;
-        display: grid;
-    }
-    .capturaveis-resumo {
-        min-width: 0;
-    }
-}
-
-/* Etapa 06: atribuição confirmada pelo mestre em cada card. */
-.capturavel-atribuir-form {
-    display: grid;
-    gap: .55rem;
-    margin-top: auto;
-}
-.capturavel-atribuir-form label {
-    font-weight: 700;
-    font-size: .9rem;
-}
-.capturavel-atribuir-form select {
-    width: 100%;
-    min-width: 0;
-}
-.capturavel-atribuir-form button {
-    width: 100%;
-}
+@media (prefers-reduced-motion:reduce) { .captura-pagina * { scroll-behavior:auto !important; transition:none !important; } }

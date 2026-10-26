@@ -1,0 +1,30 @@
+/* Etapa 09: ilustrações Pokémon em alta qualidade.
+   Sprites legados podem usar image-rendering:pixelated por estilo retro;
+   no PokéRPG, personagens e Pokémon HOME/artwork devem usar interpolação suave.
+   Não altera ícones, itens ou as artes do inventário. */
+body.app-shell :is(
+  .captura-previa-sprite img,
+  .capturavel-imagem img,
+  .captura-slide-arte img,
+  .captura-miniatura img,
+  .campo-pokemon-arte img,
+  .pokemon-imagem,
+  .retrato-pokemon img,
+  .retrato-pokemon-dashboard img,
+  .box-pokemon-imagem-wrap img,
+  .painel-pokemon-imagem img,
+  .inventario-nds-equipe img,
+  .catalogo-pokemon-miniatura img,
+  .vinculo-miniatura img,
+  #imagem-pokemon
+) {
+  image-rendering: auto !important;
+  object-fit: contain;
+}
+
+/* Uma imagem em 512 px suporta melhor ampliação no carrossel.
+   Reduzimos o tamanho máximo em displays estreitos para evitar upscale excessivo. */
+body.app-shell .captura-slide-arte img {
+  max-width: min(310px, 85%);
+  max-height: 290px;
+}

@@ -24,6 +24,8 @@
     {% block estilos_finais %}{% endblock %}
     {# Design system carregado por último para estabilizar todas as telas. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui1-20261023') }}">
+    {# Suavização das imagens Pokémon: deve vir após os estilos da tela. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon-hd.css', v='etapa-09') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>

@@ -1,52 +1,103 @@
 {% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
-{% block titulo %}Capturáveis em campo | Pokémon RPG{% endblock %}
+{% block titulo %}Encontros Pokémon | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css', v='etapa-08') }}">
 {% endblock %}
 
 {% block conteudo %}
-<section class="capturaveis-topo ui-card">
-    <div>
-        <p class="rotulo">Área do jogador</p>
-        <h1>Pokémon capturáveis em campo</h1>
-        <p>Veja quais Pokémon estão disponíveis no momento e decida se vale a pena tentar capturá-los.</p>
-    </div>
-    <div class="capturaveis-resumo">
-        <strong>{{ capturaveis|length }}/{{ limite }}</strong>
-        <span>visíveis no campo</span>
-    </div>
-</section>
+<div class="captura-pagina captura-pagina-jogador" data-captura-carrossel data-meu-personagem="{{ personagem_id }}">
+    <header class="captura-cabecalho">
+        <div>
+            <p class="rotulo">Pokémon capturáveis em campo · Região de Ankar</p>
+            <h1>Pokémon encontrados</h1>
+            <p>Conheça os Pokémon que apareceram na aventura e escolha qual encontro deseja observar.</p>
+        </div>
+        <span class="captura-contador">{{ capturaveis|length }} de {{ limite }} em campo</span>
+    </header>
 
-{% if capturaveis %}
-    <section class="capturaveis-grade" aria-label="Lista de Pokémon capturáveis">
-        {% for item in capturaveis %}
-        <article class="capturavel-card ui-card capturavel-card-jogador">
-            <div class="capturavel-imagem capturavel-imagem-destaque">
-                {% if item.imagem %}
-                    <img src="{{ item.imagem }}" alt="{{ item.nome }}">
-                {% else %}
-                    <div class="capturavel-placeholder" aria-hidden="true">◈</div>
-                {% endif %}
-            </div>
-            <div class="capturavel-conteudo">
-                <p class="rotulo">Encontrado por {{ item.encontrado_por }}</p>
-                <h2>{{ item.nome }}</h2>
-                <div class="capturavel-tipos">
-                    {% for tipo in item.tipos %}
-                        {{ selo_tipo(tipo.nome) }}
-                    {% endfor %}
+    {% if capturaveis %}
+    <section class="captura-carrossel-filtros ui-card" aria-label="Explorar encontros">
+        <div class="campo">
+            <label for="captura-visao">Mostrar encontros</label>
+            <select id="captura-visao" data-carousel-filtro>
+                <option value="meus">Meus encontrados</option>
+                <option value="todos">Todos os Pokémon</option>
+                {% set encontradores = namespace(ids=[]) %}
+                {% for item in capturaveis %}
+                    {% if item.encontrado_por_id and item.encontrado_por_id not in encontradores.ids %}
+                        {% set encontradores.ids = encontradores.ids + [item.encontrado_por_id] %}
+                        <option value="{{ item.encontrado_por_id }}">{{ item.encontrado_por }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="campo">
+            <label for="captura-escolher">Ir direto para</label>
+            <select id="captura-escolher" data-carousel-selecionar>
+                {% for item in capturaveis %}
+                    <option value="{{ item.id }}">{{ item.nome }} · {{ item.encontrado_por }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </section>
+
+    <section class="captura-vitrine" aria-label="Carrossel de Pokémon" aria-roledescription="carrossel">
+        <button class="captura-seta" type="button" data-carousel-anterior aria-label="Pokémon anterior">‹</button>
+        <div class="captura-slides" data-carousel-slides>
+            {% for item in capturaveis %}
+            <article class="captura-slide ui-card {% if item.shiny %}captura-slide-shiny{% endif %}"
+                data-carousel-slide data-id="{{ item.id }}" data-encontrador="{{ item.encontrado_por_id }}"
+                aria-roledescription="slide" aria-label="{{ item.nome }}, encontrado por {{ item.encontrado_por }}">
+                <div class="captura-slide-arte">
+                    <span class="captura-slide-numeracao">Encontro #{{ item.ordem }}</span>
+                    {% if item.shiny %}<span class="captura-selo-shiny">✦ Shiny</span>{% endif %}
+                    {% if item.imagem %}<img src="{{ item.imagem }}" alt="Sprite de {{ item.nome }}" loading="{{ 'eager' if loop.first else 'lazy' }}">
+                    {% else %}<span class="captura-grande-placeholder" aria-hidden="true">◇</span>{% endif %}
                 </div>
-            </div>
-        </article>
+                <div class="captura-slide-informacoes">
+                    {% if item.encontrado_por_id == personagem_id %}
+                        <span class="captura-achado-proprio" title="Encontrado por {{ item.encontrado_por }}">Encontrado por você</span>
+                    {% else %}
+                        <span class="captura-achado-outro">Encontrado por {{ item.encontrado_por }}</span>
+                    {% endif %}
+                    <h2>{{ item.nome }}</h2>
+                    <div class="captura-tipos">{% for tipo in item.tipos %}{{ selo_tipo(tipo.nome) }}{% endfor %}</div>
+                    <p>Observe o Pokémon e converse com o mestre quando quiser tentar capturá-lo.</p>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        <button class="captura-seta" type="button" data-carousel-proximo aria-label="Próximo Pokémon">›</button>
+    </section>
+    <div class="captura-navegacao-meta">
+        <span data-carousel-status aria-live="polite" aria-atomic="true">Explorando {{ capturaveis|length }} encontros</span>
+        <span class="captura-dica">Use as setas ou escolha uma miniatura</span>
+    </div>
+    <nav class="captura-miniaturas" data-carousel-miniaturas aria-label="Selecionar um Pokémon">
+        {% for item in capturaveis %}
+        <button type="button" class="captura-miniatura" data-carousel-miniatura data-id="{{ item.id }}"
+            data-encontrador="{{ item.encontrado_por_id }}" aria-label="Ver {{ item.nome }}, encontrado por {{ item.encontrado_por }}" aria-current="false">
+            <span class="captura-miniatura-arte">
+                {% if item.imagem %}<img src="{{ item.imagem }}" alt="" loading="lazy">
+                {% else %}<span aria-hidden="true">◇</span>{% endif %}
+            </span>
+            <strong>{{ item.nome }}</strong>
+            {% if item.shiny %}<span class="captura-miniatura-shiny" title="Shiny">✦</span>{% endif %}
+        </button>
         {% endfor %}
-    </section>
-{% else %}
-    <section class="ui-card capturaveis-vazio">
+    </nav>
+    {% else %}
+    <section class="captura-estado-vazio ui-card">
         <h2>Nenhum Pokémon capturável no momento</h2>
-        <p>Quando um encontro for registrado pelo mestre, os Pokémon disponíveis aparecerão aqui.</p>
+        <p>Quando o mestre anunciar um encontro, os Pokémon disponíveis aparecerão aqui.</p>
     </section>
-{% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/capturaveis.js', v='etapa-08') }}" defer></script>
 {% endblock %}

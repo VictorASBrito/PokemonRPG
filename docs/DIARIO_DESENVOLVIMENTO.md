@@ -156,3 +156,31 @@ Implementada a primeira versão do **campo compartilhado com até 16 times**. Jo
 **Decisão expressa do usuário:** não implementar mecânica automática de tentativa de captura. A tentativa é narrativa entre os jogadores, e a atribuição efetiva é administrada pelo mestre.
 
 **Validação:** sintaxe e integridade dos arquivos verificadas; testes integrados a executar no ambiente local. Nova migration `7a1f20d9c405` deve ser aplicada após backup. Próxima etapa opcional: evolução da interface de combate (HP, ações/turnos) e suporte a oponentes NPC independentes, conforme prioridade do usuário.
+
+## 2026-10-25 — Etapa 08: Shiny automático e carrossel de captura
+
+- **Nova regra em `capturaveis_service.py`:** o Shiny do encontro é sorteado em 1d100 na criação, comparando o resultado com `personagem.numeros_shiny` do encontrador (números de 1 a 100, não Pokédex). Campo `shiny` já existente é atualizado. O histórico da criação passa a conter o número sorteado e o resultado. A atribuição à Box preserva o resultado sem novo sorteio. A captura permanece narrativa/manual.
+- **Mestre:** UI de capturáveis mais legível, com resumo, prévia do catálogo, filtros por nome/treinador/Shiny, cards reorganizados e destaque de Shiny. Mantidos os fluxos de adicionar, atribuir e remover.
+- **Jogadores:** vitrine em carrossel com sprite grande, tipos, selo Shiny, setas, miniaturas, seletor direto e foco inicial nos Pokémon que a conta logada encontrou. Sem encontro próprio, inicia em todos. Progressive enhancement quando JS indisponível.
+- **Testes adicionados:** `tests/test_capturaveis_shiny_carrossel.py` para regra, persistência, transferência e marcação HTML; `tests/test_capturaveis_ui.js` para lógica do carrossel. Os **2 testes JavaScript** executados localmente passaram. A suíte Flask/pytest permanece **pendente no ambiente do usuário** porque Flask e Flask-Migrate não estão disponíveis neste ambiente.
+- **Sem migration**, sem alteração de estrutura do banco, sem alteração de Pokémon existentes, sem `.env` ou dados pessoais no pacote. Atualizada a documentação `CAPTURAVEIS.md` e o documento mestre.
+- **Validação pendente:** executar a suíte Python, criar encontros reais com rolagens Shiny, verificar transferência à Box, testar troca de treinador no carrossel e conferir visual claro/escuro e mobile.
+
+
+### Etapa 09 — Ajuste de qualidade de imagens Pokémon (implementação preparada)
+
+- Identificada regra `image-rendering: pixelated` no carrossel, miniaturas, cards do mestre e Campo. Correção via CSS específico carregado por último.
+- Preparado comando de sincronização HD opcional com execução somente mediante `--aplicar`; usa arquivos HOME de 512 px ou official-artwork 475 px, quando disponíveis, com verificação de PNG e preservação de URLs personalizadas.
+- Adicionados testes automáticos para filtros de fonte, tamanho mínimo e simulação/aplicação sem rede.
+- Pendente: testes integrados no ambiente do usuário e validação dos downloads reais no PostgreSQL e no navegador.
+
+### 2026-10-25 — Etapa 09.1: Recuperação das imagens HD pendentes
+
+- Recebido relatório real com **953 formas atualizadas e 110 não atualizadas**. O trecho explícito mostra 90 falhas (88 HTTP 404, 1 timeout, 1 resposta grande); as 20 não detalhadas estão no começo do catálogo, provavelmente Arceus e Aegislash.
+- Criada tradução controlada dos códigos de formas para a PokéAPI, consulta adicional de `pokemon-form`, tentativa de HOME e official-artwork, retry de falhas transitórias, limite de JSON ampliado e atualização independente das URLs normal/Shiny.
+- Criado `midia pokemon-hd-pendentes` e relatório JSON no diretório de HD para localizar exatamente o que ainda falta depois da execução.
+- Atualizadas a documentação e a suíte de testes; sem migration, sem alterações diretas no PostgreSQL. O novo download precisa ser validado na máquina do usuário.
+
+
+### Etapa 09.2 — Recuperação de oito artes finais (25/10/2026)
+O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny), `frillish` (ambas), `jellicent` (ambas), `minior-nucleo` (ambas), `pikachu-parceiro` (Shiny), `pyroar` (ambas), `zacian-heroi` (ambas), `zamazenta-heroi` (ambas). O sincronizador passou a testar fontes WebP 512px além de PNGs, inclui IDs exatos de cinco espécies problemáticas e oferece `--representativas` para opções explicitamente aproximadas de parceiro/núcleo Minior. Nenhuma migration foi criada; nenhuma alteração é aplicada sem `--aplicar`; resultado de integração PostgreSQL/download pendente de validação do usuário. Ver `docs/IMAGENS_POKEMON_HD.md`.

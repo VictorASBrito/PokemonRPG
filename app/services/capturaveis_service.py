@@ -22,6 +22,8 @@ class PainelCapturaveisMestre:
     encontrados_por: list[dict[str, str]]
     total_ativos: int
     limite: int
+    total_shiny: int
+    total_encontradores: int
 
 
 def _campanha_ativa(campanha_codigo: str, *, bloquear: bool = False) -> Campanha | None:
@@ -57,6 +59,27 @@ def _genero_aleatorio(campanha_id: uuid.UUID) -> str:
     return "Ø"
 
 
+def sortear_shiny(numeros_shiny: Any) -> tuple[bool, int]:
+    """Cada encontro usa 1d100; coincide com os números Shiny do encontrador.
+
+    Não usa número da Pokédex. O resultado é único para aquele encontro,
+    permanece salvo e não é sorteado novamente ao transferir à Box.
+    """
+    validos: set[int] = set()
+    if isinstance(numeros_shiny, list):
+        for valor in numeros_shiny:
+            if isinstance(valor, bool):
+                continue
+            try:
+                numero = int(valor)
+            except (ValueError, TypeError, OverflowError):
+                continue
+            if 1 <= numero <= 100:
+                validos.add(numero)
+    resultado = random.randint(1, 100)
+    return resultado in validos, resultado
+
+
 def _tipos_forma(forma: FormaPokemon) -> list[dict[str, str]]:
     tipos: list[dict[str, str]] = []
     for relacao in sorted(forma.tipos, key=lambda item: item.posicao):
@@ -80,6 +103,7 @@ def _serializar(capturavel: PokemonCapturavel) -> dict[str, Any]:
         "imagem": _imagem_forma(capturavel),
         "tipos": _tipos_forma(capturavel.forma_pokemon),
         "encontrado_por": capturavel.encontrado_por.nome if capturavel.encontrado_por else "Não definido",
+        "encontrado_por_id": str(capturavel.encontrado_por_personagem_id) if capturavel.encontrado_por_personagem_id else "",
         "natureza": capturavel.natureza.nome if capturavel.natureza else "",
         "genero": capturavel.genero or "Ø",
         "shiny": capturavel.shiny,
@@ -121,6 +145,8 @@ def carregar_painel_capturaveis_mestre(*, campanha_codigo: str) -> PainelCaptura
             encontrados_por=[],
             total_ativos=0,
             limite=LIMITE_CAPTURAVEIS,
+            total_shiny=0,
+            total_encontradores=0,
         )
 
     capturaveis = list(db.session.execute(_consulta_capturaveis(campanha.id)).scalars())
@@ -143,6 +169,8 @@ def carregar_painel_capturaveis_mestre(*, campanha_codigo: str) -> PainelCaptura
         encontrados_por=[{"id": str(item.id), "nome": item.nome} for item in personagens],
         total_ativos=len(capturaveis),
         limite=LIMITE_CAPTURAVEIS,
+        total_shiny=sum(bool(item.shiny) for item in capturaveis),
+        total_encontradores=len({item.encontrado_por_personagem_id for item in capturaveis if item.encontrado_por_personagem_id}),
     )
 
 
@@ -199,13 +227,14 @@ def criar_capturavel_campo(
         raise ValueError(f"O campo já atingiu o limite de {LIMITE_CAPTURAVEIS} Pokémon capturáveis.")
 
     natureza = _natureza_aleatoria()
+    shiny, numero_sorteado = sortear_shiny(encontrado_por.numeros_shiny)
     capturavel = PokemonCapturavel(
         campanha_id=campanha.id,
         forma_pokemon_id=forma.id,
         encontrado_por_personagem_id=encontrado_por.id,
         natureza_id=natureza.id if natureza else None,
         genero=_genero_aleatorio(campanha.id),
-        shiny=False,
+        shiny=shiny,
         ordem=ordem,
         ativo=True,
     )
@@ -222,6 +251,8 @@ def criar_capturavel_campo(
                 "campanha_codigo": campanha.codigo,
                 "forma": forma.nome,
                 "encontrado_por": encontrado_por.nome,
+                "shiny": shiny,
+                "sorteio_shiny": numero_sorteado,
             },
         )
     )

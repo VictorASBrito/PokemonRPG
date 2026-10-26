@@ -4,111 +4,144 @@
 {% block titulo %}Capturáveis em campo | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css', v='etapa-08') }}">
 {% endblock %}
 
 {% block conteudo %}
-<section class="capturaveis-topo ui-card">
-    <div>
-        <p class="rotulo">Mestre</p>
-        <h1>Pokémon capturáveis em campo</h1>
-        <p>Use esta tela para registrar os Pokémon encontrados pelos jogadores. Até {{ painel.limite }} podem ficar ativos ao mesmo tempo.</p>
-    </div>
-    <div class="capturaveis-resumo">
-        <strong>{{ painel.total_ativos }}/{{ painel.limite }}</strong>
-        <span>ativos no momento</span>
-    </div>
-</section>
-
-<section class="capturaveis-layout">
-    <section class="ui-card capturaveis-formulario-card">
-        <div class="titulo-secao">
-            <div>
-                <p class="rotulo">Novo registro</p>
-                <h2>Adicionar capturável</h2>
-            </div>
+<div class="captura-pagina captura-pagina-mestre" data-capturas-mestre>
+    <header class="captura-cabecalho">
+        <div>
+            <p class="rotulo">Campanha {{ painel.campanha.nome }} · Gerenciador de encontros</p>
+            <h1>Pokémon capturáveis</h1>
+            <p>Prepare os encontros da mesa, acompanhe quem encontrou cada Pokémon e atribua as capturas quando decidir.</p>
         </div>
-        <form method="post" class="capturaveis-formulario">
-            <div class="campo campo-amplo">
-                <label for="forma_nome">Espécie ou forma</label>
-                <input id="forma_nome" name="forma_nome" type="search" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}" data-seletor-visual="pokemon" data-seletor-alvo="forma_id" placeholder="Pesquisar no catálogo" autocomplete="off" required>
-                <small>Digite o nome e selecione a espécie na lista de resultados.</small>
-                <input id="forma_id" name="forma_id" type="hidden">
-            </div>
-            <div class="campo">
-                <label for="encontrado_por_personagem_id">Encontrado por</label>
-                <select id="encontrado_por_personagem_id" name="encontrado_por_personagem_id" required>
-                    <option value="">Selecione o jogador</option>
-                    {% for personagem in painel.encontrados_por %}
-                        <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="capturaveis-formulario-acoes">
-                <button class="botao botao-primario" type="submit">Adicionar ao campo</button>
-            </div>
-        </form>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('mestre.dashboard') }}">Voltar ao painel</a>
+    </header>
+
+    <section class="captura-metricas" aria-label="Resumo dos capturáveis">
+        <div class="captura-metrica"><span>Em campo</span><strong>{{ painel.total_ativos }} <small>/ {{ painel.limite }}</small></strong></div>
+        <div class="captura-metrica"><span>Vagas restantes</span><strong>{{ painel.limite - painel.total_ativos }}</strong></div>
+        <div class="captura-metrica"><span>Shinies</span><strong>{{ painel.total_shiny }}</strong></div>
+        <div class="captura-metrica"><span>Treinadores envolvidos</span><strong>{{ painel.total_encontradores }}</strong></div>
     </section>
 
-    <section class="capturaveis-lista-wrap">
-        <div class="titulo-secao titulo-secao-lista">
-            <div>
-                <p class="rotulo">Campo atual</p>
-                <h2>Disponíveis para captura</h2>
+    <div class="captura-gestao">
+        <aside class="captura-criacao ui-card">
+            <div class="captura-secao-titulo">
+                <p class="rotulo">Novo encontro</p>
+                <h2>Adicionar ao campo</h2>
+                <p>Escolha a espécie e o treinador que encontrou o Pokémon.</p>
             </div>
-        </div>
-        {% if painel.capturaveis %}
-            <div class="capturaveis-grade">
+            <form method="post" class="capturaveis-formulario" data-captura-form>
+                <div class="campo">
+                    <label for="forma_nome">Espécie ou forma</label>
+                    <input id="forma_nome" name="forma_nome" type="search"
+                        data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+                        data-seletor-visual="pokemon" data-seletor-alvo="forma_id"
+                        placeholder="Ex.: Bulbasaur" autocomplete="off" required>
+                    <small>Selecione uma opção da lista para escolher a forma correta.</small>
+                    <input id="forma_id" name="forma_id" type="hidden">
+                </div>
+                <div class="captura-previa" data-captura-previa hidden aria-live="polite">
+                    <div class="captura-previa-sprite" data-previa-sprite></div>
+                    <div><strong data-previa-nome></strong><div class="captura-tipos" data-previa-tipos></div></div>
+                </div>
+                <div class="campo">
+                    <label for="encontrado_por_personagem_id">Encontrado por</label>
+                    <select id="encontrado_por_personagem_id" name="encontrado_por_personagem_id" required>
+                        <option value="">Selecione o treinador</option>
+                        {% for personagem in painel.encontrados_por %}
+                        <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <p class="captura-regra-shiny">O sistema sorteia 1–100 e compara com os números Shiny do treinador selecionado ao adicionar. O resultado é preservado na Box.</p>
+                <button class="botao botao-primario captura-adicionar" type="submit" {% if painel.total_ativos >= painel.limite %}disabled{% endif %}>
+                    Adicionar Pokémon
+                </button>
+            </form>
+        </aside>
+
+        <section class="captura-listagem" aria-labelledby="captura-listagem-titulo">
+            <div class="captura-listagem-titulo">
+                <div>
+                    <p class="rotulo">Encontros atuais</p>
+                    <h2 id="captura-listagem-titulo">Disponíveis para captura</h2>
+                </div>
+                <span class="captura-contador" data-captura-contador>{{ painel.total_ativos }} exibidos</span>
+            </div>
+            <div class="captura-filtros ui-card" role="search" aria-label="Filtrar capturáveis">
+                <div class="campo">
+                    <label for="captura-filtro-nome">Pesquisar</label>
+                    <input type="search" id="captura-filtro-nome" placeholder="Nome do Pokémon" data-filtro-nome>
+                </div>
+                <div class="campo">
+                    <label for="captura-filtro-jogador">Treinador</label>
+                    <select id="captura-filtro-jogador" data-filtro-treinador>
+                        <option value="">Todos os treinadores</option>
+                        {% for personagem in painel.encontrados_por %}
+                        <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <label class="captura-checkbox"><input type="checkbox" data-filtro-shiny> Apenas Shiny</label>
+            </div>
+
+            {% if painel.capturaveis %}
+            <div class="capturaveis-grade" data-capturaveis-grade>
                 {% for item in painel.capturaveis %}
-                <article class="capturavel-card ui-card">
-                    <div class="capturavel-ordem">#{{ item.ordem }}</div>
-                    <div class="capturavel-imagem">
-                        {% if item.imagem %}
-                            <img src="{{ item.imagem }}" alt="{{ item.nome }}">
-                        {% else %}
-                            <div class="capturavel-placeholder" aria-hidden="true">◈</div>
-                        {% endif %}
+                <article class="capturavel-card ui-card {% if item.shiny %}capturavel-card-shiny{% endif %}"
+                    data-captura-card data-nome="{{ item.nome|lower }}"
+                    data-encontrador="{{ item.encontrado_por_id }}" data-shiny="{{ '1' if item.shiny else '0' }}">
+                    <div class="capturavel-visual">
+                        <span class="capturavel-ordem">#{{ item.ordem }}</span>
+                        {% if item.shiny %}<span class="captura-selo-shiny">✦ Shiny</span>{% endif %}
+                        <div class="capturavel-imagem">
+                            {% if item.imagem %}<img src="{{ item.imagem }}" alt="{{ item.nome }}" loading="lazy">
+                            {% else %}<div class="capturavel-placeholder" aria-hidden="true">◇</div>{% endif %}
+                        </div>
                     </div>
                     <div class="capturavel-conteudo">
                         <h3>{{ item.nome }}</h3>
+                        <div class="captura-tipos">{% for tipo in item.tipos %}{{ selo_tipo(tipo.nome) }}{% endfor %}</div>
                         <p class="capturavel-encontrado">Encontrado por <strong>{{ item.encontrado_por }}</strong></p>
-                        <div class="capturavel-tipos">
-                            {% for tipo in item.tipos %}
-                                {{ selo_tipo(tipo.nome) }}
-                            {% endfor %}
-                        </div>
                         <dl class="capturavel-meta">
                             <div><dt>Natureza</dt><dd>{{ item.natureza or '—' }}</dd></div>
                             <div><dt>Sexo</dt><dd>{{ item.genero or 'Ø' }}</dd></div>
                         </dl>
                     </div>
-                    <form method="post" action="{{ url_for('capturas.atribuir_mestre', capturavel_id=item.id) }}" class="capturavel-atribuir-form">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <label for="destinatario-{{ item.id }}">Atribuir à Box de</label>
-                        <select id="destinatario-{{ item.id }}" name="personagem_id" required>
-                            <option value="">Escolha o jogador</option>
-                            {% for personagem in painel.encontrados_por %}
-                                <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="botao botao-primario" type="submit">Atribuir à Box</button>
-                    </form>
-                                        <form method="post" action="{{ url_for('capturas.remover_mestre', capturavel_id=item.id) }}" class="capturavel-acoes">
-                        <button class="botao botao-secundario" type="submit">Remover</button>
-                    </form>
+                    <div class="capturavel-operacoes">
+                        <form method="post" action="{{ url_for('capturas.atribuir_mestre', capturavel_id=item.id) }}" class="capturavel-atribuir-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <label for="destinatario-{{ item.id }}">Enviar para a Box</label>
+                            <select id="destinatario-{{ item.id }}" name="personagem_id" required>
+                                <option value="">Escolha o destinatário</option>
+                                {% for personagem in painel.encontrados_por %}
+                                <option value="{{ personagem.id }}" {% if personagem.id == item.encontrado_por_id %}selected{% endif %}>{{ personagem.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="botao botao-primario" type="submit">Atribuir à Box</button>
+                        </form>
+                        <form method="post" action="{{ url_for('capturas.remover_mestre', capturavel_id=item.id) }}" class="capturavel-acoes">
+                            <button class="botao botao-secundario" type="submit" aria-label="Remover {{ item.nome }} do campo">Remover</button>
+                        </form>
+                    </div>
                 </article>
                 {% endfor %}
             </div>
-        {% else %}
-            <section class="ui-card capturaveis-vazio">
-                <h3>Nenhum Pokémon em campo</h3>
-                <p>Quando o mestre adicionar um novo encontro, ele aparecerá aqui para toda a mesa.</p>
-            </section>
-        {% endif %}
-    </section>
-</section>
+            <div class="captura-vazio-filtro ui-card" data-filtro-vazio hidden>Nenhum Pokémon corresponde aos filtros selecionados.</div>
+            {% else %}
+            <div class="captura-estado-vazio ui-card">
+                <h3>O campo está livre</h3>
+                <p>Adicione um Pokémon ao lado para iniciar um novo encontro.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='capturaveis-052') }}"></script>
+<script src="{{ url_for('static', filename='js/capturaveis.js', v='etapa-08') }}" defer></script>
 {% endblock %}
