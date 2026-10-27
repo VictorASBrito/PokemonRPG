@@ -66,3 +66,12 @@ node --test tests/test_capturaveis_ui.js
 ```
 
 Não há migration na Etapa 08: `Personagem.numeros_shiny`, `PokemonCapturavel.shiny` e o histórico já existem. Faça backup antes das atualizações e confirme visualmente os temas claro e escuro e o layout móvel.
+
+
+## Correção 09.3 — Visibilidade inicial do carrossel (26/10/2026)
+
+- A tela de jogadores passa a abrir com o filtro **Todos os Pokémon** selecionado, mesmo quando o jogador possui encontros próprios.
+- O primeiro encontro encontrado pelo personagem logado recebe o foco inicial; se não houver nenhum, começa no primeiro encontro geral.
+- Desde a abertura, todas as miniaturas e a navegação entre todos os capturáveis permanecem acessíveis; **Meus encontrados** e os filtros por treinador continuam disponíveis como opções manuais.
+- O ajuste é exclusivamente de interface (`templates/capturas/jogador.html` e `static/js/capturaveis.js`). Não altera sorteios Shiny, atribuições, imagens HD, permissões ou o banco de dados.
+- Verificações: `node --test tests/test_capturaveis_ui.js` e `python -m pytest -q tests/test_capturaveis_shiny_carrossel.py`.

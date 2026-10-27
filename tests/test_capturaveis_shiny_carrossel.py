@@ -109,6 +109,9 @@ def test_carrossel_exibe_todos_e_prioriza_encontros_proprios(app_db, client_db):
     assert 'data-carousel-miniatura' in html
     assert 'data-carousel-proximo' in html
     assert "Todos os Pokémon" in html
+    assert '<option value="todos" selected>Todos os Pokémon</option>' in html
+    assert '<option value="meus">Meus encontrados</option>' in html
+    assert "etapa-09-3" in html
     assert "Nina" in html
     assert "capturaveis.js" in html
 

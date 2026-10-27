@@ -386,3 +386,10 @@ Implementada a primeira versão do **campo compartilhado com até 16 times**. Jo
 
 ### Etapa 09.2 — Recuperação de oito artes finais (25/10/2026)
 O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny), `frillish` (ambas), `jellicent` (ambas), `minior-nucleo` (ambas), `pikachu-parceiro` (Shiny), `pyroar` (ambas), `zacian-heroi` (ambas), `zamazenta-heroi` (ambas). O sincronizador passou a testar fontes WebP 512px além de PNGs, inclui IDs exatos de cinco espécies problemáticas e oferece `--representativas` para opções explicitamente aproximadas de parceiro/núcleo Minior. Nenhuma migration foi criada; nenhuma alteração é aplicada sem `--aplicar`; resultado de integração PostgreSQL/download pendente de validação do usuário. Ver `docs/IMAGENS_POKEMON_HD.md`.
+
+
+### Etapa 09.3 — Visibilidade de todos os capturáveis no carrossel (26/10/2026)
+- Ajustada a inicialização de `/jogador/capturaveis`: o filtro padrão agora é **Todos os Pokémon**; quando há encontro próprio, ele é apenas o slide inicial selecionado, sem esconder Pokémon de outros jogadores.
+- Setas, miniaturas e opção de seleção direta abrangem todos desde a entrada. O filtro **Meus encontrados** continua disponível.
+- Arquivos: `templates/capturas/jogador.html`, `static/js/capturaveis.js`, `tests/test_capturaveis_ui.js`, `tests/test_capturaveis_shiny_carrossel.py`. Querystring do JS alterada para evitar cache da versão antiga.
+- Correção de interface, sem migration, sem impacto em imagens HD, capturas, Shiny ou Boxes. A validação real pelo mestre permanece pendente.

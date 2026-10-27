@@ -184,3 +184,10 @@ Implementada a primeira versão do **campo compartilhado com até 16 times**. Jo
 
 ### Etapa 09.2 — Recuperação de oito artes finais (25/10/2026)
 O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny), `frillish` (ambas), `jellicent` (ambas), `minior-nucleo` (ambas), `pikachu-parceiro` (Shiny), `pyroar` (ambas), `zacian-heroi` (ambas), `zamazenta-heroi` (ambas). O sincronizador passou a testar fontes WebP 512px além de PNGs, inclui IDs exatos de cinco espécies problemáticas e oferece `--representativas` para opções explicitamente aproximadas de parceiro/núcleo Minior. Nenhuma migration foi criada; nenhuma alteração é aplicada sem `--aplicar`; resultado de integração PostgreSQL/download pendente de validação do usuário. Ver `docs/IMAGENS_POKEMON_HD.md`.
+
+
+### 2026-10-26 — Correção 09.3: todos os encontros visíveis na abertura
+- O mestre relatou que, ao abrir a vitrine dos jogadores, o filtro padrão **Meus encontrados** ocultava os Pokémon dos demais até trocar manualmente para **Todos os Pokémon**.
+- Corrigido o JavaScript para iniciar com a lista completa e focar, se disponível, o primeiro Pokémon encontrado pelo próprio personagem. O HTML passa a selecionar **Todos os Pokémon** por padrão, inclusive antes da inicialização do script.
+- Acrescentados testes de regressão em Node.js: encontro próprio fora da primeira posição; navegação global desde a abertura; filtro Meus e retorno a Todos; seleção direta de Pokémon de outro treinador; jogador sem encontro próprio. Ajustado teste Flask de marcação HTML.
+- Não há migration ou mudanças na lógica de captura. A versão do JavaScript na URL foi alterada para evitar cache de navegador.

@@ -23,8 +23,8 @@
         <div class="campo">
             <label for="captura-visao">Mostrar encontros</label>
             <select id="captura-visao" data-carousel-filtro>
+                <option value="todos" selected>Todos os Pokémon</option>
                 <option value="meus">Meus encontrados</option>
-                <option value="todos">Todos os Pokémon</option>
                 {% set encontradores = namespace(ids=[]) %}
                 {% for item in capturaveis %}
                     {% if item.encontrado_por_id and item.encontrado_por_id not in encontradores.ids %}
@@ -99,5 +99,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/capturaveis.js', v='etapa-08') }}" defer></script>
+<script src="{{ url_for('static', filename='js/capturaveis.js', v='etapa-09-3') }}" defer></script>
 {% endblock %}

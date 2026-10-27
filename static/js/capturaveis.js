@@ -106,9 +106,10 @@
         const preferido = filtrados.findIndex((slide) => slide.dataset.id === preferidoId);
         mostrar(preferido >= 0 ? preferido : 0);
     };
-    if (!meuId || !slides.some((slide) => slide.dataset.encontrador === meuId)) {
-        if (filtro) filtro.value = 'todos';
-    }
+    // Todos os encontros devem estar disponíveis desde a abertura.
+    // A preferência pessoal muda apenas o slide selecionado, nunca o filtro inicial.
+    const encontroProprio = slides.find((slide) => !!meuId && slide.dataset.encontrador === meuId);
+    if (filtro) filtro.value = 'todos';
     anterior?.addEventListener('click', () => mostrar(indice - 1));
     proximo?.addEventListener('click', () => mostrar(indice + 1));
     filtro?.addEventListener('change', () => aplicarFiltro());
@@ -128,6 +129,6 @@
         evento.preventDefault();
         mostrar(indice + (evento.key === 'ArrowRight' ? 1 : -1));
     });
-    aplicarFiltro();
+    aplicarFiltro(encontroProprio?.dataset.id || '');
     carrossel.dataset.carouselReady = 'true';
 })();
