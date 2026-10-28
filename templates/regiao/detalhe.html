@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block titulo %}{{ local.nome }} | Atlas de Ankar{% endblock %}
-{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a2') }}">{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a3') }}">{% endblock %}
 {% block conteudo %}
 <nav class="ankar-trilha" aria-label="Localização"><a href="{{ url_for('regiao.indice_ankar') }}">Atlas de Ankar</a><span aria-hidden="true">/</span><span>{{ local.nome }}</span></nav>
 <section class="ankar-detalhe-hero">
@@ -78,5 +78,10 @@
   {% endfor %}
 </section>
 <p class="ankar-nota">Dados provenientes de <strong>{{ local.origem }}</strong>, aba <strong>{{ local.aba }}</strong>. O símbolo <strong>x</strong> é exibido como marcador original, sem inventar uma espécie. Eventuais sobreposições e lacunas do d100 permanecem como na planilha.</p>
+<div class="ankar-acoes-voltar">
 <a href="{{ url_for('regiao.indice_ankar') }}" class="ankar-voltar">← Voltar ao atlas</a>
+{% if ponto_mapa %}
+<a href="{{ url_for('regiao.indice_ankar', local=local.id) }}#ankar-mapa" class="ankar-voltar">Ver localização no mapa ↗</a>
+{% endif %}
+</div>
 {% endblock %}

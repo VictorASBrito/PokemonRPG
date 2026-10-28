@@ -428,3 +428,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - O instalador, o Atlas visual, os JSON, a navegação, os acessos e as planilhas não sofreram mudanças nesta correção.
 - Relato do usuário antes do patch: 9 testes passaram e 1 falhou; aguardar reexecução dos 10 testes no Windows para confirmar a correção no ambiente real.
 - **Sem migrations ou escrita no PostgreSQL.**
+
+<!-- ANKAR_10A3_REVISAO_VISUAL -->
+### Etapa 10A.3 — Mapa interativo e revisão visual (28/10/2026)
+- Integração **somente leitura** do `Mapa.jpg` original em `/regiao/ankar`: 119 marcadores manuais, 73 rotas, 26 cidades e 20 POIs vinculados aos slugs existentes.
+- Filtros de pontos, zoom, toque, identificação e links de detalhe; acesso exclusivo do mestre, como na etapa 10A.2.
+- CSS do Atlas harmonizado com as variáveis do design system; estilos globais e telas de jogador permanecem inalterados.
+- Mapa em `static/img/ankar-mapa.jpg` e posições em `app/data/mapa_ankar_pontos.json`. Não representa caminhos calculados.
+- Seis testes de mapa e verificações Chromium isoladas em 390/820/1440 px passaram. Validação integrada do Flask e do site real pendente no ambiente do mestre.
+- Sem migration, acesso a PostgreSQL, alteração de planilha ou de contas.
+- Detalhes: `docs/REVISAO_VISUAL_ANKAR_10A3.md`.

@@ -227,3 +227,12 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Resultado anterior informado pelo usuário:** `9 passed, 1 failed in 3.01s` antes da correção.
 - **Migrations:** nenhuma. **PostgreSQL:** nenhuma alteração. **GitHub:** nenhuma alteração.
 - **Próximo:** `python -m pytest -q tests/test_atlas_ankar.py tests/test_atlas_ankar_flask.py` no Windows e conferir navegação visual.
+
+<!-- ANKAR_10A3_REVISAO_VISUAL -->
+### 2026-10-28 — Etapa 10A.3: mapa interativo e revisão visual
+- **Status:** IMPLEMENTAÇÃO INCREMENTAL, TESTES ISOLADOS PASSARAM; VALIDAÇÃO FLASK/LOCAL PENDENTE.
+- **Objetivo:** aproveitar o mapa original sem reformular a experiência dos jogadores em mobile/tablet/desktop.
+- **Arquivos:** JSON com 119 marcadores, JPG original, serviço/rota Atlas, índice/detalhe, CSS/JS Atlas, testes e documentação.
+- **Preservação:** nenhuma tela do jogador, CSS global, banco, `.env`, uploads ou planilha original modificados. Sem migrations.
+- **Validações locais:** 6 testes pytest, sintaxe Node, compilação Python e interações Chromium nas larguras 390/820/1440 px. Sem testes integrados Flask neste ambiente.
+- **Próxima ação:** testar no servidor real do mestre, ajustar eventuais coordenadas e revisar capturas das telas existentes antes de mudanças globais.

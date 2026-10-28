@@ -20,3 +20,16 @@ def localizar_ankar(slug: str) -> dict | None:
         if local["id"] == slug:
             return local
     return None
+
+CAMINHO_MAPA = Path(__file__).resolve().parent.parent / "data" / "mapa_ankar_pontos.json"
+
+
+@lru_cache(maxsize=1)
+def carregar_mapa_ankar() -> dict:
+    """Marcadores curados manualmente sobre a imagem do mapa, sem acessar o banco."""
+    with CAMINHO_MAPA.open(encoding="utf-8") as arquivo:
+        return json.load(arquivo)
+
+
+def ponto_no_mapa(slug: str) -> dict | None:
+    return next((p for p in carregar_mapa_ankar()["pontos"] if p["id"] == slug), None)

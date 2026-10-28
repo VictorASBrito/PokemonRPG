@@ -1,0 +1,16 @@
+ETAPA 10A.3 - REVISAO VISUAL DO ATLAS DE ANKAR
+Pacote incremental: somente arquivos específicos do Atlas.
+Pré-requisito: Etapa 10A.2 previamente instalada.
+Não contém o catálogo original (app/data/catalogo_ankar_visual.json), app/__init__.py ou templates/base.html.
+
+2b1505b95b1d37f2aa3fe4bba82832e7e0193489c10ab08b7c5d4adb50e086ed  app/data/mapa_ankar_pontos.json
+5819faa868ca75f26f48029fa94771fde955a3c372ba90fb00330a724d986a19  app/routes/regiao.py
+f4dbf0762325cba2124196a338e76db15c46972eb425fcf5bf338803b9f65c64  app/services/regiao_ankar_service.py
+f2f69d6c22930c2fbd5c98406a099f303421e46f641f5c27034cd05422da9645  templates/regiao/indice.html
+9a5c0f363688602eaf64c1f9a19014644e3e15aee1ca314913b9ead8407c19dc  templates/regiao/detalhe.html
+e42d5cbbb6c7066bda9611621177297b9bb66aae504c4bc36ded141cd864ad4e  static/css/atlas-ankar.css
+c65f86be46bad543d2e6b4927b94a807f523a69e2d4397e299303c082c3f0e1a  static/js/atlas-ankar.js
+82225bb53d97c3f1ddd13f128b2605298d387d4ab7b3736cf203960d1377c70e  static/img/ankar-mapa.jpg
+b3496cb4a902913204b68f037cd45d6c2799b8162b891127be4c808f98f3edd1  tests/test_mapa_ankar_visual.py
+32cf5bc8e0315663e4e7d9271749f0f49a039e055c6c906cb48b507e7761a1a0  scripts/registrar_revisao_visual_ankar.py
+6ae004538344b676ca242377c9bba5e723198018c482d1659a5880bbd76360c8  docs/REVISAO_VISUAL_ANKAR_10A3.md

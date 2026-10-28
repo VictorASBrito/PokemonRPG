@@ -1,0 +1,1196 @@
+{
+  "versao": "10A.3",
+  "imagem": "Mapa.jpg fornecido pelo mestre; posições relativas identificadas manualmente no mapa",
+  "pontos": [
+    {
+      "id": "rota-1",
+      "x": 81.534,
+      "y": 7.376,
+      "numero": "1",
+      "tipo": "rota",
+      "nome": "ROTA 1",
+      "habitat": "Oceano",
+      "pokemons": 10
+    },
+    {
+      "id": "rota-2",
+      "x": 72.727,
+      "y": 10.496,
+      "numero": "2",
+      "tipo": "rota",
+      "nome": "ROTA 2",
+      "habitat": "Praia",
+      "pokemons": 14
+    },
+    {
+      "id": "rota-3",
+      "x": 66.667,
+      "y": 10.496,
+      "numero": "3",
+      "tipo": "rota",
+      "nome": "ROTA 3",
+      "habitat": "Oceano",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-4",
+      "x": 57.292,
+      "y": 7.447,
+      "numero": "4",
+      "tipo": "rota",
+      "nome": "ROTA 4",
+      "habitat": "Oceano",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-5",
+      "x": 51.231,
+      "y": 7.943,
+      "numero": "5",
+      "tipo": "rota",
+      "nome": "ROTA 5",
+      "habitat": "Planície",
+      "pokemons": 25
+    },
+    {
+      "id": "rota-6",
+      "x": 38.542,
+      "y": 10.709,
+      "numero": "6",
+      "tipo": "rota",
+      "nome": "ROTA 6",
+      "habitat": "Planície",
+      "pokemons": 26
+    },
+    {
+      "id": "rota-7",
+      "x": 34.186,
+      "y": 13.475,
+      "numero": "7",
+      "tipo": "rota",
+      "nome": "ROTA 7",
+      "habitat": "Praia",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-8",
+      "x": 31.723,
+      "y": 15.674,
+      "numero": "8",
+      "tipo": "rota",
+      "nome": "ROTA 8",
+      "habitat": "Praia",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-9",
+      "x": 22.822,
+      "y": 18.298,
+      "numero": "9",
+      "tipo": "rota",
+      "nome": "ROTA 9",
+      "habitat": "Planície",
+      "pokemons": 9
+    },
+    {
+      "id": "rota-10",
+      "x": 15.057,
+      "y": 18.014,
+      "numero": "10",
+      "tipo": "rota",
+      "nome": "ROTA 10",
+      "habitat": "Pântano",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-11",
+      "x": 10.511,
+      "y": 16.667,
+      "numero": "11",
+      "tipo": "rota",
+      "nome": "ROTA 11",
+      "habitat": "Montanha",
+      "pokemons": 22
+    },
+    {
+      "id": "rota-12",
+      "x": 4.545,
+      "y": 13.688,
+      "numero": "12",
+      "tipo": "rota",
+      "nome": "ROTA 12",
+      "habitat": "Montanha",
+      "pokemons": 22
+    },
+    {
+      "id": "rota-13",
+      "x": 7.576,
+      "y": 22.34,
+      "numero": "13",
+      "tipo": "rota",
+      "nome": "ROTA 13",
+      "habitat": "Oceano",
+      "pokemons": 8
+    },
+    {
+      "id": "rota-14",
+      "x": 7.481,
+      "y": 33.617,
+      "numero": "14",
+      "tipo": "rota",
+      "nome": "ROTA 14",
+      "habitat": "Praia",
+      "pokemons": 7
+    },
+    {
+      "id": "rota-15",
+      "x": 10.227,
+      "y": 45.319,
+      "numero": "15",
+      "tipo": "rota",
+      "nome": "ROTA 15",
+      "habitat": "Planície",
+      "pokemons": 14
+    },
+    {
+      "id": "rota-16",
+      "x": 9.943,
+      "y": 54.326,
+      "numero": "16",
+      "tipo": "rota",
+      "nome": "ROTA 16",
+      "habitat": "Deserto",
+      "pokemons": 10
+    },
+    {
+      "id": "rota-17",
+      "x": 3.598,
+      "y": 57.376,
+      "numero": "17",
+      "tipo": "rota",
+      "nome": "ROTA 17",
+      "habitat": "Praia",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-18",
+      "x": 10.511,
+      "y": 66.241,
+      "numero": "18",
+      "tipo": "rota",
+      "nome": "ROTA 18",
+      "habitat": "Oceano",
+      "pokemons": 8
+    },
+    {
+      "id": "rota-19",
+      "x": 14.015,
+      "y": 75.248,
+      "numero": "19",
+      "tipo": "rota",
+      "nome": "ROTA 19",
+      "habitat": "Oceano",
+      "pokemons": 8
+    },
+    {
+      "id": "rota-20",
+      "x": 12.216,
+      "y": 96.95,
+      "numero": "20",
+      "tipo": "rota",
+      "nome": "ROTA 20",
+      "habitat": "Ártico",
+      "pokemons": 23
+    },
+    {
+      "id": "rota-21",
+      "x": 20.17,
+      "y": 93.617,
+      "numero": "21",
+      "tipo": "rota",
+      "nome": "ROTA 21",
+      "habitat": "Ártico",
+      "pokemons": 12
+    },
+    {
+      "id": "rota-22",
+      "x": 32.576,
+      "y": 90.922,
+      "numero": "22",
+      "tipo": "rota",
+      "nome": "ROTA 22",
+      "habitat": "Oceano",
+      "pokemons": 7
+    },
+    {
+      "id": "rota-23",
+      "x": 50.568,
+      "y": 89.362,
+      "numero": "23",
+      "tipo": "rota",
+      "nome": "ROTA 23",
+      "habitat": "Oceano",
+      "pokemons": 9
+    },
+    {
+      "id": "rota-24",
+      "x": 63.636,
+      "y": 85.461,
+      "numero": "24",
+      "tipo": "rota",
+      "nome": "ROTA 24",
+      "habitat": "Tundra",
+      "pokemons": 16
+    },
+    {
+      "id": "rota-25",
+      "x": 71.78,
+      "y": 88.582,
+      "numero": "25",
+      "tipo": "rota",
+      "nome": "ROTA 25",
+      "habitat": "Montanha",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-26",
+      "x": 74.432,
+      "y": 80.851,
+      "numero": "26",
+      "tipo": "rota",
+      "nome": "ROTA 26",
+      "habitat": "Oceano",
+      "pokemons": 8
+    },
+    {
+      "id": "rota-27",
+      "x": 78.788,
+      "y": 74.752,
+      "numero": "27",
+      "tipo": "rota",
+      "nome": "ROTA 27",
+      "habitat": "Praia",
+      "pokemons": 16
+    },
+    {
+      "id": "rota-28",
+      "x": 92.045,
+      "y": 76.596,
+      "numero": "28",
+      "tipo": "rota",
+      "nome": "ROTA 28",
+      "habitat": "Tundra",
+      "pokemons": 9
+    },
+    {
+      "id": "rota-29",
+      "x": 90.436,
+      "y": 70.638,
+      "numero": "29",
+      "tipo": "rota",
+      "nome": "ROTA 29",
+      "habitat": "Tundra",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-30",
+      "x": 85.606,
+      "y": 68.723,
+      "numero": "30",
+      "tipo": "rota",
+      "nome": "ROTA 30",
+      "habitat": "Tundra",
+      "pokemons": 18
+    },
+    {
+      "id": "rota-31",
+      "x": 79.167,
+      "y": 66.028,
+      "numero": "31",
+      "tipo": "rota",
+      "nome": "ROTA 31",
+      "habitat": "Rio",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-32",
+      "x": 67.14,
+      "y": 63.05,
+      "numero": "32",
+      "tipo": "rota",
+      "nome": "ROTA 32",
+      "habitat": "Planície",
+      "pokemons": 23
+    },
+    {
+      "id": "rota-33",
+      "x": 71.117,
+      "y": 54.823,
+      "numero": "33",
+      "tipo": "rota",
+      "nome": "ROTA 33",
+      "habitat": "Planície",
+      "pokemons": 8
+    },
+    {
+      "id": "rota-34",
+      "x": 83.239,
+      "y": 52.695,
+      "numero": "34",
+      "tipo": "rota",
+      "nome": "ROTA 34",
+      "habitat": "Deserto",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-35",
+      "x": 92.614,
+      "y": 53.262,
+      "numero": "35",
+      "tipo": "rota",
+      "nome": "ROTA 35",
+      "habitat": "Montanha",
+      "pokemons": 24
+    },
+    {
+      "id": "rota-36",
+      "x": 76.136,
+      "y": 45.603,
+      "numero": "36",
+      "tipo": "rota",
+      "nome": "ROTA 36",
+      "habitat": "Deserto",
+      "pokemons": 7
+    },
+    {
+      "id": "rota-37",
+      "x": 78.788,
+      "y": 37.801,
+      "numero": "37",
+      "tipo": "rota",
+      "nome": "ROTA 37",
+      "habitat": "Deserto",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-38",
+      "x": 80.303,
+      "y": 41.277,
+      "numero": "38",
+      "tipo": "rota",
+      "nome": "ROTA 38",
+      "habitat": "Deserto",
+      "pokemons": 12
+    },
+    {
+      "id": "rota-39",
+      "x": 82.955,
+      "y": 29.078,
+      "numero": "39",
+      "tipo": "rota",
+      "nome": "ROTA 39",
+      "habitat": "Deserto",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-40",
+      "x": 73.958,
+      "y": 31.064,
+      "numero": "40",
+      "tipo": "rota",
+      "nome": "ROTA 40",
+      "habitat": "Deserto",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-41",
+      "x": 70.928,
+      "y": 26.738,
+      "numero": "41",
+      "tipo": "rota",
+      "nome": "ROTA 41",
+      "habitat": "Planície",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-42",
+      "x": 71.402,
+      "y": 16.383,
+      "numero": "42",
+      "tipo": "rota",
+      "nome": "ROTA 42",
+      "habitat": "Floresta",
+      "pokemons": 22
+    },
+    {
+      "id": "rota-43",
+      "x": 83.807,
+      "y": 10.567,
+      "numero": "43",
+      "tipo": "rota",
+      "nome": "ROTA 43",
+      "habitat": "Floresta",
+      "pokemons": 23
+    },
+    {
+      "id": "rota-44",
+      "x": 79.261,
+      "y": 16.667,
+      "numero": "44",
+      "tipo": "rota",
+      "nome": "ROTA 44",
+      "habitat": "Floresta",
+      "pokemons": 24
+    },
+    {
+      "id": "rota-45",
+      "x": 92.045,
+      "y": 14.113,
+      "numero": "45",
+      "tipo": "rota",
+      "nome": "ROTA 45",
+      "habitat": "Deserto",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-46",
+      "x": 62.595,
+      "y": 22.553,
+      "numero": "46",
+      "tipo": "rota",
+      "nome": "ROTA 46",
+      "habitat": "Planície",
+      "pokemons": 17
+    },
+    {
+      "id": "rota-47",
+      "x": 57.292,
+      "y": 24.61,
+      "numero": "47",
+      "tipo": "rota",
+      "nome": "ROTA 47",
+      "habitat": "Floresta",
+      "pokemons": 28
+    },
+    {
+      "id": "rota-48",
+      "x": 44.602,
+      "y": 28.298,
+      "numero": "48",
+      "tipo": "rota",
+      "nome": "ROTA 48",
+      "habitat": "Planície",
+      "pokemons": 23
+    },
+    {
+      "id": "rota-49",
+      "x": 33.617,
+      "y": 21.631,
+      "numero": "49",
+      "tipo": "rota",
+      "nome": "ROTA 49",
+      "habitat": "Planície",
+      "pokemons": 22
+    },
+    {
+      "id": "rota-50",
+      "x": 31.25,
+      "y": 28.652,
+      "numero": "50",
+      "tipo": "rota",
+      "nome": "ROTA 50",
+      "habitat": "Floresta",
+      "pokemons": 27
+    },
+    {
+      "id": "rota-51",
+      "x": 27.083,
+      "y": 33.475,
+      "numero": "51",
+      "tipo": "rota",
+      "nome": "ROTA 51",
+      "habitat": "Planície",
+      "pokemons": 16
+    },
+    {
+      "id": "rota-52",
+      "x": 27.178,
+      "y": 38.723,
+      "numero": "52",
+      "tipo": "rota",
+      "nome": "ROTA 52",
+      "habitat": "Pântano",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-53",
+      "x": 15.625,
+      "y": 39.504,
+      "numero": "53",
+      "tipo": "rota",
+      "nome": "ROTA 53",
+      "habitat": "Floresta",
+      "pokemons": 26
+    },
+    {
+      "id": "rota-54",
+      "x": 36.458,
+      "y": 36.099,
+      "numero": "54",
+      "tipo": "rota",
+      "nome": "ROTA 54",
+      "habitat": "Pântano",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-55",
+      "x": 44.508,
+      "y": 32.837,
+      "numero": "55",
+      "tipo": "rota",
+      "nome": "ROTA 55",
+      "habitat": "Planície",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-56",
+      "x": 37.405,
+      "y": 39.291,
+      "numero": "56",
+      "tipo": "rota",
+      "nome": "ROTA 56",
+      "habitat": "Pântano",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-57",
+      "x": 45.739,
+      "y": 41.064,
+      "numero": "57",
+      "tipo": "rota",
+      "nome": "ROTA 57",
+      "habitat": "Floresta",
+      "pokemons": 27
+    },
+    {
+      "id": "rota-58",
+      "x": 52.178,
+      "y": 33.759,
+      "numero": "58",
+      "tipo": "rota",
+      "nome": "ROTA 58",
+      "habitat": "Floresta",
+      "pokemons": 26
+    },
+    {
+      "id": "rota-59",
+      "x": 59.091,
+      "y": 40.709,
+      "numero": "59",
+      "tipo": "rota",
+      "nome": "ROTA 59",
+      "habitat": "Floresta",
+      "pokemons": 22
+    },
+    {
+      "id": "rota-60",
+      "x": 60.038,
+      "y": 44.61,
+      "numero": "60",
+      "tipo": "rota",
+      "nome": "ROTA 60",
+      "habitat": "Floresta",
+      "pokemons": 17
+    },
+    {
+      "id": "rota-61",
+      "x": 60.985,
+      "y": 51.348,
+      "numero": "61",
+      "tipo": "rota",
+      "nome": "ROTA 61",
+      "habitat": "Planície",
+      "pokemons": 11
+    },
+    {
+      "id": "rota-62",
+      "x": 50.379,
+      "y": 57.092,
+      "numero": "62",
+      "tipo": "rota",
+      "nome": "ROTA 62",
+      "habitat": "Planície",
+      "pokemons": 18
+    },
+    {
+      "id": "rota-63",
+      "x": 41.383,
+      "y": 48.227,
+      "numero": "63",
+      "tipo": "rota",
+      "nome": "ROTA 63",
+      "habitat": "Planície",
+      "pokemons": 12
+    },
+    {
+      "id": "rota-64",
+      "x": 33.049,
+      "y": 52.411,
+      "numero": "64",
+      "tipo": "rota",
+      "nome": "ROTA 64",
+      "habitat": "Planície",
+      "pokemons": 13
+    },
+    {
+      "id": "rota-65",
+      "x": 37.689,
+      "y": 60.355,
+      "numero": "65",
+      "tipo": "rota",
+      "nome": "ROTA 65",
+      "habitat": "Floresta",
+      "pokemons": 28
+    },
+    {
+      "id": "rota-66",
+      "x": 44.034,
+      "y": 65.319,
+      "numero": "66",
+      "tipo": "rota",
+      "nome": "ROTA 66",
+      "habitat": "Floresta",
+      "pokemons": 28
+    },
+    {
+      "id": "rota-67",
+      "x": 52.178,
+      "y": 66.667,
+      "numero": "67",
+      "tipo": "rota",
+      "nome": "ROTA 67",
+      "habitat": "Tundra",
+      "pokemons": 20
+    },
+    {
+      "id": "rota-68",
+      "x": 65.436,
+      "y": 67.021,
+      "numero": "68",
+      "tipo": "rota",
+      "nome": "ROTA 68",
+      "habitat": "Tundra",
+      "pokemons": 18
+    },
+    {
+      "id": "rota-69",
+      "x": 56.913,
+      "y": 70.993,
+      "numero": "69",
+      "tipo": "rota",
+      "nome": "ROTA 69",
+      "habitat": "Praia",
+      "pokemons": 7
+    },
+    {
+      "id": "rota-70",
+      "x": 66.004,
+      "y": 79.645,
+      "numero": "70",
+      "tipo": "rota",
+      "nome": "ROTA 70",
+      "habitat": "Oceano",
+      "pokemons": 9
+    },
+    {
+      "id": "rota-71",
+      "x": 45.549,
+      "y": 93.262,
+      "numero": "71",
+      "tipo": "rota",
+      "nome": "ROTA 71",
+      "habitat": "Oceano",
+      "pokemons": 10
+    },
+    {
+      "id": "rota-72",
+      "x": 42.992,
+      "y": 96.596,
+      "numero": "72",
+      "tipo": "rota",
+      "nome": "ROTA 72",
+      "habitat": "Ártico",
+      "pokemons": 15
+    },
+    {
+      "id": "rota-73",
+      "x": 64.394,
+      "y": 5.745,
+      "numero": "73",
+      "tipo": "rota",
+      "nome": "ROTA 73",
+      "habitat": "Montanha",
+      "pokemons": 12
+    },
+    {
+      "id": "gym-01-psy",
+      "x": 93.845,
+      "y": 5.816,
+      "numero": "1",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 01 - YREZON",
+      "habitat": "Urbano",
+      "pokemons": 18
+    },
+    {
+      "id": "gym-02-wat",
+      "x": 8.523,
+      "y": 29.078,
+      "numero": "2",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 02 - FINNALGA",
+      "habitat": "Urbano",
+      "pokemons": 8
+    },
+    {
+      "id": "gym-03-ste",
+      "x": 89.962,
+      "y": 93.475,
+      "numero": "3",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 03 - DIANELT",
+      "habitat": "Urbano",
+      "pokemons": 11
+    },
+    {
+      "id": "gym-04-ele",
+      "x": 69.792,
+      "y": 21.489,
+      "numero": "4",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 04 - ZAPPEN",
+      "habitat": "Urbano",
+      "pokemons": 10
+    },
+    {
+      "id": "gym-05-fai",
+      "x": 45.36,
+      "y": 9.716,
+      "numero": "5",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 05 - LUFAY",
+      "habitat": "Urbano",
+      "pokemons": 11
+    },
+    {
+      "id": "gym-06-gra",
+      "x": 50.852,
+      "y": 29.078,
+      "numero": "6",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 06 - GRAMÁLIA",
+      "habitat": "Urbano",
+      "pokemons": 10
+    },
+    {
+      "id": "gym-07-bug",
+      "x": 38.352,
+      "y": 26.879,
+      "numero": "7",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 07 - KUUNA",
+      "habitat": "Urbano",
+      "pokemons": 9
+    },
+    {
+      "id": "gym-08-roc",
+      "x": 81.439,
+      "y": 31.773,
+      "numero": "8",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 08 - ALBAROCK",
+      "habitat": "Urbano",
+      "pokemons": 7
+    },
+    {
+      "id": "gym-09-poi",
+      "x": 32.292,
+      "y": 36.667,
+      "numero": "9",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 09 - MOSSKIP",
+      "habitat": "Urbano",
+      "pokemons": 5
+    },
+    {
+      "id": "gym-10-fly",
+      "x": 93.087,
+      "y": 50.142,
+      "numero": "10",
+      "tipo": "cidade",
+      "nome": "GREYPEAK",
+      "habitat": "Urbano",
+      "pokemons": 12
+    },
+    {
+      "id": "gym-11-nor",
+      "x": 39.394,
+      "y": 55.106,
+      "numero": "11",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 11 - PLENÚRIA",
+      "habitat": "Urbano",
+      "pokemons": 11
+    },
+    {
+      "id": "gym-12-gro",
+      "x": 9.754,
+      "y": 58.369,
+      "numero": "12",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 12 - SANDAR",
+      "habitat": "Urbano",
+      "pokemons": 7
+    },
+    {
+      "id": "gym-13-gho",
+      "x": 91.572,
+      "y": 73.83,
+      "numero": "13",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 13 - VELARDIS",
+      "habitat": "Urbano",
+      "pokemons": 7
+    },
+    {
+      "id": "gym-14-dra",
+      "x": 70.644,
+      "y": 86.383,
+      "numero": "14",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 14 - DRAGULCH",
+      "habitat": "Urbano",
+      "pokemons": 6
+    },
+    {
+      "id": "gym-15-fir",
+      "x": 66.193,
+      "y": 4.113,
+      "numero": "15",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 15 - ASHORNE",
+      "habitat": "Urbano",
+      "pokemons": 2
+    },
+    {
+      "id": "gym-16-fig",
+      "x": 4.735,
+      "y": 17.801,
+      "numero": "16",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 16 - KRAVIGA",
+      "habitat": "Urbano",
+      "pokemons": 9
+    },
+    {
+      "id": "gym-17-dar",
+      "x": 56.155,
+      "y": 42.128,
+      "numero": "17",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 17 - YANIX",
+      "habitat": "Urbano",
+      "pokemons": 7
+    },
+    {
+      "id": "gym-18-ice",
+      "x": 17.519,
+      "y": 95.957,
+      "numero": "18",
+      "tipo": "cidade",
+      "nome": "CIDADE GINÁSIO 18 - VALAIS",
+      "habitat": "Urbano",
+      "pokemons": 8
+    },
+    {
+      "id": "aux-01-lightmor",
+      "x": 61.553,
+      "y": 58.227,
+      "numero": "1",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 01 - LIGHTMOR",
+      "habitat": "Urbano",
+      "pokemons": 22
+    },
+    {
+      "id": "aux-02-gastrial",
+      "x": 34.943,
+      "y": 64.326,
+      "numero": "2",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 02 - GASTRIAL",
+      "habitat": "Urbano",
+      "pokemons": 14
+    },
+    {
+      "id": "aux-03-nanaban",
+      "x": 7.67,
+      "y": 38.865,
+      "numero": "3",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 03 - NANABAN",
+      "habitat": "Urbano",
+      "pokemons": 9
+    },
+    {
+      "id": "aux-04-valeon",
+      "x": 27.746,
+      "y": 17.447,
+      "numero": "4",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 04 - VALEON",
+      "habitat": "Urbano",
+      "pokemons": 3
+    },
+    {
+      "id": "aux-05-capivalia",
+      "x": 76.989,
+      "y": 21.277,
+      "numero": "5",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 05 - CAPIVÁLIA",
+      "habitat": "Urbano",
+      "pokemons": 10
+    },
+    {
+      "id": "aux-06-siwara",
+      "x": 77.083,
+      "y": 51.135,
+      "numero": "6",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 06 - SIWARA",
+      "habitat": "Urbano",
+      "pokemons": 6
+    },
+    {
+      "id": "aux-07-vila-lapras",
+      "x": 95.076,
+      "y": 44.397,
+      "numero": "7",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 06 - VILA LAPRAS",
+      "habitat": "Urbano",
+      "pokemons": 5
+    },
+    {
+      "id": "aux-08-katto",
+      "x": 75.568,
+      "y": 65.177,
+      "numero": "8",
+      "tipo": "cidade",
+      "nome": "CIDADE AUXILIAR 06 - KATTO",
+      "habitat": "Urbano",
+      "pokemons": 7
+    },
+    {
+      "id": "p-01-caverna-magnetica",
+      "x": 89.583,
+      "y": 21.348,
+      "numero": "1",
+      "tipo": "interesse",
+      "nome": "CAVERNA MAGNÉTICA",
+      "habitat": "Caverna",
+      "pokemons": 19
+    },
+    {
+      "id": "p-02-tunel-dos-pescadores",
+      "x": 86.364,
+      "y": 40.426,
+      "numero": "2",
+      "tipo": "interesse",
+      "nome": "TÚNEL DOS PESCADORES",
+      "habitat": "Caverna",
+      "pokemons": 15
+    },
+    {
+      "id": "p-03-ruinas-negativas",
+      "x": 80.019,
+      "y": 63.688,
+      "numero": "3",
+      "tipo": "interesse",
+      "nome": "RUÍNAS NEGATIVAS",
+      "habitat": "Caverna",
+      "pokemons": 12
+    },
+    {
+      "id": "p-04-hidreletrica-de-zappen",
+      "x": 72.538,
+      "y": 24.113,
+      "numero": "4",
+      "tipo": "interesse",
+      "nome": "HIDRELÉTRICA DE ZAPPEN",
+      "habitat": "Urbano",
+      "pokemons": 12
+    },
+    {
+      "id": "p-05-lago-subterraneo",
+      "x": 56.723,
+      "y": 67.589,
+      "numero": "5",
+      "tipo": "interesse",
+      "nome": "LAGO SUBTERRÂNEO",
+      "habitat": "Rio",
+      "pokemons": 0
+    },
+    {
+      "id": "p-06-ilha-divarium",
+      "x": 60.038,
+      "y": 73.475,
+      "numero": "6",
+      "tipo": "interesse",
+      "nome": "ILHA DIVARIUM",
+      "habitat": "Praia",
+      "pokemons": 12
+    },
+    {
+      "id": "p-07-reserva-central",
+      "x": 39.962,
+      "y": 31.206,
+      "numero": "7",
+      "tipo": "interesse",
+      "nome": "RESERVA CENTRAL",
+      "habitat": "-",
+      "pokemons": 0
+    },
+    {
+      "id": "p-08-rio-de-areia",
+      "x": 82.481,
+      "y": 26.95,
+      "numero": "8",
+      "tipo": "interesse",
+      "nome": "RIO DE AREIA",
+      "habitat": "Deserto",
+      "pokemons": 7
+    },
+    {
+      "id": "p-09-caverna-alagada",
+      "x": 22.159,
+      "y": 40.78,
+      "numero": "9",
+      "tipo": "interesse",
+      "nome": "CAVERNA ALAGADA",
+      "habitat": "Caverna",
+      "pokemons": 15
+    },
+    {
+      "id": "p-10-caverna-circular",
+      "x": 27.367,
+      "y": 51.773,
+      "numero": "10",
+      "tipo": "interesse",
+      "nome": "CAVERNA CIRCULAR",
+      "habitat": "Caverna",
+      "pokemons": 16
+    },
+    {
+      "id": "p-11-pentarrio",
+      "x": 45.17,
+      "y": 47.73,
+      "numero": "11",
+      "tipo": "interesse",
+      "nome": "PENTARRIO",
+      "habitat": "Rio",
+      "pokemons": 19
+    },
+    {
+      "id": "p-12-ilhas-dos-4",
+      "x": 3.693,
+      "y": 55.177,
+      "numero": "12",
+      "tipo": "interesse",
+      "nome": "ILHAS DOS QUATRO",
+      "habitat": "Praia",
+      "pokemons": 13
+    },
+    {
+      "id": "p-13-antiga-usina-nuclear",
+      "x": 95.17,
+      "y": 76.383,
+      "numero": "13",
+      "tipo": "interesse",
+      "nome": "ANTIGA USINA NUCLEAR",
+      "habitat": "Urbano",
+      "pokemons": 5
+    },
+    {
+      "id": "p-14-caverna-komodora",
+      "x": 72.348,
+      "y": 89.645,
+      "numero": "14",
+      "tipo": "interesse",
+      "nome": "CAVERNA KOMODORA",
+      "habitat": "Caverna",
+      "pokemons": 0
+    },
+    {
+      "id": "p-15-cratera-heatran",
+      "x": 64.489,
+      "y": 1.702,
+      "numero": "15",
+      "tipo": "interesse",
+      "nome": "CRATERA HEATRAN",
+      "habitat": "Vulcão",
+      "pokemons": 13
+    },
+    {
+      "id": "p-16-monte-apagado",
+      "x": 3.693,
+      "y": 7.305,
+      "numero": "16",
+      "tipo": "interesse",
+      "nome": "MONTE APAGADO",
+      "habitat": "Vulcão",
+      "pokemons": 13
+    },
+    {
+      "id": "p-17-montanha-enluarada",
+      "x": 62.027,
+      "y": 38.298,
+      "numero": "17",
+      "tipo": "interesse",
+      "nome": "MONTANHA ENLUARADA",
+      "habitat": "Montanha",
+      "pokemons": 20
+    },
+    {
+      "id": "p-18-ilha-dos-namorados",
+      "x": 11.932,
+      "y": 72.624,
+      "numero": "18",
+      "tipo": "interesse",
+      "nome": "ILHA DOS NAMORADOS",
+      "habitat": "Praia",
+      "pokemons": 13
+    },
+    {
+      "id": "p-19-usina-nuclear-de-ankar",
+      "x": 91.477,
+      "y": 67.943,
+      "numero": "19",
+      "tipo": "interesse",
+      "nome": "USINA NUCLEAR DE ANKAR",
+      "habitat": "Urbano",
+      "pokemons": 0
+    },
+    {
+      "id": "p-20-montes-gelados",
+      "x": 94.034,
+      "y": 47.021,
+      "numero": "20",
+      "tipo": "interesse",
+      "nome": "MONTES GELADOS",
+      "habitat": "Montanha",
+      "pokemons": 10
+    }
+  ]
+}

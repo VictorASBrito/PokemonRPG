@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block titulo %}Atlas de Ankar | Pokémon RPG{% endblock %}
-{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a2') }}">{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a3') }}">{% endblock %}
 {% block conteudo %}
 <section class="ankar-hero">
   <div>
@@ -16,7 +16,67 @@
   <div><strong>{{ catalogo.resumo.interesses }}</strong><span>Pontos de interesse</span></div>
   <div><strong>{{ catalogo.resumo.tabelas }}</strong><span>Tabelas de terreno</span></div>
 </section>
-<section class="ankar-explorador">
+<section class="ankar-mapa-secao" id="ankar-mapa" aria-labelledby="ankar-mapa-titulo">
+  <div class="ankar-mapa-cabecalho">
+    <div>
+      <p class="ankar-eyebrow">Navegação pelo mapa original</p>
+      <h2 id="ankar-mapa-titulo">Mapa interativo de Ankar</h2>
+      <p class="ankar-discreto">Explore os números do mapa. Selecione um marcador e abra a ficha do local. No celular, arraste para percorrer a região.</p>
+    </div>
+    <a class="ankar-mapa-pular" href="#ankar-explorador">Ir para a lista de locais ↓</a>
+  </div>
+  <div class="ankar-mapa-filtros" role="group" aria-label="Marcadores mostrados no mapa">
+    <button class="ankar-opcao ativo" type="button" data-mapa-tipo="rota" aria-pressed="true">Rotas · 73</button>
+    <button class="ankar-opcao" type="button" data-mapa-tipo="cidade" aria-pressed="false">Cidades · 26</button>
+    <button class="ankar-opcao" type="button" data-mapa-tipo="interesse" aria-pressed="false">Pontos de interesse · 20</button>
+  </div>
+  <div class="ankar-mapa-layout">
+    <div class="ankar-mapa-container">
+      <div class="ankar-mapa-controles" role="group" aria-label="Zoom do mapa">
+        <button type="button" data-mapa-zoom="menos" aria-label="Diminuir zoom">−</button>
+        <span id="ankar-mapa-zoom-valor" aria-live="polite">100%</span>
+        <button type="button" data-mapa-zoom="mais" aria-label="Aumentar zoom">+</button>
+        <button type="button" data-mapa-zoom="centralizar" title="Centralizar marcador selecionado">Localizar</button>
+      </div>
+      <div class="ankar-mapa-viewport" id="ankar-mapa-viewport" tabindex="0" aria-label="Mapa de Ankar. Use as barras de rolagem ou gestos para navegar; use os marcadores para selecionar locais.">
+        <div class="ankar-mapa-plano" id="ankar-mapa-plano">
+          <img src="{{ url_for('static', filename='img/ankar-mapa.jpg') }}"
+               width="1533" height="2048" alt="Mapa ilustrado da região de Ankar, com rotas numeradas, cidades e pontos de interesse." loading="lazy" draggable="false">
+          {% for ponto in mapa.pontos %}
+          <a class="ankar-mapa-pin ankar-mapa-pin-{{ ponto.tipo }}"
+             style="--x:{{ ponto.x }}%;--y:{{ ponto.y }}%"
+             href="{{ url_for('regiao.detalhe_ankar', slug=ponto.id) }}"
+             data-mapa-id="{{ ponto.id }}"
+             data-mapa-tipo-ponto="{{ ponto.tipo }}"
+             data-mapa-nome="{{ ponto.nome }}"
+             data-mapa-habitat="{{ ponto.habitat }}"
+             data-mapa-pokemons="{{ ponto.pokemons }}"
+             data-mapa-numero="{{ ponto.numero }}"
+             title="{{ ponto.nome }} — abrir ficha"
+             aria-label="{{ ponto.nome }}"
+             {% if ponto.tipo != 'rota' %}hidden{% endif %}>
+            <span class="ankar-pin-numeral" aria-hidden="true">{{ ponto.numero }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      <p class="ankar-mapa-dica">Os marcadores são posicionados sobre a arte original; números e caminhos permanecem como no mapa fornecido.</p>
+    </div>
+    <aside class="ankar-mapa-info" id="ankar-mapa-info" aria-live="polite" aria-atomic="true">
+      <span class="ankar-mapa-info-eyebrow">Explorador da região</span>
+      <h3 id="ankar-mapa-info-nome">Escolha um ponto no mapa</h3>
+      <p id="ankar-mapa-info-detalhes" class="ankar-discreto">Selecione um número para identificar a rota, cidade ou ponto de interesse correspondente.</p>
+      <a id="ankar-mapa-info-link" class="ankar-mapa-info-link botao botao-primario botao-link" href="{{ url_for('regiao.indice_ankar') }}" hidden>Abrir ficha do local</a>
+      <div class="ankar-mapa-legenda" aria-label="Legenda dos marcadores">
+        <span><i class="ankar-legenda-rota"></i>Rotas · números brancos</span>
+        <span><i class="ankar-legenda-cidade"></i>Cidades · vermelhos/azuis</span>
+        <span><i class="ankar-legenda-interesse"></i>Pontos de interesse · amarelos</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="ankar-explorador" id="ankar-explorador">
   <header class="ankar-explorador-topo">
     <div><p class="ankar-eyebrow">Diretório da região</p><h2>Todos os locais</h2></div>
     <p class="ankar-contador" id="ankar-contador" aria-live="polite">{{ catalogo.resumo.locais }} locais</p>
@@ -45,6 +105,6 @@
   </div>
   <p id="ankar-vazio" class="ankar-vazio" hidden>Nenhum local corresponde aos filtros escolhidos.</p>
 </section>
-<p class="ankar-nota">Catálogo informativo baseado nas planilhas originais da campanha. Nenhuma rolagem, captura ou acesso é executado nesta tela.</p>
+<p class="ankar-nota">Catálogo informativo baseado nas planilhas originais e no mapa fornecido da campanha. Nenhuma rolagem, captura ou acesso é executado nesta tela.</p>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a2') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a3') }}" defer></script>{% endblock %}
