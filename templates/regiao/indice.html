@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block titulo %}Atlas de Ankar | Pokémon RPG{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a2') }}">{% endblock %}
+{% block conteudo %}
+<section class="ankar-hero">
+  <div>
+    <p class="ankar-eyebrow">Campanha de Ankar · Atlas do mestre</p>
+    <h1>Explore a região de Ankar</h1>
+    <p>Rotas, cidades e pontos de interesse reunidos em um único lugar. Consulte habitats, terrenos, acessos e os Pokémon de cada área.</p>
+  </div>
+  <div class="ankar-hero-icon" aria-hidden="true">✧</div>
+</section>
+<section class="ankar-metricas" aria-label="Resumo do atlas">
+  <div><strong>{{ catalogo.resumo.rotas }}</strong><span>Rotas</span></div>
+  <div><strong>{{ catalogo.resumo.cidades }}</strong><span>Cidades</span></div>
+  <div><strong>{{ catalogo.resumo.interesses }}</strong><span>Pontos de interesse</span></div>
+  <div><strong>{{ catalogo.resumo.tabelas }}</strong><span>Tabelas de terreno</span></div>
+</section>
+<section class="ankar-explorador">
+  <header class="ankar-explorador-topo">
+    <div><p class="ankar-eyebrow">Diretório da região</p><h2>Todos os locais</h2></div>
+    <p class="ankar-contador" id="ankar-contador" aria-live="polite">{{ catalogo.resumo.locais }} locais</p>
+  </header>
+  <div class="ankar-filtros">
+    <label class="ankar-pesquisa-label" for="ankar-pesquisa">Buscar local, habitat, terreno, acesso ou Pokémon</label>
+    <input id="ankar-pesquisa" class="ankar-pesquisa" type="search" autocomplete="off" placeholder="Ex.: Rota 1, oceano, Yrezon, caverna…">
+    <div class="ankar-opcoes" role="group" aria-label="Tipo de local">
+      <button type="button" class="ankar-opcao ativo" data-tipo="todos" aria-pressed="true">Todos</button>
+      <button type="button" class="ankar-opcao" data-tipo="rota" aria-pressed="false">Rotas</button>
+      <button type="button" class="ankar-opcao" data-tipo="cidade" aria-pressed="false">Cidades</button>
+      <button type="button" class="ankar-opcao" data-tipo="interesse" aria-pressed="false">Pontos de interesse</button>
+    </div>
+  </div>
+  <div class="ankar-locais" id="ankar-locais">
+    {% for local in catalogo.locais %}
+    <a class="ankar-local" href="{{ url_for('regiao.detalhe_ankar', slug=local.id) }}"
+       data-tipo="{{ local.tipo }}"
+       data-busca="{{ ([local.nome, local.aba, local.habitat_principal, local.habitat_secundario, local.terrenos|join(' '), local.terrenos_encontro|join(' '), local.pokemon_nomes|join(' '), local.acessos|map(attribute='nome')|join(' ')])|join(' ')|lower }}">
+      <div class="ankar-local-topo"><span class="ankar-tipo ankar-tipo-{{ local.tipo }}">{{ local.categoria }}</span><span class="ankar-seta" aria-hidden="true">↗</span></div>
+      <h3>{{ local.nome|title if local.tipo != 'rota' else local.nome }}</h3>
+      <p class="ankar-local-detalhe">{{ local.habitat_principal or 'Habitat não informado' }}{% if local.habitat_secundario and local.habitat_secundario != '-' %} · {{ local.habitat_secundario }}{% endif %}</p>
+      <div class="ankar-local-pe"><span>{{ local.zonas|length }} área(s)</span><span>{{ local.tabelas }} terreno(s) com tabela</span><span>{{ local.pokemons_distintos }} Pokémon</span></div>
+    </a>
+    {% endfor %}
+  </div>
+  <p id="ankar-vazio" class="ankar-vazio" hidden>Nenhum local corresponde aos filtros escolhidos.</p>
+</section>
+<p class="ankar-nota">Catálogo informativo baseado nas planilhas originais da campanha. Nenhuma rolagem, captura ou acesso é executado nesta tela.</p>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a2') }}" defer></script>{% endblock %}

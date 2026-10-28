@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ local.nome }} | Atlas de Ankar{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a2') }}">{% endblock %}
+{% block conteudo %}
+<nav class="ankar-trilha" aria-label="Localização"><a href="{{ url_for('regiao.indice_ankar') }}">Atlas de Ankar</a><span aria-hidden="true">/</span><span>{{ local.nome }}</span></nav>
+<section class="ankar-detalhe-hero">
+  <div>
+    <span class="ankar-tipo ankar-tipo-{{ local.tipo }}">{{ local.categoria }}</span>
+    <h1>{{ local.nome|title if local.tipo != 'rota' else local.nome }}</h1>
+    <p>{{ local.descricao if local.descricao and local.descricao != '-' else 'A descrição narrativa deste local não foi preenchida na planilha.' }}</p>
+  </div>
+  <div class="ankar-resumo-detalhe">
+    <div><small>Tabelas de terreno</small><strong>{{ local.tabelas }}</strong></div>
+    <div><small>Entradas de encontro</small><strong>{{ local.encontros }}</strong></div>
+    <div><small>Pokémon distintos</small><strong>{{ local.pokemons_distintos }}</strong></div>
+  </div>
+</section>
+<section class="ankar-informacoes" aria-label="Características da região">
+  <div class="ankar-informacao"><span>Habitat principal</span><strong>{{ local.habitat_principal if local.habitat_principal and local.habitat_principal != '-' else 'Não informado' }}</strong></div>
+  <div class="ankar-informacao"><span>Habitat secundário</span><strong>{{ local.habitat_secundario if local.habitat_secundario and local.habitat_secundario != '-' else 'Não informado' }}</strong></div>
+  <div class="ankar-informacao"><span>{{ local.deslocamento_rotulo or 'Extensão / deslocamento' }}</span><strong>{{ local.deslocamento_valor or 'Não informado' }}</strong></div>
+</section>
+<div class="ankar-duas-colunas">
+  <section class="ankar-painel">
+    <h2>Terrenos do local</h2>
+    {% if local.terrenos %}<div class="ankar-chips">{% for terreno in local.terrenos %}<span>{{ terreno }}</span>{% endfor %}</div>
+    {% else %}<p class="ankar-discreto">Não há tipos de terreno preenchidos.</p>{% endif %}
+  </section>
+  <section class="ankar-painel">
+    <h2>Acessos</h2>
+    {% if local.acessos %}<div class="ankar-chips ankar-chips-acesso">{% for acesso in local.acessos %}
+      {% if acesso.destino_id %}<a href="{{ url_for('regiao.detalhe_ankar', slug=acesso.destino_id) }}">{{ acesso.nome }} <span aria-hidden="true">↗</span></a>
+      {% else %}<span title="Acesso preservado da planilha; destino ainda não identificado">{{ acesso.nome }}</span>{% endif %}
+    {% endfor %}</div>{% else %}<p class="ankar-discreto">Não há acessos informados na planilha.</p>{% endif %}
+  </section>
+</div>
+<section class="ankar-encontros">
+  <div class="ankar-encontros-topo">
+    <div><p class="ankar-eyebrow">Guia de habitats e espécies</p><h2>Pokémon que podem aparecer</h2></div>
+    <p class="ankar-discreto">Os números d100 indicam o intervalo de encontro; % Captura é um dado separado.</p>
+  </div>
+  {% if local.zonas|length > 1 %}
+  <nav class="ankar-navegacao-zonas" aria-label="Zonas do local">
+    {% for zona in local.zonas %}<a href="#{{ zona.id }}">{{ zona.nome }}</a>{% endfor %}
+  </nav>
+  {% endif %}
+  {% for zona in local.zonas %}
+  <section class="ankar-zona" id="{{ zona.id }}">
+    <div class="ankar-zona-cabecalho"><h3>{{ zona.nome }}</h3><span>{{ zona.tabelas|length }} tabela(s)</span></div>
+    <div class="ankar-grid-terrenos">
+    {% for tabela in zona.tabelas %}
+      <article class="ankar-terreno">
+        <div class="ankar-terreno-cabecalho"><h4>{{ tabela.terreno }}</h4><span>{{ tabela.encontros|length }} entrada(s)</span></div>
+        <div class="ankar-tabela-scroll">
+          <table class="ankar-tabela">
+            <thead><tr><th scope="col">Pokémon</th><th scope="col">d100</th><th scope="col">% Captura</th></tr></thead>
+            <tbody>
+              {% for encontro in tabela.encontros %}
+              <tr class="{% if encontro.marcador %}ankar-linha-x{% endif %}">
+                <td>
+                  {% if encontro.marcador %}<span class="ankar-nao-informado">Marcador x</span>
+                  {% elif encontro.pokemon %}<strong>{{ encontro.pokemon }}</strong>
+                  {% else %}<em>Espécie não informada</em>{% endif %}
+                </td>
+                <td><span class="ankar-faixa{% if not encontro.faixa_valida %} ankar-faixa-pendente{% endif %}" {% if encontro.faixa_reconstituida %}title="Faixa reconstituída da célula formatada como data pelo Excel"{% endif %}>{{ encontro.d100 or '—' }}</span></td>
+                <td>{{ encontro.captura if encontro.captura is not none else '—' }}{% if encontro.captura is not none %}%{% endif %}</td>
+              </tr>
+              {% else %}<tr><td colspan="3" class="ankar-discreto">Nenhuma espécie preenchida nesta tabela.</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+  {% else %}
+  <div class="ankar-painel"><p class="ankar-discreto">Este local não possui tabelas d100 preenchidas na planilha original.</p></div>
+  {% endfor %}
+</section>
+<p class="ankar-nota">Dados provenientes de <strong>{{ local.origem }}</strong>, aba <strong>{{ local.aba }}</strong>. O símbolo <strong>x</strong> é exibido como marcador original, sem inventar uma espécie. Eventuais sobreposições e lacunas do d100 permanecem como na planilha.</p>
+<a href="{{ url_for('regiao.indice_ankar') }}" class="ankar-voltar">← Voltar ao atlas</a>
+{% endblock %}

@@ -1,0 +1,79 @@
+/* Atlas visual de Ankar — estilos isolados para não afetar os painéis existentes. */
+.ankar-hero,.ankar-detalhe-hero{background:linear-gradient(115deg,#142f50 0%,#244b73 63%,#2c666a 100%);color:#fff;padding:clamp(24px,4vw,48px);border-radius:20px;margin-bottom:20px;position:relative;overflow:hidden}
+.ankar-hero{display:flex;align-items:center;justify-content:space-between;gap:30px}
+.ankar-hero h1,.ankar-detalhe-hero h1{font-size:clamp(1.7rem,3.2vw,2.65rem);line-height:1.12;margin:5px 0 15px;color:#fff}
+.ankar-hero p,.ankar-detalhe-hero p{max-width:780px;color:#e5f1ff;line-height:1.65;margin:0}
+.ankar-eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.74rem;font-weight:800;margin:0;color:#789bc1}
+.ankar-hero .ankar-eyebrow,.ankar-detalhe-hero .ankar-eyebrow{color:#b3dbf0}
+.ankar-hero-icon{font-size:clamp(60px,10vw,150px);opacity:.27;line-height:1;pointer-events:none}
+.ankar-metricas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.ankar-metricas>div,.ankar-painel,.ankar-informacao,.ankar-explorador,.ankar-terreno{background:var(--cor-fundo-card,var(--superficie,#fff));background:var(--surface,#fff);color:var(--text,#202b38);border:1px solid var(--border,#dbe1e8);border-radius:15px}
+.ankar-metricas>div{padding:17px 20px;display:flex;flex-direction:column;gap:4px}
+.ankar-metricas strong{font-size:1.95rem;color:var(--text,#192a3b);font-variant-numeric:tabular-nums}
+.ankar-metricas span{font-size:.82rem;color:var(--text-muted,#6b7888)}
+.ankar-explorador{padding:clamp(16px,2.8vw,28px)}
+.ankar-explorador-topo,.ankar-encontros-topo{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:16px}
+.ankar-explorador h2,.ankar-encontros h2{margin:4px 0;font-size:1.43rem}
+.ankar-contador,.ankar-discreto,.ankar-nota{color:var(--text-muted,#718096)}
+.ankar-filtros{margin-bottom:22px}
+.ankar-pesquisa-label{display:block;margin-bottom:8px;font-weight:700;font-size:.89rem}
+.ankar-pesquisa{display:block;width:100%;background:var(--surface,#fff);color:var(--text,#243449);border:1px solid var(--border,#ccd7e2);border-radius:12px;padding:13px 15px;font:inherit}
+.ankar-pesquisa:focus-visible,.ankar-opcao:focus-visible,.ankar-local:focus-visible{outline:3px solid #5d97e4;outline-offset:3px}
+.ankar-opcoes,.ankar-chips,.ankar-navegacao-zonas{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.ankar-opcao{border:1px solid var(--border,#cdd6df);background:var(--surface,#fff);color:var(--text,#2d3b4e);padding:8px 13px;border-radius:22px;font:inherit;font-size:.86rem;cursor:pointer}
+.ankar-opcao.ativo{background:#274f77;border-color:#274f77;color:#fff}
+.ankar-locais{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.ankar-local{display:flex;flex-direction:column;gap:11px;min-height:171px;text-decoration:none!important;color:inherit!important;border:1px solid var(--border,#d8e0e8);border-radius:14px;padding:17px;background:var(--surface,#fff);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.ankar-local:hover{transform:translateY(-2px);border-color:#5c96cb;box-shadow:0 6px 22px #102b4630}
+.ankar-local[hidden]{display:none!important}
+.ankar-local-topo,.ankar-local-pe,.ankar-terreno-cabecalho,.ankar-zona-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ankar-tipo{display:inline-block;border-radius:7px;background:#e6f0ff;color:#224d80;padding:5px 8px;font-size:.72rem;font-weight:700}
+.ankar-tipo-cidade{background:#e6f6ef;color:#176048}.ankar-tipo-interesse{background:#f2eafc;color:#65438c}
+.ankar-seta{font-size:1.1rem;color:var(--text-muted,#63798b)}
+.ankar-local h3{font-size:1.12rem;margin:0;line-height:1.3;overflow-wrap:anywhere}
+.ankar-local-detalhe{margin:0;color:var(--text-muted,#627487);font-size:.87rem}
+.ankar-local-pe{flex-wrap:wrap;justify-content:flex-start;margin-top:auto;gap:6px 13px;font-size:.74rem;color:var(--text-muted,#6e8090)}
+.ankar-vazio{padding:34px;text-align:center}.ankar-nota{font-size:.84rem;line-height:1.6;margin:18px 2px}
+.ankar-trilha{display:flex;align-items:center;gap:9px;font-size:.88rem;margin-bottom:18px;flex-wrap:wrap}
+.ankar-trilha a,.ankar-voltar{color:#5285bd;text-decoration:none}.ankar-trilha span:last-child{color:var(--text-muted,#67798a)}
+.ankar-detalhe-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:28px}
+.ankar-detalhe-hero h1{margin-top:13px}.ankar-detalhe-hero p{white-space:pre-line}
+.ankar-resumo-detalhe{display:flex;gap:10px;flex:0 0 auto}
+.ankar-resumo-detalhe>div{padding:12px;background:#ffffff18;border:1px solid #ffffff35;border-radius:12px;display:flex;flex-direction:column;min-width:100px;gap:6px;text-align:center}
+.ankar-resumo-detalhe strong{font-size:1.55rem;color:#fff}.ankar-resumo-detalhe small{font-size:.75rem;color:#c6dced}
+.ankar-informacoes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.ankar-informacao{padding:17px;display:flex;flex-direction:column;gap:6px}
+.ankar-informacao span{font-size:.82rem;color:var(--text-muted,#6f8194)}
+.ankar-informacao strong{font-size:1.06rem;overflow-wrap:anywhere}
+.ankar-duas-colunas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.ankar-painel{padding:18px}.ankar-painel h2{font-size:1.04rem;margin:0 0 10px}
+.ankar-chips>span,.ankar-chips>a,.ankar-navegacao-zonas>a{border:1px solid var(--border,#cfdce8);background:var(--surface-muted,#eef3f8);border-radius:9px;padding:8px 10px;font-size:.87rem;color:var(--text,#233e58);text-decoration:none}
+.ankar-chips-acesso>a:hover,.ankar-navegacao-zonas>a:hover{border-color:#5b8bbe;background:#e3edf8;color:#224d75}
+.ankar-encontros{margin-top:26px}.ankar-encontros-topo{align-items:center}
+.ankar-navegacao-zonas{margin:0 0 19px}
+.ankar-zona{margin-bottom:29px;scroll-margin-top:20px}
+.ankar-zona-cabecalho{border-bottom:1px solid var(--border,#dce3ed);margin:20px 0 14px;padding-bottom:10px}
+.ankar-zona-cabecalho h3{font-size:1.16rem;margin:0}.ankar-zona-cabecalho>span{font-size:.79rem;color:var(--text-muted,#66788a)}
+.ankar-grid-terrenos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:start}
+.ankar-terreno{overflow:hidden}.ankar-terreno-cabecalho{background:var(--surface-muted,#eef3f8);padding:14px 16px}
+.ankar-terreno-cabecalho h4{font-size:1rem;margin:0}.ankar-terreno-cabecalho span{font-size:.78rem;color:var(--text-muted,#6f7f90)}
+.ankar-tabela-scroll{overflow:auto}.ankar-tabela{width:100%;border-collapse:collapse;font-size:.9rem;text-align:left}
+.ankar-tabela th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted,#697b8d);padding:11px 13px;background:var(--surface,#fff)}
+.ankar-tabela td{padding:10px 13px;border-top:1px solid var(--border,#e4eaf0);vertical-align:middle}
+.ankar-tabela th:nth-child(2),.ankar-tabela td:nth-child(2){white-space:nowrap;text-align:center}
+.ankar-tabela th:last-child,.ankar-tabela td:last-child{text-align:right;white-space:nowrap}
+.ankar-faixa{display:inline-flex;justify-content:center;min-width:55px;border-radius:6px;background:#e8effa;color:#244f78;font-variant-numeric:tabular-nums;font-weight:700;font-size:.85rem;padding:4px 5px}
+.ankar-faixa-pendente{background:#fff2de;color:#9d641e}
+.ankar-linha-x td,.ankar-nao-informado{color:var(--text-muted,#778797);font-style:italic;font-weight:400}
+.ankar-voltar{display:inline-block;margin:18px 0 25px;font-weight:700}
+:root[data-theme='dark'] .ankar-local,:root[data-theme='dark'] .ankar-painel,:root[data-theme='dark'] .ankar-explorador,:root[data-theme='dark'] .ankar-metricas>div,:root[data-theme='dark'] .ankar-informacao,:root[data-theme='dark'] .ankar-terreno{background:#1b2634;color:#e6ecf5;border-color:#334456}
+:root[data-theme='dark'] .ankar-metricas strong{color:#f1f6fd}
+:root[data-theme='dark'] .ankar-pesquisa,:root[data-theme='dark'] .ankar-opcao{background:#1b2634;color:#e4edf7;border-color:#34475a}
+:root[data-theme='dark'] .ankar-opcao.ativo{background:#396b9a;color:#fff}
+:root[data-theme='dark'] .ankar-chips>span,:root[data-theme='dark'] .ankar-chips>a,:root[data-theme='dark'] .ankar-navegacao-zonas>a,:root[data-theme='dark'] .ankar-terreno-cabecalho{background:#233344;color:#e4eaf2;border-color:#41556a}
+:root[data-theme='dark'] .ankar-faixa{background:#283e55;color:#c8e0fa}
+:root[data-theme='dark'] .ankar-faixa-pendente{background:#4d3c27;color:#ffda91}
+:root[data-theme='dark'] .ankar-tabela th{background:#1b2634}
+:root[data-theme='dark'] .ankar-tabela td{border-color:#364759}
+@media(max-width:1000px){.ankar-locais{grid-template-columns:repeat(2,minmax(0,1fr))}.ankar-detalhe-hero{flex-direction:column;align-items:flex-start}.ankar-resumo-detalhe{width:100%}.ankar-resumo-detalhe>div{flex:1}}
+@media(max-width:700px){.ankar-hero-icon{display:none}.ankar-metricas{grid-template-columns:repeat(2,minmax(0,1fr))}.ankar-locais,.ankar-informacoes,.ankar-duas-colunas,.ankar-grid-terrenos{grid-template-columns:1fr}.ankar-encontros-topo,.ankar-explorador-topo{align-items:flex-start;flex-direction:column}.ankar-resumo-detalhe{gap:5px}.ankar-resumo-detalhe>div{min-width:0;padding:9px 4px}.ankar-resumo-detalhe strong{font-size:1.2rem}.ankar-tabela td,.ankar-tabela th{padding:8px}.ankar-hero,.ankar-detalhe-hero{padding:24px}}

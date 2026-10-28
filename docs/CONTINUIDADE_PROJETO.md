@@ -393,3 +393,38 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Setas, miniaturas e opção de seleção direta abrangem todos desde a entrada. O filtro **Meus encontrados** continua disponível.
 - Arquivos: `templates/capturas/jogador.html`, `static/js/capturaveis.js`, `tests/test_capturaveis_ui.js`, `tests/test_capturaveis_shiny_carrossel.py`. Querystring do JS alterada para evitar cache da versão antiga.
 - Correção de interface, sem migration, sem impacto em imagens HD, capturas, Shiny ou Boxes. A validação real pelo mestre permanece pendente.
+
+
+---
+
+<!-- ANKAR-10A-1-1-2026-10-27 -->
+## Versão 10 — Etapa 10A.1.1: auditor das planilhas de Ankar (27/10/2026)
+
+- **Base de código conferida:** commit `871cfaefbb1b6c59a0b001d1f9fa172d38cb1529` (27/10/2026), `main` idêntica a `feature/att-frontend` nessa revisão. Preparada uma entrega incremental para instalação local; nenhuma alteração foi feita no GitHub.
+- **Escopo entregue:** serviço `app/services/auditoria_ankar_service.py` e comando `flask --app app.py ankar auditar-planilhas --rotas ... --cidades ...` (texto ou JSON) em leitura exclusiva; separação de local, zona, terreno e entradas, sem deduzir significado dos dados ambíguos. Registrado em `docs/AUDITORIA_PLANILHAS_ANKAR.md`.
+- **Planilhas reais analisadas somente leitura:** 73 rotas e 47 abas de cidades/pontos (120 no total); 352 tabelas e 2.683 entradas observadas, com 313 erros e 626 avisos de auditoria no estado atual. Relatório detalhado em `docs/RELATORIO_AUDITORIA_ANKAR_2026-10-27.txt`. Essas contagens não são conteúdo importado/validado.
+- **Ocorrências importantes:** sobreposição Pyukumuku 56–60 / Skrelp 60–75 na Rota 1 Água; datas Excel indevidamente interpretadas; tabelas incompletas, intervalos inválidos, `x` e marcadores `Random`. Não converter datas ou `x` automaticamente.
+- **Compatibilidade:** registrados novos comandos por Blueprint, `openpyxl>=3.1,<4.0` em `requirements.txt`; nenhum modelo ORM, migration, PostgreSQL, captura, combate ou regras Shiny alterado.
+- **Testes neste ambiente:** 10 testes unitários passaram; 1 teste de CLI ficou ignorado por ausência de Flask, Flask-SQLAlchemy e Flask-Migrate no ambiente de trabalho. **Não afirmar integração Flask/PostgreSQL validada** até execução local.
+- **Ação seguinte:** instalar, executar `python -m pytest -q tests/test_auditoria_ankar.py`, executar o comando sobre as planilhas reais, revisar erros e relatar resultados. Somente depois planejar aprovação/importação validada da geografia (10A.1.2). Etapas de NPCs, Campo e eventos continuam não implementadas nesta Versão 10.
+
+
+<!-- ATLAS_ANKAR_V10A2 -->
+### Etapa 10A.2 — Atlas visual de Ankar (28/10/2026)
+- Entregue catálogo visual **somente leitura** com 119 locais: 73 rotas, 26 cidades e 20 pontos de interesse (352 tabelas, 2.683 entradas).
+- Rotas em `/regiao/ankar`; detalhes em `/regiao/ankar/<slug>`; acesso restrito ao mestre para evitar spoilers aos jogadores.
+- Fonte estática: `app/data/catalogo_ankar_visual.json`, gerada das duas planilhas originais pelo script `scripts/gerar_catalogo_ankar.py`; fontes não são necessárias em produção para a consulta.
+- Habitats principal/secundário, terrenos, acessos, deslocamento/tamanho, descrições, zonas e encontros por terreno são exibidos. `% Captura` não é peso de encontro.
+- Datas que o Excel gerou automaticamente a partir de d100 são apresentadas como faixas (dia-mês) mantendo o valor original no JSON. Marcadores `x`, sobreposições e dados incompletos não são alterados.
+- Novos módulos: `app/routes/regiao.py`, `app/services/regiao_ankar_service.py`, `templates/regiao/`, `static/css/atlas-ankar.css`, `static/js/atlas-ankar.js`.
+- Registro do blueprint e links da navegação inseridos por `scripts/instalar_atlas_ankar.py`, que preserva conteúdo local e é idempotente.
+- Nenhuma migration, escrita no PostgreSQL, rolagem de encontros ou atribuição de capturáveis. Validar testes Flask com dependências instaladas e conferir UI local.
+- Próxima etapa: revisão visual/conteúdo e só depois discussão do fluxo de encontros, permissões e dados persistidos.
+
+
+<!-- ATLAS_ANKAR_V10A2_1_UTF8 -->
+### Etapa 10A.2.1 — Correção dos testes no Windows (28/10/2026)
+- Corrigido `tests/test_atlas_ankar.py`: todas as leituras de arquivos no teste de idempotência agora especificam `encoding='utf-8'`. A codificação padrão `cp1252` do Windows gerava `UnicodeDecodeError` ao ler o diário.
+- O instalador, o Atlas visual, os JSON, a navegação, os acessos e as planilhas não sofreram mudanças nesta correção.
+- Relato do usuário antes do patch: 9 testes passaram e 1 falhou; aguardar reexecução dos 10 testes no Windows para confirmar a correção no ambiente real.
+- **Sem migrations ou escrita no PostgreSQL.**

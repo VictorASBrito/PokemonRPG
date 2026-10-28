@@ -191,3 +191,39 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Corrigido o JavaScript para iniciar com a lista completa e focar, se disponível, o primeiro Pokémon encontrado pelo próprio personagem. O HTML passa a selecionar **Todos os Pokémon** por padrão, inclusive antes da inicialização do script.
 - Acrescentados testes de regressão em Node.js: encontro próprio fora da primeira posição; navegação global desde a abertura; filtro Meus e retorno a Todos; seleção direta de Pokémon de outro treinador; jogador sem encontro próprio. Ajustado teste Flask de marcação HTML.
 - Não há migration ou mudanças na lógica de captura. A versão do JavaScript na URL foi alterada para evitar cache de navegador.
+
+
+<!-- ANKAR-10A-1-1-2026-10-27 -->
+### 2026-10-27 — Versão 10, Etapa 10A.1.1: auditoria somente leitura de Ankar
+- **Objetivo:** auditar planilhas de rotas, cidades e pontos de interesse, preservando zonas e terrenos, antes de qualquer importação.
+- **Status:** IMPLEMENTADO EM ZIP; 10 TESTES UNITÁRIOS PASSARAM; INSTALAÇÃO/INTEGRAÇÃO FLASK PENDENTES DE VALIDAÇÃO PELO MESTRE.
+- **Branch/commit-base:** `main` = `feature/att-frontend`, commit `871cfaefbb1b6c59a0b001d1f9fa172d38cb1529` (27/10/2026). GitHub usado apenas para leitura.
+- **Arquivos:** `app/services/auditoria_ankar_service.py`, `app/commands/ankar.py`, `app/commands/__init__.py`, `app/__init__.py`, `requirements.txt`, `tests/test_auditoria_ankar.py`, `docs/AUDITORIA_PLANILHAS_ANKAR.md`, `docs/RELATORIO_AUDITORIA_ANKAR_2026-10-27.txt`, `scripts/aplicar_documentacao_10a1.py`, documentação de continuidade/diário (acréscimos preservando conteúdo histórico).
+- **Esquema/migrations:** nenhuma. Sem escrita em PostgreSQL, sem modificação de XLSX, sem importação de encontros.
+- **Leitura exploratória real:** 120 abas, 352 tabelas, 2.683 entradas, 313 erros e 626 avisos, conforme relatório. `x`, datas Excel, sobreposição d100 e `Random` não interpretados automaticamente.
+- **Testes executados:** `PYTHONPATH=... python -m pytest -q tests/test_auditoria_ankar.py` → 10 passaram, 1 ignorado (Flask ausente no ambiente da execução). Compilação Python dos arquivos novos passou. CLI real no aplicativo e PostgreSQL não testados aqui.
+- **Riscos/pendências:** validar integração Flask e arquivos reais no computador do mestre; discutir correções da planilha sem sobrescrever originais; decidir semântica de `x` e marcadores ambíguos. O relatório pode apontar lacunas aparentes devido a d100 inválidos.
+- **Próxima ação:** instalar ZIP incremental, instalar dependências, executar testes e comando, obter feedback local; somente então prosseguir para armazenamento validado 10A.1.2.
+
+
+<!-- ATLAS_ANKAR_V10A2 -->
+### 2026-10-28 — Etapa 10A.2: Atlas visual de Ankar
+- **Objetivo:** disponibilizar rotas, cidades, pontos de interesse, habitats, terrenos, acessos e Pokémon no site antes de implementar funções.
+- **Status:** IMPLEMENTADO EM PACOTE INCREMENTAL; VALIDAÇÃO FLASK E NAVEGADOR PENDENTES.
+- **Base:** commit `871cfae` (27/10/2026), compatível com a instalação da etapa 10A.1.1.
+- **Dados:** 73 rotas, 26 cidades, 20 pontos de interesse; 352 tabelas e 2.683 linhas de encontros extraídas das planilhas fornecidas nesta conversa.
+- **Arquivos:** atlas JSON, leitor XLSX, serviço, blueprint, templates, CSS, JS, instalador aditivo, testes e documentação especializada.
+- **Decisões:** somente leitura, tela do mestre; sem mecanismos de encontro/captura. Recuperar interpretação visual de datas do Excel sem substituir o original; marcador `x` mantém semântica não confirmada.
+- **Migrations:** nenhuma. **PostgreSQL:** nenhuma escrita. **GitHub:** nenhuma alteração.
+- **Testes:** registrar aqui o resultado executado localmente após instalar as dependências.
+- **Próximo:** validar telas, revisar exceções de dados e planejar a função posterior com o mestre.
+
+
+<!-- ATLAS_ANKAR_V10A2_1_UTF8 -->
+### 2026-10-28 — Etapa 10A.2.1: Ajuste UTF-8 em teste de regressão
+- **Objetivo:** corrigir a falha `UnicodeDecodeError: cp1252` em `test_instalador_e_idempotente_e_nao_altera_jogador` no Windows.
+- **Status:** PATCH PREPARADO; reexecução Windows pendente.
+- **Alterações:** `tests/test_atlas_ankar.py` usa `read_text(encoding='utf-8')`; documentação de correção em `docs/CORRECAO_UTF8_ATLAS_ANKAR_10A2_1.md`.
+- **Resultado anterior informado pelo usuário:** `9 passed, 1 failed in 3.01s` antes da correção.
+- **Migrations:** nenhuma. **PostgreSQL:** nenhuma alteração. **GitHub:** nenhuma alteração.
+- **Próximo:** `python -m pytest -q tests/test_atlas_ankar.py tests/test_atlas_ankar_flask.py` no Windows e conferir navegação visual.

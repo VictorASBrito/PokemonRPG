@@ -31,12 +31,13 @@ def create_app() -> Flask:
     # pelo Alembic. Os JSON permanecem apenas como fonte de importação legada.
     from app import models as _models  # noqa: F401
 
-    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli, midia_cli, planilhas_jogadores_cli
+    from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli, midia_cli, planilhas_jogadores_cli, ankar_cli
     from app.routes.auth import auth_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
     from app.routes.capturas import capturas_bp
     from app.routes.combates import combates_bp
     from app.routes.boxes import boxes_bp
+    from app.routes.regiao import regiao_bp
     from app.routes.jogadores import jogadores_bp
     from app.routes.inventario import inventario_bp
     from app.routes.mestre import mestre_bp
@@ -51,6 +52,7 @@ def create_app() -> Flask:
     app.register_blueprint(mestre_bp)
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
+    app.register_blueprint(regiao_bp)
     app.register_blueprint(banco_cli, cli_group=None)
     app.register_blueprint(dados_cli, cli_group=None)
     app.register_blueprint(usuarios_cli, cli_group=None)
@@ -60,6 +62,7 @@ def create_app() -> Flask:
     app.register_blueprint(inventario_cli, cli_group=None)
     app.register_blueprint(midia_cli, cli_group=None)
     app.register_blueprint(planilhas_jogadores_cli, cli_group=None)
+    app.register_blueprint(ankar_cli, cli_group=None)
 
     @app.before_request
     def exigir_troca_senha():
