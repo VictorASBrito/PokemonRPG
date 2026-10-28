@@ -127,3 +127,130 @@
 @media(max-width:780px){.ankar-mapa-layout{grid-template-columns:minmax(0,1fr)}.ankar-mapa-viewport{height:min(65vh,570px);min-height:390px}.ankar-mapa-info{display:block}.ankar-mapa-legenda{display:flex;flex-wrap:wrap;gap:12px}}
 @media(max-width:520px){.ankar-mapa-secao{padding:12px}.ankar-mapa-filtros{gap:7px}.ankar-mapa-filtros .ankar-opcao{flex:1 1 auto;padding:9px 10px;font-size:.8rem}.ankar-mapa-pin{width:38px;height:38px}.ankar-mapa-cabecalho{gap:7px}.ankar-mapa-pular{margin-bottom:6px}.ankar-mapa-viewport{min-height:360px;height:53vh}.ankar-mapa-info{padding:14px}.ankar-mapa-controles{left:6px;top:6px}}
 @media(prefers-reduced-motion:reduce){.ankar-mapa-pin{transition:none}}
+
+/* Etapa 10A.4: mapa inteiro em repouso + explorador à direita. */
+.ankar-mapa-layout{grid-template-columns:minmax(270px, min(39vw, 510px)) minmax(300px, 1fr);align-items:start;gap:18px}
+.ankar-mapa-viewport{height:min(72vh, 750px);min-height:0;display:block;overflow:auto;background:#3c7599}
+.ankar-mapa-plano{--ankar-mapa-base:420px;--ankar-mapa-escala:1;width:calc(var(--ankar-mapa-base) * var(--ankar-mapa-escala));margin-inline:auto}
+.ankar-mapa-info{display:flex;flex-direction:column;gap:16px;padding:18px;position:static}
+.ankar-mapa-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0}
+.ankar-mapa-filtros .ankar-opcao{font-size:.78rem;padding:9px 6px;min-height:48px;border-radius:10px;line-height:1.25}
+.ankar-mapa-busca label{display:block;font-size:.81rem;font-weight:750;margin-bottom:6px}
+.ankar-mapa-busca select{width:100%;background:var(--superficie);color:var(--texto)}
+.ankar-mapa-selecao{padding:14px;border:1px solid var(--borda);background:var(--superficie);border-radius:12px}
+.ankar-mapa-selecao h3{font-size:1.07rem;margin:6px 0}
+.ankar-mapa-selecao p{margin:0 0 12px}
+.ankar-mapa-selecao .ankar-mapa-info-link{margin:0}
+.ankar-mapa-legenda{margin:0;padding-top:14px;gap:8px}
+.ankar-mapa-controles{top:7px;left:7px}
+.ankar-mapa-dica{max-width:460px}
+
+/* Detalhes mais densos; lore inteira fica disponível, não ocupa a primeira dobra. */
+.ankar-detalhe-hero{padding:clamp(17px,2vw,28px);gap:20px;align-items:end;margin-bottom:12px}
+.ankar-detalhe-hero h1{font-size:clamp(1.55rem,2.3vw,2.15rem);margin:9px 0 9px}
+.ankar-detalhe-hero p{font-size:.92rem;line-height:1.5;max-width:72ch;white-space:normal}
+.ankar-descricao-completa{padding:0 18px;margin:0 0 13px}
+.ankar-descricao-completa summary{cursor:pointer;padding:13px 0;font-size:.87rem;font-weight:800;color:var(--texto)}
+.ankar-descricao-completa summary:focus-visible{outline:3px solid var(--primaria);outline-offset:3px}
+.ankar-descricao-paragrafos{border-top:1px solid var(--borda);padding:3px 0 16px;max-width:85ch}
+.ankar-descricao-paragrafos p{font-size:.9rem;line-height:1.65;margin:13px 0}
+.ankar-resumo-detalhe{gap:7px}
+.ankar-resumo-detalhe>div{min-width:86px;padding:9px;gap:3px}
+.ankar-resumo-detalhe strong{font-size:1.24rem}
+.ankar-resumo-detalhe small{font-size:.68rem}
+.ankar-informacao{padding:12px 15px}
+.ankar-duas-colunas{margin-bottom:15px}
+.ankar-encontros{margin-top:18px}
+.ankar-zona{margin-bottom:19px}
+.ankar-grid-terrenos{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.ankar-terreno-cabecalho{padding:11px 13px}
+.ankar-grade-pokemon{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:9px;padding:12px;align-items:stretch}
+.ankar-pokemon-mini{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;min-height:166px;padding:9px 7px;color:var(--texto);background:var(--superficie);border:1px solid var(--borda);border-radius:13px;text-align:center;text-decoration:none;font:inherit}
+button.ankar-pokemon-mini{cursor:pointer;transition:border-color .14s ease,transform .14s ease,box-shadow .14s ease}
+button.ankar-pokemon-mini:hover{border-color:var(--primaria);transform:translateY(-2px);box-shadow:var(--sombra-suave)}
+button.ankar-pokemon-mini:focus-visible{outline:3px solid var(--primaria);outline-offset:2px}
+.ankar-pokemon-arte{height:78px;width:100%;display:grid;place-items:center;border-radius:10px;background:var(--superficie-suave);color:var(--texto-suave);font-size:2rem;flex-shrink:0}
+.ankar-pokemon-arte img{display:block;width:74px;height:74px;object-fit:contain;image-rendering:auto}
+.ankar-pokemon-mini strong{font-size:.85rem;line-height:1.2;overflow-wrap:anywhere}
+.ankar-pokemon-numeros,.ankar-pokemon-captura{font-size:.71rem;color:var(--texto-suave);font-variant-numeric:tabular-nums}
+.ankar-pokemon-captura{margin-top:auto}
+.ankar-pokemon-x{font-size:3.2rem;color:#e5474b;font-weight:900;background:color-mix(in srgb,#e5474b 10%,var(--superficie));line-height:1}
+.ankar-pokemon-vazio strong{color:#db5252}
+.ankar-pokemon-indisponivel{opacity:.76}
+.ankar-pokemon-indisponivel small{font-size:.68rem;color:var(--texto-suave);margin-top:auto}
+.ankar-dialog{width:min(430px,calc(100% - 28px));max-height:90dvh;overflow:auto;padding:22px;border:1px solid var(--borda);border-radius:17px;background:var(--superficie);color:var(--texto);box-shadow:0 20px 55px #0006}
+.ankar-dialog::backdrop{background:rgba(4,10,18,.68)}
+.ankar-dialog-topo{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ankar-dialog h2{margin:0;font-size:1.25rem}
+.ankar-dialog-fechar{width:36px;height:36px;font-size:1.5rem;border:1px solid var(--borda);background:var(--superficie-suave);color:var(--texto);border-radius:9px;cursor:pointer}
+.ankar-dialog-selecao{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--borda)}
+.ankar-dialog-selecao strong{font-size:1.12rem}
+.ankar-dialog-arte{display:grid;place-items:center;width:72px;height:72px;flex:0 0 72px;background:var(--superficie-suave);border-radius:13px;font-size:2rem}
+.ankar-dialog-arte img{width:67px;height:67px;object-fit:contain}
+.ankar-dialog [data-ankar-etapa] > p{line-height:1.5}
+.ankar-dialog [data-ankar-etapa][hidden]{display:none!important}
+.ankar-dialog-label{display:block;margin:16px 0 8px;font-weight:750}
+.ankar-dialog-acoes{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:9px;margin-top:18px}
+.ankar-dialog-acoes button{min-height:44px}
+@media(max-width:1060px){.ankar-mapa-layout{grid-template-columns:minmax(260px, 46%) minmax(260px,1fr)}.ankar-mapa-filtros{grid-template-columns:1fr}.ankar-mapa-filtros .ankar-opcao{min-height:38px;text-align:left;padding:8px 13px}.ankar-resumo-detalhe>div{min-width:0}}
+@media(max-width:800px){.ankar-mapa-layout{grid-template-columns:minmax(0,1fr)}.ankar-mapa-info{gap:12px}.ankar-mapa-filtros{grid-template-columns:repeat(3,minmax(0,1fr))}.ankar-mapa-filtros .ankar-opcao{text-align:center}.ankar-mapa-viewport{height:min(72vh,700px);min-height:0}.ankar-mapa-legenda{display:flex;flex-wrap:wrap}.ankar-mapa-selecao{padding:12px}}
+@media(max-width:700px){.ankar-detalhe-hero{padding:18px;align-items:start}.ankar-resumo-detalhe{width:100%}.ankar-grade-pokemon{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;padding:10px}.ankar-pokemon-mini{min-height:155px;padding:7px 5px}.ankar-pokemon-arte{height:70px}.ankar-pokemon-arte img{height:67px;width:67px}.ankar-mapa-viewport{height:min(68vh,660px)}.ankar-mapa-pin{width:33px;height:33px}}
+@media(max-width:420px){.ankar-mapa-filtros{grid-template-columns:1fr 1fr}.ankar-mapa-filtros .ankar-opcao:last-child{grid-column:1/-1}.ankar-resumo-detalhe small{font-size:.62rem}.ankar-dialog-acoes button{flex:1}}
+
+/* A arte já contém números: superfícies clicáveis invisíveis até foco/seleção,
+   evitando que dezenas de círculos se sobreponham aos rótulos originais. */
+.ankar-mapa-pin,.ankar-mapa-pin-rota,.ankar-mapa-pin-cidade,.ankar-mapa-pin-interesse{background:transparent;border-color:transparent;color:transparent;text-shadow:none;box-shadow:none}
+.ankar-mapa-pin:hover,.ankar-mapa-pin:focus-visible,.ankar-mapa-pin[aria-current='location']{background:rgba(21,53,79,.75);border-color:#fff;color:#fff;text-shadow:0 1px 3px #0009}
+/* A caixa do mapa acompanha a altura real da arte no mobile: sem faixa vazia. */
+.ankar-mapa-viewport{height:auto;aspect-ratio:1533 / 2048;max-height:min(72vh,750px);min-height:0}
+.ankar-pokemon-arte{position:relative;overflow:hidden}
+.ankar-pokemon-arte img{position:absolute;inset:0;margin:auto}
+
+
+/* Etapa 10A.5 — mapa estático responsivo, sem escala/scroll nem tooltips soltos.
+   A imagem original contém números e símbolos, então o alvo não os duplica. */
+.ankar-mapa-layout{display:grid;grid-template-columns:minmax(0, min(34vw, 470px)) minmax(0,1fr);gap:18px;align-items:start}
+.ankar-mapa-container{min-width:0;max-width:470px}
+.ankar-mapa-viewport{
+  display:block;position:relative;width:100%;height:auto;max-height:none;
+  min-height:0;aspect-ratio:1533 / 2048;overflow:hidden;
+  overscroll-behavior:auto;touch-action:auto;scrollbar-width:none;
+  border:1px solid var(--borda);border-radius:12px;background:#39789d;
+}
+.ankar-mapa-plano{
+  width:100%;height:100%;max-width:100%;aspect-ratio:1533 / 2048;
+  margin:0;position:relative;isolation:isolate;
+}
+.ankar-mapa-plano>img{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+.ankar-mapa-pin,.ankar-mapa-pin-rota,.ankar-mapa-pin-cidade,.ankar-mapa-pin-interesse{
+  width:17px;height:17px;min-width:0;min-height:0;padding:0;
+  border:1px solid transparent;border-radius:50%;
+  outline:0;background:transparent;color:transparent;text-shadow:none;box-shadow:none;
+  transform:translate(-50%,-50%);transition:outline-color .12s ease,background .12s ease;
+}
+.ankar-mapa-pin .ankar-pin-numeral{font-size:0;color:transparent;line-height:0}
+.ankar-mapa-pin:hover,.ankar-mapa-pin:focus-visible,.ankar-mapa-pin[aria-current='location']{
+  z-index:4;border-color:transparent;outline:2px solid var(--destaque);outline-offset:0;
+  background:rgba(15,35,50,.18);color:transparent;text-shadow:none;box-shadow:none;
+}
+/* Popups CSS anteriores transbordavam o mapa e criavam barras de rolagem. */
+.ankar-mapa-pin:hover::after,.ankar-mapa-pin:focus-visible::after{content:none!important;display:none!important}
+.ankar-mapa-filtros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.ankar-mapa-filtros .ankar-opcao{min-height:44px;padding:9px 6px;text-align:center;line-height:1.25;font-size:.77rem}
+.ankar-mapa-info{min-width:0}
+@media(max-width:1100px){
+  .ankar-mapa-layout{grid-template-columns:minmax(0,43%) minmax(0,1fr)}
+  .ankar-mapa-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ankar-mapa-filtros .ankar-opcao{text-align:center}
+}
+@media(max-width:800px){
+  .ankar-mapa-layout{grid-template-columns:minmax(0,1fr);gap:12px}
+  .ankar-mapa-container{width:min(100%,440px);max-width:100%;margin-inline:auto}
+  .ankar-mapa-info{width:100%}
+  .ankar-mapa-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+  .ankar-mapa-pin{width:20px;height:20px}
+  .ankar-mapa-filtros .ankar-opcao:last-child{grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce){.ankar-mapa-pin{transition:none}}

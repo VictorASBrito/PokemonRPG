@@ -37,64 +37,38 @@
   filtrar();
 })();
 
-/* Mapa original de Ankar: visualização progressiva, sem chamadas à API ou escrita. */
+/* Mapa de Ankar: pontos clicáveis sobre a arte, sem zoom ou scroll interno. */
 (() => {
   'use strict';
-  const viewport = document.getElementById('ankar-mapa-viewport');
   const plano = document.getElementById('ankar-mapa-plano');
-  if (!viewport || !plano) return;
+  if (!plano) return;
 
   const pontos = [...plano.querySelectorAll('[data-mapa-id]')];
   const botoes = [...document.querySelectorAll('[data-mapa-tipo]')];
   const nome = document.getElementById('ankar-mapa-info-nome');
   const detalhes = document.getElementById('ankar-mapa-info-detalhes');
   const link = document.getElementById('ankar-mapa-info-link');
-  const visorZoom = document.getElementById('ankar-mapa-zoom-valor');
-  let categoria = 'rota';
-  let escala = 1;
   let selecionado = null;
-  const ajustarLargura = () => {
-    plano.style.setProperty('--ankar-mapa-base', `${Math.max(820, viewport.clientWidth)}px`);
-  };
-  ajustarLargura();
-  window.addEventListener('resize', ajustarLargura);
-  const clamp = (valor, minimo, maximo) => Math.min(maximo, Math.max(minimo, valor));
 
-  function situar(ponto, suave = false) {
-    if (!ponto || ponto.hidden) return;
-    const x = parseFloat(ponto.style.getPropertyValue('--x')) / 100;
-    const y = parseFloat(ponto.style.getPropertyValue('--y')) / 100;
-    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-    viewport.scrollTo({
-      left: clamp(plano.offsetWidth * x - viewport.clientWidth / 2, 0,
-        Math.max(0, viewport.scrollWidth - viewport.clientWidth)),
-      top: clamp(plano.offsetHeight * y - viewport.clientHeight / 2, 0,
-        Math.max(0, viewport.scrollHeight - viewport.clientHeight)),
-      behavior: suave && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto',
-    });
-  }
-
-  function selecionar(ponto, centralizar = false) {
+  function selecionar(ponto) {
     if (!ponto || ponto.hidden) return;
     if (selecionado) selecionado.removeAttribute('aria-current');
     selecionado = ponto;
-    selecionado.setAttribute('aria-current', 'location');
+    ponto.setAttribute('aria-current', 'location');
     nome.textContent = ponto.dataset.mapaNome;
-    const numero = ponto.dataset.mapaNumero;
     const tipo = ponto.dataset.mapaTipoPonto === 'rota' ? 'Rota' :
       (ponto.dataset.mapaTipoPonto === 'cidade' ? 'Cidade' : 'Ponto de interesse');
-    const hab = ponto.dataset.mapaHabitat && ponto.dataset.mapaHabitat !== '-' ? ponto.dataset.mapaHabitat : 'Habitat não informado';
-    detalhes.textContent = `${tipo} ${numero} no mapa · ${hab} · ${ponto.dataset.mapaPokemons} Pokémon distintos no catálogo.`;
+    const habitat = ponto.dataset.mapaHabitat && ponto.dataset.mapaHabitat !== '-'
+      ? ponto.dataset.mapaHabitat : 'Habitat não informado';
+    detalhes.textContent = `${tipo} ${ponto.dataset.mapaNumero} · ${habitat} · ${ponto.dataset.mapaPokemons} Pokémon distintos no catálogo.`;
     link.href = ponto.href;
     link.hidden = false;
-    if (centralizar) situar(ponto, true);
   }
 
   function mostrarCategoria(tipo) {
-    categoria = tipo;
-    for (const ponto of pontos) ponto.hidden = ponto.dataset.mapaTipoPonto !== categoria;
+    for (const ponto of pontos) ponto.hidden = tipo !== 'todos' && ponto.dataset.mapaTipoPonto !== tipo;
     for (const botao of botoes) {
-      const ativo = botao.dataset.mapaTipo === categoria;
+      const ativo = botao.dataset.mapaTipo === tipo;
       botao.classList.toggle('ativo', ativo);
       botao.setAttribute('aria-pressed', String(ativo));
     }
@@ -102,53 +76,77 @@
       selecionado.removeAttribute('aria-current');
       selecionado = null;
       nome.textContent = 'Escolha um ponto no mapa';
-      detalhes.textContent = 'Selecione um número para identificar o local correspondente.';
+      detalhes.textContent = 'Selecione um número ou símbolo para identificar o local correspondente.';
       link.hidden = true;
     }
   }
 
   for (const botao of botoes) botao.addEventListener('click', () => mostrarCategoria(botao.dataset.mapaTipo));
-
   for (const ponto of pontos) {
-    ponto.addEventListener('click', event => {
-      // Permite abrir normalmente com Ctrl, Cmd, Shift, botão do meio ou segundo clique.
-      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0 || ponto === selecionado) return;
+    ponto.addEventListener('click', (event) => {
+      // O primeiro clique mostra a ficha resumida; o segundo abre o detalhe.
+      // Teclas modificadoras e outros botões mantêm o comportamento do link.
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0 || selecionado === ponto) return;
       event.preventDefault();
       selecionar(ponto);
-      if (window.matchMedia('(max-width: 700px)').matches) {
-        document.getElementById('ankar-mapa-info')?.scrollIntoView({block: 'nearest', behavior: 'auto'});
-      }
     });
   }
 
-  function zoom(novaEscala) {
-    const anterior = escala;
-    escala = clamp(Number(novaEscala), 0.7, 2.5);
-    if (escala === anterior) return;
-    const centroX = (viewport.scrollLeft + viewport.clientWidth / 2) / plano.offsetWidth;
-    const centroY = (viewport.scrollTop + viewport.clientHeight / 2) / plano.offsetHeight;
-    plano.style.setProperty('--ankar-mapa-escala', String(escala));
-    if (visorZoom) visorZoom.textContent = `${Math.round(escala * 100)}%`;
-    viewport.scrollLeft = centroX * plano.offsetWidth - viewport.clientWidth / 2;
-    viewport.scrollTop = centroY * plano.offsetHeight - viewport.clientHeight / 2;
-  }
-
-  for (const botao of document.querySelectorAll('[data-mapa-zoom]')) {
-    botao.addEventListener('click', () => {
-      const acao = botao.dataset.mapaZoom;
-      if (acao === 'centralizar') { if (selecionado) situar(selecionado, true); else {viewport.scrollTop = 0; viewport.scrollLeft = 0;} return; }
-      zoom(escala + (acao === 'mais' ? 0.25 : -0.25));
-    });
-  }
-
-  // Acesso direto do detalhe: ?local=rota-1#ankar-mapa (valida against DOM ids).
+  mostrarCategoria('todos');
+  // Retorno das fichas: mantém seleção sem forçar zoom ou rolagem do mapa.
   const preselecionado = new URLSearchParams(window.location.search).get('local');
   if (preselecionado) {
     const ponto = pontos.find(p => p.dataset.mapaId === preselecionado);
-    if (ponto) {
-      mostrarCategoria(ponto.dataset.mapaTipoPonto);
-      selecionar(ponto);
-      window.requestAnimationFrame(() => situar(ponto));
-    }
+    if (ponto) selecionar(ponto);
   }
+})();
+
+/* Etapa 10A.4 — geração com confirmação explícita e escolha de treinador. */
+(() => {
+  'use strict';
+  const dialog = document.getElementById('ankar-gerar-dialog');
+  if (!dialog) return;
+  const etapaConfirmar = dialog.querySelector('[data-ankar-etapa="confirmar"]');
+  const etapaJogador = dialog.querySelector('[data-ankar-etapa="jogador"]');
+  const nome = document.getElementById('ankar-dialog-pokemon');
+  const arte = document.getElementById('ankar-dialog-arte');
+  const jogador = document.getElementById('ankar-encontrado-por');
+  const abrir = botao => {
+    nome.textContent = botao.dataset.pokemon;
+    arte.replaceChildren();
+    if (botao.dataset.imagem) {
+      const img = document.createElement('img');
+      img.src = botao.dataset.imagem;
+      img.alt = '';
+      img.onerror = () => img.remove();
+      arte.append(img);
+    } else arte.textContent = '◇';
+    for (const campo of ['zona', 'tabela', 'indice']) {
+      document.getElementById(`ankar-post-${campo}`).value = botao.dataset[campo];
+    }
+    jogador.value = '';
+    etapaConfirmar.hidden = false;
+    etapaJogador.hidden = true;
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  };
+  document.querySelectorAll('[data-ankar-gerar]').forEach(botao => {
+    botao.addEventListener('click', () => abrir(botao));
+  });
+  dialog.querySelectorAll('[data-ankar-fechar]').forEach(botao => {
+    botao.addEventListener('click', () => dialog.close ? dialog.close() : dialog.removeAttribute('open'));
+  });
+  document.getElementById('ankar-confirmar-geracao').addEventListener('click', () => {
+    etapaConfirmar.hidden = true;
+    etapaJogador.hidden = false;
+    jogador.focus();
+  });
+  document.getElementById('ankar-voltar-confirmacao').addEventListener('click', () => {
+    etapaConfirmar.hidden = false;
+    etapaJogador.hidden = true;
+  });
+  dialog.addEventListener('close', () => {
+    etapaConfirmar.hidden = false;
+    etapaJogador.hidden = true;
+  });
 })();

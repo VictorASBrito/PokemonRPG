@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 {% block titulo %}{{ local.nome }} | Atlas de Ankar{% endblock %}
-{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a3') }}">{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a4') }}">{% endblock %}
 {% block conteudo %}
+{# A ficha pode ser renderizada isoladamente por testes/Prévia, sem os dados
+   opcionais do catálogo e dos jogadores. No Flask real, as variáveis são
+   fornecidas pela rota e estes fallbacks não alteram o comportamento. #}
+{% set formas = formas|default({}, true) %}
+{% set encontrados_por = encontrados_por|default([], true) %}
+{% set descricao_paragrafos = descricao_paragrafos|default([], true) %}
+{% set atlas_csrf = atlas_csrf|default('', true) %}
 <nav class="ankar-trilha" aria-label="Localização"><a href="{{ url_for('regiao.indice_ankar') }}">Atlas de Ankar</a><span aria-hidden="true">/</span><span>{{ local.nome }}</span></nav>
 <section class="ankar-detalhe-hero">
   <div>
     <span class="ankar-tipo ankar-tipo-{{ local.tipo }}">{{ local.categoria }}</span>
     <h1>{{ local.nome|title if local.tipo != 'rota' else local.nome }}</h1>
-    <p>{{ local.descricao if local.descricao and local.descricao != '-' else 'A descrição narrativa deste local não foi preenchida na planilha.' }}</p>
+    {% if descricao_paragrafos %}
+    <p class="ankar-descricao-intro">{{ descricao_paragrafos[0]|truncate(245, True, '…') }}</p>
+    {% else %}<p>Descrição ainda não preenchida na planilha.</p>{% endif %}
   </div>
   <div class="ankar-resumo-detalhe">
     <div><small>Tabelas de terreno</small><strong>{{ local.tabelas }}</strong></div>
@@ -15,6 +24,12 @@
     <div><small>Pokémon distintos</small><strong>{{ local.pokemons_distintos }}</strong></div>
   </div>
 </section>
+{% if descricao_paragrafos and (descricao_paragrafos|length > 1 or descricao_paragrafos[0]|length > 245) %}
+<details class="ankar-descricao-completa ankar-painel">
+  <summary>Conhecer a história e a descrição completa de {{ local.nome|title if local.tipo != 'rota' else local.nome }}</summary>
+  <div class="ankar-descricao-paragrafos">{% for paragrafo in descricao_paragrafos %}<p>{{ paragrafo }}</p>{% endfor %}</div>
+</details>
+{% endif %}
 <section class="ankar-informacoes" aria-label="Características da região">
   <div class="ankar-informacao"><span>Habitat principal</span><strong>{{ local.habitat_principal if local.habitat_principal and local.habitat_principal != '-' else 'Não informado' }}</strong></div>
   <div class="ankar-informacao"><span>Habitat secundário</span><strong>{{ local.habitat_secundario if local.habitat_secundario and local.habitat_secundario != '-' else 'Não informado' }}</strong></div>
@@ -45,29 +60,44 @@
   </nav>
   {% endif %}
   {% for zona in local.zonas %}
+  {% set zona = dict(zona, indice=loop.index0) %}
   <section class="ankar-zona" id="{{ zona.id }}">
     <div class="ankar-zona-cabecalho"><h3>{{ zona.nome }}</h3><span>{{ zona.tabelas|length }} tabela(s)</span></div>
     <div class="ankar-grid-terrenos">
     {% for tabela in zona.tabelas %}
+      {% set tabela = dict(tabela, indice=loop.index0) %}
       <article class="ankar-terreno">
         <div class="ankar-terreno-cabecalho"><h4>{{ tabela.terreno }}</h4><span>{{ tabela.encontros|length }} entrada(s)</span></div>
-        <div class="ankar-tabela-scroll">
-          <table class="ankar-tabela">
-            <thead><tr><th scope="col">Pokémon</th><th scope="col">d100</th><th scope="col">% Captura</th></tr></thead>
-            <tbody>
-              {% for encontro in tabela.encontros %}
-              <tr class="{% if encontro.marcador %}ankar-linha-x{% endif %}">
-                <td>
-                  {% if encontro.marcador %}<span class="ankar-nao-informado">Marcador x</span>
-                  {% elif encontro.pokemon %}<strong>{{ encontro.pokemon }}</strong>
-                  {% else %}<em>Espécie não informada</em>{% endif %}
-                </td>
-                <td><span class="ankar-faixa{% if not encontro.faixa_valida %} ankar-faixa-pendente{% endif %}" {% if encontro.faixa_reconstituida %}title="Faixa reconstituída da célula formatada como data pelo Excel"{% endif %}>{{ encontro.d100 or '—' }}</span></td>
-                <td>{{ encontro.captura if encontro.captura is not none else '—' }}{% if encontro.captura is not none %}%{% endif %}</td>
-              </tr>
-              {% else %}<tr><td colspan="3" class="ankar-discreto">Nenhuma espécie preenchida nesta tabela.</td></tr>{% endfor %}
-            </tbody>
-          </table>
+        <div class="ankar-grade-pokemon">
+          {% for encontro in tabela.encontros %}
+            {% set forma = formas.get(encontro.pokemon|lower) if encontro.pokemon else none %}
+            {% if encontro.marcador %}
+              <div class="ankar-pokemon-mini ankar-pokemon-vazio" aria-label="Sem encontro nos números {{ encontro.d100 or 'não informados' }}">
+                <span class="ankar-pokemon-arte ankar-pokemon-x" aria-hidden="true">×</span>
+                <strong>Sem encontro</strong>
+                <span class="ankar-pokemon-numeros">d100: {{ encontro.d100 or '—' }}</span>
+              </div>
+            {% elif encontro.pokemon and encontro.pokemon|lower != 'random' and forma and encontrados_por %}
+              <button class="ankar-pokemon-mini ankar-pokemon-gerar" type="button"
+                data-ankar-gerar data-pokemon="{{ encontro.pokemon }}"
+                data-zona="{{ zona.indice }}" data-tabela="{{ tabela.indice }}" data-indice="{{ loop.index0 }}"
+                data-imagem="{{ forma.imagem }}" aria-label="Gerar {{ encontro.pokemon }} nos capturáveis">
+                <span class="ankar-pokemon-arte"><span aria-hidden="true" class="ankar-arte-fallback">◇</span>{% if forma.imagem %}<img src="{{ forma.imagem }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</span>
+                <strong>{{ encontro.pokemon }}</strong>
+                <span class="ankar-pokemon-numeros">d100: {{ encontro.d100 or '—' }}</span>
+                <span class="ankar-pokemon-captura">Captura: {{ encontro.captura ~ '%' if encontro.captura is not none else '—' }}</span>
+              </button>
+            {% else %}
+              <div class="ankar-pokemon-mini ankar-pokemon-indisponivel"
+                title="{{ 'Espécie ainda não vinculada ao catálogo' if encontro.pokemon else 'Registro ainda não preenchido' }}">
+                <span class="ankar-pokemon-arte" aria-hidden="true">◇</span>
+                <strong>{{ encontro.pokemon or 'Não informado' }}</strong>
+                <span class="ankar-pokemon-numeros">d100: {{ encontro.d100 or '—' }}</span>
+                <span class="ankar-pokemon-captura">Captura: {{ encontro.captura ~ '%' if encontro.captura is not none else '—' }}</span>
+                <small>{{ 'Consultar catálogo' if encontro.pokemon else 'Pendente' }}</small>
+              </div>
+            {% endif %}
+          {% else %}<p class="ankar-discreto">Nenhuma espécie preenchida.</p>{% endfor %}
         </div>
       </article>
     {% endfor %}
@@ -77,7 +107,44 @@
   <div class="ankar-painel"><p class="ankar-discreto">Este local não possui tabelas d100 preenchidas na planilha original.</p></div>
   {% endfor %}
 </section>
-<p class="ankar-nota">Dados provenientes de <strong>{{ local.origem }}</strong>, aba <strong>{{ local.aba }}</strong>. O símbolo <strong>x</strong> é exibido como marcador original, sem inventar uma espécie. Eventuais sobreposições e lacunas do d100 permanecem como na planilha.</p>
+<p class="ankar-nota">Dados provenientes de <strong>{{ local.origem }}</strong>, aba <strong>{{ local.aba }}</strong>. O <strong>X vermelho</strong> indica que não há encontro nos números correspondentes. Eventuais sobreposições e lacunas do d100 permanecem como na planilha.</p>
+{% if encontrados_por %}
+<dialog class="ankar-dialog" id="ankar-gerar-dialog" aria-labelledby="ankar-dialog-titulo">
+  <div class="ankar-dialog-topo">
+    <h2 id="ankar-dialog-titulo">Gerar Pokémon</h2>
+    <button type="button" class="ankar-dialog-fechar" data-ankar-fechar aria-label="Fechar janela">×</button>
+  </div>
+  <div class="ankar-dialog-selecao">
+    <span class="ankar-dialog-arte" id="ankar-dialog-arte" aria-hidden="true">◇</span>
+    <strong id="ankar-dialog-pokemon">Pokémon</strong>
+  </div>
+  <div data-ankar-etapa="confirmar">
+    <p>Deseja gerar este Pokémon na tela de capturáveis?</p>
+    <div class="ankar-dialog-acoes">
+      <button type="button" class="botao botao-secundario" data-ankar-fechar>Cancelar</button>
+      <button type="button" class="botao botao-primario" id="ankar-confirmar-geracao">Sim, continuar</button>
+    </div>
+  </div>
+  <form method="post" action="{{ url_for('regiao.gerar_encontro_atlas', slug=local.id) }}" data-ankar-etapa="jogador" hidden>
+    <input type="hidden" name="csrf_token" value="{{ atlas_csrf }}">
+    <input type="hidden" name="zona" id="ankar-post-zona">
+    <input type="hidden" name="tabela" id="ankar-post-tabela">
+    <input type="hidden" name="indice" id="ankar-post-indice">
+    <label class="ankar-dialog-label" for="ankar-encontrado-por">Qual jogador encontrou este Pokémon?</label>
+    <select id="ankar-encontrado-por" name="encontrado_por_personagem_id" required>
+      <option value="">Selecione o treinador</option>
+      {% for personagem in encontrados_por %}
+        <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
+      {% endfor %}
+    </select>
+    <p class="ankar-discreto">Natureza, sexo e Shiny serão definidos pelo fluxo normal de capturáveis.</p>
+    <div class="ankar-dialog-acoes">
+      <button type="button" class="botao botao-secundario" id="ankar-voltar-confirmacao">Voltar</button>
+      <button type="submit" class="botao botao-primario">Adicionar aos capturáveis</button>
+    </div>
+  </form>
+</dialog>
+{% endif %}
 <div class="ankar-acoes-voltar">
 <a href="{{ url_for('regiao.indice_ankar') }}" class="ankar-voltar">← Voltar ao atlas</a>
 {% if ponto_mapa %}
@@ -85,3 +152,5 @@
 {% endif %}
 </div>
 {% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a4') }}" defer></script>{% endblock %}

@@ -236,3 +236,24 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Preservação:** nenhuma tela do jogador, CSS global, banco, `.env`, uploads ou planilha original modificados. Sem migrations.
 - **Validações locais:** 6 testes pytest, sintaxe Node, compilação Python e interações Chromium nas larguras 390/820/1440 px. Sem testes integrados Flask neste ambiente.
 - **Próxima ação:** testar no servidor real do mestre, ajustar eventuais coordenadas e revisar capturas das telas existentes antes de mudanças globais.
+
+<!-- ATLAS_ANKAR_V10A4 -->
+### 2026-10-28 — Etapa 10A.4: Atlas compacto e geração de capturáveis
+- Mapa inteiro visível à esquerda com filtros e seleção à direita no desktop; responsivo em mobile/tablet, sem alteração nas demais páginas.
+- Descrição narrativa abreviada na ficha, com conteúdo integral expansível em parágrafos; habitats, acessos e d100 preservados.
+- Tabelas de Pokémon em cards com artes do catálogo. `x` indica sem encontro e não gera Pokémon.
+- Com autorização de mestre e confirmação, o card escolhe treinador e delega ao serviço `criar_capturavel_campo` atual (natureza, sexo, Shiny, limite 15, histórico).
+- Criada rota POST do atlas com CSRF e validação da entrada original, sem mutation de planilhas.
+- Sem migration. Testes Python/Flask e revisão final no navegador do usuário pendentes de execução local.
+- Próximo passo: validar navegação e geração real de um encontro; depois analisar espécies sem correspondência entre planilha e catálogo.
+
+
+
+<!-- ATLAS_ANKAR_V10A4_1 -->
+### Etapa 10A.4.1 — Compatibilidade da ficha do Atlas (28/10/2026)
+- **Problema:** o teste `test_template_detalhe_aponta_para_mapa_sem_alterar_encontros` da Etapa 10A.3 renderizava `templates/regiao/detalhe.html` diretamente e não passava `formas`. A atualização 10A.4 introduziu `formas.get(...)` e causava `jinja2.exceptions.UndefinedError`, mesmo com o endpoint real fornecendo o contexto.
+- **Correção:** valores padrão seguros para as variáveis opcionais `formas`, `encontrados_por`, `descricao_paragrafos` e `atlas_csrf`, apenas quando omitidas ou nulas. A página real permanece inalterada quando a rota fornece esses valores.
+- **Arquivos:** `templates/regiao/detalhe.html`, `tests/test_atlas_10a4_1_template.py`, script e documentação desta correção.
+- **Escopo:** sem migrations, alteração no PostgreSQL, mudanças nos encontros, imagens, regras de acesso ou planilhas.
+- **Validação local do pacote:** testes unitários Jinja sem Flask; reexecutar a suíte Flask completa na máquina da campanha.
+- **Próxima ação:** verificar a geração Atlas → Capturáveis com o mestre no ambiente PostgreSQL e revisar a usabilidade da interface.

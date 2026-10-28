@@ -81,7 +81,10 @@ def test_template_index_marca_pontos_com_links_e_controles():
     assert 'href="/regiao/ankar/rota-1"' in html
     assert 'img/ankar-mapa.jpg' in html
     assert 'id="ankar-mapa-viewport"' in html
-    assert 'data-mapa-zoom="mais"' in html
+    assert 'data-mapa-tipo="todos"' in html
+    assert 'data-mapa-zoom' not in html
+    assert 'ankar-mapa-escolher' not in html
+    assert html.count('data-mapa-tipo=') == 4
     assert 'href="#ankar-explorador"' in html
     assert html.count('class="ankar-local"') == 119
 
