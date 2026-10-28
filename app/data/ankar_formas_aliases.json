@@ -1,0 +1,256 @@
+{
+  "versao": "10A.6",
+  "origem": "data/catalogo/pokemons.json do projeto (1064 formas; leitura em 28/10/2026)",
+  "notas": {
+    "Shellos (A)": "O catálogo possui somente Shellos genérico; a distinção azul/rosa ainda não possui formas cadastradas.",
+    "Shellos (R)": "O catálogo possui somente Shellos genérico; a distinção azul/rosa ainda não possui formas cadastradas.",
+    "Oricorio (E)": "Correspondência pela inicial Elétrico/Pom-Pom; confirmar nomenclatura na campanha.",
+    "Oricorio (F)": "Correspondência pela inicial Fogo/Baile; confirmar nomenclatura na campanha.",
+    "Oricorio (G)": "Correspondência pela inicial Fantasma/Ghost/Sensu; confirmar nomenclatura na campanha.",
+    "Oricorio (P)": "Correspondência pela inicial Psíquico/Pa’hu; confirmar nomenclatura na campanha."
+  },
+  "aliases": {
+    "Basculin": [
+      {
+        "codigo": "basculin-vermelho",
+        "nome": "Basculin (Vermelho)"
+      },
+      {
+        "codigo": "basculin-azul",
+        "nome": "Basculin (Azul)"
+      }
+    ],
+    "Burmy": [
+      {
+        "codigo": "burmy-planta",
+        "nome": "Burmy (Planta)"
+      },
+      {
+        "codigo": "burmy-arenoso",
+        "nome": "Burmy (Arenoso)"
+      },
+      {
+        "codigo": "burmy-entulho",
+        "nome": "Burmy (Entulho)"
+      }
+    ],
+    "Corsola-G": [
+      {
+        "codigo": "corsola-galar",
+        "nome": "Corsola (Galar)"
+      }
+    ],
+    "Darumaka-G": [
+      {
+        "codigo": "darumaka-galar",
+        "nome": "Darumaka (Galar)"
+      }
+    ],
+    "Diglett-A": [
+      {
+        "codigo": "diglett-alola",
+        "nome": "Diglett (Alola)"
+      }
+    ],
+    "Eiscue": [
+      {
+        "codigo": "eiscue-congelado",
+        "nome": "Eiscue (Congelado)"
+      },
+      {
+        "codigo": "eiscue-revelado",
+        "nome": "Eiscue (Revelado)"
+      }
+    ],
+    "Farfetch'd-G": [
+      {
+        "codigo": "farfetch-d-galar",
+        "nome": "Farfetch'd (Galar)"
+      }
+    ],
+    "Geodude-A": [
+      {
+        "codigo": "geodude-alola",
+        "nome": "Geodude (Alola)"
+      }
+    ],
+    "Graveler-A": [
+      {
+        "codigo": "graveler-alola",
+        "nome": "Graveler (Alola)"
+      }
+    ],
+    "Grimer-A": [
+      {
+        "codigo": "grimer-alola",
+        "nome": "Grimer (Alola)"
+      }
+    ],
+    "Indeedee": [
+      {
+        "codigo": "indeedee-macho",
+        "nome": "Indeedee (Macho)"
+      },
+      {
+        "codigo": "indeedee-femea",
+        "nome": "Indeedee (Fêmea)"
+      }
+    ],
+    "Linoone-G": [
+      {
+        "codigo": "linoone-galar",
+        "nome": "Linoone (Galar)"
+      }
+    ],
+    "Meowth-A": [
+      {
+        "codigo": "meowth-alola",
+        "nome": "Meowth (Alola)"
+      }
+    ],
+    "Meowth-G": [
+      {
+        "codigo": "meowth-galar",
+        "nome": "Meowth (Galar)"
+      }
+    ],
+    "Minior": [
+      {
+        "codigo": "minior-meteoro",
+        "nome": "Minior (Meteoro)"
+      },
+      {
+        "codigo": "minior-nucleo",
+        "nome": "Minior (Núcleo)"
+      }
+    ],
+    "Morpeko": [
+      {
+        "codigo": "morpeko-satisfeito",
+        "nome": "Morpeko (Satisfeito)"
+      },
+      {
+        "codigo": "morpeko-faminto",
+        "nome": "Morpeko (Faminto)"
+      }
+    ],
+    "Mr. Mime-G": [
+      {
+        "codigo": "mr-mime-galar",
+        "nome": "Mr. Mime (Galar)"
+      }
+    ],
+    "Muk-A": [
+      {
+        "codigo": "muk-alola",
+        "nome": "Muk (Alola)"
+      }
+    ],
+    "Oricorio (E)": [
+      {
+        "codigo": "oricorio-pom-pom",
+        "nome": "Oricorio (Pom-Pom)"
+      }
+    ],
+    "Oricorio (F)": [
+      {
+        "codigo": "oricorio-baile",
+        "nome": "Oricorio (Baile)"
+      }
+    ],
+    "Oricorio (G)": [
+      {
+        "codigo": "oricorio-sensu",
+        "nome": "Oricorio (Sensu)"
+      }
+    ],
+    "Oricorio (P)": [
+      {
+        "codigo": "oricorio-pa-hu",
+        "nome": "Oricorio (Pa'hu)"
+      }
+    ],
+    "Ponyta-G": [
+      {
+        "codigo": "ponyta-galar",
+        "nome": "Ponyta (Galar)"
+      }
+    ],
+    "Pumpkaboo": [
+      {
+        "codigo": "pumpkaboo-medio",
+        "nome": "Pumpkaboo (Médio)"
+      },
+      {
+        "codigo": "pumpkaboo-pequeno",
+        "nome": "Pumpkaboo (Pequeno)"
+      },
+      {
+        "codigo": "pumpkaboo-grande",
+        "nome": "Pumpkaboo (Grande)"
+      },
+      {
+        "codigo": "pumpkaboo-gigante",
+        "nome": "Pumpkaboo (Gigante)"
+      }
+    ],
+    "Rattata-A": [
+      {
+        "codigo": "rattata-alola",
+        "nome": "Rattata (Alola)"
+      }
+    ],
+    "Sandshrew-A": [
+      {
+        "codigo": "sandshrew-alola",
+        "nome": "Sandshrew (Alola)"
+      }
+    ],
+    "Shellos (A)": [
+      {
+        "codigo": "shellos",
+        "nome": "Shellos"
+      }
+    ],
+    "Shellos (R)": [
+      {
+        "codigo": "shellos",
+        "nome": "Shellos"
+      }
+    ],
+    "Stunfisk-G": [
+      {
+        "codigo": "stunfisk-galar",
+        "nome": "Stunfisk (Galar)"
+      }
+    ],
+    "Vulpix-A": [
+      {
+        "codigo": "vulpix-alola",
+        "nome": "Vulpix (Alola)"
+      }
+    ],
+    "Wishiwashi": [
+      {
+        "codigo": "wishiwashi-sozinho",
+        "nome": "Wishiwashi (Sozinho)"
+      },
+      {
+        "codigo": "wishiwashi-cardume",
+        "nome": "Wishiwashi (Cardume)"
+      }
+    ],
+    "Yamask-G": [
+      {
+        "codigo": "yamask-galar",
+        "nome": "Yamask (Galar)"
+      }
+    ],
+    "Zigzagoon-G": [
+      {
+        "codigo": "zigzagoon-galar",
+        "nome": "Zigzagoon (Galar)"
+      }
+    ]
+  }
+}

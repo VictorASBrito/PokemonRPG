@@ -10,7 +10,8 @@
   const vazio = document.getElementById('ankar-vazio');
   let tipoAtivo = 'todos';
   const normalizar = (valor) => String(valor || '').normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    .replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
   const filtrar = () => {
     const termo = normalizar(input.value.trim());
     let visiveis = 0;
@@ -19,6 +20,23 @@
       const textoOk = !termo || normalizar(card.dataset.busca).includes(termo);
       const mostra = categoriaOk && textoOk;
       card.hidden = !mostra;
+      const indicador = card.querySelector('[data-pokemon-resultado]');
+      if (indicador) {
+        indicador.hidden = true;
+        indicador.textContent = '';
+        if (mostra && termo.length >= 2) {
+          let registros = [];
+          try { registros = JSON.parse(card.dataset.pokemonIndice || '[]'); } catch (_) { /* JSON ausente */ }
+          const encontrados = registros.filter(registro => [registro.nome, ...(registro.aliases || [])]
+            .some(n => normalizar(n).includes(termo)));
+          if (encontrados.length) {
+            indicador.textContent = 'Pokémon: ' + encontrados.slice(0, 4)
+              .map(e => `${e.nome} — ${e.ambientes.join(' / ')}`).join(' • ') +
+              (encontrados.length > 4 ? ` • +${encontrados.length - 4} espécie(s)` : '');
+            indicador.hidden = false;
+          }
+        }
+      }
       if (mostra) visiveis += 1;
     }
     if (contador) contador.textContent = `${visiveis} ${visiveis === 1 ? 'local' : 'locais'}`;
@@ -111,16 +129,38 @@
   const nome = document.getElementById('ankar-dialog-pokemon');
   const arte = document.getElementById('ankar-dialog-arte');
   const jogador = document.getElementById('ankar-encontrado-por');
-  const abrir = botao => {
-    nome.textContent = botao.dataset.pokemon;
+  const idForma = document.getElementById('ankar-forma-id');
+  const seletorForma = document.getElementById('ankar-forma-seletor');
+  const blocoForma = document.getElementById('ankar-forma-bloco');
+  const formularios = dialog.querySelector('[data-ankar-etapa="jogador"]');
+  let opcoesAtuais = [];
+  function exibirImagem(url) {
     arte.replaceChildren();
-    if (botao.dataset.imagem) {
+    if (url) {
       const img = document.createElement('img');
-      img.src = botao.dataset.imagem;
+      img.src = url;
       img.alt = '';
       img.onerror = () => img.remove();
       arte.append(img);
     } else arte.textContent = '◇';
+  }
+  function atualizarForma() {
+    const escolhida = opcoesAtuais.find(f => f.id === seletorForma.value);
+    idForma.value = escolhida ? escolhida.id : '';
+    exibirImagem(escolhida ? escolhida.imagem : '');
+  }
+  if (seletorForma) seletorForma.addEventListener('change', atualizarForma);
+  const abrir = botao => {
+    nome.textContent = botao.dataset.pokemon;
+    try { opcoesAtuais = JSON.parse(botao.dataset.formas || '[]'); }
+    catch (_) { opcoesAtuais = []; }
+    seletorForma.replaceChildren(new Option('Escolha uma forma', ''));
+    for (const opcao of opcoesAtuais) seletorForma.add(new Option(opcao.nome, opcao.id));
+    blocoForma.hidden = opcoesAtuais.length <= 1;
+    seletorForma.disabled = opcoesAtuais.length <= 1;
+    seletorForma.required = opcoesAtuais.length > 1;
+    idForma.value = opcoesAtuais.length === 1 ? opcoesAtuais[0].id : '';
+    exibirImagem(opcoesAtuais.length === 1 ? opcoesAtuais[0].imagem : botao.dataset.imagem);
     for (const campo of ['zona', 'tabela', 'indice']) {
       document.getElementById(`ankar-post-${campo}`).value = botao.dataset[campo];
     }
@@ -139,7 +179,14 @@
   document.getElementById('ankar-confirmar-geracao').addEventListener('click', () => {
     etapaConfirmar.hidden = true;
     etapaJogador.hidden = false;
-    jogador.focus();
+    (opcoesAtuais.length > 1 ? seletorForma : jogador).focus();
+  });
+  formularios.addEventListener('submit', event => {
+    if (opcoesAtuais.length > 1 && !idForma.value) {
+      event.preventDefault();
+      seletorForma.focus();
+      seletorForma.reportValidity();
+    }
   });
   document.getElementById('ankar-voltar-confirmacao').addEventListener('click', () => {
     etapaConfirmar.hidden = false;

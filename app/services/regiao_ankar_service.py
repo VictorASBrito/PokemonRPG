@@ -50,40 +50,49 @@ def encontro_por_indices(local: dict, zona: int, tabela: int, indice: int) -> di
     return encontro
 
 
-def formas_presentes_no_atlas(local: dict) -> dict[str, dict[str, str]]:
-    """Relaciona espécies do local às artes e IDs do catálogo vivo em uma consulta.
-
-    A escolha do primeiro ID em nome duplicado segue o comportamento atual de
-    buscar_forma (ordenado por ID). Não gera arte artificial, nem faz imports.
-    """
+def formas_presentes_no_atlas(local: dict) -> dict[str, dict]:
+    """Lê o catálogo vivo e associa por código/forma explícita, sem inventar variantes."""
     from sqlalchemy import select
     from app.extensions import db
     from app.models.db import FormaPokemon
+    from app.services.ankar_formas_service import indices_formas_locais, chave_nome
 
     nomes = {
-        str(encontro.get("pokemon", "")).strip().casefold()
+        str(encontro.get("pokemon", "")).strip()
         for zona in local.get("zonas", [])
         for tabela in zona.get("tabelas", [])
         for encontro in tabela.get("encontros", [])
-        if encontro.get("pokemon")
-        and not encontro.get("marcador")
-        and str(encontro["pokemon"]).strip().casefold() not in {"x", "random"}
+        if encontro.get("pokemon") and not encontro.get("marcador")
+        and chave_nome(encontro["pokemon"]) not in {"x", "random"}
     }
     if not nomes:
         return {}
     formas = db.session.execute(
         select(FormaPokemon).where(FormaPokemon.ativo.is_(True)).order_by(FormaPokemon.id)
     ).scalars()
-    resultado: dict[str, dict[str, str]] = {}
-    for forma in formas:
-        chave = forma.nome.casefold()
-        if chave in nomes and chave not in resultado:
-            resultado[chave] = {
-                "id": str(forma.id),
-                "imagem": forma.imagem_url or forma.imagem_shiny_url or "",
-                "nome": forma.nome,
-            }
-    return resultado
+    return indices_formas_locais(nomes, formas)
+
+
+def catalogo_com_busca_pokemon(catalogo: dict) -> dict:
+    """Enriquece a lista visual com nomes das formas e locais de encontro, sem DB."""
+    from app.services.ankar_formas_service import apelidos_pesquisa
+    locais = []
+    for local in catalogo.get('locais', []):
+        especies = {}
+        for zona in local.get('zonas', []):
+            for tabela in zona.get('tabelas', []):
+                for encontro in tabela.get('encontros', []):
+                    nome = str(encontro.get('pokemon') or '').strip()
+                    if not nome or encontro.get('marcador') or nome.casefold() in {'x', 'random'}:
+                        continue
+                    especie = especies.setdefault(nome, {'nome': nome, 'ambientes': set(), 'aliases': apelidos_pesquisa(nome)})
+                    especie['ambientes'].add(f"{zona['nome']} · {tabela['terreno']}")
+        busca = [dict(nome=especie['nome'], ambientes=sorted(especie['ambientes']),
+                      aliases=especie['aliases']) for especie in especies.values()]
+        busca.sort(key=lambda item: item['nome'].casefold())
+        locais.append(dict(local, pokemon_busca=busca,
+                           pokemon_busca_termos=' '.join(a for e in busca for a in e['aliases'])))
+    return dict(catalogo, locais=locais)
 
 
 def paragrafos_da_descricao(descricao: str | None) -> list[str]:

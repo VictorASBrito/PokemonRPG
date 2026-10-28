@@ -254,3 +254,17 @@ button.ankar-pokemon-mini:focus-visible{outline:3px solid var(--primaria);outlin
   .ankar-mapa-filtros .ankar-opcao:last-child{grid-column:auto}
 }
 @media(prefers-reduced-motion:reduce){.ankar-mapa-pin{transition:none}}
+
+/* 10A.6 — contexto do Pokémon nos resultados da pesquisa e seletor de formas. */
+.ankar-pesquisa-ajuda{font-size:.8rem;margin:4px 0 1px;line-height:1.4}
+.ankar-local-pokemon-match{
+  padding:8px 10px;margin:10px 0 4px;
+  border:1px solid var(--borda);border-radius:9px;
+  background:var(--superficie-suave);color:var(--texto);
+  font-size:.78rem;line-height:1.45;overflow-wrap:anywhere;
+}
+.ankar-local-pokemon-match[hidden]{display:none!important}
+.ankar-pokemon-formas-nota{font-size:.69rem;color:var(--texto-suave);line-height:1.25}
+#ankar-forma-bloco[hidden]{display:none!important}
+#ankar-forma-bloco select{width:100%;min-height:44px}
+#ankar-forma-ajuda{font-size:.78rem;line-height:1.4;margin:6px 0 0}

@@ -1,0 +1,19 @@
+POKEMON RPG — ETAPA 10A.6: VÍNCULOS E BUSCA POR POKÉMON
+
+1. Extraia este ZIP diretamente na raiz do PokemonRPG, permitindo substituir somente os arquivos correspondentes.
+2. Atualize a documentação (idempotente):
+   python scripts/registrar_atlas_10a6.py
+3. Confira as formas ativas no PostgreSQL (somente leitura):
+   python scripts/diagnosticar_formas_ankar.py
+4. Rode os testes no seu ambiente .venv:
+   python -m pytest -q tests/test_ankar_10a6_vinculos.py tests/test_ankar_10a6_flask.py tests/test_ankar_10a5_mapa_fixo.py tests/test_mapa_ankar_visual.py tests/test_atlas_10a4_1_template.py tests/test_ankar_10a4.py tests/test_atlas_ankar_flask.py
+5. Reinicie o Flask e recarregue /regiao/ankar com Ctrl+F5.
+6. Pesquise por Corsola-G ou Corsola (Galar), abra Rota 4 e confira o card.
+
+NÃO é necessário executar migrations, reimportar as planilhas nem substituir o banco de dados.
+A documentação técnica completa está em docs/ATLAS_ANKAR_10A6.md.
+
+LIMITES IMPORTANTES:
+- Shellos (A) e (R) compartilham a única forma Shellos disponível no catálogo atual.
+- Espécies com múltiplas formas sem detalhe na planilha exigem escolha do mestre.
+- Verifique se a convenção E/F/G/P de Oricorio combina com sua campanha.

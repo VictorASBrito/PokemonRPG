@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block titulo %}{{ local.nome }} | Atlas de Ankar{% endblock %}
-{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a4') }}">{% endblock %}
+{% block estilos_finais %}<link rel="stylesheet" href="{{ url_for('static', filename='css/atlas-ankar.css', v='v10a6') }}">{% endblock %}
 {% block conteudo %}
 {# A ficha pode ser renderizada isoladamente por testes/Prévia, sem os dados
    opcionais do catálogo e dos jogadores. No Flask real, as variáveis são
@@ -71,6 +71,7 @@
         <div class="ankar-grade-pokemon">
           {% for encontro in tabela.encontros %}
             {% set forma = formas.get(encontro.pokemon|lower) if encontro.pokemon else none %}
+            {% set opcoes = forma.opcoes|default([forma], true) if forma else [] %}
             {% if encontro.marcador %}
               <div class="ankar-pokemon-mini ankar-pokemon-vazio" aria-label="Sem encontro nos números {{ encontro.d100 or 'não informados' }}">
                 <span class="ankar-pokemon-arte ankar-pokemon-x" aria-hidden="true">×</span>
@@ -81,9 +82,11 @@
               <button class="ankar-pokemon-mini ankar-pokemon-gerar" type="button"
                 data-ankar-gerar data-pokemon="{{ encontro.pokemon }}"
                 data-zona="{{ zona.indice }}" data-tabela="{{ tabela.indice }}" data-indice="{{ loop.index0 }}"
-                data-imagem="{{ forma.imagem }}" aria-label="Gerar {{ encontro.pokemon }} nos capturáveis">
+                data-imagem="{{ forma.imagem }}" data-formas="{{ opcoes|tojson|forceescape }}"
+                aria-label="Gerar {{ encontro.pokemon }} nos capturáveis">
                 <span class="ankar-pokemon-arte"><span aria-hidden="true" class="ankar-arte-fallback">◇</span>{% if forma.imagem %}<img src="{{ forma.imagem }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</span>
                 <strong>{{ encontro.pokemon }}</strong>
+                {% if forma.quantidade|default(1) > 1 %}<small class="ankar-pokemon-formas-nota">Escolher forma ({{ forma.quantidade }})</small>{% elif forma.observacao|default('') %}<small class="ankar-pokemon-formas-nota" title="{{ forma.observacao }}">Forma do catálogo: {{ forma.nome }}</small>{% endif %}
                 <span class="ankar-pokemon-numeros">d100: {{ encontro.d100 or '—' }}</span>
                 <span class="ankar-pokemon-captura">Captura: {{ encontro.captura ~ '%' if encontro.captura is not none else '—' }}</span>
               </button>
@@ -137,6 +140,14 @@
         <option value="{{ personagem.id }}">{{ personagem.nome }}</option>
       {% endfor %}
     </select>
+    <div id="ankar-forma-bloco" hidden>
+      <label class="ankar-dialog-label" for="ankar-forma-seletor">Qual forma apareceu?</label>
+      <select id="ankar-forma-seletor" aria-describedby="ankar-forma-ajuda" required disabled>
+        <option value="">Escolha uma forma</option>
+      </select>
+      <p id="ankar-forma-ajuda" class="ankar-discreto">A planilha não diferencia as formas desta espécie. Escolha a versão encontrada.</p>
+    </div>
+    <input type="hidden" id="ankar-forma-id" name="forma_id" value="">
     <p class="ankar-discreto">Natureza, sexo e Shiny serão definidos pelo fluxo normal de capturáveis.</p>
     <div class="ankar-dialog-acoes">
       <button type="button" class="botao botao-secundario" id="ankar-voltar-confirmacao">Voltar</button>
@@ -153,4 +164,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a4') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/atlas-ankar.js', v='v10a6') }}" defer></script>{% endblock %}
