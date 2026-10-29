@@ -14,3 +14,6 @@ static/uploads/*
 
 # Binário local opcional do Cloudflare Tunnel
 cloudflared.exe
+
+# Relatórios privados de inventário (10C.1)
+relatorios/revisao_itens_ankar*/
