@@ -1,0 +1,36 @@
+POKÉMON RPG — ETAPA 10B.3 — FICHAS INDEPENDENTES POR URL
+
+INSTALAÇÃO
+1. Faça backup da versão local (git status; não descarte suas alterações).
+2. Extraia o ZIP na raiz do PokemonRPG, mantendo as pastas.
+3. Execute:
+   python scripts/instalar_fichas_por_url.py
+   python -m pytest -q tests/test_fichas_por_url_10b3.py tests/test_fichas_por_url_10b3_flask.py
+4. Reinicie o Flask.
+5. Abra http://127.0.0.1:5000/selecionar e escolha os personagens.
+6. Para ver os links configurados:
+   python scripts/listar_links_fichas.py
+   python scripts/listar_links_fichas.py --base https://seu-endereco
+
+EXEMPLOS
+  /p/lucas/                   → painel de lucas
+  /p/mari/jogador/ficha       → ficha de mari
+  /p/jao/jogador/equipe      → equipe de jao
+  /p/mari/jogador/inventario  → inventário de mari
+  /selecionar                 → círculo (mesmo com Mestre conectado)
+
+Cada link tem cookie de sessão independente, com os privilégios do jogador
+correspondente. O login tradicional Mestre continua isolado. Usar o botão
+'Trocar personagem' retorna à seleção.
+
+ATENÇÃO: links de jogadores são sem senha e dão acesso inclusive a alterações
+na ficha pelo usuário da URL. Não compartilhe fora da mesa. Contas mestre,
+administrador e tester não recebem URLs públicas por esse mecanismo.
+
+O instalador cria backups '*.antes_10b3.bak' e é idempotente.
+Não executa migrations nem altera dados do PostgreSQL, passwords ou sprites.
+
+VALIDAÇÃO NESTE AMBIENTE: 6 testes independentes passaram; os testes de
+integração Flask/SQLAlchemy precisam ser executados no computador do usuário.
+
+DOCUMENTAÇÃO COMPLETA: docs/FICHAS_POR_URL_10B3.md

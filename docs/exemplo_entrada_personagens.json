@@ -1,0 +1,15 @@
+{
+  "versao": 1,
+  "habilitado": false,
+  "slots": [
+    {"login": "jogador01", "sprite": "img/login-personagens/slot-01.png"},
+    {"login": "jogador02", "sprite": "img/login-personagens/slot-02.png"},
+    {"login": "jogador03", "sprite": "img/login-personagens/slot-03.png"},
+    {"login": "jogador04", "sprite": "img/login-personagens/slot-04.png"},
+    {"login": "jogador05", "sprite": "img/login-personagens/slot-05.png"},
+    {"login": "jogador06", "sprite": "img/login-personagens/slot-06.png"},
+    {"login": "jogador07", "sprite": "img/login-personagens/slot-07.png"},
+    {"login": "jogador08", "sprite": "img/login-personagens/slot-08.png"},
+    {"login": "jogador09", "sprite": "img/login-personagens/slot-09.png"}
+  ]
+}

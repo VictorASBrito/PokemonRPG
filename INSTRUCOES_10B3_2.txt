@@ -1,0 +1,29 @@
+POKÉMON RPG — ETAPA 10B.3.2 — LOGIN MESTRE / TESTE / VICTOR
+
+SINTOMA
+O slot Mestre abre GET /login/coringa. O formulário login.html, sem atributo action,
+envia POST à mesma rota, que aceita apenas GET. Flask responde 405 Method Not Allowed.
+
+CORREÇÃO
+- O formulário de senha passa a enviar POST explicitamente para /login (auth.login).
+- O formulário do slot Mestre pode ser aberto mesmo se houver sessão administrativa ativa.
+- POST /login aceita nova autenticação; a verificação de senha existente permanece.
+- Se a senha estiver incorreta, a sessão anterior não é substituída.
+- As fichas em /p/<login>/, os cookies individuais e os nove slots não são alterados.
+
+INSTALAR
+1. Extraia o ZIP na raiz de PokemonRPG, preservando scripts/, tests/, docs/.
+2. Com .venv ativo, execute:
+       python scripts/corrigir_login_mestre_10b3_2.py
+3. Teste:
+       python -m pytest -q tests/test_login_mestre_10b3_2.py tests/test_login_mestre_10b3_2_flask.py
+4. Reinicie o Flask e acesse /selecionar -> Mestre -> informe mestre/victor/teste.
+5. Confira que os slots de jogadores /p/<login>/ ainda funcionam simultaneamente.
+
+Instalador idempotente. Antes de mudar arquivos, valida todos os trechos e cria
+backups .antes_10b3_2.bak. Mantém configuração do data/entrada_personagens.json.
+NÃO exige migrations nem altera o banco, senhas ou privilégios.
+
+VALIDAÇÃO NESTE AMBIENTE
+Testes independentes do Flask serão executados aqui. Testes de integração Flask
+precisam ser executados no ambiente do projeto com as dependências instaladas.

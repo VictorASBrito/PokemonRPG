@@ -9,7 +9,7 @@
         <h1>Bem-vindo à campanha</h1>
         <p class="texto-suave">Entre para acessar sua ficha e as ferramentas da mesa.</p>
 
-        <form method="post" class="formulario">
+        <form method="post" class="formulario" action="{{ url_for('auth.login') }}">
             <label for="login">Usuário</label>
             <input id="login" name="login" value="{{ login or '' }}" autocomplete="username" required autofocus>
 

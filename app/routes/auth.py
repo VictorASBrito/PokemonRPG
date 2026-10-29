@@ -74,7 +74,7 @@ def _destino_seguro(destino: str | None) -> str | None:
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if session.get("usuario_id"):
+    if request.method == "GET" and session.get("usuario_id"):
         return redirect(url_for("inicio"))
 
     if request.method == "POST":
@@ -120,14 +120,25 @@ def login():
         destino = _destino_seguro(request.args.get("proxima"))
         return redirect(destino or url_for("inicio"))
 
-    return render_template("login.html")
+    # ENTRADA_PERSONAGENS_10B1: GET visual; POST de usuário/senha preservado.
+    from app.services.entrada_personagens_service import listar_slots_visuais, slots_vazios
+    try:
+        slots = listar_slots_visuais(campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]))
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao listar personagens na entrada visual.")
+        slots = slots_vazios()
+    return render_template(
+        "entrada_personagens.html",
+        slots=slots,
+        entrada_csrf=session.setdefault("entrada_personagens_csrf", secrets.token_urlsafe(32)),
+    )
 
 
 @auth_bp.post("/logout")
 @login_obrigatorio
 def logout():
     session.clear()
-    flash("Sessão encerrada.", "sucesso")
     return redirect(url_for("auth.login"))
 
 

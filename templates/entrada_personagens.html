@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Escolha seu personagem | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/entrada-personagens.css', v='10b2') }}">{% endblock %}
+{% block conteudo %}
+<section class="entrada-visual" aria-labelledby="entrada-titulo">
+  <header class="entrada-titulo">
+    <p class="rotulo">Região de Ankar</p>
+    <h1 id="entrada-titulo">Quem vai entrar na aventura?</h1>
+    <p class="texto-suave">Escolha seu personagem para abrir a ficha.</p>
+  </header>
+  <div class="entrada-anel" aria-label="Selecione um personagem ou a entrada do Mestre">
+    <div class="entrada-orbita" aria-hidden="true"></div>
+    <div class="entrada-centro" aria-hidden="true">
+      <img src="{{ url_for('static', filename='img/pokebola.png') }}" alt="">
+      <span>Pokémon RPG</span>
+    </div>
+    {% for slot in slots %}
+    <div class="entrada-posicao" style="--x:{{ slot.x }}%;--y:{{ slot.y }}%;" data-slot="{{ slot.numero }}">
+      {% if slot.disponivel %}
+      <form method="post" action="{{ url_for('entrada_personagens.entrar_com_personagem', numero=slot.numero) }}">
+        <input type="hidden" name="csrf_token" value="{{ entrada_csrf }}">
+        <button class="entrada-personagem" type="submit" aria-label="Entrar como {{ slot.nome }}">
+          <span class="entrada-sprite">
+            {% if slot.imagem %}<img src="{{ slot.imagem }}" alt="" loading="eager" decoding="async">
+            {% else %}<span class="entrada-inicial" aria-hidden="true">{{ slot.nome[:1]|upper }}</span>{% endif %}
+          </span>
+          <span class="entrada-nome">{{ slot.nome }}</span>
+        </button>
+      </form>
+      {% else %}
+      <div class="entrada-personagem entrada-indisponivel" aria-label="Slot {{ slot.numero }} aguardando configuração">
+        <span class="entrada-sprite">
+          {% if slot.imagem %}<img src="{{ slot.imagem }}" alt="" loading="eager">
+          {% else %}<span class="entrada-inicial" aria-hidden="true">?</span>{% endif %}
+        </span>
+        <span class="entrada-nome">{{ slot.nome }}</span>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <a class="entrada-coringa" href="{{ url_for('entrada_personagens.coringa') }}" aria-label="Mestre: entrar com usuário e senha">
+      <span class="entrada-coringa-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/pokebola.png') }}" alt=""></span>
+      <span class="entrada-nome">Mestre</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

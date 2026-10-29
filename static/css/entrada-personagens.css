@@ -1,0 +1,37 @@
+/* Etapa 10B.2: refinamento visual da entrada, sem alterar autenticação. */
+.entrada-visual { width: min(940px,100%); margin: 0 auto; text-align: center; padding: clamp(8px,2vh,22px) 0 32px; }
+.entrada-titulo { max-width: 670px; margin: 0 auto; }
+.entrada-titulo h1 { margin: 0 0 8px; font-size: clamp(1.5rem,3vw,2.4rem); line-height: 1.16; }
+.entrada-titulo p:last-child { line-height: 1.5; margin: 0 auto; font-size: .95rem; }
+.entrada-anel { --slot:clamp(64px,6.6vw,94px); position: relative; width:min(680px,100%,calc(100dvh - 285px)); aspect-ratio:1; margin: min(15px,2.4vh) auto 0; isolation: isolate; }
+.entrada-orbita { position:absolute; inset: 8%; border: 2px dashed var(--borda); border-radius:50%; background: radial-gradient(circle at 50% 50%,var(--superficie-suave),transparent 59%); box-shadow:0 4px 28px rgba(16,24,40,.06) inset; pointer-events:none; }
+.entrada-orbita::after { content:""; position:absolute; inset:8%; border:1px solid var(--borda); border-radius:50%; opacity:.42; }
+.entrada-centro { position:absolute; inset: 36%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; color: var(--texto); pointer-events:none; }
+.entrada-centro img { width:clamp(32px,5vw,56px); height:auto; filter:drop-shadow(0 3px 4px rgba(0,0,0,.2)); }
+.entrada-centro span { font-weight: 850; font-size:clamp(.78rem,1.7vw,1.08rem); white-space:nowrap; }
+.entrada-posicao { position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%); width:var(--slot); z-index:1; }
+.entrada-posicao form { margin:0; }
+.entrada-personagem { display:flex; flex-direction:column; align-items:center; gap: 3px; padding: 0; border:0; background:none; color:var(--texto); width:100%; cursor:pointer; }
+.entrada-sprite { width:var(--slot); height:var(--slot); flex:0 0 var(--slot); display:grid; place-items:center; background:var(--superficie); border:2px solid var(--borda); border-radius:50%; box-shadow:var(--sombra-suave); overflow:hidden; transition:transform .16s,border-color .16s,box-shadow .16s; }
+/* Uma área idêntica para todos; o corpo completo cabe dentro dela.
+   A altura padronizada evita cortar sprites mais altos ou largos. */
+.entrada-sprite img { display:block; width:auto; height:78%; max-width:82%; max-height:78%; object-fit:contain; object-position:center; image-rendering:pixelated; flex-shrink:0; }
+.entrada-personagem:hover .entrada-sprite, .entrada-personagem:focus-visible .entrada-sprite { transform:translateY(-3px) scale(1.06); border-color:var(--primaria); box-shadow: 0 0 0 4px var(--primaria-suave),var(--sombra); }
+.entrada-inicial { font-size:clamp(1.3rem,3vw,2rem); font-weight:850; color:var(--primaria); }
+.entrada-nome { display:block; width:max-content; max-width:min(130px,20vw); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; padding:3px 5px; text-align:center; background:var(--superficie); border:1px solid var(--borda); border-radius:9px; color:var(--texto); font-size:clamp(.67rem,1.5vw,.83rem); font-weight:800; line-height:1.17; overflow-wrap:anywhere; }
+.entrada-indisponivel { cursor:default; opacity:.55; }
+.entrada-indisponivel .entrada-inicial { color:var(--texto-suave); }
+.entrada-coringa { position:absolute; left:50%; top:94%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:3px; z-index:2; width:var(--slot); text-decoration:none; color:var(--texto); }
+.entrada-coringa-icone { width:var(--slot); height:var(--slot); flex:0 0 var(--slot); display:grid; place-items:center; border-radius:50%; background:var(--primaria-suave); border:2px solid var(--primaria); color:var(--primaria); box-shadow:var(--sombra-suave); transition:transform .16s; }
+.entrada-coringa-icone img { display:block; width:66%; height:66%; object-fit:contain; filter:drop-shadow(0 2px 3px rgba(0,0,0,.16)); }
+.entrada-coringa:hover .entrada-coringa-icone, .entrada-coringa:focus-visible .entrada-coringa-icone { transform:scale(1.06); }
+@media(max-width:640px){
+ .entrada-visual {padding-top:10px;}
+ .entrada-titulo {padding:0 6px;}
+ .entrada-titulo h1 {font-size:1.45rem;}
+ .entrada-titulo p:last-child {font-size:.83rem;}
+ .entrada-anel {width:min(100%,390px); --slot:clamp(52px,14vw,62px); margin-top:18px;}
+ .entrada-posicao .entrada-nome,.entrada-coringa .entrada-nome {font-size:.65rem; padding:3px 4px;}
+ .entrada-centro {inset:37%;}
+}
+@media(prefers-reduced-motion:reduce){.entrada-visual * {transition:none!important;}}

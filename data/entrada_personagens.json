@@ -1,0 +1,42 @@
+{
+  "versao": 1,
+  "habilitado": true,
+  "slots": [
+    {
+      "login": "lucas",
+      "sprite": "img/login-personagens/slot-01.png"
+    },
+    {
+      "login": "mari",
+      "sprite": "img/login-personagens/slot-02.png"
+    },
+    {
+      "login": "braz",
+      "sprite": "img/login-personagens/slot-03.png"
+    },
+    {
+      "login": "jao",
+      "sprite": "img/login-personagens/slot-04.png"
+    },
+    {
+      "login": "tuts",
+      "sprite": "img/login-personagens/slot-05.png"
+    },
+    {
+      "login": "vini",
+      "sprite": "img/login-personagens/slot-06.png"
+    },
+    {
+      "login": "manu",
+      "sprite": "img/login-personagens/slot-07.png"
+    },
+    {
+      "login": "jare",
+      "sprite": "img/login-personagens/slot-08.png"
+    },
+    {
+      "login": "nanda",
+      "sprite": "img/login-personagens/slot-09.png"
+    }
+  ]
+}

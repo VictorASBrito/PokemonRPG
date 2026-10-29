@@ -1,0 +1,13 @@
+Pokémon RPG — Etapa 10B.2 (ajuste visual da tela de entrada)
+
+1. Extraia este ZIP na raiz do projeto PokemonRPG.
+2. Substitua apenas estes dois arquivos de interface:
+   templates/entrada_personagens.html
+   static/css/entrada-personagens.css
+   (scripts/, tests/ são arquivos novos; não sobrescreva outras mudanças.)
+3. Execute: python scripts/registrar_entrada_10b2.py
+4. Teste: python -m pytest -q tests/test_entrada_10b2_visual.py tests/test_entrada_personagens.py tests/test_entrada_personagens_flask.py
+5. Reinicie o servidor e atualize /login com Ctrl+F5.
+
+Nenhuma configuração de slots, nome de login, sessão ou dado do banco é alterado.
+O slot inferior se chama Mestre, mas mantém a rota de login tradicional e exige senha.

@@ -64,6 +64,10 @@
             </nav>
 
             <div class="usuario-topo">
+                {# FICHAS_POR_URL_10B3: seletor independente da sessão principal. #}
+                {% if request.environ.get('ANKAR_FICHA_LOGIN') %}
+                    <a class="botao botao-secundario botao-link" href="{{ request.environ.get('ANKAR_SCRIPT_ROOT_ORIGINAL', '') }}/selecionar">Trocar personagem</a>
+                {% endif %}
                 <button class="tema-toggle" id="tema-toggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Alternar tema">
                     <span class="tema-toggle-icone" aria-hidden="true">◐</span>
                     <span class="tema-toggle-texto">Tema</span>
@@ -73,10 +77,10 @@
                     <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url or url_for('mestre.dashboard') }}">Sair da prévia</a>
                 {% else %}
                     <span>{{ session.get('nome') }}</span>
-                    <a class="botao botao-secundario botao-link" href="{{ url_for('auth.trocar_senha') }}">Senha</a>
-                    <form action="{{ url_for('auth.logout') }}" method="post">
+                    {% if not session.get('entrada_visual') %}<a class="botao botao-secundario botao-link" href="{{ url_for('auth.trocar_senha') }}">Senha</a>{% endif %}
+                    {% if not request.environ.get('ANKAR_FICHA_LOGIN') %}<form action="{{ url_for('auth.logout') }}" method="post">
                         <button class="botao botao-secundario" type="submit">Sair</button>
-                    </form>
+                    </form>{% endif %}
                 {% endif %}
             </div>
         {% endif %}

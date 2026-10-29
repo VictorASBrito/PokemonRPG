@@ -21,6 +21,9 @@ def create_app() -> Flask:
     )
 
     Config(raiz).aplicar(app)
+    # FICHAS_POR_URL_10B3: URL e cookies independentes por jogador.
+    from app.services.fichas_url_service import instalar_fichas_por_url
+    instalar_fichas_por_url(app)
     from app.services.tipos_visual import tipo_visual
     app.jinja_env.filters["tipo_visual"] = tipo_visual
 
@@ -33,6 +36,8 @@ def create_app() -> Flask:
 
     from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli, midia_cli, planilhas_jogadores_cli, ankar_cli
     from app.routes.auth import auth_bp
+    from app.routes.entrada_personagens import entrada_personagens_bp
+    from app.routes.fichas_url import fichas_url_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
     from app.routes.capturas import capturas_bp
     from app.routes.combates import combates_bp
@@ -44,6 +49,8 @@ def create_app() -> Flask:
     from app.routes.pokemons import pokemons_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(entrada_personagens_bp)
+    app.register_blueprint(fichas_url_bp)
     app.register_blueprint(catalogo_admin_bp)
     app.register_blueprint(capturas_bp)
     app.register_blueprint(combates_bp)

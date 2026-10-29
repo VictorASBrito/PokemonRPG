@@ -459,3 +459,46 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Escopo:** sem migrations, alteração no PostgreSQL, mudanças nos encontros, imagens, regras de acesso ou planilhas.
 - **Validação local do pacote:** testes unitários Jinja sem Flask; reexecutar a suíte Flask completa na máquina da campanha.
 - **Próxima ação:** verificar a geração Atlas → Capturáveis com o mestre no ambiente PostgreSQL e revisar a usabilidade da interface.
+
+
+<!-- ENTRADA_PERSONAGENS_10B1 -->
+### 2026-10-28 — Etapa 10B.1: Seleção visual de personagens
+- Tela de entrada com nove slots em círculo e acesso coringa tradicional.
+- Login visual restrito a nove contas `jogador` explicitamente configuradas em `data/entrada_personagens.json`; mestre, administrador e tester nunca são aceitos.
+- Rotas: GET `/login`, GET `/login/coringa`, POST `/login/personagem/<numero>`.
+- Sessões existentes e login tradicional preservados; CSRF na seleção direta.
+- Configurar contas com `scripts/configurar_entrada_personagens.py`, documentado em `docs/ENTRADA_VISUAL_ANKAR.md`.
+- Risco aceito: entrada sem senha permite que qualquer visitante escolha um personagem visível; exigir controle de acesso externo caso o site seja público.
+- Nenhuma migration ou importação no PostgreSQL.
+
+<!-- ENTRADA_PERSONAGENS_10B2 -->
+### Etapa 10B.2 — Refinamento da seleção de personagens (28/10/2026)
+- Alterações restritas a `templates/entrada_personagens.html` e `static/css/entrada-personagens.css`.
+- O décimo slot foi renomeado de Coringa para **Mestre**, com a Pokébola já presente em `static/img/pokebola.png`. A rota de acesso tradicional permanece `entrada_personagens.coringa`.
+- Slots dos nove jogadores mantêm exatamente a mesma dimensão visual; sprites exibidas inteiras com `object-fit: contain`, centralizadas e sem corte. A ordem, as imagens dos slots e a configuração de logins permanecem intactas.
+- Texto sob o título: apenas “Escolha seu personagem para abrir a ficha.”; textos explicativos do coringa e rodapé removidos.
+- Sem alterações na autenticação, sessões, permissões, banco de dados, migrations ou configurações de contas.
+- Verificações: executar `python -m pytest -q tests/test_entrada_10b2_visual.py tests/test_entrada_personagens.py tests/test_entrada_personagens_flask.py` no ambiente do projeto.
+
+
+<!-- FICHAS_POR_URL_10B3 -->
+### 2026-10-28 — Etapa 10B.3: Fichas independentes por URL
+- Cada personagem configurado possui URL estável `/p/<login>/`, por exemplo `/p/lucas/jogador/dashboard`.
+- WSGI ajusta SCRIPT_NAME/PATH_INFO: `url_for` preserva contexto em links, formulários e arquivos estáticos.
+- Cookies Flask separados por jogador (nome e caminho) preservam o login de Mestre e outras abas.
+- Cada requisição revalida conta, personagem e campanha no PostgreSQL; apenas nove contas jogador configuradas.
+- Autorização limitada aos endpoints do jogador. Acesso administrativo permanece fora de `/p/<login>/`.
+- GET `/selecionar` mostra a escolha mesmo que haja login Mestre em outra aba.
+- Acesso por URL é sem senha, inclusive para ações de jogador: compartilhar links concede acesso à ficha.
+- Sem migrations, sem mudanças em senhas, dados da campanha ou sprites.
+- Testes: `python -m pytest -q tests/test_fichas_por_url_10b3.py tests/test_fichas_por_url_10b3_flask.py`.
+- 10B.3.1: instalador independe da implementação do logout em auth.py, paths de teste normalizados no Windows.
+
+
+<!-- LOGIN_MESTRE_10B3_2 -->
+### 2026-10-28 — Etapa 10B.3.2: acesso Mestre, Teste e Victor
+- Corrigido `templates/login.html`: POST explicitamente para `auth.login`, não `/login/coringa` (GET).
+- `entrada_personagens.coringa` pode exibir o formulário mesmo com sessão administrativa ativa.
+- `auth.login` só redireciona sessão existente em GET; em POST valida normalmente a nova senha e substitui sessão após sucesso.
+- A correção preserva as nove fichas por URL, as contas e o PostgreSQL; sem migrations.
+- Verificação: testes `tests/test_login_mestre_10b3_2.py` e `tests/test_login_mestre_10b3_2_flask.py`.

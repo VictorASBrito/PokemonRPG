@@ -1,0 +1,16 @@
+Pokémon RPG — Etapa 10B.1: Entrada circular de personagens
+
+1) Extraia este ZIP na raiz do PokemonRPG, SEM apagar arquivos existentes.
+2) Execute: python scripts/instalar_entrada_personagens.py
+3) Liste:   python scripts/configurar_entrada_personagens.py listar
+4) Configure EXATAMENTE os 9 jogadores que devem entrar sem senha:
+   python scripts/configurar_entrada_personagens.py definir login1 login2 login3 login4 login5 login6 login7 login8 login9
+   (ou 'auto' SOMENTE quando houver exatamente 9 jogadores elegíveis.)
+5) Associe sprites slot-01.png a slot-09.png em static/img/login-personagens/.
+6) Testes: python -m pytest -q tests/test_entrada_personagens.py tests/test_entrada_personagens_flask.py
+7) Reinicie o Flask e acesse /login.
+
+IMPORTANTE: qualquer visitante que abrir /login pode clicar nas 9 contas liberadas!
+O acesso coringa mantém a senha para mestre e contas de teste.
+
+Leia docs/ENTRADA_VISUAL_ANKAR.md para detalhes e segurança.
