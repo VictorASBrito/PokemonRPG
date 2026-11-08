@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/avisos-toast-10c4-1.css', v='10c4-1') }}">
     {# ANKAR_VISUAL_RESPONSIVO_10C5: último acabamento global, após os estilos existentes. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-global-10c5.css', v='10c5-1') }}">
+    {# ANKAR_PADRAO_VISUAL_10D1: menu contextual e hierarquia consistente. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/padrao-visual-10d1.css', v='10d1-1') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
@@ -94,6 +96,20 @@
             </div>
         {% endif %}
     </header>
+
+    {# Navegacao contextual da administracao; as rotas e permissoes sao as existentes. #}
+    {% set ui10d_endpoint = request.endpoint or '' %}
+    {% if ui10d_endpoint.startswith('catalogo_admin.') %}
+    <nav class="ui10d-menu-contexto" aria-label="Seções do catálogo">
+        <span class="ui10d-menu-contexto-titulo">Catálogo</span>
+        <div class="ui10d-menu-contexto-links">
+            <a href="{{ url_for('catalogo_admin.dashboard') }}"{% if ui10d_endpoint == 'catalogo_admin.dashboard' %} aria-current="page"{% endif %}>Visão geral</a>
+            <a href="{{ url_for('catalogo_admin.pokemons') }}"{% if 'pokemon' in ui10d_endpoint %} aria-current="page"{% endif %}>Pokémon</a>
+            <a href="{{ url_for('catalogo_admin.golpes') }}"{% if 'golpe' in ui10d_endpoint or 'vinculo' in ui10d_endpoint %} aria-current="page"{% endif %}>Golpes</a>
+            <a href="{{ url_for('catalogo_admin.itens') }}"{% if 'item' in ui10d_endpoint %} aria-current="page"{% endif %}>Itens</a>
+        </div>
+    </nav>
+    {% endif %}
 
     <main class="conteudo" id="conteudo-principal" tabindex="-1">
         {% block conteudo %}{% endblock %}

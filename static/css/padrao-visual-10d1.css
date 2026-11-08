@@ -1,0 +1,187 @@
+/* ANKAR_PADRAO_VISUAL_10D1 — primeira camada do padrao de menus.
+   Carregar depois de visual-global-10c5.css.
+   Regras preservam temas, permissões, rotas, sprites e lógica de formulários. */
+:root {
+  --ui10d-raio: 16px;
+  --ui10d-gap: clamp(10px, 1.4vw, 18px);
+  --ui10d-menu-fundo: var(--superficie);
+  --ui10d-menu-borda: var(--borda);
+}
+
+/* A regra legada em geral.css escondia títulos completos de várias páginas.
+   Reintroduz hierarquia sem trazer de volta o cabeçalho hero oversized. */
+body.app-shell .cabecalho-pagina.cabecalho-com-acoes,
+body.app-shell .cabecalho-dashboard {
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ui10d-gap);
+  min-height: 0;
+  margin-block: 0 18px;
+  padding-block: 8px 16px;
+  border-bottom: 1px solid var(--borda);
+}
+body.app-shell .cabecalho-pagina.cabecalho-com-acoes > div:first-child,
+body.app-shell .cabecalho-dashboard > div:first-child {
+  display: block;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+body.app-shell :is(.cabecalho-pagina, .cabecalho-dashboard) h1 {
+  margin: 2px 0 4px;
+  font-size: clamp(1.3rem, 1rem + 1.05vw, 1.9rem);
+  line-height: 1.17;
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+body.app-shell :is(.cabecalho-pagina, .cabecalho-dashboard) .rotulo {
+  margin: 0 0 5px;
+  font-size: .7rem;
+}
+body.app-shell :is(.cabecalho-pagina, .cabecalho-dashboard) .texto-suave {
+  margin: 4px 0 0;
+  max-width: 76ch;
+  line-height: 1.45;
+  font-size: .88rem;
+}
+body.app-shell :is(.acoes-cabecalho, .painel-mestre-acoes-topo, .acoes-dashboard) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Menu secundário comum a TODAS as páginas do catálogo, sem editar oito templates. */
+.ui10d-menu-contexto {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  padding: 8px var(--ui-v10-gutter, clamp(12px, 2vw, 28px));
+  border-bottom: 1px solid var(--ui10d-menu-borda);
+  background: var(--ui10d-menu-fundo);
+  color: var(--texto);
+}
+.ui10d-menu-contexto-titulo {
+  flex: 0 0 auto;
+  color: var(--texto-suave);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.ui10d-menu-contexto-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.ui10d-menu-contexto-links a {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  font-size: .86rem;
+  font-weight: 750;
+  color: var(--texto-suave);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ui10d-menu-contexto-links a:is(:hover, :focus-visible) {
+  color: var(--texto);
+  background: var(--superficie-suave);
+  border-color: var(--borda);
+}
+.ui10d-menu-contexto-links a[aria-current="page"] {
+  color: var(--texto);
+  background: var(--primaria-suave);
+  border-color: var(--primaria);
+}
+
+/* Padrão de filtros e ações para o catálogo, boxes e gestão da campanha. */
+body.app-shell :is(.filtros-catalogo, .filtros-golpes, .filtros-boxes,
+                   .painel-mestre-filtros, .captura-filtros) {
+  gap: 12px;
+  border-radius: var(--ui10d-raio);
+}
+body.app-shell :is(.filtros-catalogo, .filtros-golpes, .filtros-boxes,
+                   .painel-mestre-filtros, .captura-filtros) > * { min-width: 0; }
+body.app-shell :is(.filtros-catalogo, .filtros-boxes, .filtros-golpes) .acoes-filtros {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+body.app-shell :is(.filtros-catalogo, .filtros-boxes, .filtros-golpes) :is(input, select) {
+  min-height: 44px;
+  max-width: 100%;
+}
+body.app-shell :is(.barra-acoes-formulario, .barra-acoes-catalogo, .barra-salvar-pokemon) {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+body.app-shell :is(.barra-acoes-formulario, .barra-acoes-catalogo) .botao {
+  min-height: 44px;
+}
+body.app-shell :is(.paginacao, .acoes-jogador) { gap: 8px; flex-wrap: wrap; }
+
+/* Feedback de foco/ação consistente em telas operacionais. */
+body.app-shell :where(.botao, .chip, .inventario-nds-acao, .inventario-uso-acao) {
+  -webkit-tap-highlight-color: transparent;
+}
+body.app-shell :where(.botao, .chip, .inventario-nds-acao, .inventario-uso-acao):disabled {
+  opacity: .56;
+  cursor: not-allowed;
+}
+body.app-shell :where(.botao, .chip, .inventario-nds-acao, .inventario-uso-acao):focus-visible,
+.ui10d-menu-contexto-links a:focus-visible {
+  outline: 3px solid var(--ui-v10-focus, #e9bc56);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+  body.app-shell .cabecalho-pagina.cabecalho-com-acoes,
+  body.app-shell .cabecalho-dashboard { align-items: flex-start; }
+  .ui10d-menu-contexto { gap: 10px; }
+}
+@media (max-width: 700px) {
+  body.app-shell .cabecalho-pagina.cabecalho-com-acoes,
+  body.app-shell .cabecalho-dashboard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 3px;
+    padding-bottom: 12px;
+  }
+  body.app-shell .cabecalho-pagina.cabecalho-com-acoes > div:first-child,
+  body.app-shell .cabecalho-dashboard > div:first-child { flex-basis: auto; }
+  body.app-shell :is(.acoes-cabecalho, .painel-mestre-acoes-topo, .acoes-dashboard) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  body.app-shell :is(.acoes-cabecalho, .painel-mestre-acoes-topo, .acoes-dashboard) .botao {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .ui10d-menu-contexto { gap: 0; padding: 6px 12px; }
+  .ui10d-menu-contexto-titulo { display: none; }
+  .ui10d-menu-contexto-links { width: 100%; gap: 5px; }
+  .ui10d-menu-contexto-links a { min-height: 44px; padding: 9px 12px; }
+  body.app-shell :is(.barra-acoes-formulario, .barra-acoes-catalogo) { align-items: stretch; }
+}
+@media (max-width: 420px) {
+  body.app-shell :is(.cabecalho-pagina, .cabecalho-dashboard) h1 { font-size: 1.35rem; }
+  body.app-shell :is(.cabecalho-pagina, .cabecalho-dashboard) .texto-suave { font-size: .84rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui10d-menu-contexto-links { scroll-behavior: auto; }
+  .ui10d-menu-contexto-links a { transition: none; }
+}
