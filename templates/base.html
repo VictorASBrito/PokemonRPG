@@ -27,6 +27,8 @@
     {# Suavização das imagens Pokémon: deve vir após os estilos da tela. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon-hd.css', v='etapa-09') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/avisos-toast-10c4-1.css', v='10c4-1') }}">
+    {# ANKAR_VISUAL_RESPONSIVO_10C5: último acabamento global, após os estilos existentes. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-global-10c5.css', v='10c5-1') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
@@ -37,7 +39,13 @@
         </a>
 
         {% if session.get('usuario_id') %}
-            <nav class="navegacao-principal" aria-label="Navegação principal">
+            <button class="ui-mobile-nav-toggle" type="button"
+                    data-ui-nav-toggle aria-controls="ui-navegacao-principal" aria-expanded="false"
+                    aria-label="Abrir menu de navegação">
+                <span class="ui-menu-icone" aria-hidden="true">☰</span><span>Menu</span>
+            </button>
+            <nav id="ui-navegacao-principal" class="navegacao-principal"
+                 data-ui-navegacao aria-label="Navegação principal">
                 {% if modo_preview_mestre|default(false) %}
                     <a href="{{ url_for('mestre.preview_jogador', jogador_id=preview_personagem_id) }}">Painel</a>
                     <a href="{{ url_for('mestre.ficha_jogador', jogador_id=preview_personagem_id) }}">Minha ficha</a>
@@ -107,6 +115,7 @@
 
     <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
     <script src="{{ url_for('static', filename='js/avisos-toast-10c4-1.js', v='10c4-2') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/visual-navegacao-10c5.js', v='10c5-1') }}" defer></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

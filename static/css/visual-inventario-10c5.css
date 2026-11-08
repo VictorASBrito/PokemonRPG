@@ -1,0 +1,279 @@
+/* ANKAR_VISUAL_MOCHILA_10C5
+   Layout da mochila fluido: corrigir recorte do painel do mestre, autocomplete,
+   abas e escolha de Pokémon. Não mexe nos formulários nem no JS de consumo. */
+
+/* O overflow-y:hidden anterior cortava os formulários de gerenciamento e a
+   lista de autocomplete quando o painel ultrapassava a altura da janela. */
+body:has(.inventario-nds) { overflow-y: auto !important; }
+body:has(.inventario-nds) .conteudo { padding-bottom: 28px; }
+.inventario-nds { width: 100%; max-width: 100%; min-width: 0; }
+.inventario-nds > * { min-width: 0; }
+.inventario-nds-bag, .inventario-nds-equipe,
+.inventario-nds-area-mestre { min-width: 0; }
+
+/* Tipografia e hierarquia: legibilidade em ambos os temas. */
+.inventario-nds-item-titulo h2 { line-height: 1.16; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.inventario-nds-item-descricao { line-height: 1.55; overflow-wrap: anywhere; }
+.inventario-nds-linha-nome { overflow-wrap: anywhere; }
+.inventario-nds-form-transferir { align-items: end; }
+.inventario-nds-form label { min-width: 0; }
+.inventario-nds-form select, .inventario-nds-form input { min-width: 0; }
+.inventario-nds .inventario-uso-acao { min-height: 44px; }
+.inventario-nds .inventario-nds-aba { min-height: 48px; }
+
+/* Menu do mestre: o autocomplete passa a flutuar sem ser cortado por pais com
+   height rígida, usando a posição acima/abaixo já definida no autocomplete. */
+.inventario-nds-area-mestre {
+  position: relative;
+  z-index: 11;
+  overflow: visible !important;
+  max-height: none !important;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 17px;
+}
+.inventario-nds-area-mestre details {
+  position: relative;
+  overflow: visible !important;
+  border: 1px solid rgba(145, 169, 205, .14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .025);
+  padding: 8px 12px;
+  min-width: 0;
+}
+.inventario-nds-area-mestre details + details { margin-top: 8px; }
+.inventario-nds-area-mestre summary {
+  min-height: 34px;
+  display: list-item;
+  padding: 8px 5px;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.inventario-nds-area-mestre details[open] { background: rgba(255, 255, 255, .045); }
+.inventario-nds-area-mestre form {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(84px, 108px) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 8px 0 6px;
+}
+.inventario-nds-area-mestre form > * { min-width: 0; }
+.inventario-nds-area-mestre form > input[type="hidden"] { display: none; }
+.inventario-nds-area-mestre :is(input, select, button) { min-height: 44px; }
+.inventario-nds-area-mestre :is(input[type="search"], input[type="number"], select) { width: 100%; }
+.inventario-nds-area-mestre:has(.seletor-visual-aberto),
+.inventario-nds-area-mestre details:has(.seletor-visual-aberto) { z-index: 90; }
+.inventario-nds-area-mestre .seletor-visual-resultados {
+  width: min(480px, max(100%, calc(100vw - 36px)));
+  max-width: calc(100vw - 36px);
+  max-height: min(320px, 42dvh);
+  z-index: 130;
+}
+
+/* A lista e os botões do item mantêm o destaque sem comprimir o nome. */
+.inventario-nds-linha:has(.inventario-uso-acoes) { min-width: 0; }
+.inventario-nds-linha:has(.inventario-uso-acoes) .inventario-nds-linha-botao { min-width: 0; }
+.inventario-nds-linha-quantidade { flex: 0 0 auto; }
+.inventario-uso-acoes { gap: 7px; }
+.inventario-nds-treinador-pokemon.inventario-uso-elegivel {
+  box-shadow: 0 0 0 2px rgba(118, 231, 163, .18), 0 8px 26px rgba(38, 105, 76, .23);
+}
+.inventario-uso-alvo span { font-size: .75rem; }
+.inventario-uso-cancelamento button { min-height: 36px; }
+
+/* A visualização do mapa permanece estática, mas cabe em qualquer tela. */
+.inventario-mapa-dialogo {
+  width: min(1180px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  border-radius: 18px;
+}
+.inventario-mapa-dialogo img { max-width: 100%; max-height: calc(100dvh - 130px); height: auto; object-fit: contain; }
+.inventario-equipar-dialogo { width: min(480px, calc(100vw - 24px)); }
+.inventario-equipar-dialogo img { max-height: none; }
+
+@media (min-width: 1200px) and (min-height: 760px) {
+  /* Substitui o 'viewport lacrado' por painéis alinhados e rolagem da página. */
+  .inventario-nds {
+    height: auto !important;
+    min-height: calc(100dvh - 110px);
+    overflow: visible !important;
+    align-items: start;
+  }
+  .inventario-nds-equipe {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none;
+    overflow: visible !important;
+  }
+  .inventario-nds-equipe-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: none;
+    min-height: 0;
+    max-height: min(66dvh, 850px);
+    overflow-y: auto;
+  }
+  .inventario-nds-treinador-pokemon { flex: 0 0 auto; min-height: 84px; max-height: none; }
+  .inventario-nds-bag {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .inventario-nds-paineis { height: auto !important; min-height: min(52dvh, 600px); }
+  .inventario-nds-coluna-lista, .inventario-nds-coluna-detalhes {
+    height: auto;
+    min-height: 0;
+  }
+  .inventario-nds-card-lista, .inventario-nds-card-detalhes {
+    height: 100%;
+    min-height: min(52dvh, 600px);
+    overflow: visible !important;
+  }
+  .inventario-nds-lista {
+    overflow-y: auto;
+    max-height: min(47dvh, 550px);
+    min-height: 140px;
+  }
+  .inventario-nds-area-mestre { flex: none; max-height: none !important; overflow: visible !important; }
+}
+
+@media (min-width: 1200px) and (min-height: 980px) {
+  .inventario-nds-equipe { position: sticky; top: 84px; }
+}
+
+@media (min-width: 800px) and (max-width: 1199px) {
+  .inventario-nds { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .inventario-nds-equipe {
+    height: auto;
+    min-height: 0;
+    padding: 15px;
+    gap: 12px;
+  }
+  .inventario-nds-equipe-lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    max-height: none;
+    overflow: visible;
+  }
+  .inventario-nds-treinador-pokemon {
+    min-width: 0;
+    min-height: 84px;
+    padding: 8px;
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 8px;
+    border-radius: 14px;
+  }
+  .inventario-nds-treinador-foto { width: 54px; height: 54px; border-radius: 12px; }
+  .inventario-nds-treinador-nome strong { font-size: .85rem; }
+  .inventario-nds-treinador-hp { font-size: .72rem; }
+  .inventario-nds-bag { height: auto; overflow: visible; }
+  .inventario-nds-paineis,
+  .inventario-nds-toolbar-resumo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .inventario-nds-card-lista, .inventario-nds-card-detalhes { min-height: 350px; }
+  .inventario-nds-lista { max-height: 440px; }
+}
+
+@media (max-width: 1199px) {
+  .inventario-nds-bag { overflow: visible; }
+  .inventario-nds-abas {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    gap: 8px;
+    scrollbar-width: thin;
+    scroll-snap-type: x proximity;
+  }
+  .inventario-nds-aba { width: auto; min-width: 112px; height: 50px; padding-inline: 8px; scroll-snap-align: start; }
+  .inventario-nds-toolbar-resumo, .inventario-nds-paineis { min-width: 0; }
+  .inventario-nds-lista { min-height: 100px; }
+}
+
+@media (max-width: 799px) {
+  .inventario-nds { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .inventario-nds-equipe { min-height: 0; height: auto; padding: 14px; gap: 12px; }
+  /* Em celular a equipe ocupa uma faixa horizontal, evitando rolar por seis
+     Pokémon antes de alcançar a mochila. A seleção de alvos segue clicável. */
+  .inventario-nds-equipe-lista {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    padding: 4px 4px 12px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  .inventario-nds-treinador-pokemon {
+    flex: 0 0 224px;
+    min-width: 224px;
+    min-height: 86px;
+    max-height: none;
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 8px;
+    padding: 9px;
+    border-radius: 15px;
+    scroll-snap-align: start;
+  }
+  .inventario-nds-treinador-foto { width: 54px; height: 54px; border-radius: 12px; }
+  .inventario-nds-treinador-nome strong { font-size: .82rem; }
+  .inventario-nds-treinador-hp { font-size: .72rem; }
+  .inventario-nds-equipe-rodape { margin-top: 0; }
+  .inventario-nds-bag { height: auto; overflow: visible; padding: 14px; }
+  .inventario-nds-paineis { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .inventario-nds-card-lista, .inventario-nds-card-detalhes { height: auto; min-height: 210px; }
+  .inventario-nds-lista { max-height: 360px; }
+  .inventario-nds-toolbar-resumo { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .inventario-nds-toolbar-counter { min-height: 72px; height: auto; padding: 8px 14px; }
+  .inventario-nds-resumo-bolsa { min-height: 84px; height: auto; }
+  .inventario-nds-form-transferir { display: grid; grid-template-columns: minmax(0, 1fr) 100px; gap: 10px; }
+  .inventario-nds-form-transferir > button { grid-column: 1 / -1; justify-self: end; }
+  .inventario-nds-area-mestre form { grid-template-columns: minmax(0, 1fr) 90px auto; }
+}
+
+@media (max-width: 540px) {
+  .inventario-nds-equipe { border-radius: 17px; }
+  .inventario-nds-bag { border-radius: 17px; }
+  .inventario-nds-logo { padding-bottom: 10px; }
+  .inventario-nds-abas { width: 100%; padding-bottom: 6px; }
+  .inventario-nds-aba { min-width: max-content; padding: 6px 10px 6px 6px; min-height: 46px; height: 46px; }
+  .inventario-nds-resumo-bolsa { grid-template-columns: 55px minmax(0, 1fr); padding: 9px; gap: 10px; }
+  .inventario-nds-resumo-bag-artes img { width: 48px; height: 52px; }
+  .inventario-nds-toolbar-metas strong { font-size: 1.05rem; }
+  .inventario-nds-toolbar-metas span { font-size: .78rem; }
+  .inventario-nds .inventario-nds-card { padding: 12px; }
+  .inventario-nds-item-cabecalho { grid-template-columns: 60px minmax(0, 1fr) auto; gap: 8px; }
+  .inventario-nds-item-imagem { width: 60px; height: 60px; border-radius: 12px; }
+  .inventario-nds-item-quantidade { justify-self: end; font-size: .78rem; }
+  .inventario-nds-item-titulo h2 { font-size: 1.08rem; }
+  .inventario-nds-linha:has(.inventario-uso-acoes) { grid-template-columns: minmax(0, 1fr); }
+  .inventario-uso-acoes { justify-content: flex-end; padding: 0 3px 5px; }
+  .inventario-nds-area-mestre form { grid-template-columns: minmax(0, 1fr); }
+  .inventario-nds-area-mestre form > button { justify-self: stretch; width: 100%; }
+  .inventario-nds-form-transferir { grid-template-columns: minmax(0, 1fr); }
+  .inventario-nds-form-transferir > button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inventario-nds-aba, .inventario-uso-acao { transition: none; }
+  .inventario-nds-equipe-lista, .inventario-nds-abas { scroll-behavior: auto; }
+}
+
+/* Dentro do formulário estreito de mobile, a lista de resultados não pode
+   usar a largura da viewport: deve respeitar o campo pai. */
+@media (max-width: 700px) {
+  .inventario-nds-area-mestre .seletor-visual-resultados {
+    width: 100%;
+    max-width: 100%;
+    left: 0;
+    right: 0;
+  }
+}
