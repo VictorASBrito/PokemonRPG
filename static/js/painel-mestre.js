@@ -51,14 +51,16 @@
     }));
 
     const mostrarMensagem = (texto, erro = false) => {
+        // ANKAR_10D2_CENTRAL_MESTRE — Toast de 1,5 segundo, como as demais páginas do sistema.
+        if (window.PokemonRPGToast?.mostrar) {
+            window.PokemonRPGToast.mostrar(texto, erro ? 'erro' : 'sucesso');
+            if (mensagem) mensagem.textContent = '';
+            return;
+        }
         if (!mensagem) return;
         mensagem.textContent = texto;
-        mensagem.classList.toggle('painel-mestre-mensagem-erro', erro);
         window.clearTimeout(mostrarMensagem.timer);
-        mostrarMensagem.timer = window.setTimeout(() => {
-            mensagem.textContent = '';
-            mensagem.classList.remove('painel-mestre-mensagem-erro');
-        }, 3500);
+        mostrarMensagem.timer = window.setTimeout(() => { mensagem.textContent = ''; }, 1500);
     };
 
     const atualizarNumerosOrdem = () => {
@@ -202,8 +204,14 @@
         form.addEventListener('submit', async (evento) => {
             evento.preventDefault();
             const botao = evento.submitter;
-            const delta = botao?.dataset.delta;
-            if (!delta) return;
+            const quantidade = Number(form.querySelector('[name="quantidade"]')?.value);
+            const operacao = botao?.dataset.operacao;
+            if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 9999 ||
+                !['mais', 'menos'].includes(operacao)) {
+                mostrarMensagem('Informe uma quantidade válida entre 1 e 9999 PV.', true);
+                return;
+            }
+            const delta = String(operacao === 'mais' ? quantidade : -quantidade);
             const botoes = [...form.querySelectorAll('button')];
             botoes.forEach((item) => { item.disabled = true; });
             try {
@@ -231,6 +239,34 @@
                 mostrarMensagem(erro.message || 'Não foi possível atualizar os PV.', true);
             } finally {
                 botoes.forEach((item) => { item.disabled = false; });
+            }
+        });
+    });
+
+
+    document.querySelectorAll('[data-cura-10d2]').forEach((form) => {
+        form.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+            const global = form.dataset.curaGlobal === 'true';
+            const pergunta = global
+                ? 'Curar todos os Pokémon (equipe e Box) de TODOS os jogadores ativos? A operação não poderá ser desfeita automaticamente.'
+                : 'Curar todos os Pokémon (equipe e Box) deste jogador e remover suas condições?';
+            if (!window.confirm(pergunta)) return;
+            const botao = form.querySelector('[type="submit"]');
+            if (botao) botao.disabled = true;
+            try {
+                const resposta = await fetch(form.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'fetch' },
+                    body: new FormData(form),
+                });
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível concluir a cura.');
+                window.location.reload(); // re-renderiza todos os PV e condições.
+            } catch (erro) {
+                mostrarMensagem(erro.message || 'Falha ao curar Pokémon.', true);
+                if (botao) botao.disabled = false;
             }
         });
     });

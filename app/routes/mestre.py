@@ -40,7 +40,10 @@ from app.services.usuario_service import (
     listar_jogadores_campanha,
 )
 
-mestre_bp = Blueprint("mestre", __name__, url_prefix="/mestre")
+from app.services.cura_mestre_10d2 import curar_pokemons_mestre
+from app.services.entrada_personagens_service import configuracao_login
+
+mestre_bp = Blueprint("mestre", __name__, url_prefix="/mestre")  # ANKAR_10D2_CENTRAL_MESTRE
 
 
 def _campanha_codigo() -> str:
@@ -67,6 +70,15 @@ def dashboard():
             jogadores=[],
             fonte_dados="PostgreSQL",
         ), 503
+
+    # Sprites do seletor de personagens, com fallback neutro. Os caminhos
+    # chegam validados pela configuração de entrada, sem controlar o acesso.
+    sprites = {slot["login"]: slot["sprite"] for slot in configuracao_login()}
+    for jogador in painel.jogadores:
+        caminho = sprites.get(str(jogador.get("login", "")).lower())
+        jogador["sprite_url"] = url_for(
+            "static", filename=caminho or "img/pokebola.png"
+        )
 
     return render_template(
         "mestre/dashboard.html",
@@ -158,25 +170,8 @@ def ajustar_pv_pokemon_painel(pokemon_id: str):
 @mestre_bp.get("/jogadores")
 @perfil_obrigatorio("mestre")
 def jogadores():
-    try:
-        _, lista = _dados_banco()
-    except SQLAlchemyError:
-        db.session.rollback()
-        current_app.logger.exception("Falha ao listar jogadores no PostgreSQL.")
-        flash("Não foi possível carregar os jogadores.", "erro")
-        return render_template(
-            "mestre/jogadores.html",
-            jogadores=[],
-            fonte_dados="PostgreSQL",
-        ), 503
-
-    token = session.setdefault("perfil_csrf", secrets.token_urlsafe(32))
-    return render_template(
-        "mestre/jogadores.html",
-        jogadores=lista,
-        fonte_dados="PostgreSQL",
-        perfil_csrf_token=token,
-    )
+    """A URL antiga continua válida, servindo a central unificada."""
+    return dashboard()
 
 
 def _validar_novo_jogador(nome: str, login: str, senha: str, confirmar: str) -> list[str]:
@@ -451,3 +446,49 @@ def ficha_jogador(jogador_id: str):
         fonte_ficha="PostgreSQL",
         nivel_csrf_token=session.setdefault("perfil_csrf", secrets.token_urlsafe(32)),
     )
+
+# ANKAR_10D2_CENTRAL_MESTRE: curas totais limitadas à campanha e ao perfil mestre.
+def _curar_painel_10d2(personagem_id=None):
+    token = session.get("perfil_csrf", "")
+    recebido = request.form.get("csrf_token", "")
+    if not token or not recebido or not hmac.compare_digest(token, recebido):
+        return jsonify({"erro": "Formulário inválido. Atualize o painel."}), 400
+    if request.form.get("confirmar") != "CURAR_POKEMONS":
+        return jsonify({"erro": "Confirmação obrigatória para cura total."}), 400
+    try:
+        resultado = curar_pokemons_mestre(
+            campanha_codigo=_campanha_codigo(),
+            usuario_id=session.get("usuario_id"),
+            personagem_id=personagem_id,
+        )
+    except ValueError as erro:
+        db.session.rollback()
+        if request.headers.get("X-Requested-With") == "fetch":
+            return jsonify({"erro": str(erro)}), 400
+        flash(str(erro), "erro")
+        return redirect(url_for("mestre.dashboard"))
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao curar Pokémon pela central do mestre.")
+        if request.headers.get("X-Requested-With") == "fetch":
+            return jsonify({"erro": "Não foi possível curar os Pokémon."}), 503
+        flash("Não foi possível curar os Pokémon.", "erro")
+        return redirect(url_for("mestre.dashboard"))
+
+    flash(f"Cura concluída: {resultado['alterados']} Pokémon recuperados e "
+          f"{resultado['condicoes_removidas']} condições removidas.", "sucesso")
+    if request.headers.get("X-Requested-With") == "fetch":
+        return jsonify(resultado)
+    return redirect(url_for("mestre.dashboard"))
+
+
+@mestre_bp.post("/painel/treinadores/<personagem_id>/curar")
+@perfil_obrigatorio("mestre")
+def curar_treinador_painel(personagem_id: str):
+    return _curar_painel_10d2(personagem_id)
+
+
+@mestre_bp.post("/painel/curar-todos")
+@perfil_obrigatorio("mestre")
+def curar_todos_painel():
+    return _curar_painel_10d2()

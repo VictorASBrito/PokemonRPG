@@ -174,7 +174,7 @@ def test_mestre_pode_visualizar_mesmo_dashboard_do_jogador(app_db, client_db) ->
     texto = resposta.get_data(as_text=True)
     assert resposta.status_code == 200
     assert "Visualização como jogador" in texto
-    assert "Área do jogador" in texto
+    assert 'class="dashboard-jogador"' in texto
     assert "Painel de Bartz" in texto
     assert "Minha ficha" in texto
     assert "Voltar ao painel do mestre" in texto

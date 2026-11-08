@@ -1,0 +1,69 @@
+/* 10D.2 — Central do mestre. Somente nesta tela; preserva o restante do site. */
+.painel-mestre-central { display: grid; gap: 12px; min-width: 0; }
+.painel-mestre-central .painel-mestre-cabecalho { margin-bottom: 0; padding-bottom: 10px; }
+.painel-mestre-central .painel-mestre-cabecalho .painel-mestre-acoes-topo { align-items: center; }
+.painel-mestre-central .painel-mestre-filtros { margin: 0; padding: 12px 16px; gap: 8px 14px; }
+.painel-mestre-central .painel-mestre-filtros .campo label { font-size: .84rem; }
+.painel-mestre-central .painel-mestre-resultado { font-size: .75rem; min-height: 0; }
+.painel-mestre-central .painel-mestre-jogadores { gap: 12px; }
+.painel-mestre-central .painel-jogador-card { padding: 15px; border-radius: 16px; min-width: 0; }
+.painel-mestre-central .painel-jogador-topo { gap: 10px; align-items: center; }
+.painel-mestre-central .painel-jogador-identidade-wrap { min-width: 0; flex: 1 1 240px; }
+.painel-mestre-central .painel-jogador-identidade { gap: 10px; align-items: center; min-width: 0; }
+.painel-mestre-central .painel-jogador-identidade > div { min-width: 0; }
+.painel-mestre-central .painel-jogador-identidade h2 { font-size: 1.13rem; margin: 0; line-height: 1.2; overflow-wrap: anywhere; }
+.painel-mestre-central .painel-jogador-identidade .rotulo { font-size: .67rem; letter-spacing: .04em; margin: 0 0 2px; }
+.painel-mestre-central .painel-jogador-identidade .texto-suave { font-size: .79rem; line-height: 1.35; }
+.painel-mestre-central .painel-jogador-avatar { width: 53px; height: 53px; flex: 0 0 53px; object-fit: contain; background: var(--superficie-suave); padding: 3px; image-rendering: pixelated; }
+.painel-mestre-central .painel-jogador-links { flex: 0 1 auto; gap: 6px; align-items: center; }
+.painel-mestre-central .painel-jogador-links .botao,
+.painel-mestre-central .painel-mestre-acoes-topo .botao { min-height: 37px; padding: 7px 10px; font-size: .8rem; border-radius: 9px; }
+.painel-mestre-central .botao-curar { color: #c6f6df; border-color: #307458; background: #194638; }
+:root[data-theme="light"] .painel-mestre-central .botao-curar { color: #155a38; border-color: #82bda2; background: #e7f8ef; }
+.painel-mestre-central .botao-curar:hover { filter: brightness(1.09); }
+.painel-mestre-central button:disabled { opacity: .55; cursor: progress; }
+.painel-mestre-central .painel-jogador-gestao { margin-top: 10px; border-top: 1px solid var(--borda); padding-top: 8px; }
+.painel-mestre-central .painel-jogador-gestao > summary,
+.painel-mestre-central .painel-jogador-atributos-expansivel > summary { cursor: pointer; font-size: .79rem; font-weight: 750; padding: 5px 2px; }
+.painel-mestre-central .painel-jogador-gestao-conteudo { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; padding: 9px 0 3px; }
+.painel-mestre-central .painel-jogador-gestao form { display: flex; gap: 6px; align-items: end; flex-wrap: wrap; }
+.painel-mestre-central .painel-jogador-gestao label { font-size: .75rem; display: grid; gap: 4px; }
+.painel-mestre-central .painel-jogador-gestao input[type=number] { width: 70px; }
+.painel-mestre-central .painel-jogador-gestao select { min-width: 115px; }
+.painel-mestre-central .painel-jogador-gestao :is(input,select) { padding: 7px 9px; min-height: 38px; }
+.painel-mestre-central .painel-jogador-gestao .botao { min-height: 38px; font-size: .78rem; padding: 7px 10px; }
+.painel-mestre-central .painel-jogador-resumo { display: flex; flex-wrap: wrap; align-items: start; gap: 12px; margin-top: 10px; }
+.painel-mestre-central .painel-recurso-treinador { flex: 0 1 340px; padding: 8px 11px; min-width: min(100%, 290px); }
+.painel-mestre-central .painel-recurso-cabecalho strong { font-size: .87rem; }
+.painel-mestre-central .painel-recurso progress { height: 6px; margin-top: 5px; }
+.painel-mestre-central .painel-jogador-chips { flex: 1 1 220px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.painel-mestre-central .painel-jogador-chips span { border: 1px solid var(--borda); padding: 6px 9px; border-radius: 9px; font-size: .74rem; background: var(--superficie-suave); }
+.painel-mestre-central .painel-jogador-atributos-expansivel { flex: 1 1 100%; }
+.painel-mestre-central .painel-jogador-atributos { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 6px; padding: 6px 0; }
+.painel-mestre-central .painel-atributo-personagem { min-width: 0; padding: 7px 8px; font-size: .76rem; }
+.painel-mestre-central .painel-atributo-personagem strong { font-size: .85rem; }
+.painel-mestre-central .painel-alertas-jogador { margin-top: 7px; }
+.painel-mestre-central .painel-equipe-compacta { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 7px; margin-top: 10px; }
+.painel-mestre-central .painel-pokemon-card { min-width: 0; border-radius: 12px; display: flex; flex-direction: column; }
+.painel-mestre-central .painel-pokemon-link { padding: 8px; align-items: flex-start; gap: 7px; min-width: 0; }
+.painel-mestre-central .painel-pokemon-imagem { width: 42px; height: 42px; flex-basis: 42px; border-radius: 9px; }
+.painel-mestre-central .painel-pokemon-info { min-width: 0; flex: 1; }
+.painel-mestre-central .painel-pokemon-info > strong { display: block; font-size: .82rem; line-height: 1.2; white-space: normal; overflow-wrap: anywhere; min-height: 2.4em; }
+.painel-mestre-central .painel-pokemon-info > small { display: block; font-size: .69rem; line-height: 1.2; min-height: 1.25em; }
+.painel-mestre-central .painel-pokemon-tipos { margin-top: 4px; }
+.painel-mestre-central .painel-pokemon-tipos span { font-size: .6rem; }
+.painel-mestre-central .painel-pokemon-vida { padding: 4px 8px 8px; margin-top: auto; }
+.painel-mestre-central .painel-pokemon-vida > div:first-child { font-size: .71rem; }
+.painel-mestre-central .painel-pokemon-vida progress { height: 6px; margin-top: 4px; }
+.painel-mestre-central .painel-pokemon-rodape { font-size: .69rem; padding: 5px 8px; min-height: 26px; }
+.painel-mestre-central .controle-pv-rapido { display: grid; grid-template-columns: minmax(56px, 1fr) auto auto; gap: 4px; margin-top: 7px; align-items: stretch; }
+.painel-mestre-central .controle-pv-rapido input { min-width: 0; width: 100%; border: 1px solid var(--borda); background: var(--superficie); color: var(--texto); min-height: 35px; border-radius: 7px; padding: 4px 7px; text-align: center; font-size: .79rem; }
+.painel-mestre-central .controle-pv-rapido button { min-width: 32px; min-height: 35px; padding: 4px 7px; border-radius: 7px; background: var(--superficie-suave); color: var(--texto); font-size: .77rem; }
+.painel-mestre-central .controle-pv-rapido button[data-operacao="mais"] { color: #57ba86; }
+.painel-mestre-central .controle-pv-rapido button[data-operacao="menos"] { color: #ee7a80; }
+@media (max-width: 1280px) { .painel-mestre-central .painel-equipe-compacta { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (max-width: 1000px) { .painel-mestre-central .painel-jogador-topo { flex-wrap: wrap; } .painel-mestre-central .painel-jogador-links { justify-content: flex-start; } .painel-mestre-central .painel-jogador-atributos { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (max-width: 750px) { .painel-mestre-central .painel-equipe-compacta { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 640px) { .painel-mestre-central .painel-mestre-cabecalho { align-items: stretch; } .painel-mestre-central .painel-mestre-acoes-topo { flex-wrap: wrap; } .painel-mestre-central .painel-mestre-acoes-topo > * { flex: 1 1 auto; text-align: center; } .painel-mestre-central .painel-mestre-filtros { padding: 12px; grid-template-columns: minmax(0,1fr); } .painel-mestre-central .painel-mestre-chips { justify-content: start; } .painel-mestre-central .painel-jogador-links { width: 100%; } .painel-mestre-central .painel-jogador-links .botao { flex: 1 1 auto; text-align: center; } .painel-mestre-central .painel-equipe-compacta { grid-template-columns: repeat(2,minmax(0,1fr)); } .painel-mestre-central .painel-jogador-resumo { display: block; } .painel-mestre-central .painel-jogador-chips { margin-top: 8px; } .painel-mestre-central .painel-jogador-atributos { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 380px) { .painel-mestre-central .painel-equipe-compacta { grid-template-columns: minmax(0,1fr); } .painel-mestre-central .painel-pokemon-link { align-items: center; } }
+@media (prefers-reduced-motion: reduce) { .painel-mestre-central * { transition: none !important; } }

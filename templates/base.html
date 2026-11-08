@@ -58,7 +58,7 @@
                     <a href="{{ url_for('inventario.inventario_mestre', personagem_id=preview_personagem_id) }}">Inventário</a>
                 {% elif session.get('perfil') == 'mestre' %}
                     <a href="{{ url_for('mestre.dashboard') }}">Painel</a>
-                    <a href="{{ url_for('mestre.jogadores') }}">Jogadores</a>
+                    {# ANKAR_10D2_CENTRAL_MESTRE: jogadores integrados ao Painel. #}
                     <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
                     <a href="{{ url_for('regiao.indice_ankar') }}">Região</a>
                     <a href="{{ url_for('combates.painel') }}">Campo</a>

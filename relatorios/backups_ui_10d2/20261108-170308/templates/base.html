@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Pokémon RPG{% endblock %}</title>
+    <script>
+        (() => {
+            const chave = 'pokemon-rpg-tema';
+            let salvo = null;
+            try { salvo = localStorage.getItem(chave); } catch (_erro) { salvo = null; }
+            const tema = salvo === 'dark' || salvo === 'light'
+                ? salvo
+                : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.dataset.theme = tema;
+        })();
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/geral.css') }}">
+    {% block estilos %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/refinamento.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tema.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/seletor-visual.css') }}">
+    {% block estilos_finais %}{% endblock %}
+    {# Design system carregado por último para estabilizar todas as telas. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui1-20261023') }}">
+    {# Suavização das imagens Pokémon: deve vir após os estilos da tela. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon-hd.css', v='etapa-09') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/avisos-toast-10c4-1.css', v='10c4-1') }}">
+    {# ANKAR_VISUAL_RESPONSIVO_10C5: último acabamento global, após os estilos existentes. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-global-10c5.css', v='10c5-1') }}">
+    {# ANKAR_PADRAO_VISUAL_10D1: menu contextual e hierarquia consistente. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/padrao-visual-10d1.css', v='10d1-1') }}">
+</head>
+<body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
+    <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
+    <header class="topo">
+        <a class="marca" href="{{ url_for('inicio') }}">
+            <img class="marca-pokebola" src="{{ url_for('static', filename='img/pokebola.png') }}" alt="" aria-hidden="true">
+            Pokémon RPG
+        </a>
+
+        {% if session.get('usuario_id') %}
+            <button class="ui-mobile-nav-toggle" type="button"
+                    data-ui-nav-toggle aria-controls="ui-navegacao-principal" aria-expanded="false"
+                    aria-label="Abrir menu de navegação">
+                <span class="ui-menu-icone" aria-hidden="true">☰</span><span>Menu</span>
+            </button>
+            <nav id="ui-navegacao-principal" class="navegacao-principal"
+                 data-ui-navegacao aria-label="Navegação principal">
+                {% if modo_preview_mestre|default(false) %}
+                    <a href="{{ url_for('mestre.preview_jogador', jogador_id=preview_personagem_id) }}">Painel</a>
+                    <a href="{{ url_for('mestre.ficha_jogador', jogador_id=preview_personagem_id) }}">Minha ficha</a>
+                    <a href="{{ url_for('pokemons.equipe_mestre', jogador_id=preview_personagem_id) }}">Equipe</a>
+                    <a href="{{ url_for('boxes.boxes_mestre', jogador_id=preview_personagem_id) }}">Boxes</a>
+                    <a href="{{ url_for('regiao.indice_ankar') }}">Região</a>
+                    <a href="{{ url_for('combates.painel') }}">Campo</a>
+                    <a href="{{ url_for('inventario.inventario_mestre', personagem_id=preview_personagem_id) }}">Inventário</a>
+                {% elif session.get('perfil') == 'mestre' %}
+                    <a href="{{ url_for('mestre.dashboard') }}">Painel</a>
+                    <a href="{{ url_for('mestre.jogadores') }}">Jogadores</a>
+                    <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
+                    <a href="{{ url_for('regiao.indice_ankar') }}">Região</a>
+                    <a href="{{ url_for('combates.painel') }}">Campo</a>
+                    <a href="{{ url_for('capturas.campo_mestre') }}">Capturáveis</a>
+                {% else %}
+                    <a href="{{ url_for('jogadores.dashboard') }}">Painel</a>
+                    <a href="{{ url_for('jogadores.ficha') }}">Minha ficha</a>
+                    <a href="{{ url_for('pokemons.equipe_jogador') }}">Equipe</a>
+                    <a href="{{ url_for('boxes.boxes_jogador') }}">Boxes</a>
+                    <a href="{{ url_for('combates.painel') }}">Campo</a>
+                    <a href="{{ url_for('inventario.inventario_jogador') }}">Inventário</a>
+                    <a href="{{ url_for('capturas.campo_jogador') }}">Capturáveis</a>
+                {% endif %}
+            </nav>
+
+            <div class="usuario-topo">
+                {# FICHAS_POR_URL_10B3: seletor independente da sessão principal. #}
+                {% if request.environ.get('ANKAR_FICHA_LOGIN') %}
+                    <a class="botao botao-secundario botao-link" href="{{ request.environ.get('ANKAR_SCRIPT_ROOT_ORIGINAL', '') }}/selecionar">Trocar personagem</a>
+                {% endif %}
+                <button class="tema-toggle" id="tema-toggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Alternar tema">
+                    <span class="tema-toggle-icone" aria-hidden="true">◐</span>
+                    <span class="tema-toggle-texto">Tema</span>
+                </button>
+                {% if modo_preview_mestre|default(false) %}
+                    <span>{{ nome_jogador }}</span>
+                    <a class="botao botao-secundario botao-link" href="{{ voltar_painel_url or url_for('mestre.dashboard') }}">Sair da prévia</a>
+                {% else %}
+                    <span>{{ session.get('nome') }}</span>
+                    {% if not session.get('entrada_visual') %}<a class="botao botao-secundario botao-link" href="{{ url_for('auth.trocar_senha') }}">Senha</a>{% endif %}
+                    {% if not request.environ.get('ANKAR_FICHA_LOGIN') %}<form action="{{ url_for('auth.logout') }}" method="post">
+                        <button class="botao botao-secundario" type="submit">Sair</button>
+                    </form>{% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </header>
+
+    {# Navegacao contextual da administracao; as rotas e permissoes sao as existentes. #}
+    {% set ui10d_endpoint = request.endpoint or '' %}
+    {% if ui10d_endpoint.startswith('catalogo_admin.') %}
+    <nav class="ui10d-menu-contexto" aria-label="Seções do catálogo">
+        <span class="ui10d-menu-contexto-titulo">Catálogo</span>
+        <div class="ui10d-menu-contexto-links">
+            <a href="{{ url_for('catalogo_admin.dashboard') }}"{% if ui10d_endpoint == 'catalogo_admin.dashboard' %} aria-current="page"{% endif %}>Visão geral</a>
+            <a href="{{ url_for('catalogo_admin.pokemons') }}"{% if 'pokemon' in ui10d_endpoint %} aria-current="page"{% endif %}>Pokémon</a>
+            <a href="{{ url_for('catalogo_admin.golpes') }}"{% if 'golpe' in ui10d_endpoint or 'vinculo' in ui10d_endpoint %} aria-current="page"{% endif %}>Golpes</a>
+            <a href="{{ url_for('catalogo_admin.itens') }}"{% if 'item' in ui10d_endpoint %} aria-current="page"{% endif %}>Itens</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="conteudo" id="conteudo-principal" tabindex="-1">
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    {# AVISOS_TOAST_10C4_1: mensagens globais sem ocupar espaco do conteudo. #}
+    <section class="avisos-toast" data-avisos-toast aria-label="Avisos do sistema">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensagem in mensagens %}
+                {% set tipo = categoria if categoria in ('sucesso', 'erro', 'aviso', 'info') else 'info' %}
+                <div class="aviso-toast aviso-toast--{{ tipo }}" role="{{ 'alert' if tipo == 'erro' else 'status' }}" data-aviso-toast data-tempo-ms="1500">
+                    <span class="aviso-toast-icone" aria-hidden="true"></span>
+                    <span class="aviso-toast-mensagem">{{ mensagem }}</span>
+                    <button type="button" class="aviso-toast-fechar" data-aviso-toast-fechar aria-label="Fechar aviso">&times;</button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+    </section>
+
+    <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/avisos-toast-10c4-1.js', v='10c4-2') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/visual-navegacao-10c5.js', v='10c5-1') }}" defer></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
