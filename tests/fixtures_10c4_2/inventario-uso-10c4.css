@@ -1,0 +1,88 @@
+/* 10C.4 — ajustes isolados à mochila; preservar as variáveis e tema existentes. */
+.inventario-nds-linha:has(.inventario-uso-acoes) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+.inventario-nds-linha:has(.inventario-uso-acoes) .inventario-nds-linha-botao {
+  min-width: 0;
+  grid-template-columns: 10px 50px minmax(0,1fr) auto;
+  gap: 8px;
+  padding-inline: 10px;
+}
+.inventario-nds-linha:has(.inventario-uso-acoes) .inventario-nds-linha-quantidade {
+  grid-column: auto;
+  justify-self: end;
+}
+.inventario-uso-acoes { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.inventario-uso-acao {
+  border-radius: 12px;
+  border: 1px solid rgba(100, 209, 155, .35);
+  background: rgba(35, 111, 85, .4);
+  color: var(--inv-text, #fff);
+  padding: 11px 10px;
+  min-height: 42px;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.inventario-uso-acao:hover, .inventario-uso-acao:focus-visible,
+.inventario-uso-acao[aria-pressed="true"] {
+  outline: 2px solid rgba(109, 234, 161, .8);
+  outline-offset: 1px;
+  background: rgba(36, 127, 83, .7);
+}
+.inventario-uso-acao-equipar { background: rgba(48, 79, 116, .6); border-color: rgba(117, 166, 222, .35); }
+.inventario-nds-treinador-pokemon { position: relative; }
+.inventario-nds-treinador-pokemon.inventario-uso-elegivel {
+  border-color: #6ade96;
+  outline: 2px solid rgba(101, 227, 146, .86);
+  outline-offset: 2px;
+  box-shadow: 0 0 22px rgba(87, 208, 131, .27), inset 0 0 0 1px rgba(120, 239, 159, .16);
+}
+.inventario-uso-alvo {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: rgba(24, 92, 55, .10);
+  color: #e7ffe9;
+  cursor: pointer;
+  text-align: right;
+  padding: 0 11px 8px;
+  font-size: .77rem;
+  font-weight: 900;
+}
+.inventario-uso-alvo span { display: inline-block; border-radius: 9px; padding: 5px 7px; background: #22573f; }
+.inventario-uso-alvo:hover,.inventario-uso-alvo:focus-visible { background: rgba(65, 160, 92, .22); outline: 2px solid #9af0ad; }
+.inventario-uso-alvo[hidden], .inventario-uso-aviso[hidden] { display: none !important; }
+.inventario-uso-aviso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(120, 233, 165, .40);
+  border-radius: 12px;
+  background: rgba(34, 82, 64, .42);
+  font-size: .81rem;
+  line-height: 1.4;
+}
+.inventario-uso-aviso button { color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 7px; padding: 5px; cursor: pointer; }
+.inventario-equipar-dialogo { width: min(450px, calc(100vw - 32px)); padding: 22px; }
+.inventario-equipar-dialogo form { display: grid; gap: 13px; }
+.inventario-equipar-dialogo label { display: grid; gap: 6px; }
+.inventario-equipar-dialogo select { padding: 10px; width: 100%; background: #111c2b; color: #fff; border: 1px solid #506076; border-radius: 9px; }
+.inventario-equipar-acoes { display: flex; gap: 10px; flex-wrap: wrap; }
+.inventario-nds-area-mestre select { width: 100%; min-height: 42px; padding: 0 10px; border-radius: 12px; background: #101b2c; color: var(--inv-text,#fff); border: 1px solid rgba(131,163,206,.22); }
+@media (max-width: 620px) {
+  .inventario-nds-linha:has(.inventario-uso-acoes) { grid-template-columns: minmax(0,1fr); }
+  .inventario-nds-linha:has(.inventario-uso-acoes) .inventario-nds-linha-quantidade { grid-column: auto; }
+  .inventario-uso-acoes { justify-content: flex-end; padding-bottom: 3px; }
+}
+/* Os filtros do inventario.js usam hidden; uma regra de layout não pode reexibir linhas ocultas. */
+.inventario-nds-linha[hidden] { display: none !important; }

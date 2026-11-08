@@ -60,19 +60,25 @@
 .inventario-uso-alvo span { display: inline-block; border-radius: 9px; padding: 5px 7px; background: #22573f; }
 .inventario-uso-alvo:hover,.inventario-uso-alvo:focus-visible { background: rgba(65, 160, 92, .22); outline: 2px solid #9af0ad; }
 .inventario-uso-alvo[hidden], .inventario-uso-aviso[hidden] { display: none !important; }
-.inventario-uso-aviso {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid rgba(120, 233, 165, .40);
-  border-radius: 12px;
-  background: rgba(34, 82, 64, .42);
-  font-size: .81rem;
-  line-height: 1.4;
+/* ANKAR_10C4_2_SELECAO_TOAST: nenhum aviso fixo sobre a lista de Pokémon. */
+.inventario-uso-cancelamento { margin-left: auto; flex: 0 0 auto; }
+.inventario-uso-cancelamento[hidden] { display: none !important; }
+.inventario-uso-cancelamento button {
+  font: inherit;
+  font-weight: 750;
+  font-size: .75rem;
+  cursor: pointer;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(111, 201, 160, .55);
+  background: rgba(34, 82, 64, .35);
+  color: var(--inv-text, #fff);
 }
-.inventario-uso-aviso button { color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 7px; padding: 5px; cursor: pointer; }
+.inventario-uso-cancelamento button:hover,
+.inventario-uso-cancelamento button:focus-visible {
+  outline: 2px solid rgba(109, 234, 161, .7);
+  outline-offset: 1px;
+}
 .inventario-equipar-dialogo { width: min(450px, calc(100vw - 32px)); padding: 22px; }
 .inventario-equipar-dialogo form { display: grid; gap: 13px; }
 .inventario-equipar-dialogo label { display: grid; gap: 6px; }

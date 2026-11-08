@@ -27,7 +27,6 @@
   if (!root) return;
   const form = root.querySelector('[data-formulario-uso]');
   const msgWrap = root.querySelector('[data-uso-aviso]');
-  const msg = root.querySelector('[data-uso-mensagem]');
   const cards = [...root.querySelectorAll('[data-pokemon-alvo]')];
   const botoes = [...root.querySelectorAll('[data-ativar-uso]')];
   const usarItem = form?.querySelector('[name="item_id"]');
@@ -40,6 +39,7 @@
   function limpar() {
     aguardando = null;
     if (msgWrap) msgWrap.hidden = true;
+    window.PokemonRPGToast?.fecharDinamico();
     for (const card of cards) {
       card.classList.remove('inventario-uso-elegivel');
       const botao = card.querySelector('[data-selecionar-pokemon]');
@@ -54,9 +54,9 @@
     if (usarPokemon) usarPokemon.value = '';
   }
 
-  function informar(texto) {
-    if (msg) msg.textContent = texto;
-    if (msgWrap) msgWrap.hidden = false;
+  // ANKAR_10C4_2_SELECAO_TOAST: usa a mesma notificação global de 1,5s.
+  function informar(texto, tipo = 'info') {
+    window.PokemonRPGToast?.mostrar(texto, tipo);
   }
 
   function enviar(itemId, pokemonId) {
@@ -122,9 +122,10 @@
       aguardando = disponiveis ? id : null;
       if (aguardando) {
         botao.setAttribute('aria-pressed', 'true');
-        informar('Selecione um Pokémon destacado para usar o item.');
+        if (msgWrap) msgWrap.hidden = false; // apenas Cancelar, sem banner de aviso
+        informar('Selecione um Pokémon destacado para usar o item.', 'info');
       } else {
-        informar('Nenhum Pokémon da equipe pode receber o efeito agora.');
+        informar('Nenhum Pokémon da equipe pode receber o efeito agora.', 'aviso');
       }
     });
   }

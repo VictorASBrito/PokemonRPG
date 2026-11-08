@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/efeitos-itens-10c3.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/inventario.css', v=versao_inventario) }}">
 {# ANKAR_10C4_USO_LINHA #}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/inventario-uso-10c4.css', v='10c4') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/inventario-uso-10c4.css', v='10c4-2') }}">
 {% endblock %}
 {% block conteudo %}
 <!-- Inventario NDS: {{ versao_inventario }}. Se este marcador não aparecer no código-fonte, o servidor está usando arquivos antigos. -->
@@ -28,12 +28,12 @@
                 <strong>BAG</strong>
                 <small>{{ personagem.nome }}</small>
             </div>
+            {# ANKAR_10C4_2_SELECAO_TOAST: cancelar permanece disponível; aviso é temporário. #}
+            <div class="inventario-uso-cancelamento" data-uso-aviso hidden>
+                <button type="button" data-uso-cancelar aria-label="Cancelar seleção de Pokémon">Cancelar</button>
+            </div>
         </div>
 
-        <div class="inventario-uso-aviso" data-uso-aviso role="status" aria-live="polite" hidden>
-            <span data-uso-mensagem></span>
-            <button type="button" data-uso-cancelar>Cancelar</button>
-        </div>
         <div class="inventario-nds-equipe-lista">
             {% for registro in equipe_visual %}
             {% set p = registro.pokemon %}
@@ -268,5 +268,5 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/inventario.js', v=versao_inventario) }}" defer></script>
-<script src="{{ url_for('static', filename='js/inventario-uso-10c4.js', v='10c4') }}" defer></script>
+<script src="{{ url_for('static', filename='js/inventario-uso-10c4.js', v='10c4-2') }}" defer></script>
 {% endblock %}
