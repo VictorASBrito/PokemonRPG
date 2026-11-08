@@ -304,6 +304,7 @@ def usar_item_consumivel(
     personagem_id: str | uuid.UUID,
     item_id: str | uuid.UUID,
     quantidade: Any = 1,
+    pokemon_id: str | uuid.UUID | None = None,
     usuario_id: str | uuid.UUID | None,
     campanha_id: str | uuid.UUID | None = None,
 ) -> None:
@@ -320,7 +321,16 @@ def usar_item_consumivel(
         raise ValueError("Personagem ou item não encontrado.")
     if not item.consumivel:
         raise ValueError("Este item não está marcado como consumível.")
+    # ANKAR_10C3_CURA — confirma o alvo e aplica cura/status antes do consumo.
+    from app.services.efeitos_itens_10c3 import exige_alvo_pokemon, aplicar_efeitos_terapeuticos
     registro = _registro_inventario(personagem.id, item.id, bloquear=True)
+    if registro is None or registro.quantidade < quantidade_int:
+        raise ValueError(f"Quantidade insuficiente de {item.nome} no inventário.")
+    resultado_terapia = None
+    if exige_alvo_pokemon(item):
+        resultado_terapia = aplicar_efeitos_terapeuticos(
+            item=item, personagem=personagem, pokemon_id=pokemon_id, quantidade=quantidade_int
+        )
     antes = _snapshot_registro(registro)
     registro = _retirar_sem_commit(personagem, item, quantidade_int)
     depois = _snapshot_registro(registro) if registro.quantidade > 0 else None
@@ -335,6 +345,7 @@ def usar_item_consumivel(
             "inventario": depois,
             "usado": quantidade_int,
             "efeitos": item.efeitos,
+            "efeitos_aplicados": resultado_terapia,
         },
     )
     db.session.commit()

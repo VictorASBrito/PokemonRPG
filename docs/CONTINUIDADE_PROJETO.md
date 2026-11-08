@@ -512,3 +512,12 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Normalizações são apenas sugestões para revisão; não fundir códigos, inventários nem equipamentos automaticamente.
 - Etapa seguinte: revisar relatórios do PostgreSQL, aprovar grafias/categorias/imagens e especificar as distribuições por login e quantidade.
 - Testes puros em `tests/test_revisao_itens_10c1.py`; sem migrations e sem escrita no PostgreSQL.
+
+<!-- ANKAR_10C3_CATALOGO_20261028 -->
+### 2026-10-28 — Etapa 10C.3: reconstrução de itens e efeitos reais
+- Escopo: manifesto explícito de 77 códigos legados para 48 itens de destino, com preservação de vínculos e somatório de estoques; remoção de naturezas falsas somente mediante aceite consciente.
+- Catálogo reconstruído somente com `--aplicar --confirmar RECONSTRUIR-ANKAR`, após backup de dados e auditoria. Nunca aplicar como efeito colateral da instalação.
+- Cura PV/remover condição passa a funcionar ao consumir com seleção do Pokémon, transação conjunta e histórico; sem PP automático.
+- Mapa da Região de Ankar: item-chave sem interação, visualizado no inventário em modal com `static/img/ankar-mapa.jpg`.
+- Fonte: commit `5a54423` (“Imagens Itens 1”). **Sem migrations**. Integração PostgreSQL não verificada neste ambiente.
+- Detalhes em `docs/ETAPA_10C3_RECONSTRUCAO_CATALOGO.md`.

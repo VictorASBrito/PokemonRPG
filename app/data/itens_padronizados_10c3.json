@@ -1,0 +1,1216 @@
+{
+  "versao": 1,
+  "origem": "relatorio de inventario 2026-10-28 + commit Imagens Itens 1",
+  "origens": [
+    {
+      "origem": "frutinha",
+      "destino": "frutinha-ankar",
+      "nome_origem": "Frutinha",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pokedex",
+      "destino": "pokedex",
+      "nome_origem": "Pokedex",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-poke-bolas",
+      "destino": "poke-bola",
+      "nome_origem": "Poke Bolas",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pocao",
+      "destino": "pocao",
+      "nome_origem": "Poção",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-elixir",
+      "destino": "elixir",
+      "nome_origem": "Elixir",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-antidoto",
+      "destino": "antidoto",
+      "nome_origem": "Antídoto",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-despertador",
+      "destino": "despertador",
+      "nome_origem": "Despertador",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cura-queimaduras",
+      "destino": "cura-queimaduras",
+      "nome_origem": "Cura Queimaduras",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cura-congelamento",
+      "destino": "cura-congelamento",
+      "nome_origem": "Cura Congelamento",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cura-paralisia",
+      "destino": "cura-paralisia",
+      "nome_origem": "Cura Paralisia",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-caneta",
+      "destino": "caneta",
+      "nome_origem": "Caneta",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-papel",
+      "destino": "papel",
+      "nome_origem": "Papel",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-isqueiro",
+      "destino": "isqueiro",
+      "nome_origem": "Isqueiro",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-lanterna",
+      "destino": "lanterna",
+      "nome_origem": "Lanterna",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-vara-de-pesca",
+      "destino": "vara-de-pesca",
+      "nome_origem": "Vara de pesca",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-colar",
+      "destino": "colar",
+      "nome_origem": "Colar",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pokeball",
+      "destino": "poke-bola",
+      "nome_origem": "Pokéball",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-greatball",
+      "destino": "grande-bola",
+      "nome_origem": "Greatball",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-ultraball",
+      "destino": "ultra-bola",
+      "nome_origem": "Ultraball",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-premier-ball",
+      "destino": "premier-ball",
+      "nome_origem": "Premier Ball",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cantil-pequeno",
+      "destino": "cantil-pequeno",
+      "nome_origem": "Cantil pequeno",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-corda-simples-2m",
+      "destino": "corda-simples-2m",
+      "nome_origem": "Corda simples (2m)",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-faca-pequena",
+      "destino": "faca-pequena",
+      "nome_origem": "Faca pequena",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-frutas",
+      "destino": "frutas",
+      "nome_origem": "Frutas",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-incubadora-comum",
+      "destino": "incubadora-comum",
+      "nome_origem": "Incubadora Comúm",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-ultra-bola",
+      "destino": "ultra-bola",
+      "nome_origem": "Ultra Bola",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-ameixas",
+      "destino": "ameixas",
+      "nome_origem": "Ameixas",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-limao",
+      "destino": "limao",
+      "nome_origem": "Limão",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-maca-vermelha",
+      "destino": "maca-vermelha",
+      "nome_origem": "Maçã Vermelha",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-fruta-amarga",
+      "destino": "fruta-amarga",
+      "nome_origem": "Fruta Amarga",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cereja",
+      "destino": "cereja",
+      "nome_origem": "Cereja",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-quieto",
+      "destino": null,
+      "nome_origem": "Quieto",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-peculiar",
+      "destino": null,
+      "nome_origem": "Peculiar",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-timido",
+      "destino": null,
+      "nome_origem": "Tímido",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-inflexivel",
+      "destino": null,
+      "nome_origem": "Inflexível",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-gentil",
+      "destino": null,
+      "nome_origem": "Gentil",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-cura-queima",
+      "destino": "cura-queimaduras",
+      "nome_origem": "cura queima",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cura-congela",
+      "destino": "cura-congelamento",
+      "nome_origem": "cura congela",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pokebola",
+      "destino": "poke-bola",
+      "nome_origem": "pokebola",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-kit-cozinha",
+      "destino": "kit-cozinha",
+      "nome_origem": "kit cozinha",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-focil-desconhecido",
+      "destino": "fossil-desconhecido",
+      "nome_origem": "focil desconhecido",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pedra-do-sol",
+      "destino": "pedra-do-sol",
+      "nome_origem": "pedra do sol",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-cantil",
+      "destino": "cantil",
+      "nome_origem": "Cantil",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-corda-simples",
+      "destino": "corda-simples",
+      "nome_origem": "Corda Simples",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-ultra-pokebola",
+      "destino": "ultra-bola",
+      "nome_origem": "Ultra pokebola",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-grande-bola",
+      "destino": "grande-bola",
+      "nome_origem": "Grande Bola",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-calmo",
+      "destino": null,
+      "nome_origem": "Calmo",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-relaxado",
+      "destino": null,
+      "nome_origem": "Relaxado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-valente",
+      "destino": null,
+      "nome_origem": "Valente",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-atrevido",
+      "destino": null,
+      "nome_origem": "Atrevido",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-cuidadoso",
+      "destino": null,
+      "nome_origem": "Cuidadoso",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-corajoso",
+      "destino": null,
+      "nome_origem": "Corajoso",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-ousado",
+      "destino": null,
+      "nome_origem": "Ousado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-desobediente",
+      "destino": null,
+      "nome_origem": "Desobediente",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-modesto",
+      "destino": null,
+      "nome_origem": "Modesto",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-precipitado",
+      "destino": null,
+      "nome_origem": "Precipitado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-frutas-douradas",
+      "destino": "frutas-douradas",
+      "nome_origem": "frutas douradas",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-descuidado",
+      "destino": null,
+      "nome_origem": "Descuidado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-moderado",
+      "destino": null,
+      "nome_origem": "Moderado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-docil",
+      "destino": null,
+      "nome_origem": "Dócil",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-pocoes",
+      "destino": "pocao",
+      "nome_origem": "poções",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-novelo-de-la",
+      "destino": "novelo-de-la",
+      "nome_origem": "novelo de lã",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-flor-roxa",
+      "destino": "flor-roxa",
+      "nome_origem": "Flor Roxa",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-picareta",
+      "destino": "picareta",
+      "nome_origem": "Picareta",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-pedra-de-fogo",
+      "destino": "pedra-de-fogo",
+      "nome_origem": "Pedra de Fogo",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-bola-grande",
+      "destino": "grande-bola",
+      "nome_origem": "Bola Grande",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-vara-p",
+      "destino": "vara-p",
+      "nome_origem": "Vara (P)",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-iscas-p",
+      "destino": "iscas-p",
+      "nome_origem": "Iscas (P)",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-iscas-n",
+      "destino": "iscas-n",
+      "nome_origem": "Iscas (N)",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-colar-quebrado",
+      "destino": "colar-quebrado",
+      "nome_origem": "Colar Quebrado",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-fruta",
+      "destino": "fruta",
+      "nome_origem": "Fruta",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-ingenuo",
+      "destino": null,
+      "nome_origem": "Ingênuo",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-apressado",
+      "destino": null,
+      "nome_origem": "Apressado",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-serio",
+      "destino": null,
+      "nome_origem": "Sério",
+      "acao": "rejeitar_natureza"
+    },
+    {
+      "origem": "importado-ficha-mega-pedra",
+      "destino": "mega-pedra",
+      "nome_origem": "Mega pedra",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-chaveirinho-de-areia",
+      "destino": "chaveirinho-de-areia",
+      "nome_origem": "chaveirinho de areia",
+      "acao": "migrar"
+    },
+    {
+      "origem": "importado-ficha-brinco-dourado",
+      "destino": "brinco-dourado",
+      "nome_origem": "brinco dourado",
+      "acao": "migrar"
+    }
+  ],
+  "padronizados": [
+    {
+      "codigo": "ameixas",
+      "nome": "Ameixas",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-ameixas"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "antidoto",
+      "nome": "Antídoto",
+      "categoria": "Cura",
+      "descricao": "Remove Envenenado e Muito Envenenado de um Pokémon.",
+      "imagem_arquivo": "antidoto.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-antidoto"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "codigos_status": [
+              "envenenado",
+              "muito-envenenado"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "brinco-dourado",
+      "nome": "Brinco dourado",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-brinco-dourado"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "caneta",
+      "nome": "Caneta",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-caneta"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "cantil",
+      "nome": "Cantil",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "cantil.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cantil"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "cantil-pequeno",
+      "nome": "Cantil Pequeno",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "cantil.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cantil-pequeno"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "cereja",
+      "nome": "Cereja",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cereja"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "chaveirinho-de-areia",
+      "nome": "Chaveirinho de areia",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "chaveiro_areia.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-chaveirinho-de-areia"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "colar",
+      "nome": "Colar",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-colar"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "colar-quebrado",
+      "nome": "Colar Quebrado",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-colar-quebrado"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "corda-simples",
+      "nome": "Corda Simples",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "corda.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-corda-simples"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "corda-simples-2m",
+      "nome": "Corda simples (2m)",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "corda.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-corda-simples-2m"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "cura-congelamento",
+      "nome": "Cura Congelamento",
+      "categoria": "Cura",
+      "descricao": "Remove a condição Congelado de um Pokémon.",
+      "imagem_arquivo": "descongelar.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-congelamento",
+        "importado-ficha-cura-congela"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "codigos_status": [
+              "congelado"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "cura-paralisia",
+      "nome": "Cura Paralisia",
+      "categoria": "Cura",
+      "descricao": "Remove a condição Paralisado de um Pokémon.",
+      "imagem_arquivo": "paralisia.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-paralisia"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "codigos_status": [
+              "paralisado"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "cura-queimaduras",
+      "nome": "Cura Queimaduras",
+      "categoria": "Cura",
+      "descricao": "Remove a condição Queimando de um Pokémon.",
+      "imagem_arquivo": "queimadura.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-queimaduras",
+        "importado-ficha-cura-queima"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "codigos_status": [
+              "queimando"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "despertador",
+      "nome": "Despertador",
+      "categoria": "Cura",
+      "descricao": "Remove a condição Dormindo de um Pokémon.",
+      "imagem_arquivo": "despertador.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-despertador"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "codigos_status": [
+              "dormindo"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "elixir",
+      "nome": "Elixir",
+      "categoria": "Cura",
+      "descricao": "Elixir. Sem recuperação automática de PP nesta campanha; configure outros efeitos antes de marcar como consumível.",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-elixir"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "faca-pequena",
+      "nome": "Faca Pequena",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-faca-pequena"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "flor-roxa",
+      "nome": "Flor Roxa",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-flor-roxa"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "fruta",
+      "nome": "Fruta",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-fruta"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "fruta-amarga",
+      "nome": "Fruta Amarga",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-fruta-amarga"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "frutas",
+      "nome": "Frutas",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-frutas"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "frutas-douradas",
+      "nome": "Frutas douradas",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-frutas-douradas"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "frutinha-ankar",
+      "nome": "Frutinha",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": true,
+      "equipavel": true,
+      "uso_em_batalha": false,
+      "origens": [
+        "frutinha"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "fossil-desconhecido",
+      "nome": "Fóssil Desconhecido",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": "fossil_desconhecido.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-focil-desconhecido"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "grande-bola",
+      "nome": "Grande Bola",
+      "categoria": "Pokébolas",
+      "descricao": "",
+      "imagem_arquivo": "greatball.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-greatball",
+        "importado-ficha-grande-bola",
+        "importado-ficha-bola-grande"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "incubadora-comum",
+      "nome": "Incubadora Comum",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "incubadora.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-incubadora-comum"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "iscas-n",
+      "nome": "Iscas (N)",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "iscas.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-iscas-n"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "iscas-p",
+      "nome": "Iscas (P)",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "iscas.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-iscas-p"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "isqueiro",
+      "nome": "Isqueiro",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-isqueiro"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "kit-cozinha",
+      "nome": "Kit de Cozinha",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "kit_de_cozinha.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-kit-cozinha"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "lanterna",
+      "nome": "Lanterna",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": "lanterna.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-lanterna"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "limao",
+      "nome": "Limão",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-limao"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "mapa-da-regiao-de-ankar",
+      "nome": "Mapa da Região de Ankar",
+      "categoria": "Item-chave",
+      "descricao": "Mapa detalhado de Ankar para consulta do treinador; não revela encontros ou habitats.",
+      "imagem_arquivo": "mapa.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "efeitos_modelo": null,
+      "origens": []
+    },
+    {
+      "codigo": "maca-vermelha",
+      "nome": "Maçã Vermelha",
+      "categoria": "Frutas",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-maca-vermelha"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "mega-pedra",
+      "nome": "Mega Pedra",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-mega-pedra"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "novelo-de-la",
+      "nome": "Novelo de lã",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-novelo-de-la"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "papel",
+      "nome": "Papel",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-papel"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "pedra-de-fogo",
+      "nome": "Pedra de Fogo",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": "pedra_de_fogo.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pedra-de-fogo"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "pedra-do-sol",
+      "nome": "Pedra do Sol",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": "pedra_do_sol.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pedra-do-sol"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "picareta",
+      "nome": "Picareta",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-picareta"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "poke-bola",
+      "nome": "Poké Bola",
+      "categoria": "Pokébolas",
+      "descricao": "",
+      "imagem_arquivo": "pokeball.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-poke-bolas",
+        "importado-ficha-pokeball",
+        "importado-ficha-pokebola"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "pokedex",
+      "nome": "Pokédex",
+      "categoria": "Item-chave",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pokedex"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "pocao",
+      "nome": "Poção",
+      "categoria": "Cura",
+      "descricao": "Recupera 20 PV de um Pokémon. Não pode ultrapassar o PV máximo.",
+      "imagem_arquivo": "pocao.png",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-pocao",
+        "importado-ficha-pocoes"
+      ],
+      "efeitos_modelo": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "recuperar_pv",
+            "alvo": "pokemon",
+            "operacao": "fixo",
+            "valor": 20
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "premier-ball",
+      "nome": "Premier Ball",
+      "categoria": "Pokébolas",
+      "descricao": "",
+      "imagem_arquivo": "premierball.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-premier-ball"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "ultra-bola",
+      "nome": "Ultra Bola",
+      "categoria": "Pokébolas",
+      "descricao": "",
+      "imagem_arquivo": "ultraball.png",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-ultraball",
+        "importado-ficha-ultra-bola",
+        "importado-ficha-ultra-pokebola"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "vara-p",
+      "nome": "Vara (P)",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-vara-p"
+      ],
+      "efeitos_modelo": null
+    },
+    {
+      "codigo": "vara-de-pesca",
+      "nome": "Vara de Pesca",
+      "categoria": "Avulsos",
+      "descricao": "",
+      "imagem_arquivo": null,
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-vara-de-pesca"
+      ],
+      "efeitos_modelo": null
+    }
+  ],
+  "obs": "Nomes e objetos narrativos distintos permanecem separados. Valide propostas antes de aplicar."
+}

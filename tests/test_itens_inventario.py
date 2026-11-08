@@ -257,7 +257,7 @@ def test_fluxo_inventario_adiciona_equipa_usa_desequipa_e_transfere(app_db, clie
 
     resposta = client_db.post(
         f"/mestre/jogadores/{personagem_id}/inventario/usar",
-        data={"item_id": item_id, "quantidade": "1"},
+        data={"item_id": item_id, "pokemon_id": pokemon_id, "quantidade": "1"},
     )
     assert resposta.status_code == 302
     with app_db.app_context():

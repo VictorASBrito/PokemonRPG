@@ -309,3 +309,12 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Normalizações são apenas sugestões para revisão; não fundir códigos, inventários nem equipamentos automaticamente.
 - Etapa seguinte: revisar relatórios do PostgreSQL, aprovar grafias/categorias/imagens e especificar as distribuições por login e quantidade.
 - Testes puros em `tests/test_revisao_itens_10c1.py`; sem migrations e sem escrita no PostgreSQL.
+
+<!-- ANKAR_10C3_CATALOGO_20261028 -->
+### 2026-10-28 — Etapa 10C.3: reconstrução controlada do catálogo de itens
+- **Status:** pacote incremental preparado, testes isolados executados, testes Flask/PostgreSQL e aplicação pendentes de execução local e aprovação.
+- **Mudanças:** plano de 77 códigos para 48 cadastros, vínculos de inventários, arte de itens do commit Imagens Itens 1, mapa estático e cura funcional (PV/status) com seleção de alvo.
+- **Proteções:** simulação padrão, bloqueios contra dados diferentes, conflito de imagens e usuários de outras campanhas, backup JSON antes de aplicar, confirmação explícita; natureza Ingênuo com 1 unidade só pode ser descartada com flag específica.
+- **Banco:** não alterado pela entrega; reconstrução destrutiva só com comando explícito após backup PostgreSQL; nenhuma migration.
+- **Testes:** executar `python -m pytest -q tests/test_itens_10c3_puro.py tests/test_itens_10c3_flask.py` e testes de regressão reais.
+- **Próximo:** revisar simulação, validar imagem de cada item, aplicar conscientemente e testar cura/condições + mapa.

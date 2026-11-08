@@ -1,0 +1,713 @@
+{
+  "resumo": {
+    "catalogo_antes": 77,
+    "catalogo_depois": 48,
+    "linhas_inventario_antes": 0,
+    "linhas_inventario_depois": 0,
+    "unidades_antes": 0,
+    "unidades_depois": 0,
+    "unidades_suspeitas_descartadas": 0,
+    "equipados": 0,
+    "com_imagem": 24,
+    "sem_imagem": 24
+  },
+  "plano": [
+    {
+      "codigo": "ameixas",
+      "nome": "Ameixas",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-ameixas"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "antidoto",
+      "nome": "Antídoto",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-antidoto"
+      ],
+      "imagem_url": "/static/img/inventory/itens/antidoto.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "6cd0274f-9090-5545-9a48-b28f21ac7387",
+            "todos": false
+          },
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "6155d529-c62e-5677-a1f9-7f6b7b0af201",
+            "todos": false
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "brinco-dourado",
+      "nome": "Brinco dourado",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-brinco-dourado"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "caneta",
+      "nome": "Caneta",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-caneta"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "cantil",
+      "nome": "Cantil",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cantil"
+      ],
+      "imagem_url": "/static/img/inventory/itens/cantil.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "cantil-pequeno",
+      "nome": "Cantil Pequeno",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cantil-pequeno"
+      ],
+      "imagem_url": "/static/img/inventory/itens/cantil.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "cereja",
+      "nome": "Cereja",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-cereja"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "chaveirinho-de-areia",
+      "nome": "Chaveirinho de areia",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-chaveirinho-de-areia"
+      ],
+      "imagem_url": "/static/img/inventory/itens/chaveiro_areia.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "colar",
+      "nome": "Colar",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-colar"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "colar-quebrado",
+      "nome": "Colar Quebrado",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-colar-quebrado"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "corda-simples",
+      "nome": "Corda Simples",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-corda-simples"
+      ],
+      "imagem_url": "/static/img/inventory/itens/corda.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "corda-simples-2m",
+      "nome": "Corda simples (2m)",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-corda-simples-2m"
+      ],
+      "imagem_url": "/static/img/inventory/itens/corda.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "cura-congelamento",
+      "nome": "Cura Congelamento",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-congelamento",
+        "importado-ficha-cura-congela"
+      ],
+      "imagem_url": "/static/img/inventory/itens/descongelar.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "d42259ac-874b-52e7-99e3-50255b0b3f18",
+            "todos": false
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "cura-paralisia",
+      "nome": "Cura Paralisia",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-paralisia"
+      ],
+      "imagem_url": "/static/img/inventory/itens/paralisia.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "72c2e23c-2879-57ca-a6f1-14c99248d407",
+            "todos": false
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "cura-queimaduras",
+      "nome": "Cura Queimaduras",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-cura-queimaduras",
+        "importado-ficha-cura-queima"
+      ],
+      "imagem_url": "/static/img/inventory/itens/queimadura.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "3c0a7fbe-1ac9-595c-b0cc-dcc203a6f72f",
+            "todos": false
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "despertador",
+      "nome": "Despertador",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-despertador"
+      ],
+      "imagem_url": "/static/img/inventory/itens/despertador.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "remover_status",
+            "alvo": "pokemon",
+            "status_id": "0bee542d-71de-52be-aa8d-c265776520f4",
+            "todos": false
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "elixir",
+      "nome": "Elixir",
+      "categoria": "Cura",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-elixir"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "faca-pequena",
+      "nome": "Faca Pequena",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-faca-pequena"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "flor-roxa",
+      "nome": "Flor Roxa",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-flor-roxa"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "fruta",
+      "nome": "Fruta",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-fruta"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "fruta-amarga",
+      "nome": "Fruta Amarga",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-fruta-amarga"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "frutas",
+      "nome": "Frutas",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-frutas"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "frutas-douradas",
+      "nome": "Frutas douradas",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-frutas-douradas"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "frutinha-ankar",
+      "nome": "Frutinha",
+      "categoria": "Frutas",
+      "consumivel": true,
+      "equipavel": true,
+      "uso_em_batalha": false,
+      "origens": [
+        "frutinha"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "fossil-desconhecido",
+      "nome": "Fóssil Desconhecido",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-focil-desconhecido"
+      ],
+      "imagem_url": "/static/img/inventory/itens/fossil_desconhecido.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "grande-bola",
+      "nome": "Grande Bola",
+      "categoria": "Pokébolas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-greatball",
+        "importado-ficha-grande-bola",
+        "importado-ficha-bola-grande"
+      ],
+      "imagem_url": "/static/img/inventory/itens/greatball.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "incubadora-comum",
+      "nome": "Incubadora Comum",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-incubadora-comum"
+      ],
+      "imagem_url": "/static/img/inventory/itens/incubadora.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "iscas-n",
+      "nome": "Iscas (N)",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-iscas-n"
+      ],
+      "imagem_url": "/static/img/inventory/itens/iscas.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "iscas-p",
+      "nome": "Iscas (P)",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-iscas-p"
+      ],
+      "imagem_url": "/static/img/inventory/itens/iscas.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "isqueiro",
+      "nome": "Isqueiro",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-isqueiro"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "kit-cozinha",
+      "nome": "Kit de Cozinha",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-kit-cozinha"
+      ],
+      "imagem_url": "/static/img/inventory/itens/kit_de_cozinha.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "lanterna",
+      "nome": "Lanterna",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-lanterna"
+      ],
+      "imagem_url": "/static/img/inventory/itens/lanterna.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "limao",
+      "nome": "Limão",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-limao"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "mapa-da-regiao-de-ankar",
+      "nome": "Mapa da Região de Ankar",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [],
+      "imagem_url": "/static/img/inventory/itens/mapa.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "maca-vermelha",
+      "nome": "Maçã Vermelha",
+      "categoria": "Frutas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-maca-vermelha"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "mega-pedra",
+      "nome": "Mega Pedra",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-mega-pedra"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "novelo-de-la",
+      "nome": "Novelo de lã",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-novelo-de-la"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "papel",
+      "nome": "Papel",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-papel"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "pedra-de-fogo",
+      "nome": "Pedra de Fogo",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pedra-de-fogo"
+      ],
+      "imagem_url": "/static/img/inventory/itens/pedra_de_fogo.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "pedra-do-sol",
+      "nome": "Pedra do Sol",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pedra-do-sol"
+      ],
+      "imagem_url": "/static/img/inventory/itens/pedra_do_sol.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "picareta",
+      "nome": "Picareta",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-picareta"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "poke-bola",
+      "nome": "Poké Bola",
+      "categoria": "Pokébolas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-poke-bolas",
+        "importado-ficha-pokeball",
+        "importado-ficha-pokebola"
+      ],
+      "imagem_url": "/static/img/inventory/itens/pokeball.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "pokedex",
+      "nome": "Pokédex",
+      "categoria": "Item-chave",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-pokedex"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "pocao",
+      "nome": "Poção",
+      "categoria": "Cura",
+      "consumivel": true,
+      "equipavel": false,
+      "uso_em_batalha": true,
+      "origens": [
+        "importado-ficha-pocao",
+        "importado-ficha-pocoes"
+      ],
+      "imagem_url": "/static/img/inventory/itens/pocao.png",
+      "efeitos": {
+        "versao": 1,
+        "efeitos": [
+          {
+            "tipo": "recuperar_pv",
+            "alvo": "pokemon",
+            "operacao": "fixo",
+            "valor": 20
+          }
+        ]
+      }
+    },
+    {
+      "codigo": "premier-ball",
+      "nome": "Premier Ball",
+      "categoria": "Pokébolas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-premier-ball"
+      ],
+      "imagem_url": "/static/img/inventory/itens/premierball.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "ultra-bola",
+      "nome": "Ultra Bola",
+      "categoria": "Pokébolas",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-ultraball",
+        "importado-ficha-ultra-bola",
+        "importado-ficha-ultra-pokebola"
+      ],
+      "imagem_url": "/static/img/inventory/itens/ultraball.png",
+      "efeitos": null
+    },
+    {
+      "codigo": "vara-p",
+      "nome": "Vara (P)",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-vara-p"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    },
+    {
+      "codigo": "vara-de-pesca",
+      "nome": "Vara de Pesca",
+      "categoria": "Avulsos",
+      "consumivel": false,
+      "equipavel": false,
+      "uso_em_batalha": false,
+      "origens": [
+        "importado-ficha-vara-de-pesca"
+      ],
+      "imagem_url": null,
+      "efeitos": null
+    }
+  ]
+}

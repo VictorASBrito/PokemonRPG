@@ -1,0 +1,7 @@
+/* Etapa 10C.3 — complementos locais, sem mudar o layout existente. */
+.inventario-nds-form select[name="pokemon_id"] {min-width:160px;max-width:100%;}
+.inventario-mapa-botao{margin-block:8px}
+.inventario-mapa-dialogo{padding:16px;max-width:min(96vw,1100px);max-height:92vh;border:1px solid var(--borda,#63748d);border-radius:16px;background:var(--superficie,#172339);color:var(--texto,#fff);overflow:auto;box-shadow:0 20px 60px #0008}
+.inventario-mapa-dialogo::backdrop{background:#000b}
+.inventario-mapa-dialogo form{display:flex;justify-content:flex-end;margin-bottom:12px}
+.inventario-mapa-dialogo img{display:block;width:100%;height:auto;max-height:78vh;object-fit:contain;border-radius:8px}

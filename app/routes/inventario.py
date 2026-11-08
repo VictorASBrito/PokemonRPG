@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
 from app.services.inventario_apresentacao import BOLSAS, VERSAO_INTERFACE, preparar_equipe, preparar_itens
+from app.services.efeitos_itens_10c3 import exige_alvo_pokemon  # ANKAR_10C3_CURA
 from app.services.inventario_service import (
     adicionar_item,
     ajustar_quantidade_item,
@@ -46,6 +47,7 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
         "jogador/inventario.html",
         versao_inventario=VERSAO_INTERFACE,
         bolsas=BOLSAS,
+        item_exige_pokemon=exige_alvo_pokemon,
         itens_visuais=preparar_itens(contexto.inventario),
         equipe_visual=preparar_equipe(contexto.pokemons, contexto.personagem),
         contexto=contexto,
@@ -136,6 +138,7 @@ def _usar(personagem_id: str, *, modo_mestre: bool):
         personagem_id=personagem_id,
         item_id=request.form.get("item_id"),
         quantidade=request.form.get("quantidade", 1),
+        pokemon_id=request.form.get("pokemon_id"),
     )
 
 

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block titulo %}Mochila de {{ personagem.nome }} | Pokémon RPG{% endblock %}
 {% block estilos_finais %}
+{# ANKAR_10C3_CURA #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/efeitos-itens-10c3.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/inventario.css', v=versao_inventario) }}">
 {% endblock %}
 {% block conteudo %}
@@ -144,6 +146,9 @@
                         </header>
 
                         <p class="inventario-nds-item-descricao">{{ item.descricao or 'Sem descrição cadastrada.' }}</p>
+                        {% if item.codigo == 'mapa-da-regiao-de-ankar' %}
+                        <button type="button" class="inventario-nds-acao inventario-mapa-botao" onclick="document.getElementById('inventario-mapa-estatico').showModal()">Ver mapa da Região de Ankar</button>
+                        {% endif %}
 
                         {% if item.efeitos %}
                         <details class="inventario-nds-efeitos">
@@ -157,6 +162,16 @@
                             <form method="post" action="{{ url_for('inventario.usar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.usar_jogador') }}" class="inventario-nds-form">
                                 <input type="hidden" name="item_id" value="{{ item.id }}">
                                 <label>Registrar uso <input type="number" name="quantidade" min="1" max="{{ linha.registro.quantidade }}" value="1" required></label>
+                                {% if item_exige_pokemon(item) %}
+                                <label>Aplicar em Pokémon
+                                    <select name="pokemon_id" required>
+                                        <option value="">Selecione o Pokémon</option>
+                                        {% for p in contexto.pokemons if p.ativo %}
+                                        <option value="{{ p.id }}">{{ p.apelido or p.forma_pokemon.nome }} — {{ p.pv_atual }} PV</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                {% endif %}
                                 <button type="submit" class="inventario-nds-acao">Usar</button>
                             </form>
                             {% endif %}
@@ -200,7 +215,7 @@
                         </div>
 
                         {% if item.consumivel %}
-                        <p class="inventario-nds-observacao">O botão Usar registra o consumo no inventário. Efeitos sobre PV são resolvidos pelas regras da campanha.</p>
+                        <p class="inventario-nds-observacao">O uso de itens configurados para cura recupera PV ou remove condições do Pokémon selecionado. O consumo e a cura acontecem juntos.</p>
                         {% endif %}
                     </article>
                     {% endfor %}
@@ -227,6 +242,10 @@
         {% endif %}
     </section>
 </div>
+<dialog id="inventario-mapa-estatico" class="inventario-mapa-dialogo" aria-label="Mapa da Região de Ankar">
+  <form method="dialog"><button type="submit" class="botao botao-secundario">Fechar mapa</button></form>
+  <img src="{{ url_for('static', filename='img/ankar-mapa.jpg') }}" alt="Mapa completo da Região de Ankar" loading="lazy">
+</dialog>
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
