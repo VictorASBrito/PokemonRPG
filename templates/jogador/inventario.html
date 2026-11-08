@@ -4,10 +4,19 @@
 {# ANKAR_10C3_CURA #}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/efeitos-itens-10c3.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/inventario.css', v=versao_inventario) }}">
+{# ANKAR_10C4_USO_LINHA #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/inventario-uso-10c4.css', v='10c4') }}">
 {% endblock %}
 {% block conteudo %}
 <!-- Inventario NDS: {{ versao_inventario }}. Se este marcador não aparecer no código-fonte, o servidor está usando arquivos antigos. -->
 <div id="inventario-nds" class="inventario-nds" data-inventario-versao="{{ versao_inventario }}" data-inventario>
+    {# 10C4: POST único, acionado por interação real na lista e na equipe. #}
+    <form id="inventario-uso-10c4" data-formulario-uso method="post"
+          action="{{ url_for('inventario.usar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.usar_jogador') }}" hidden>
+        <input type="hidden" name="item_id" value="">
+        <input type="hidden" name="pokemon_id" value="">
+        <input type="hidden" name="quantidade" value="1">
+    </form>
     <aside class="inventario-nds-equipe" aria-label="Equipe do treinador">
         <div class="inventario-nds-logo">
             <div class="inventario-nds-logo-bags" aria-hidden="true">
@@ -21,10 +30,18 @@
             </div>
         </div>
 
+        <div class="inventario-uso-aviso" data-uso-aviso role="status" aria-live="polite" hidden>
+            <span data-uso-mensagem></span>
+            <button type="button" data-uso-cancelar>Cancelar</button>
+        </div>
         <div class="inventario-nds-equipe-lista">
             {% for registro in equipe_visual %}
             {% set p = registro.pokemon %}
-            <article class="inventario-nds-treinador-pokemon">
+            <article class="inventario-nds-treinador-pokemon"
+                     data-pokemon-alvo="{{ p.id }}"
+                     data-pv-atual="{{ registro.pv_atual }}"
+                     data-pv-maximo="{{ registro.pv_maximo if registro.pv_maximo is not none else '' }}"
+                     data-status-ids="{{ p.status_ativos|map(attribute='status_id')|join(',') }}">
                 <span class="inventario-nds-treinador-foto">
                     {% if p.forma_pokemon.imagem_url %}
                     <img src="{{ p.forma_pokemon.imagem_url }}" alt="{{ p.apelido or p.forma_pokemon.nome }}" loading="lazy">
@@ -37,6 +54,10 @@
                     </span>
                     <span class="inventario-nds-treinador-barra"><span style="width:{{ registro.percentual if registro.percentual is not none else 0 }}%"></span></span>
                 </span>
+                <button class="inventario-uso-alvo" data-selecionar-pokemon="{{ p.id }}" type="button"
+                        aria-label="Usar item em {{ p.apelido or p.forma_pokemon.nome }}" hidden disabled>
+                    <span>Selecionar</span>
+                </button>
             </article>
             {% else %}
             <p class="inventario-nds-equipe-vazia">Nenhum Pokémon na equipe.</p>
@@ -117,6 +138,20 @@
                                 </span>
                                 <span class="inventario-nds-linha-quantidade">× {{ linha.registro.quantidade }}</span>
                             </button>
+                            {% if item.consumivel or item.codigo == 'mapa-da-regiao-de-ankar' or (item.equipavel and contexto.pokemons) %}
+                            <span class="inventario-uso-acoes">
+                                {% if item.consumivel or item.codigo == 'mapa-da-regiao-de-ankar' %}
+                                <button type="button" class="inventario-uso-acao" data-ativar-uso="{{ item.id }}"
+                                        data-tipo-uso="{{ 'mapa' if item.codigo == 'mapa-da-regiao-de-ankar' else ('terapia' if item_exige_pokemon(item) else 'registro') }}"
+                                        aria-label="Usar {{ item.nome }}">Usar</button>
+                                {% endif %}
+                                {% if item.equipavel and contexto.pokemons %}
+                                <button type="button" class="inventario-uso-acao inventario-uso-acao-equipar" data-equipar-item="{{ item.id }}"
+                                        aria-label="Equipar {{ item.nome }}">Equipar</button>
+                                {% endif %}
+                            </span>
+                            {% endif %}
+                            <script type="application/json" data-uso-efeitos="{{ item.id }}">{{ item.efeitos|tojson }}</script>
                         </div>
                         {% endfor %}
                     </div>
@@ -146,51 +181,8 @@
                         </header>
 
                         <p class="inventario-nds-item-descricao">{{ item.descricao or 'Sem descrição cadastrada.' }}</p>
-                        {% if item.codigo == 'mapa-da-regiao-de-ankar' %}
-                        <button type="button" class="inventario-nds-acao inventario-mapa-botao" onclick="document.getElementById('inventario-mapa-estatico').showModal()">Ver mapa da Região de Ankar</button>
-                        {% endif %}
-
-                        {% if item.efeitos %}
-                        <details class="inventario-nds-efeitos">
-                            <summary>Efeitos cadastrados</summary>
-                            <pre>{{ item.efeitos|tojson(indent=2) }}</pre>
-                        </details>
-                        {% endif %}
 
                         <div class="inventario-nds-operacoes">
-                            {% if item.consumivel %}
-                            <form method="post" action="{{ url_for('inventario.usar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.usar_jogador') }}" class="inventario-nds-form">
-                                <input type="hidden" name="item_id" value="{{ item.id }}">
-                                <label>Registrar uso <input type="number" name="quantidade" min="1" max="{{ linha.registro.quantidade }}" value="1" required></label>
-                                {% if item_exige_pokemon(item) %}
-                                <label>Aplicar em Pokémon
-                                    <select name="pokemon_id" required>
-                                        <option value="">Selecione o Pokémon</option>
-                                        {% for p in contexto.pokemons if p.ativo %}
-                                        <option value="{{ p.id }}">{{ p.apelido or p.forma_pokemon.nome }} — {{ p.pv_atual }} PV</option>
-                                        {% endfor %}
-                                    </select>
-                                </label>
-                                {% endif %}
-                                <button type="submit" class="inventario-nds-acao">Usar</button>
-                            </form>
-                            {% endif %}
-
-                            {% if item.equipavel and contexto.pokemons %}
-                            <form method="post" action="{{ url_for('inventario.equipar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.equipar_jogador') }}" class="inventario-nds-form inventario-nds-form-combo">
-                                <input type="hidden" name="item_id" value="{{ item.id }}">
-                                <label>Equipar em um Pokémon
-                                    <select name="pokemon_id" required>
-                                        <option value="">Selecionar Pokémon</option>
-                                        {% for p in contexto.pokemons %}
-                                        <option value="{{ p.id }}">{{ p.apelido or p.forma_pokemon.nome }}{% if p.item_equipado %} — troca {{ p.item_equipado.nome }}{% endif %}</option>
-                                        {% endfor %}
-                                    </select>
-                                </label>
-                                <button type="submit" class="inventario-nds-acao">Equipar</button>
-                            </form>
-                            {% endif %}
-
                             {% if contexto.destinatarios %}
                             <form method="post" action="{{ url_for('inventario.transferir_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.transferir_jogador') }}" class="inventario-nds-form inventario-nds-form-transferir">
                                 <input type="hidden" name="item_id" value="{{ item.id }}">
@@ -205,23 +197,12 @@
                             </form>
                             {% endif %}
 
-                            {% if modo_mestre %}
-                            <form method="post" action="{{ url_for('inventario.ajustar_mestre', personagem_id=personagem.id) }}" class="inventario-nds-form">
-                                <input type="hidden" name="item_id" value="{{ item.id }}">
-                                <label>Quantidade (mestre)<input type="number" name="quantidade" min="0" max="999999" value="{{ linha.registro.quantidade }}" required></label>
-                                <button type="submit" class="inventario-nds-acao inventario-nds-acao-sec">Ajustar</button>
-                            </form>
-                            {% endif %}
                         </div>
-
-                        {% if item.consumivel %}
-                        <p class="inventario-nds-observacao">O uso de itens configurados para cura recupera PV ou remove condições do Pokémon selecionado. O consumo e a cura acontecem juntos.</p>
-                        {% endif %}
                     </article>
                     {% endfor %}
                     <div data-placeholder-detalhe class="inventario-nds-placeholder">
                         <div class="inventario-nds-placeholder-icone">🎒</div>
-                        <p>Selecione um item na lista para ver sua descrição, quantidade e ações disponíveis.</p>
+                        <p>Selecione um item para consultar a descrição e, se disponível, transferi-lo.</p>
                     </div>
                 </div>
             </section>
@@ -238,6 +219,23 @@
                     <button type="submit" class="inventario-nds-acao">Adicionar</button>
                 </form>
             </details>
+            <details>
+                <summary>Gerenciamento do mestre · Ajustar quantidade</summary>
+                <form method="post" action="{{ url_for('inventario.ajustar_mestre', personagem_id=personagem.id) }}">
+                    <label>Item do inventário
+                        <select name="item_id" required>
+                            <option value="">Selecione um item</option>
+                            {% for registro in contexto.inventario %}
+                            <option value="{{ registro.item.id }}">{{ registro.item.nome }} (×{{ registro.quantidade }})</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>Nova quantidade
+                        <input type="number" name="quantidade" min="0" max="999999" value="1" required>
+                    </label>
+                    <button type="submit" class="inventario-nds-acao">Ajustar</button>
+                </form>
+            </details>
         </section>
         {% endif %}
     </section>
@@ -246,8 +244,29 @@
   <form method="dialog"><button type="submit" class="botao botao-secundario">Fechar mapa</button></form>
   <img src="{{ url_for('static', filename='img/ankar-mapa.jpg') }}" alt="Mapa completo da Região de Ankar" loading="lazy">
 </dialog>
+{% if contexto.pokemons %}
+<dialog id="inventario-equipar-10c4" class="inventario-mapa-dialogo inventario-equipar-dialogo" aria-label="Equipar item em Pokémon">
+    <form method="post" action="{{ url_for('inventario.equipar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.equipar_jogador') }}">
+        <h2>Equipar item em Pokémon</h2>
+        <input type="hidden" name="item_id" value="">
+        <label>Escolha um Pokémon
+            <select name="pokemon_id" required>
+                <option value="">Selecionar Pokémon</option>
+                {% for p in contexto.pokemons %}
+                <option value="{{ p.id }}">{{ p.apelido or p.forma_pokemon.nome }}{% if p.item_equipado %} — troca {{ p.item_equipado.nome }}{% endif %}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="inventario-equipar-acoes">
+            <button type="submit" class="inventario-nds-acao">Equipar</button>
+            <button type="button" class="inventario-nds-acao inventario-nds-acao-sec" data-equipar-cancelar>Cancelar</button>
+        </div>
+    </form>
+</dialog>
+{% endif %}
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/inventario.js', v=versao_inventario) }}" defer></script>
+<script src="{{ url_for('static', filename='js/inventario-uso-10c4.js', v='10c4') }}" defer></script>
 {% endblock %}

@@ -146,6 +146,7 @@ def carregar_contexto_inventario(
             .options(
                 selectinload(Pokemon.forma_pokemon),
                 selectinload(Pokemon.item_equipado).selectinload(Item.categoria),
+                selectinload(Pokemon.status_ativos),  # ANKAR_10C4_STATUS_ALVOS
             )
             .order_by(Pokemon.localizacao, Pokemon.posicao)
         ).scalars()

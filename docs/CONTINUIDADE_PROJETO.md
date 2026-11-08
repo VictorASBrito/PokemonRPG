@@ -521,3 +521,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Mapa da Região de Ankar: item-chave sem interação, visualizado no inventário em modal com `static/img/ankar-mapa.jpg`.
 - Fonte: commit `5a54423` (“Imagens Itens 1”). **Sem migrations**. Integração PostgreSQL não verificada neste ambiente.
 - Detalhes em `docs/ETAPA_10C3_RECONSTRUCAO_CATALOGO.md`.
+
+<!-- INVENTARIO_USO_VISUAL_10C4 -->
+### Etapa 10C.4 — Uso do item pela linha e escolha visual do Pokémon
+- O botão **Usar** fica na linha do item, junto ao nome e quantidade; o painel direito apresenta descrição e transferência.
+- Tratamentos de PV destacam Pokémon da equipe feridos; tratamentos de status destacam Pokémon afetados (mesmo com PV cheio). A seleção envia POST ao serviço terapêutico 10C.3, sem afrouxar validações.
+- O **Mapa de Ankar** abre no diálogo estático pelo botão Usar e não é consumido.
+- Equipar continua disponível em diálogo (equipe/Box), e o ajuste de quantidade fica apenas no gerenciamento do Mestre.
+- PENDÊNCIA VISUAL: a área inferior de Adicionar item do Mestre pode aparecer cortada/compactada, especialmente o seletor de catálogo em viewport baixo. Revisar overflow e popup do autocomplete posteriormente.
+- Consulte `docs/ETAPA_10C4_INVENTARIO_USO_VISUAL.md` para testes manuais. Sem migrations e sem alteração automática de inventários.
+
