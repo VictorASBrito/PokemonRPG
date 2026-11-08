@@ -1,0 +1,227 @@
+/* ANKAR_10D3_CARDS_VERTICAIS — evolução visual do Painel do Mestre.
+   Só atua nesta página e sobrescreve os layouts horizontais da 10D.2.
+   Respeita os controles JS/backend existentes, temas e as curas 10D.2. */
+
+.painel-mestre-central.painel-mestre-10d3 {
+  --d3-radius: 14px;
+  --d3-gap: 9px;
+  width: 100%;
+  min-width: 0;
+}
+.painel-mestre-10d3 .painel-mestre-jogadores {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  margin: 0;
+}
+@media (min-width: 860px) {
+  .painel-mestre-10d3 .painel-mestre-jogadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1350px) {
+  .painel-mestre-10d3 .painel-mestre-jogadores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1900px) {
+  .painel-mestre-10d3 .painel-mestre-jogadores { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Card vertical: largura limitada pela grade; nenhuma coluna expande toda a tela. */
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  min-height: 0;
+  padding: 12px;
+  gap: 10px;
+  overflow: visible;
+  border-radius: var(--d3-radius);
+  isolation: auto;
+}
+.painel-mestre-10d3 .painel-jogador-card:has(.painel-jogador-gestao[open]) { z-index: 30; }
+.painel-mestre-10d3 .painel-jogador-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--borda);
+}
+.painel-mestre-10d3 .painel-jogador-identidade-wrap { display: flex; align-items: center; min-width: 0; flex: 1 1 auto; }
+.painel-mestre-10d3 .painel-jogador-identidade { display: flex; min-width: 0; flex: 1 1 auto; gap: 9px; align-items: center; text-decoration: none; color: inherit; }
+.painel-mestre-10d3 .painel-jogador-nomes { flex: 1; min-width: 0; }
+.painel-mestre-10d3 .painel-jogador-identidade h2 { margin: 0 0 2px; font-size: 1.04rem; line-height: 1.2; overflow-wrap: anywhere; }
+.painel-mestre-10d3 .painel-jogador-subtitulo { color: var(--texto); font-size: .76rem; line-height: 1.35; margin: 0; overflow-wrap: anywhere; }
+.painel-mestre-10d3 .painel-jogador-login { color: var(--texto-suave); font-size: .69rem; margin: 3px 0 0; overflow-wrap: anywhere; }
+.painel-mestre-10d3 .painel-jogador-avatar { width: 48px; height: 48px; flex: 0 0 48px; object-fit: contain; image-rendering: pixelated; }
+.painel-mestre-10d3 .painel-ordem-controle { flex: 0 0 auto; }
+
+/* Um único menu de opções por treinador, sem ocupar uma faixa inteira. */
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  z-index: 40;
+}
+.painel-mestre-10d3 .painel-jogador-gestao > summary {
+  display: grid;
+  place-items: center;
+  list-style: none;
+  width: 37px;
+  height: 37px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  border: 1px solid var(--borda);
+  background: var(--superficie-suave);
+  color: var(--texto);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.painel-mestre-10d3 .painel-jogador-gestao > summary::-webkit-details-marker { display: none; }
+.painel-mestre-10d3 .painel-jogador-gestao[open] > summary { border-color: var(--primaria); background: var(--primaria-suave); }
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao-conteudo {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  left: auto;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 11px;
+  width: min(330px, calc(100vw - 42px));
+  max-height: min(75dvh, 600px);
+  overflow-y: auto;
+  border: 1px solid var(--borda);
+  border-radius: 13px;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: var(--sombra);
+  padding: 13px;
+}
+.painel-mestre-10d3 .painel-menu-titulo { font-size: .68rem; letter-spacing: .065em; text-transform: uppercase; color: var(--texto-suave); }
+.painel-mestre-10d3 .painel-jogador-menu-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.painel-mestre-10d3 .painel-jogador-menu-links a {
+  display: block; padding: 9px 10px; min-height: 38px;
+  border: 1px solid var(--borda); border-radius: 9px;
+  background: var(--superficie-suave); color: var(--texto);
+  font-size: .81rem; font-weight: 750; text-decoration: none; text-align: center;
+}
+.painel-mestre-10d3 .painel-jogador-menu-links a:hover { border-color: var(--primaria); }
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao form {
+  display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 6px;
+  margin: 0; width: 100%;
+}
+.painel-mestre-10d3 .painel-jogador-gestao form label { grid-column: 1 / -1; font-size: .77rem; display: block; }
+.painel-mestre-10d3 .painel-jogador-gestao form select,
+.painel-mestre-10d3 .painel-jogador-gestao form input[type=number] { width: 100%; min-height: 37px; min-width: 0; }
+.painel-mestre-10d3 .painel-jogador-gestao form > button:only-of-type { grid-column: 1 / -1; }
+
+/* VIDA + STATUS: visíveis, com densidade de informação maior e sem details. */
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-resumo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin: 0;
+  min-width: 0;
+}
+.painel-mestre-10d3 .painel-bloco-titulo {
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  font-weight: 850; color: var(--texto-suave); margin: 0 0 6px;
+}
+.painel-mestre-10d3 .painel-jogador-vida, .painel-mestre-10d3 .painel-jogador-status { min-width: 0; }
+.painel-mestre-central.painel-mestre-10d3 .painel-recurso-treinador { width: 100%; min-width: 0; padding: 8px 10px; }
+.painel-mestre-10d3 .painel-recurso-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.painel-mestre-10d3 .painel-recurso-cabecalho span { color: var(--texto-suave); font-size: .74rem; }
+.painel-mestre-10d3 .painel-recurso-cabecalho strong { color: var(--texto); font-size: .85rem; }
+.painel-mestre-10d3 .painel-jogador-atributos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 5px; padding: 0; margin: 0;
+}
+.painel-mestre-central.painel-mestre-10d3 .painel-atributo-personagem {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 5px; min-width: 0; min-height: 30px; padding: 5px 7px;
+  border: 1px solid var(--borda); border-radius: 7px;
+  background: var(--superficie-suave); font-size: .69rem;
+}
+.painel-mestre-10d3 .painel-atributo-personagem span { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+.painel-mestre-10d3 .painel-atributo-personagem strong { flex: 0 0 auto; font-size: .81rem; }
+.painel-mestre-10d3 .painel-jogador-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0 0; }
+.painel-mestre-10d3 .painel-jogador-chips span { padding: 4px 6px; font-size: .65rem; border: 1px solid var(--borda); }
+.painel-mestre-10d3 .painel-alertas-jogador { margin: 0; }
+.painel-mestre-10d3 .painel-alertas-jogador span { font-size: .65rem; padding: 4px 6px; }
+
+/* Seis Pokémon em duas colunas fixas por treinador: grade vertical 2 x 3. */
+.painel-mestre-central.painel-mestre-10d3 .painel-equipe-compacta {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 7px;
+  margin: 0;
+  min-width: 0;
+}
+.painel-mestre-10d3 .painel-pokemon-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border-radius: 10px; }
+.painel-mestre-10d3 .painel-pokemon-link { display: flex; flex: 0 0 auto; align-items: flex-start; padding: 7px; gap: 6px; min-width: 0; }
+.painel-mestre-10d3 .painel-pokemon-imagem { flex: 0 0 38px; width: 38px; height: 38px; border-radius: 8px; }
+.painel-mestre-10d3 .painel-pokemon-info { min-width: 0; flex: 1 1 auto; }
+.painel-mestre-10d3 .painel-pokemon-info > strong {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; white-space: normal; overflow-wrap: anywhere;
+  font-size: .73rem; line-height: 1.13; min-height: 2.3em;
+}
+.painel-mestre-10d3 .painel-pokemon-info > small { display: block; min-height: 1.05em; font-size: .64rem; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.painel-mestre-10d3 .painel-pokemon-tipos { display: flex; flex-wrap: wrap; gap: 2px; margin: 3px 0 0; }
+.painel-mestre-10d3 .painel-pokemon-tipos span { font-size: .54rem; max-width: 100%; }
+.painel-mestre-10d3 .painel-pokemon-vida { flex: 1 0 auto; margin-top: auto; padding: 4px 7px 6px; }
+.painel-mestre-10d3 .painel-pokemon-vida > div:first-child { gap: 4px; font-size: .67rem; }
+.painel-mestre-10d3 .painel-pokemon-vida progress { height: 5px; margin-top: 3px; }
+.painel-mestre-central.painel-mestre-10d3 .controle-pv-rapido {
+  display: grid; grid-template-columns: minmax(0,1fr) 29px 29px;
+  align-items: stretch; gap: 4px; margin-top: 5px;
+}
+.painel-mestre-10d3 .controle-pv-rapido input { width: 100%; min-width: 0; min-height: 32px; font-size: .77rem; }
+.painel-mestre-10d3 .controle-pv-rapido button { min-width: 29px; min-height: 32px; padding: 2px; font-size: .85rem; }
+.painel-mestre-10d3 .painel-pokemon-rodape { font-size: .61rem; line-height: 1.25; min-height: 22px; padding: 4px 7px; }
+.painel-mestre-10d3 .painel-pokemon-rodape span { overflow-wrap: anywhere; }
+
+/* As duas ações mais importantes permanecem no rodapé. */
+.painel-mestre-10d3 .painel-jogador-rodape {
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 7px; margin-top: auto; padding-top: 9px;
+  border-top: 1px solid var(--borda);
+}
+.painel-mestre-10d3 .painel-jogador-rodape > form { margin: 0; min-width: 0; }
+.painel-mestre-10d3 .painel-jogador-rodape .botao { width: 100%; min-height: 37px; font-size: .77rem; padding: 7px 6px; border-radius: 9px; text-align: center; }
+
+/* Ordenação preservada, mas os controles só aparecem durante o modo ativo. */
+.painel-mestre-10d3 .painel-ordem-controle { display: none; }
+.painel-mestre-10d3 .modo-ordenacao .painel-ordem-controle { display: flex; gap: 3px; align-items: center; }
+.painel-mestre-10d3 .modo-ordenacao .painel-jogador-card { cursor: grab; }
+.painel-mestre-10d3 .painel-jogador-card[hidden] { display: none; }
+.painel-mestre-10d3 .painel-jogador-card:focus-within { z-index: 25; }
+:where(.painel-mestre-10d3 .painel-jogador-gestao > summary, .painel-mestre-10d3 .painel-jogador-menu-links a):focus-visible {
+  outline: 3px solid var(--destaque); outline-offset: 2px;
+}
+
+/* Celular: mantém os atributos visíveis e a equipe em 2 colunas quando couber. */
+@media (max-width: 440px) {
+  .painel-mestre-central.painel-mestre-10d3 .painel-jogador-card { padding: 10px; gap: 9px; }
+  .painel-mestre-10d3 .painel-jogador-identidade { gap: 7px; }
+  .painel-mestre-10d3 .painel-jogador-avatar { width: 42px; height: 42px; flex-basis: 42px; }
+  .painel-mestre-10d3 .painel-pokemon-link { gap: 4px; padding: 6px; }
+  .painel-mestre-10d3 .painel-pokemon-imagem { width: 32px; height: 32px; flex-basis: 32px; }
+  .painel-mestre-10d3 .painel-jogador-gestao-conteudo { width: min(310px, calc(100vw - 28px)); }
+}
+@media (max-width: 335px) {
+  .painel-mestre-central.painel-mestre-10d3 .painel-equipe-compacta { grid-template-columns: minmax(0,1fr); }
+  .painel-mestre-10d3 .painel-pokemon-imagem { width: 42px; height: 42px; flex-basis: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .painel-mestre-10d3 * { scroll-behavior: auto; transition: none !important; }
+}
