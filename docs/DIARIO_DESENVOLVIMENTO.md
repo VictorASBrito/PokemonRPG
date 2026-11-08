@@ -328,3 +328,11 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - PENDÊNCIA VISUAL: a área inferior de Adicionar item do Mestre pode aparecer cortada/compactada, especialmente o seletor de catálogo em viewport baixo. Revisar overflow e popup do autocomplete posteriormente.
 - Consulte `docs/ETAPA_10C4_INVENTARIO_USO_VISUAL.md` para testes manuais. Sem migrations e sem alteração automática de inventários.
 
+<!-- AVISOS_TOAST_10C4_1 -->
+### Etapa 10C.4.1 — Notificacoes flutuantes de confirmacao
+- Mensagens `flash()` do Flask (sucesso, erro, aviso e informacao) deixam de ocupar espaco dentro de `.conteudo` e passam a surgir em pequenos toasts na parte superior direita.
+- Cada toast desaparece apos 1,5 segundo; passar o mouse ou focar o aviso pausa a contagem e o botao Fechar permite encerramento manual.
+- A alteracao vale globalmente para mestre e jogadores (inventario, fichas, catalogos e demais telas que utilizam `templates/base.html`), sem alteracoes no banco.
+- Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
+- Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
+

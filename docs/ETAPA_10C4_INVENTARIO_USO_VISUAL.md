@@ -40,3 +40,12 @@ Base de referência: `main`, commit `e392239a` (`backup-pre-construcao`), após 
 - O painel detalhado da direita estava carregado de controles e exibia JSON técnico. Nesta etapa sua responsabilidade foi reduzida a **descrição + transferência**, com ações contextuais na lista.
 
 **Não executar `scripts/reconstruir_catalogo_10c3.py --aplicar` para testar esta etapa.** O catálogo já está configurado; esta mudança apenas altera a interação.
+
+<!-- AVISOS_TOAST_10C4_1 -->
+### Etapa 10C.4.1 — Notificacoes flutuantes de confirmacao
+- Mensagens `flash()` do Flask (sucesso, erro, aviso e informacao) deixam de ocupar espaco dentro de `.conteudo` e passam a surgir em pequenos toasts na parte superior direita.
+- Cada toast desaparece apos 1,5 segundo; passar o mouse ou focar o aviso pausa a contagem e o botao Fechar permite encerramento manual.
+- A alteracao vale globalmente para mestre e jogadores (inventario, fichas, catalogos e demais telas que utilizam `templates/base.html`), sem alteracoes no banco.
+- Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
+- Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
+

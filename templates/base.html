@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui1-20261023') }}">
     {# Suavização das imagens Pokémon: deve vir após os estilos da tela. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon-hd.css', v='etapa-09') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/avisos-toast-10c4-1.css', v='10c4-1') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
@@ -87,16 +88,25 @@
     </header>
 
     <main class="conteudo" id="conteudo-principal" tabindex="-1">
-        {% with mensagens = get_flashed_messages(with_categories=true) %}
-            {% for categoria, mensagem in mensagens %}
-                <div class="alerta alerta-{{ categoria }}" role="alert">{{ mensagem }}</div>
-            {% endfor %}
-        {% endwith %}
-
         {% block conteudo %}{% endblock %}
     </main>
 
+    {# AVISOS_TOAST_10C4_1: mensagens globais sem ocupar espaco do conteudo. #}
+    <section class="avisos-toast" data-avisos-toast aria-label="Avisos do sistema">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensagem in mensagens %}
+                {% set tipo = categoria if categoria in ('sucesso', 'erro', 'aviso', 'info') else 'info' %}
+                <div class="aviso-toast aviso-toast--{{ tipo }}" role="{{ 'alert' if tipo == 'erro' else 'status' }}" data-aviso-toast data-tempo-ms="1500">
+                    <span class="aviso-toast-icone" aria-hidden="true"></span>
+                    <span class="aviso-toast-mensagem">{{ mensagem }}</span>
+                    <button type="button" class="aviso-toast-fechar" data-aviso-toast-fechar aria-label="Fechar aviso">&times;</button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+    </section>
+
     <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/avisos-toast-10c4-1.js', v='10c4-1') }}" defer></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
