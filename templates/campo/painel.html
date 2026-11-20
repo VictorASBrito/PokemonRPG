@@ -81,6 +81,30 @@
             <button class="botao botao-primario" type="submit">Criar adversários</button>
         </form>
         <small>Limites: 40 grupos, 80 Pokémon no total e até 24 por grupo. Sem captura ou combate automático.</small>
+        {% if contexto.grupos_npc %}
+        <details class="campo-npc-adicionar">
+            <summary>Adicionar Pokémon a um grupo existente</summary>
+            <form action="" method="post" class="campo-npc-form" data-campo-npc-adicionar>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <label>Grupo
+                    <select name="grupo_id" required data-campo-npc-grupo>
+                        {% for grupo in contexto.grupos_npc %}
+                        <option value="{{ grupo.id }}">{{ grupo.nome }} · Time {{ grupo.time_numero }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>Pokémon / forma
+                    <input type="search" name="forma_nome" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+                        data-seletor-visual="pokemon" data-seletor-alvo="campo-npc-forma-adicional"
+                        placeholder="Pesquisar espécie" autocomplete="off" required>
+                    <input type="hidden" id="campo-npc-forma-adicional" name="forma_id">
+                </label>
+                <label>Nível <input type="number" name="nivel" value="10" min="1" max="100" required></label>
+                <label>Quantidade <input type="number" name="quantidade" value="1" min="1" max="12" required></label>
+                <button class="botao botao-secundario" type="submit">Adicionar ao grupo</button>
+            </form>
+        </details>
+        {% endif %}
     </section>
     {% endif %}
     <p class="campo-ajuda">

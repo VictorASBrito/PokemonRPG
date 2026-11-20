@@ -6,7 +6,7 @@ campanhas (PostgreSQL). Não há combate automático nem rolagens de captura.
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from sqlalchemy import func, select
@@ -28,6 +28,7 @@ class ContextoCampo:
     opcoes_pokemon: list[dict[str, str]]
     total_pokemons: int
     times_ocupados: int
+    grupos_npc: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _uuid(valor: str | uuid.UUID | None) -> uuid.UUID | None:
@@ -217,7 +218,9 @@ def carregar_campo(
 
     grupos_npc = listar_grupos_npc(campanha_id=campanha.id)
     for grupo in grupos_npc:
-        times[grupo["time_numero"] - 1]["grupos_npc"].append(grupo)
+        time_destino = times[grupo["time_numero"] - 1]
+        time_destino["grupos_npc"].append(grupo)
+        time_destino["npc_total"] = time_destino.get("npc_total", 0) + len(grupo["pokemons"])
 
     opcoes = list(db.session.execute(
         select(Pokemon)
@@ -233,6 +236,7 @@ def carregar_campo(
     ).scalars())
     return ContextoCampo(
         times=times,
+        grupos_npc=grupos_npc,
         opcoes_pokemon=[{
             "id": str(p.id),
             "rotulo": f"{p.personagem.nome} · {p.apelido or p.forma_pokemon.nome}" + (" (em campo)" if p.id in campo_ids else ""),

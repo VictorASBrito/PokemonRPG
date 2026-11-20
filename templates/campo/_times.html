@@ -4,7 +4,7 @@
     <section class="campo-time ui-card{% if time.pokemons or time.grupos_npc %} campo-time-ativo{% else %} campo-time-vazio{% endif %}" aria-label="Time {{ time.numero }}">
         <header class="campo-time-cabecalho">
             <h2>Time {{ time.numero }}</h2>
-            <span>{{ time.pokemons|length + (time.grupos_npc | map(attribute="pokemons") | map("length") | sum) }} Pokémon</span>
+            <span>{{ time.pokemons|length + time.get("npc_total", 0) }} Pokémon</span>
         </header>
         {% if time.pokemons or time.grupos_npc %}
             <div class="campo-time-lista">
@@ -82,19 +82,6 @@
                                     </select>
                                 </label>
                                 <button class="botao botao-secundario" type="submit">Mover grupo</button>
-                            </form>
-                            <form action="{{ url_for('combates.adicionar_npc', grupo_id=grupo.id) }}" method="post">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                                <label>Adicionar espécie
-                                    <input type="search" name="forma_nome"
-                                        data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
-                                        data-seletor-visual="pokemon" data-seletor-alvo="npc-forma-{{ grupo.id }}"
-                                        placeholder="Buscar Pokémon" autocomplete="off" required>
-                                    <input type="hidden" name="forma_id" id="npc-forma-{{ grupo.id }}">
-                                </label>
-                                <label>Nível <input type="number" name="nivel" value="10" min="1" max="100" required></label>
-                                <label>Qtd. <input type="number" name="quantidade" value="1" min="1" max="12" required></label>
-                                <button class="botao botao-secundario" type="submit">Adicionar</button>
                             </form>
                             <form action="{{ url_for('combates.remover_npc', grupo_id=grupo.id) }}" method="post" data-campo-npc-remover>
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
