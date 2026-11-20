@@ -109,3 +109,22 @@ com Charmander → Charmeleon também confirmado no manual PKMRPG v2.5
 **Limite da entrega:** não altera fichas nem cria comandos de evolução
 para jogadores. Não reintroduz amizade/XP individuais. A árvore completa
 e importações assistidas de outras cadeias ficam para 10E.2.3.
+
+
+## 10E.2.3 — Árvore evolutiva e propostas revisadas (20/11/2026)
+
+Foi preparada a etapa `feature/10e2-3-arvore-evolutiva`:
+visualização de famílias completas com ramos, convergências,
+pré-evoluções e requisitos das relações permanentes. Mega,
+alternativas e linhagens regionais ficam visualmente separadas.
+O catálogo apresenta 12 novas propostas revisadas além das seis da
+10E.2.2: cinco Eeveelutions por pedra, Pikachu e Vulpix padrão
+aprováveis uma a uma; Espeon, Umbreon, Sylveon e dois estágios de
+Porygon pendentes de regra da campanha. Ver
+`docs/ETAPA_10E2_3_ARVORE_EVOLUTIVA.md`.
+
+As exigências de amizade do manual (inclusive materiais de evolução)
+foram preservadas como **alerta editorial**: a campanha Ankar
+não possui amizade numérica, então a elegibilidade real precisa de
+uma regra do mestre na 10E.3. Nada é importado em massa ou aplicado
+a Pokémon de jogadores nesta etapa. Sem migration.

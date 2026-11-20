@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block titulo %}Árvore de {{ forma.nome }} | Pokémon RPG{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/arvore-evolutiva.css') }}">
+{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Pokédex · Família evolutiva</p>
+        <h1>Árvore de {{ forma.nome }}</h1>
+        <p class="texto-suave">Visualização das relações permanentes ativas cadastradas pelo mestre. Ramos alternativos aparecem no mesmo estágio. Nenhum Pokémon de jogador é modificado nesta tela.</p>
+    </div>
+    <div class="acoes-cabecalho">
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">Editar relações</a>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Pokédex</a>
+    </div>
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo">
+        <div><span>1</span><h2>Árvore evolutiva registrada</h2></div>
+        <p>{{ arvore.quantidade_formas }} forma(s) · {{ arvore.total_relacoes_permanentes }} evolução(ões) permanente(s) ativa(s).</p>
+    </div>
+    {% if arvore.truncada %}
+        <p class="arvore-alerta" role="alert">A árvore foi limitada para proteger a interface. Existem outras formas conectadas; revise as relações desta família.</p>
+    {% endif %}
+    {% if arvore.ciclo_legado %}
+        <p class="arvore-alerta" role="alert">Foram encontradas relações antigas com ciclo ou inconsistência. As formas estão visíveis, mas a ordem requer revisão do mestre; nenhum dado foi corrigido automaticamente.</p>
+    {% endif %}
+    {% if arvore.total_relacoes_permanentes == 0 %}
+        <p class="texto-suave">Esta família ainda não tem evoluções permanentes ativas cadastradas. A forma selecionada aparece abaixo; consulte o editor para aprovar sugestões ou registrar uma relação.</p>
+    {% endif %}
+    <div class="arvore-rolagem" role="region" tabindex="0" aria-label="Árvore evolutiva de {{ forma.nome }}">
+        <div class="arvore-estagios">
+        {% for camada in arvore.camadas %}
+            {% if not loop.first %}<div class="arvore-separador" aria-hidden="true"><span>→</span></div>{% endif %}
+            <section class="arvore-estagio" aria-label="Estágio {{ loop.index }}">
+                <h3>Estágio {{ loop.index }}</h3>
+                <div class="arvore-coluna">
+                {% for no in camada %}
+                    <article class="arvore-no {% if no.selecionado %}arvore-no-selecionado{% endif %}">
+                        <a class="arvore-no-link" href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=no.id) }}">
+                            {% if no.imagem_url %}
+                                <img src="{{ no.imagem_url }}" alt="" loading="lazy">
+                            {% else %}
+                                <span class="arvore-sem-imagem" aria-hidden="true">◈</span>
+                            {% endif %}
+                            <span class="arvore-identidade">
+                                <strong>{{ no.nome }}</strong>
+                                <small>{% if no.numero %}#{{ '%03d'|format(no.numero) }} · {% endif %}{{ no.categoria|capitalize }}</small>
+                                {% if no.selecionado %}<small class="arvore-foco">Forma selecionada</small>{% endif %}
+                            </span>
+                        </a>
+                        {% if no.predecessores %}
+                            <ul class="arvore-condicoes">
+                            {% for anterior in no.predecessores %}
+                                <li><span class="arvore-seta" aria-hidden="true">↳</span>
+                                    <a href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=anterior.origem_id) }}">{{ anterior.origem_nome }}</a>
+                                    <span>· {{ anterior.requisito }}</span>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+        </div>
+    </div>
+    <p class="texto-suave arvore-nota">Cada cartão mostra de quais formas pode vir e seus requisitos. Se duas origens convergirem para o mesmo destino, elas aparecem juntas nesse cartão. Requisitos de amizade, troca ou condições especiais são apenas cadastro narrativo; não habilitam evolução automática.</p>
+</section>
+
+<section class="cartao secao-formulario espacamento-topo ui-card">
+    <div class="secao-titulo">
+        <div><span>2</span><h2>Outras formas relacionadas à família</h2></div>
+        <p>Megas, alternativas e parentescos regionais ficam separados da árvore permanente.</p>
+    </div>
+    {% if arvore.relacoes_especiais %}
+        <div class="arvore-relacoes-especiais">
+            {% for relacao in arvore.relacoes_especiais %}
+            {% set req = relacao.requisitos or {} %}
+            <article class="arvore-especial">
+                <div><strong>{{ relacao.forma_origem.nome }} → {{ relacao.forma_destino.nome }}</strong>
+                    <p class="texto-suave">{{ {'mega':'Mega Evolução temporária','alternativa':'Mudança reversível','regional':'Parentesco regional'}.get(req.get('tipo_relacao'), 'Outra relação') }}</p>
+                    <small>{{ descrever_requisito(relacao) }}</small>
+                </div>
+                <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=relacao.forma_origem_id) }}">Revisar</a>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="texto-suave">Não há vínculos especiais ativos registrados para esta família.</p>
+    {% endif %}
+</section>
+
+<section class="cartao secao-formulario espacamento-topo ui-card">
+    <div class="secao-titulo"><div><span>3</span><h2>Fontes e regras da campanha</h2></div></div>
+    <p>A árvore mostra somente relações já cadastradas no PostgreSQL. Consulte as sugestões no editor para ampliar os ramos usando o manual Pokémon RPG v2.5, a PokéAPI e o Pokémon Database. Itens, amizade e variantes regionais têm diferenças entre as fontes; a regra de Ankar prevalece.</p>
+    <p class="texto-suave">Nesta etapa não são alterados nível, Box, golpes, PV, Pokémon capturados ou equipes de jogadores.</p>
+</section>
+{% endblock %}

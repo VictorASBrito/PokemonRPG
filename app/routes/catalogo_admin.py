@@ -63,6 +63,11 @@ from app.services.catalogo_admin_service import (
     simular_atributos_forma,
 )
 
+from app.services.arvore_evolutiva_service import (
+    descrever_requisito,
+    montar_arvore_evolutiva,
+)
+
 from app.services.evolucoes_admin_service import (
     FONTES,
     GATILHOS,
@@ -329,6 +334,27 @@ def editar_pokemon(forma_id: str):
         opcoes=opcoes,
         categorias=CATEGORIAS_FORMA,
         modo="editar",
+    )
+
+
+@catalogo_admin_bp.get("/pokemons/<forma_id>/arvore")
+@perfil_obrigatorio("mestre")
+def arvore_pokemon(forma_id: str):
+    """Árvore da família ligada por evoluções permanentes (somente leitura)."""
+    try:
+        forma = carregar_forma_admin(forma_id)
+        if forma is None:
+            flash("Forma Pokémon não encontrada.", "erro")
+            return redirect(url_for("catalogo_admin.pokemons"))
+        arvore = montar_arvore_evolutiva(forma)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao consultar a árvore evolutiva.")
+        return redirect(url_for("catalogo_admin.pokemons"))
+    return render_template(
+        "mestre/catalogo/pokemon_arvore.html",
+        forma=forma,
+        arvore=arvore,
+        descrever_requisito=descrever_requisito,
     )
 
 

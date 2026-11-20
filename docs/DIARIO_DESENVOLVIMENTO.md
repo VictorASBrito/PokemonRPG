@@ -399,3 +399,18 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Próximo:** checar CI, homologar tela no PostgreSQL Ankar e implementar visualização em árvore 10E.2.3 e revisão de outras cadeias de evolução.
 
 - **CI verificado:** workflow `Editor de evoluções e formas - 10E.2.2`, execução 44821837943, job 136584377839, commit `4b8b20a3`: `27 passed in 11.83s` na suíte de relações, catálogo e Pokédex. Também passaram os workflows de NPCs, Campo, fichas, auditoria, ordenação e saneamento nessa revisão. Execução foi em SQLite/Linux; testes manuais no PostgreSQL real e homologação visual ainda pendentes.
+
+
+### 2026-11-20 — Etapa 10E.2.3: visualização de árvore e novas cadeias revisadas
+- **Objetivo:** permitir ao mestre visualizar a família toda, inclusive ramificações, e comparar requisitos de Eevee, pedras e trocas com o livro, PokéAPI e Pokémon Database.
+- **Status:** IMPLEMENTADO EM BRANCH, validação GitHub Actions e revisão visual pendentes nesta entrada.
+- **Branch:** `feature/10e2-3-arvore-evolutiva`, partindo da main após merge do PR #14.
+- **Arquivos:** serviço de árvore `app/services/arvore_evolutiva_service.py`, rota mestre GET em `app/routes/catalogo_admin.py`, template `pokemon_arvore.html`, CSS `arvore-evolutiva.css`, editor `pokemon_relacoes.html`, sugestões `evolucoes_revisadas_10e2_3.json`, modificações em `evolucoes_admin_service.py`, testes `test_arvore_evolutiva_10e2_3.py`, CI dedicado e docs da etapa, plano/continuidade/diário.
+- **Regras:** árvore usa só `EvolucaoPokemon` ATIVAS e permanentes; Megas, alternativas e regionais são listadas separadas. Nós ordenados topologicamente, vários pais permitidos, defesa contra ciclos e limite 120. Sem automação de mudança de forma.
+- **Fontes externas:** PokéAPI evolution-chain/67 (Eevee), /10 (Pikachu) e documentação v2; PokémonDB stone/trade/pokedex Eevee. PDF fornecido p. impressas 44–45, 59–60. Há divergências relevantes; não preencher requisitos ignorando diferenças.
+- **Novas sugestões:** cinco por pedra em Eevee e duas por pedra em Pikachu/Vulpix podem ser aprovadas individualmente com alertas. Espeon, Umbreon, Sylveon, Porygon→Porygon2 e Porygon2→Porygon-Z ficam pendentes de decisão narrativa, bloqueadas mesmo via POST direto.
+- **Regra crítica do livro:** materiais exigem amizade máxima, mecânica não suportada em Ankar. A divergência é explicitamente exibida; não se altera o nível do Pokémon nem amizade/XP. Nenhum Pokémon de jogador modificado; sem migration.
+- **Testes novos:** estágios e convergências, ciclos legados, relações especiais, sugestões aprováveis/pendentes, permissões e preservação de instância da Box. CI em `test-arvore-evolutiva-10e2-3.yml` a confirmar.
+- **Próximo:** validar workflow, revisar PR, integrar e testar navegação no PostgreSQL da campanha; depois 10E.3 serviço de elegibilidade evolutiva sob confirmação do mestre.
+
+- **Validação CI confirmada para código da etapa:** GitHub Actions `Árvore evolutiva e referências revisadas - 10E.2.3`, run 44824602928, job 136593869013, commit `90548b17`: **34 passed in 12.53s** (testes novos, editor 10E.2.2, catálogo, auditoria e ordenação da Pokédex). Também passaram os workflows de auditoria 10E.2.1, saneamento 10E.2.1.2, sequência da Pokédex e Campo na mesma revisão; demais regressões devem ser verificadas por conclusão individual. Testes automatizados executados em SQLite/Linux, não no PostgreSQL real do mestre.
