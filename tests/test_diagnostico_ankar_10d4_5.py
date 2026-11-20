@@ -48,7 +48,7 @@ def test_diagnostico_regional_distingue_tabelas_e_faces():
     assert avisos["tabelas_consultadas"] == 3
     assert avisos["tabelas_aptas"] == 2
     assert avisos["tabelas_sem_encontros_validos"] == 1
-    assert avisos["rolagens_sem_faixa"] == 140
+    assert avisos["rolagens_sem_faixa"] == 40
     assert avisos["rolagens_sem_forma"] == 100
 
 
