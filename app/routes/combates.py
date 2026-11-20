@@ -5,9 +5,12 @@ import hmac
 import secrets
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, session, url_for
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
+from app.models.db import Campanha
+from app.services.transformacoes_service import transformar_pokemon, permitir_mega_treinador
 from app.routes.auth import login_obrigatorio
 from app.services.campo_service import carregar_campo, limpar_campo, posicionar_pokemon, retirar_pokemon
 from app.services.campo_npc_service import (
@@ -118,6 +121,71 @@ def retirar(pokemon_id: str):
         db.session.rollback()
         current_app.logger.exception("Falha ao retirar Pokémon do campo.")
         flash("Não foi possível retirar o Pokémon.", "erro")
+    return redirect(url_for("combates.painel"))
+
+
+def _id_campanha() -> str:
+    codigo = str(current_app.config["CAMPANHA_PADRAO"])
+    identificador = db.session.scalar(select(Campanha.id).where(
+        Campanha.codigo == codigo, Campanha.ativo.is_(True)
+    ))
+    if not identificador:
+        raise ValueError("Campanha não encontrada.")
+    return str(identificador)
+
+
+@combates_bp.post("/campo/pokemons/<pokemon_id>/transformar")
+@login_obrigatorio
+def transformar_no_campo(pokemon_id: str):
+    if _autorizacao():
+        abort(403, description="Transformação deve ser escolhida pelo próprio jogador.")
+    _conferir_token()
+    try:
+        mensagem = transformar_pokemon(
+            pokemon_id=pokemon_id, destino_id=request.form.get("destino_id"),
+            tipo=str(request.form.get("tipo", "")),
+            usuario_id=session.get("usuario_id"),
+            personagem_id=session.get("personagem_id"),
+            campanha_id=_id_campanha(),
+        )
+        db.session.commit()
+        flash(mensagem, "sucesso")
+    except (ValueError, PermissionError) as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha na transformação temporária no Campo.")
+        flash("Não foi possível transformar o Pokémon.", "erro")
+    return redirect(url_for("combates.painel"))
+
+
+@combates_bp.post("/campo/treinadores/<personagem_id>/mega")
+@login_obrigatorio
+def conceder_mega_treinador(personagem_id: str):
+    if not _autorizacao():
+        abort(403)
+    _conferir_token()
+    habilitar = request.form.get("habilitar") == "1"
+    try:
+        mensagem = permitir_mega_treinador(
+            personagem_id=personagem_id,
+            campanha_id=_id_campanha(),
+            usuario_id=session.get("usuario_id"),
+            habilitar=habilitar,
+        )
+        db.session.commit()
+        flash(mensagem, "sucesso")
+    except PermissionError:
+        db.session.rollback()
+        abort(403)
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha na concessão de Mega Evolução.")
+        flash("Não foi possível atualizar a permissão Mega.", "erro")
     return redirect(url_for("combates.painel"))
 
 
