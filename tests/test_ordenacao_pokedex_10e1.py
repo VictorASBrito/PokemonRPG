@@ -82,3 +82,59 @@ def test_registros_sem_ordem_usam_numero_nacional_como_fallback(app_db):
         assert [f.nome for f in listar_formas_ativas()][:3] == [
             "Bulbasaur", "Charmander", "Squirtle"
         ]
+
+
+def test_numeros_nacionais_sem_renumerar_formas_mega_ou_regionais():
+    """O índice 4 é Venusaur Mega, enquanto Charmander tem número nacional 4."""
+    from types import SimpleNamespace
+    from app.services.numeracao_pokedex_service import numero_nacional_forma
+
+    def numero(codigo, nome, *, especie_nome=None, especie_numero=None, personalizada=False):
+        especie = SimpleNamespace(
+            nome=especie_nome or nome.split(" (")[0],
+            numero=especie_numero,
+            personalizada=personalizada,
+        )
+        forma = SimpleNamespace(codigo=codigo, nome=nome, especie=especie)
+        return numero_nacional_forma(forma)
+
+    assert numero("bulbasaur", "Bulbasaur") == 1
+    assert numero("venusaur", "Venusaur") == 3
+    assert numero("venusaur-mega", "Venusaur (Mega)") == 3
+    assert numero("charmander", "Charmander") == 4
+    assert numero("pikachu-parceiro", "Pikachu (Parceiro)") == 25
+    assert numero("darmanitan-galar-zen", "Darmanitan (Galar Zen)") == 555
+    assert numero("morpeko-faminto", "Morpeko (Faminto)") == 877
+    assert numero("calyrex-cavaleiro-gelado", "Calyrex (Cavaleiro Gelado)") == 898
+
+    # O vínculo de espécie legado de Nidoran♂ pode apontar a Nidoran♀.
+    assert numero("nidoran", "Nidoran♀") == 29
+    assert numero("nidoran-2", "Nidoran♂", especie_nome="Nidoran♀", especie_numero=29) == 32
+
+    # Formas novas de espécies oficiais herdam seu número; customizadas
+    # conservam o número definido pelo mestre ou não exibem um número fictício.
+    assert numero("venusaur-ankar", "Venusaur (Ankar)") == 3
+    assert numero("pokemon-ankar", "Pokémon de Ankar", especie_numero=1001, personalizada=True) == 1001
+    assert numero("pokemon-sem-numero", "Pokémon Inédito", personalizada=True) is None
+
+
+def test_cartoes_exibem_numero_nacional_com_zeros_e_sem_alterar_banco(app_db, client_db):
+    _preparar_formas(app_db)
+    with app_db.app_context():
+        especie = db.session.scalar(select(EspeciePokemon).where(EspeciePokemon.codigo == "bulbasaur"))
+        assert especie.numero is None
+
+    assert client_db.post("/login", data={
+        "login": "mestre-db", "senha": "senha-db"
+    }).status_code == 302
+    resposta = client_db.get("/mestre/catalogo/pokemons")
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+    assert "#001 · Normal" in html
+    assert "#004 · Normal" in html
+    assert "#007 · Normal" in html
+    assert "#— · Personalizada" in html
+
+    with app_db.app_context():
+        especie = db.session.scalar(select(EspeciePokemon).where(EspeciePokemon.codigo == "bulbasaur"))
+        assert especie.numero is None
