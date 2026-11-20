@@ -18,6 +18,20 @@ Consultar por sequência original importada (1.064 formas) e preparar
 auditoria dos números nacionais. Não renumerar dados de campanha no escuro.
 
 ## 10E.2 — Integridade do Catálogo e relações
+
+**10E.2.1 — Auditoria de vínculos e numeração:** implementada como comando
+`flask --app app.py catalogo auditar-pokedex` em branch própria.
+O serviço é somente leitura, compara números e espécie de cada forma com
+a fonte, diferencia Nidoran♀/♂ e reporta quantidade de Pokémon ativos
+impactados. Consulte `docs/ETAPA_10E2_1_AUDITORIA_POKEDEX.md`.
+**O saneamento dos vínculos encontrados ainda não foi executado.**
+
+**Próximo incremento 10E.2.2:** após analisar o relatório da instalação
+real, criar o painel administrativo de relações. Evolução permanente,
+troca de forma reversível e Mega devem ser categorias de vínculo distintas;
+não inferir mudanças regionais automáticas nem quebrar a regra do nível
+compartilhado por personagem.
+
 1. Auditar espécies, formas alternativas e número nacional; definir
    normalização distinta para Nidoran♀/Nidoran♂ e variantes.
 2. Criar na edição de forma um painel **Relações**:
