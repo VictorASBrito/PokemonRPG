@@ -1,0 +1,34 @@
+name: Testes do Campo - NPCs e Hordas
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "templates/campo/**"
+      - "static/js/campo.js"
+      - "migrations/versions/**"
+      - "tests/test_campo_npcs_10d4.py"
+      - ".github/workflows/test-campo-npcs.yml"
+  push:
+    branches: ["feature/10d4-npcs-hordas"]
+
+permissions:
+  contents: read
+
+jobs:
+  campo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pytest
+      - name: Rodar regressões do Campo
+        run: python -m pytest -q tests/test_campo_npcs_10d4.py tests/test_campo_compartilhado.py
