@@ -79,3 +79,15 @@ Telas administrativas devem permitir criar, ativar, editar, excluir logicamente 
 Bulbasaur → Ivysaur → Venusaur; Charmander → Charmeleon → Charizard → Mega X/Y; formas Alola/Galar com linhas evolutivas regionais; Eevee com múltiplos destinos; Morpeko reversível; espécies personalizadas encadeadas pelo mestre; níveis abaixo do mínimo; destino inativo; item ausente; Pv recalculado; jogador sem permissão; duas solicitações simultâneas.
 
 **Importante:** E1–E5 constituem um roteiro técnico proposto, NÃO funcionalidades entregues pelo PR P1.
+
+
+## Auditoria preliminar da fonte de formas (GitHub, 20/11/2026)
+
+A fonte JSON foi lida integralmente, sem consultar ou alterar o PostgreSQL do mestre. Aplicando a mesma regra de classificação do importador aos 1.064 registros: 871 formas marcadas como normal, 38 regionais, 50 Mega e 105 alternativas. São categorias de registros da fonte, não uma confirmação de vínculos evolutivos.
+
+- Morpeko tem duas formas catalogadas: **Morpeko (Satisfeito)** e **Morpeko (Faminto)**; ambas estão classificadas como alternativas. A associação reversível precisa ser cadastrada explicitamente.
+- Rattata e Raticate de Alola, Meowth de Alola/Galar, Persian de Alola e Darumaka de Galar já aparecem como formas regionais separadas na fonte.
+- Darmanitan de Galar usa os nomes **Darmanitan (Galar Normal)** e **Darmanitan (Galar Zen)**; a forma comum também se chama **Darmanitan (Normal)**, razão pela qual uma verificação ingênua de nomes sem parênteses não encontra uma forma-base literal.
+- O agrupamento de espécies da importação deve ser auditado após o reparo dos dois Nidoran. A mera existência de formas regionais NÃO comprova que os vínculos entre origem e destino estão corretos.
+
+**CI do PR #9:** workflow Pokédex concluído com sucesso: 10 testes passaram em 6,10 s no GitHub Actions (Python 3.12, SQLite de testes). Não substitui validação no PostgreSQL real.
