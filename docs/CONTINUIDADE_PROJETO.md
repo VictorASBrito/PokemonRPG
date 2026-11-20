@@ -589,3 +589,15 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Modelagem:** reaproveita `EvolucaoPokemon.tipo_requisito` para gatilho e `requisitos['tipo_relacao']` para natureza do vínculo. Sem migration, sem tocar nos Pokémon dos jogadores, itens, PV ou nível de treinador.
 - **Testes:** `tests/test_evolucoes_admin_10e2_2.py`, workflow `.github/workflows/test-evolucoes-10e2-2.yml`; verificar execução na PR. Ver `docs/ETAPA_10E2_2_RELACOES_POKEMON.md`.
 - **Próximo:** verificar CI, revisar na interface, depois 10E.2.3 árvore visual e comparações das demais famílias; 10E.3 elegibilidade real sob as regras de Ankar.
+
+
+<!-- ANKAR_10E2_3_ARVORE_20261120 -->
+## 2026-11-20 — 10E.2.3: árvore evolutiva e revisão de cadeias divergentes
+- **PR/branch:** `feature/10e2-3-arvore-evolutiva`, criada da main após PR #14 (editor de relações) ser mesclado.
+- **Objetivo:** nova rota de leitura `/mestre/catalogo/pokemons/<forma_id>/arvore`, acessível pelo editor. Inclui raízes, ancestrais, ramos, convergências, estágios e requisitos das evoluções permanentes ativas. Outros tipos de relação aparecem à parte. Detector de ciclos legados, cap de 120 nós e estado vazio.
+- **Arquivos:** `app/services/arvore_evolutiva_service.py`, `templates/mestre/catalogo/pokemon_arvore.html`, `static/css/arvore-evolutiva.css`, `app/routes/catalogo_admin.py`, `app/services/evolucoes_admin_service.py`, `templates/mestre/catalogo/pokemon_relacoes.html`, `data/referencias/evolucoes_revisadas_10e2_3.json`, `tests/test_arvore_evolutiva_10e2_3.py`, workflow `test-arvore-evolutiva-10e2-3.yml`, docs da etapa/continuidade/diário/plano.
+- **Fontes:** PDF original cap. 9 página impressa 44 (PDF 45), cap. 16 páginas impressas 59–60 (PDF 60–61); PokéAPI evolution chain 67 (Eevee) e 10 (Pichu/Pikachu); PokémonDB stone/trade e Pokédex Eevee. Comparações feitas individualmente e documentadas.
+- **Novas propostas:** 12: sete por pedra liberadas somente após clique mestre (5 ramos de Eevee, Pikachu, Vulpix padrão), cinco pendentes de regra da campanha (Espeon/Umbreon/Sylveon e Porygon→Porygon2→Porygon-Z). Pendentes não são aprováveis por endpoint nem importadas automaticamente.
+- **Conflito importante:** livro PKMRPG v2.5 condiciona materiais a amizade máxima 100; Ankar não usa amizade numérica. O editor exibe alerta; aprovação do mestre é registro de regra, não execução da evolução. Trocas de Porygon e variantes Eevee diferem entre livro e jogos, pendentes de decisão.
+- **Sem migrations / sem mutação:** navegação da árvore é somente SELECT; sugestões armazenadas em JSON versionado não alteram catálogo até aprovação; nenhuma evolução/mega mudança de Pokémon do jogador é ativada.
+- **Testes:** `tests/test_arvore_evolutiva_10e2_3.py`, com testes de ramos, convergência, ciclo legado, tipos especiais, acesso e manutenção dos Pokémon do jogador. Confirmar resultados no CI do PR. Próximo 10E.3 evoluções na ficha, com nível de treinador e autorização narrativa.
