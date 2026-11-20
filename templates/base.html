@@ -62,7 +62,6 @@
                     <a href="{{ url_for('catalogo_admin.dashboard') }}">Catálogo</a>
                     <a href="{{ url_for('regiao.indice_ankar') }}">Região</a>
                     <a href="{{ url_for('combates.painel') }}">Campo</a>
-                    <a href="{{ url_for('npcs.catalogo') }}">NPCs</a>
                     <a href="{{ url_for('capturas.campo_mestre') }}">Capturáveis</a>
                 {% else %}
                     <a href="{{ url_for('jogadores.dashboard') }}">Painel</a>
@@ -108,6 +107,7 @@
             <a href="{{ url_for('catalogo_admin.pokemons') }}"{% if 'pokemon' in ui10d_endpoint %} aria-current="page"{% endif %}>Pokémon</a>
             <a href="{{ url_for('catalogo_admin.golpes') }}"{% if 'golpe' in ui10d_endpoint or 'vinculo' in ui10d_endpoint %} aria-current="page"{% endif %}>Golpes</a>
             <a href="{{ url_for('catalogo_admin.itens') }}"{% if 'item' in ui10d_endpoint %} aria-current="page"{% endif %}>Itens</a>
+            <a href="{{ url_for('catalogo_admin.npcs') }}"{% if ui10d_endpoint == 'catalogo_admin.npcs' %} aria-current="page"{% endif %}>NPCs</a>
         </div>
     </nav>
     {% endif %}

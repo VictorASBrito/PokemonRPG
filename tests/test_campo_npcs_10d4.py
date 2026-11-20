@@ -130,13 +130,22 @@ def test_adicionar_ao_grupo_e_remover_ultimo_integrante(app_db, client_db):
 
     with app_db.app_context():
         grupo_id = str(db.session.scalar(select(GrupoNPCEmCampo)).id)
-    assert client_db.post("/campo/npcs/adicionar", data={
+    rejeicao = client_db.post("/campo/npcs/adicionar", data={
         "csrf_token": token, "grupo_id": grupo_id, "forma_id": forma,
         "nivel": "15", "quantidade": "2",
+    }, follow_redirects=True)
+    assert "manter o nível 12" in rejeicao.get_data(as_text=True)
+    with app_db.app_context():
+        assert len(db.session.scalars(select(PokemonNPCEmCampo)).all()) == 1
+    assert client_db.post("/campo/npcs/adicionar", data={
+        "csrf_token": token, "grupo_id": grupo_id, "forma_id": forma,
+        "nivel": "12", "quantidade": "2",
     }).status_code == 302
     with app_db.app_context():
-        ids = [str(x.id) for x in db.session.scalars(select(PokemonNPCEmCampo)).all()]
+        membros = db.session.scalars(select(PokemonNPCEmCampo)).all()
+        ids = [str(x.id) for x in membros]
         assert len(ids) == 3
+        assert {x.nivel for x in membros} == {12}
 
     for membro_id in ids:
         assert client_db.post(f"/campo/npcs/pokemons/{membro_id}/retirar", data={

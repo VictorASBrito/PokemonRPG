@@ -47,6 +47,9 @@ class PokemonNPCEmCampo(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
     grupo_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("grupos_npc_campo.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    capturavel_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("pokemons_capturaveis.id", ondelete="SET NULL"), unique=True, index=True
+    )
     forma_pokemon_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("formas_pokemon.id", ondelete="RESTRICT"), nullable=False, index=True
     )

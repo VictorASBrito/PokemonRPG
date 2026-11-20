@@ -65,6 +65,7 @@ def encaminhar_horda(*, campanha_codigo, pokemon_id, encontrador_id, usuario_id)
     db.session.add(registro)
     db.session.flush()
     pokemon.enviado_captura = True
+    pokemon.capturavel_id = registro.id
     db.session.add(HistoricoAlteracao(
         entidade="pokemon_capturavel", registro_id=registro.id, acao="criar_horda",
         usuario_id=_uuid(usuario_id), dados_anteriores=None,

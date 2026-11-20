@@ -84,7 +84,9 @@ def gerar():
             zona_index=request.form.get("zona_index"),
             tabela_index=request.form.get("tabela_index"),
             quantidade=request.form.get("quantidade"),
-            nivel_min=request.form.get("nivel_min"), nivel_max=request.form.get("nivel_max"),
+            nivel=request.form.get("nivel"),
+            modo=request.form.get("modo"),
+            formas_manuais=request.form.getlist("forma_id_manual"),
             encontrador_id=request.form.get("encontrador_id"),
             permitir_repetidos=request.form.get("repeticoes") == "1",
         ) and "Equipe regional gerada. Revise os Pokémon antes de confirmar."
@@ -103,11 +105,12 @@ def refazer(indice):
 @npcs_bp.post("/confirmar")
 @perfil_obrigatorio("mestre")
 def confirmar():
+    acao = request.form.get("acao")
     return _operacao(lambda: aplicar_rascunho(
-        campanha_codigo=_codigo(), acao=request.form.get("acao"),
+        campanha_codigo=_codigo(), acao=acao,
         time_numero=request.form.get("time_numero"), modelo_id=request.form.get("modelo_id"),
         usuario_id=session.get("usuario_id"),
-    ))
+    ), destino="catalogo_admin.npcs" if acao in ("salvar_fixo", "atualizar_fixo") else "combates.painel")
 
 
 @npcs_bp.post("/modelos/<modelo_id>/campo")
@@ -117,7 +120,7 @@ def usar_modelo(modelo_id):
         campanha_codigo=_codigo(), modelo_id=modelo_id,
         time_numero=request.form.get("time_numero"),
         usuario_id=session.get("usuario_id"),
-    ))
+    ), destino="catalogo_admin.npcs")
 
 
 @npcs_bp.post("/modelos/<modelo_id>/arquivar")
@@ -126,4 +129,4 @@ def arquivar(modelo_id):
     return _operacao(lambda: arquivar_modelo(
         campanha_codigo=_codigo(), modelo_id=modelo_id,
         usuario_id=session.get("usuario_id"),
-    ))
+    ), destino="catalogo_admin.npcs")

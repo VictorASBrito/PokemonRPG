@@ -76,106 +76,166 @@ def _formas_disponiveis(tabela):
     return resolvidas, sorted(pendentes)
 
 
-def _sortear_um(rascunho, *, usados=None):
-    _, _, tabela = selecionar_tabela(
-        rascunho["local_id"], rascunho["zona_index"], rascunho["tabela_index"]
-    )
-    resolvidas, pendentes = _formas_disponiveis(tabela)
-    nomes_permitidos = set(resolvidas)
-    if usados:
-        nomes_permitidos.difference_update(usados)
-    escolhas, avisos = sortear_especies(
-        tabela, 1, nomes_habilitados=nomes_permitidos,
-        permitir_repetidos=True,
-    )
-    escolha = escolhas[0]
-    forma = resolvidas[escolha["pokemon"]]
-    nivel = random.randint(rascunho["nivel_min"], rascunho["nivel_max"])
-    natureza = db.session.execute(
+def _resolver_formas(tabelas):
+    """Vincula nomes do Atlas ao catálogo vivo em uma única consulta."""
+    nomes = {
+        str(e.get("pokemon") or "").strip()
+        for meta in tabelas for e in meta["tabela"].get("encontros", [])
+        if e.get("pokemon") and not e.get("marcador")
+    }
+    formas = db.session.execute(
+        select(FormaPokemon).where(FormaPokemon.ativo.is_(True))
+    ).scalars().all()
+    por_id = {str(f.id): f for f in formas}
+    resultado = {}
+    nao_resolvidas = []
+    for nome in sorted(nomes):
+        if nome.casefold() in ("x", "random"):
+            continue
+        opcoes = opcoes_formas(nome, formas)
+        if len(opcoes) == 1 and opcoes[0]["id"] in por_id:
+            resultado[nome] = por_id[opcoes[0]["id"]]
+        else:
+            nao_resolvidas.append(nome)
+    return resultado, nao_resolvidas
+
+
+def _montar_membro(forma, *, nivel, campanha, natureza, encontrador=None,
+                   fonte=None):
+    """Natureza, gênero e Shiny são sorteados uma única vez por membro."""
+    shiny, numero_shiny = (sortear_shiny(encontrador.numeros_shiny)
+                           if encontrador else (False, None))
+    return {
+        "forma_id": str(forma.id), "nome": forma.nome,
+        "nome_atlas": (fonte or {}).get("pokemon") or forma.nome,
+        "d100": (fonte or {}).get("d100"),
+        "local_nome": (fonte or {}).get("local_nome", ""),
+        "zona_nome": (fonte or {}).get("zona_nome", ""),
+        "terreno": (fonte or {}).get("terreno", ""),
+        "imagem": (forma.imagem_shiny_url if shiny else forma.imagem_url)
+                  or forma.imagem_url or "",
+        "nivel": nivel,
+        "natureza_id": str(natureza.id) if natureza else None,
+        "natureza": natureza.nome if natureza else "—",
+        "genero": _genero_aleatorio(campanha.id),
+        "shiny": bool(shiny), "sorteio_shiny": numero_shiny,
+    }
+
+
+def _naturais():
+    return db.session.execute(
         select(Natureza).where(Natureza.ativo.is_(True))
         .order_by(func.lower(Natureza.nome))
     ).scalars().all()
-    natureza_aleatoria = random.choice(natureza) if natureza else None
+
+
+def _sortear_um(rascunho, *, usados=None):
+    if rascunho.get("modo") != "aleatorio":
+        raise ValueError("A seleção manual não utiliza o sorteio aleatório.")
+    from app.services.gerador_npcs_ankar import (
+        tabelas_de_ankar, sortear_encontros_regionais,
+    )
+    tabelas = tabelas_de_ankar(
+        local_id=rascunho["local_id"],
+        zona_index=rascunho["zona_index"],
+        tabela_index=rascunho["tabela_index"],
+    )
+    resolvidas, pendentes = _resolver_formas(tabelas)
+    escolhidos, avisos = sortear_encontros_regionais(
+        tabelas, 1, nomes_habilitados=set(resolvidas),
+        permitir_repetidos=rascunho["permitir_repetidos"], usados=usados,
+    )
     campanha = _campanha(rascunho["campanha_codigo"], bloquear=False)
-    shiny = False
-    numero_shiny = None
-    if rascunho["tipo"] == "horda":
-        encontrador = _validar_encontrador(campanha.id, rascunho["encontrador_id"])
-        shiny, numero_shiny = sortear_shiny(encontrador.numeros_shiny)
-    return {
-        "forma_id": str(forma.id),
-        "nome": forma.nome,
-        "nome_atlas": escolha["pokemon"],
-        "imagem": (forma.imagem_shiny_url if shiny else forma.imagem_url) or forma.imagem_url or "",
-        "nivel": nivel, "natureza_id": str(natureza_aleatoria.id) if natureza_aleatoria else None,
-        "natureza": natureza_aleatoria.nome if natureza_aleatoria else "—",
-        "genero": _genero_aleatorio(campanha.id),
-        "shiny": bool(shiny), "sorteio_shiny": numero_shiny,
-        "d100": escolha["d100"],
-    }, avisos, pendentes
+    encontrador = (
+        _validar_encontrador(campanha.id, rascunho["encontrador_id"])
+        if rascunho["tipo"] == "horda" else None
+    )
+    naturezas = _naturais()
+    membro = _montar_membro(
+        resolvidas[escolhidos[0]["pokemon"]],
+        nivel=rascunho["nivel"], campanha=campanha,
+        natureza=random.choice(naturezas) if naturezas else None,
+        encontrador=encontrador, fonte=escolhidos[0],
+    )
+    return membro, avisos, pendentes
 
 
-def gerar_rascunho(*, campanha_codigo, nome, tipo, local_id, zona_index, tabela_index,
-                   quantidade, nivel_min, nivel_max, encontrador_id=None,
-                   permitir_repetidos=False):
+def gerar_rascunho(*, campanha_codigo, nome, tipo, quantidade, nivel,
+                   modo="aleatorio", local_id="", zona_index="", tabela_index="",
+                   formas_manuais=None, encontrador_id=None, permitir_repetidos=False):
+    from app.services.gerador_npcs_ankar import (
+        tabelas_de_ankar, sortear_encontros_regionais,
+    )
     tipo = str(tipo or "").strip().lower()
     if tipo not in TIPOS_GERADOR:
         raise ValueError("Escolha NPC fixo, NPC temporário ou horda.")
+    modo = str(modo or "").strip().lower()
+    if modo not in ("manual", "aleatorio"):
+        raise ValueError("Escolha o modo Manual ou Aleatório.")
     nome = str(nome or "").strip()
     if not 1 <= len(nome) <= 120:
-        raise ValueError("Informe o nome do encontro (até 120 caracteres).")
-    quantidade = _numero(quantidade, minimo=1, maximo=6, nome="Quantidade")
-    nivel_min = _numero(nivel_min, minimo=1, maximo=100, nome="Nível mínimo")
-    nivel_max = _numero(nivel_max, minimo=1, maximo=100, nome="Nível máximo")
-    if nivel_min > nivel_max:
-        raise ValueError("O nível mínimo não pode superar o máximo.")
+        raise ValueError("Informe o nome do NPC ou horda (até 120 caracteres).")
+    qtd = _numero(quantidade, minimo=1, maximo=6, nome="Quantidade")
+    nivel = _numero(nivel, minimo=1, maximo=100, nome="Nível")
     campanha = _campanha(campanha_codigo, bloquear=False)
-    local, zona, tabela = selecionar_tabela(local_id, zona_index, tabela_index)
-    encontrador = None
-    if tipo == "horda":
-        encontrador = _validar_encontrador(campanha.id, encontrador_id)
+    encontrador = (
+        _validar_encontrador(campanha.id, encontrador_id)
+        if tipo == "horda" else None
+    )
     rascunho = {
         "campanha_codigo": campanha.codigo, "tipo": tipo, "nome": nome,
-        "local_id": local["id"], "local_nome": local["nome"],
-        "zona_index": int(zona_index), "tabela_index": int(tabela_index),
-        "zona_nome": str(zona["nome"])[:120],
-        "terreno": str(tabela.get("terreno") or "")[:120],
-        "quantidade": quantidade, "nivel_min": nivel_min, "nivel_max": nivel_max,
+        "modo": modo, "nivel": nivel, "quantidade": qtd,
+        "local_id": "", "local_nome": "Ankar — todas as localidades",
+        "zona_index": "", "tabela_index": "", "zona_nome": "", "terreno": "",
         "encontrador_id": str(encontrador.id) if encontrador else None,
         "permitir_repetidos": bool(permitir_repetidos or tipo == "horda"),
         "pokemons": [], "avisos": {},
     }
-    # Pré-análise não deve começar o sorteio se há poucos Pokémon distintos.
-    resolvidas, pendentes = _formas_disponiveis(tabela)
-    sorteados, avisos = sortear_especies(
-        tabela, quantidade, nomes_habilitados=set(resolvidas),
-        permitir_repetidos=rascunho["permitir_repetidos"],
-    )
-    # Mesmo gerador de atributos para cada membro, mas preserva a rolagem d100.
-    for escolhido in sorteados:
-        # Sortear atributos sem re-sortear a espécie/rolagem.
-        forma = resolvidas[escolhido["pokemon"]]
-        nivel = random.randint(nivel_min, nivel_max)
-        naturezas = db.session.execute(
-            select(Natureza).where(Natureza.ativo.is_(True))
-            .order_by(func.lower(Natureza.nome))
-        ).scalars().all()
-        natureza = random.choice(naturezas) if naturezas else None
-        shiny, numero_shiny = (sortear_shiny(encontrador.numeros_shiny)
-                               if encontrador else (False, None))
-        rascunho["pokemons"].append({
-            "forma_id": str(forma.id), "nome": forma.nome,
-            "nome_atlas": escolhido["pokemon"], "d100": escolhido["d100"],
-            "imagem": (forma.imagem_shiny_url if shiny else forma.imagem_url) or forma.imagem_url or "",
-            "nivel": nivel, "natureza_id": str(natureza.id) if natureza else None,
-            "natureza": natureza.nome if natureza else "—",
-            "genero": _genero_aleatorio(campanha.id),
-            "shiny": bool(shiny), "sorteio_shiny": numero_shiny,
-        })
-    rascunho["avisos"] = {
-        **avisos, "nomes_sem_forma_unica": pendentes[:15],
-        "total_sem_forma_unica": len(pendentes),
-    }
+    naturezas = _naturais()
+    if modo == "manual":
+        ids = list(formas_manuais or [])
+        if len(ids) != qtd:
+            raise ValueError(f"Escolha exatamente {qtd} Pokémon no modo Manual.")
+        formas = [_forma(fid) for fid in ids]
+        if not rascunho["permitir_repetidos"] and len({f.id for f in formas}) != qtd:
+            raise ValueError("A equipe NPC não permite espécies repetidas; marque a opção para repetir.")
+        rascunho["local_nome"] = "Seleção manual"
+        for forma in formas:
+            rascunho["pokemons"].append(_montar_membro(
+                forma, nivel=nivel, campanha=campanha,
+                natureza=random.choice(naturezas) if naturezas else None,
+                encontrador=encontrador,
+            ))
+    else:
+        tabelas = tabelas_de_ankar(
+            local_id=local_id, zona_index=zona_index, tabela_index=tabela_index,
+        )
+        if local_id:
+            rascunho["local_id"] = str(local_id)
+            loc = tabelas[0]
+            rascunho["local_nome"] = loc["local_nome"]
+            if str(zona_index or "").strip():
+                rascunho["zona_index"] = str(zona_index)
+                rascunho["zona_nome"] = loc["zona_nome"]
+            if str(tabela_index or "").strip():
+                rascunho["tabela_index"] = str(tabela_index)
+                rascunho["terreno"] = loc["terreno"]
+        resolvidas, pendentes = _resolver_formas(tabelas)
+        escolhas, avisos = sortear_encontros_regionais(
+            tabelas, qtd, nomes_habilitados=set(resolvidas),
+            permitir_repetidos=rascunho["permitir_repetidos"],
+        )
+        for escolha in escolhas:
+            rascunho["pokemons"].append(_montar_membro(
+                resolvidas[escolha["pokemon"]], nivel=nivel,
+                campanha=campanha,
+                natureza=random.choice(naturezas) if naturezas else None,
+                encontrador=encontrador, fonte=escolha,
+            ))
+        rascunho["avisos"] = {
+            **avisos, "nomes_sem_forma_unica": pendentes[:15],
+            "total_sem_forma_unica": len(pendentes),
+        }
     session[CHAVE_RASCUNHO] = rascunho
     session.modified = True
     return rascunho

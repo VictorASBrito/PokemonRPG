@@ -240,6 +240,11 @@ def criar_capturavel_campo(
     )
     db.session.add(capturavel)
     db.session.flush()
+    from app.services.espelho_capturaveis_service import espelhar_capturavel_campo
+    espelhar_capturavel_campo(
+        campanha=campanha, capturavel=capturavel,
+        encontrador=encontrado_por, usuario_id=usuario_responsavel_id,
+    )
     db.session.add(
         HistoricoAlteracao(
             entidade="pokemon_capturavel",
@@ -394,6 +399,11 @@ def atribuir_capturavel_box(
     ordem_antiga = _retirar_do_campo_e_reordenar(
         campanha_id=campanha.id, capturavel=capturavel
     )
+    from app.services.espelho_capturaveis_service import retirar_espelho_capturavel
+    retirar_espelho_capturavel(
+        campanha_id=campanha.id, capturavel_id=origem_uuid,
+        usuario_id=usuario_responsavel_id,
+    )
 
     usuario_uuid = uuid.UUID(str(usuario_responsavel_id)) if usuario_responsavel_id else None
     destino = {
@@ -437,6 +447,11 @@ def remover_capturavel_campo(*, campanha_codigo: str, capturavel_id: str, usuari
 
     ordem_antiga = _retirar_do_campo_e_reordenar(
         campanha_id=campanha.id, capturavel=capturavel
+    )
+    from app.services.espelho_capturaveis_service import retirar_espelho_capturavel
+    retirar_espelho_capturavel(
+        campanha_id=campanha.id, capturavel_id=capturavel.id,
+        usuario_id=usuario_responsavel_id,
     )
 
     db.session.add(

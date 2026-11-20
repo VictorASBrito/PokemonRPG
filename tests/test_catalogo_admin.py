@@ -51,7 +51,7 @@ def test_catalogo_exige_perfil_mestre(client_db) -> None:
     ).status_code == 302
     resposta = client_db.get("/mestre/catalogo")
     assert resposta.status_code == 302
-    assert resposta.headers["Location"].endswith("/")
+    assert resposta.headers["Location"].endswith("/login")
 
 
 def test_mestre_cria_edita_duplica_e_desativa_forma(app_db, client_db) -> None:
