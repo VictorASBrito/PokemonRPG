@@ -13,6 +13,11 @@ from app.models.db import (
 )
 from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 
+def _login(client, login="mestre-db", senha="senha-db"):
+    resposta = client.post("/login", data={"login": login, "senha": senha})
+    assert resposta.status_code == 302
+
+
 
 def _form(codigo: str, *, categoria="normal") -> FormaPokemon:
     forma = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == codigo))
