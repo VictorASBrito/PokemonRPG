@@ -132,14 +132,17 @@ def test_detecta_numeracao_ordem_e_formas_faltantes_sem_corrigir():
     especies, formas = _catalogo_correto()
     especies[1].numero = 999
     mega = next(forma for forma in formas if forma.codigo == "venusaur-mega")
-    mega.configuracoes = {"ordem_catalogo": 800}
+    venusaur = next(forma for forma in formas if forma.codigo == "venusaur")
+    venusaur.configuracoes = {"ordem_catalogo": 800}
     formas.remove(mega)
-    # Ao não passar a Mega, a auditoria só constata sua falta.
+    # Formas ausentes e ordem divergente devem ser avisos separados.
     resultado = auditar_pokedex(especies, formas, FONTE_MINIMA)
     tipos = {(a.tipo, a.codigo) for a in resultado.achados}
     assert ("numero_nacional_incorreto", "venusaur") in tipos
+    assert ("ordem_forma_divergente", "venusaur") in tipos
     assert ("forma_oficial_ausente", "venusaur-mega") in tipos
     assert especies[1].numero == 999
+    assert venusaur.configuracoes == {"ordem_catalogo": 800}
 
 
 def test_personalizada_sem_numero_e_valida_mas_colisao_gera_aviso():
