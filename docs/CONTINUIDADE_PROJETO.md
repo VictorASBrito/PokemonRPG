@@ -550,3 +550,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Arquivos:** `app/services/numeracao_pokedex_service.py`, `app/routes/catalogo_admin.py`, `templates/mestre/catalogo/pokemons.html`, `tests/test_ordenacao_pokedex_10e1.py`, `docs/ETAPA_10E1_ORDEM_POKEDEX.md` e os documentos de continuidade.
 - **Validação:** testes incluídos no workflow de regressão existente, execução via PR; testes PostgreSQL locais não executados aqui.
 - **Próxima tarefa:** auditoria 10E.2 dos números persistidos e das relações de espécies/formas, principalmente Nidoran, sem renumerar automaticamente.
+
+
+<!-- ANKAR_10E2_1_AUDITORIA_POKEDEX_20261120 -->
+## 2026-11-20 — Etapa 10E.2.1: auditoria somente leitura de números e vínculos
+- **Base efetiva:** `main` após PR #10 (`2e8f337`); a 10E.1 ordena por `ordem_catalogo` e a 10E.1.1 apresenta números nacionais na lista sem preencher `EspeciePokemon.numero`.
+- **Implementação:** `app/services/auditoria_pokedex_service.py` compara a fonte versionada (1.064 formas, 898 espécies) com as espécies, formas e contagens agregadas de Pokémon ativos no PostgreSQL. Identifica números ausentes/incorretos, ligações erradas (Nidoran♂ → espécie Nidoran♀), formas ausentes, divergência da ordem e números customizados coincidentes.
+- **Operação:** `flask --app app.py catalogo auditar-pokedex` (primeiros 50 achados), `--todos` (lista integral), `--json` (serialização do relatório). Erros resultam em código não zero; avisos não bloqueiam. Não há opção de reparo ou `--aplicar`.
+- **Proteções:** queries SELECT (incluindo contagens agregadas) sob `db.session.no_autoflush`, sem `commit`/UPDATE/DELETE e sem coleta de dados pessoais. Nenhum Pokémon, FK, item, número de espécie ou JSON original alterado; nenhuma migration.
+- **Regressão:** `tests/test_auditoria_pokedex_10e2_1.py` + workflow `.github/workflows/test-auditoria-pokedex-10e2.yml`; status dos testes deve ser confirmado na execução do PR. Ver `docs/ETAPA_10E2_1_AUDITORIA_POKEDEX.md`.
+- **Pendência e próximo:** rodar o diagnóstico na instalação com dados reais, preservar relatório para análise, aprovar correções pontuais **após backup** e depois criar o editor de relações 10E.2.2. PR #9 antigo permanece separado; não o mesclar sem reconciliar com PR #8/#10.
