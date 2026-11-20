@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
@@ -21,5 +21,13 @@ class NPCModelo(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     zona_nome: Mapped[str] = mapped_column(String(120), nullable=False)
     terreno: Mapped[str] = mapped_column(String(120), nullable=False)
     equipe: Mapped[list] = mapped_column(JSON_DOCUMENT, nullable=False)
+    # Campos opcionais preservam modelos salvos antes desta etapa.
+    nivel: Mapped[int | None] = mapped_column(Integer)
+    classe: Mapped[str | None] = mapped_column(String(160))
+    origem: Mapped[str | None] = mapped_column(String(160))
+    foto_url: Mapped[str | None] = mapped_column(String(500))
+    anotacoes: Mapped[str | None] = mapped_column(Text)
+    atributos: Mapped[dict | None] = mapped_column(JSON_DOCUMENT)
+    pv_atual: Mapped[int | None] = mapped_column(Integer)
 
     campanha = relationship("Campanha")

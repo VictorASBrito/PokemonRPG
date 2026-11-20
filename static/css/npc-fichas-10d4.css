@@ -1,0 +1,59 @@
+/* 10D.4.4 — cards dos NPCs reutilizam a estrutura da Central do Mestre. */
+.npc-central .npc-grade { gap:14px; }
+.npc-central .npc-ficha-card { min-height:0; }
+.npc-central .painel-jogador-identidade { flex:1 1 auto; min-width:0; }
+.npc-central .painel-jogador-identidade:hover h2 { text-decoration:underline; }
+.npc-acoes-topo { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.npc-central .npc-ficha-card .painel-jogador-topo { padding-bottom:10px; }
+.npc-central .npc-ficha-card .painel-jogador-status { min-width:0; }
+.npc-central .npc-ficha-card progress { display:block; width:100%; accent-color:var(--primaria); }
+.npc-central .npc-ficha-card .painel-pokemon-link { cursor:default; }
+.npc-central .npc-ficha-card .painel-jogador-gestao form { display:block; }
+.npc-central .npc-ficha-card .painel-jogador-gestao form button { width:100%; }
+.npc-card-rodape { display:grid; grid-template-columns:minmax(0,auto) minmax(0,1fr); gap:8px; align-items:end; margin-top:auto; }
+.npc-card-rodape > a { white-space:nowrap; }
+.npc-card-rodape form { display:flex; align-items:end; gap:6px; min-width:0; }
+.npc-card-rodape .npc-time { display:grid; gap:3px; min-width:0; font-size:.7rem; }
+.npc-card-rodape .npc-time select { min-height:37px; max-width:90px; }
+.npc-card-rodape button { min-height:37px; }
+.npc-anotacao-resumo { font-size:.77rem; border-top:1px solid var(--borda); padding-top:8px; margin:0; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; color:var(--texto-suave); }
+.npc-sem-pokemon { grid-column:1/-1; padding:15px; font-size:.82rem; color:var(--texto-suave); }
+.npc-vazio { padding:25px; display:grid; gap:15px; justify-items:start; }
+.npc-ficha-editor { display:grid; gap:15px; min-width:0; max-width:1120px; margin:auto; }
+.npc-ficha-editor :is(h1,h2,h3) { margin:0; }
+.npc-ficha-editor .ui-card { padding:20px; }
+.npc-editor-form,.npc-editor-secao { display:grid; gap:14px; min-width:0; }
+.npc-editor-secao { border-bottom:1px solid var(--borda); padding-bottom:16px; }
+.npc-editor-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.npc-editor-campos label,.npc-editor-atributos label,
+.npc-adicionar-form label { display:grid; gap:6px; font-weight:700; font-size:.84rem; min-width:0; }
+.npc-editor-campos .npc-campo-largo { grid-column:1/-1; }
+.npc-ficha-editor :is(input,textarea,select) {
+ width:100%; min-width:0; box-sizing:border-box; border:1px solid var(--borda);
+ border-radius:9px; background:var(--superficie-suave); color:var(--texto);
+ padding:10px; min-height:40px; font:inherit;
+}
+.npc-ficha-editor textarea { min-height:145px; resize:vertical; }
+.npc-editor-atributos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.npc-editor-topo { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; }
+.npc-editor-acoes { display:flex; flex-wrap:wrap; gap:9px; }
+.npc-equipe-editor { display:grid; gap:16px; }
+.npc-equipe-editor-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.npc-equipe-editor-item { display:flex; align-items:center; gap:9px; padding:9px; border:1px solid var(--borda); border-radius:9px; min-width:0; }
+.npc-equipe-editor-item img { width:48px; height:48px; object-fit:contain; }
+.npc-equipe-editor-item > div { display:grid; gap:4px; flex:1; min-width:0; }
+.npc-equipe-editor-item small { font-size:.74rem; color:var(--texto-suave); }
+.npc-adicionar-form { display:flex; align-items:end; gap:10px; max-width:650px; }
+.npc-adicionar-form label { flex:1; }
+@media(max-width:750px) {
+ .npc-editor-campos,.npc-equipe-editor-cards { grid-template-columns:1fr; }
+ .npc-editor-atributos { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .npc-ficha-editor .ui-card { padding:13px; }
+ .npc-card-rodape { grid-template-columns:1fr; }
+ .npc-card-rodape form { justify-content:space-between; }
+}
+@media(max-width:410px) {
+ .npc-adicionar-form { display:grid; }
+ .npc-central .npc-ficha-card .painel-equipe-compacta { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .npc-card-rodape .botao { font-size:.75rem; }
+}

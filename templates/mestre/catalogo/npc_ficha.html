@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block titulo %}{{ "Ficha de " ~ ficha.modelo.nome if ficha.modelo else "Novo NPC fixo" }} | Pokémon RPG{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-4') }}">
+{% endblock %}
+{% block conteudo %}
+<div class="npc-ficha-editor">
+  <header class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+      <p class="rotulo">Catálogo do RPG · Ficha de treinador</p>
+      <h1>{{ ficha.modelo.nome if ficha.modelo else "Novo NPC fixo" }}</h1>
+      <p class="texto-suave">Cadastro narrativo do mestre. NPCs não possuem login, permissões, dinheiro, inventário ou Box.</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Voltar aos NPCs</a>
+  </header>
+
+  <form method="post" class="cartao ui-card npc-editor-form"
+        action="{{ url_for('catalogo_admin.ficha_npc', modelo_id=ficha.modelo.id) if ficha.modelo else url_for('catalogo_admin.novo_npc') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <section class="npc-editor-secao">
+      <h2>Identificação</h2>
+      <div class="npc-editor-campos">
+        <label>Nome do NPC
+          <input type="text" name="nome" maxlength="120" value="{{ ficha.modelo.nome if ficha.modelo else '' }}" required>
+        </label>
+        <label>Nível do NPC (e de toda a equipe)
+          <input type="number" name="nivel" min="1" max="100" value="{{ ficha.nivel }}" required>
+        </label>
+        <label>Classe / papel
+          <input type="text" name="classe" maxlength="160" placeholder="Ex.: Líder de ginásio" value="{{ ficha.modelo.classe or '' if ficha.modelo else '' }}">
+        </label>
+        <label>Origem
+          <input type="text" name="origem" maxlength="160" placeholder="Ex.: Yrezon" value="{{ ficha.modelo.origem or '' if ficha.modelo else '' }}">
+        </label>
+        <label class="npc-campo-largo">Sprite / imagem (URL)
+          <input type="text" name="foto_url" maxlength="500" placeholder="https://... ou /static/..."
+                 value="{{ ficha.modelo.foto_url or '' if ficha.modelo else '' }}">
+        </label>
+      </div>
+    </section>
+    <section class="npc-editor-secao">
+      <div class="npc-editor-topo"><h2>Status</h2>
+        <span class="texto-suave">Vida máxima = Saúde × {{ ficha.regras.pv_por_ponto_saude }}</span>
+      </div>
+      <div class="npc-editor-atributos">
+        {% for atributo in ficha.regras.atributos %}
+        <label>{{ atributo.nome }}
+          <input type="number" name="atributo_{{ atributo.id }}" min="{{ atributo.minimo }}" max="{{ atributo.maximo }}"
+                 value="{{ ficha.valores.get(atributo.id, atributo.valor_inicial) }}" required>
+        </label>
+        {% endfor %}
+      </div>
+      <p class="texto-suave">PV atual: {{ ficha.pv_atual }}. O PV máximo é recalculado ao salvar, respeitando os atributos.</p>
+    </section>
+    <section class="npc-editor-secao">
+      <h2>Anotações do mestre</h2>
+      <label for="npc-anotacoes">História, relações, objetivos, segredos e acontecimentos</label>
+      <textarea id="npc-anotacoes" name="anotacoes" maxlength="10000" rows="8"
+                placeholder="Ex.: Foi visto em Yrezon; conhece o tio de Power; desconfia da Equipe Rocket...">{{ ficha.modelo.anotacoes or '' if ficha.modelo else '' }}</textarea>
+      <small>Essas anotações ficam somente na administração do mestre, nunca na visão dos jogadores.</small>
+    </section>
+    <div class="npc-editor-acoes">
+      <button class="botao botao-primario" type="submit">{{ "Salvar ficha" if ficha.modelo else "Cadastrar NPC fixo" }}</button>
+      {% if ficha.modelo %}
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Ver card no catálogo</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if ficha.modelo %}
+  <section class="cartao ui-card npc-equipe-editor">
+    <div class="npc-editor-topo">
+      <div>
+        <h2>Equipe Pokémon — {{ card.quantidade }}/6</h2>
+        <p class="texto-suave">Todos os integrantes mantêm o nível {{ card.nivel }} do treinador.</p>
+      </div>
+      <a class="botao botao-secundario botao-link" href="{{ url_for('npcs.catalogo') }}">Gerador Manual/Aleatório</a>
+    </div>
+    <div class="npc-equipe-editor-cards">
+      {% for pokemon in card.equipe %}
+      <article class="npc-equipe-editor-item">
+        {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="" loading="lazy">{% endif %}
+        <div><strong>{{ pokemon.nome }}</strong><small>Nível {{ pokemon.nivel }} · PV {{ pokemon.pv_atual }}/{{ pokemon.pv_maximo }}</small></div>
+        <form method="post" action="{{ url_for('catalogo_admin.npc_retirar_pokemon', modelo_id=card.id, indice=pokemon.indice) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="botao botao-secundario">Retirar</button>
+        </form>
+      </article>
+      {% else %}
+      <p class="texto-suave">Equipe vazia. Adicione Pokémon manualmente ou gere uma equipe.</p>
+      {% endfor %}
+    </div>
+    {% if card.quantidade < 6 %}
+    <form method="post" class="npc-adicionar-form"
+          action="{{ url_for('catalogo_admin.npc_adicionar_pokemon', modelo_id=card.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>Adicionar Pokémon
+        <input type="search" name="forma_nome"
+               data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+               data-seletor-visual="pokemon"
+               data-seletor-alvo="npc-forma-ficha"
+               placeholder="Buscar espécie no catálogo" autocomplete="off" required>
+        <input type="hidden" name="forma_id" id="npc-forma-ficha">
+      </label>
+      <button class="botao botao-primario" type="submit">Adicionar à equipe</button>
+    </form>
+    {% endif %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4-4') }}" defer></script>
+{% endblock %}
