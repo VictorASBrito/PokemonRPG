@@ -22,6 +22,7 @@ from app.services.autorizacao_evolucao_service import (
     autorizar_evolucao_individual,
     revogar_evolucao_individual,
 )
+from app.services.evolucao_efetiva_service import evoluir_pokemon
 from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 from app.services.permissoes_service import pode_criar_pokemon, pode_editar_identidade_pokemon
 from app.services.pokemon_db_service import (
@@ -244,6 +245,10 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
             if modo_mestre else None
         ),
         consulta_evolucao=consulta_evolucao,
+        csrf_acao_evolucao=(
+            session.setdefault("csrf_acao_evolucao", secrets.token_urlsafe(32))
+            if not modo_mestre else None
+        ),
         especie=registro["especie"],
         calculos=registro["calculos"],
         regras=contexto.regras,
@@ -365,6 +370,61 @@ def editar_jogador(pokemon_id: str):
     if contexto is None:
         return redirect(url_for("jogadores.dashboard"))
     return _editar(contexto, pokemon_id, modo_mestre=False)
+
+
+@pokemons_bp.post("/jogador/pokemon/<pokemon_id>/evolucoes/<relacao_id>/evoluir")
+@perfil_obrigatorio("jogador")
+def evoluir_jogador(pokemon_id: str, relacao_id: str):
+    """Evolução voluntária: valida CSRF e propriedade no serviço sob locks."""
+    token = session.get("csrf_acao_evolucao", "")
+    informado = request.form.get("csrf_token", "")
+    if not token or not informado or not hmac.compare_digest(token, informado):
+        return ("Confirmação da evolução inválida.", 403)
+    personagem_id = str(session.get("personagem_id", ""))
+    contexto = _carregar(personagem_id)
+    if contexto is None:
+        return ("Treinador não encontrado nesta campanha.", 403)
+    pokemon = _localizar_pokemon(contexto, pokemon_id)
+    if pokemon is None:
+        return ("Pokémon não pertence ao treinador autenticado.", 404)
+    retorno = "boxes" if request.form.get("retorno") == "boxes" else "equipe"
+    destino = url_for(
+        "pokemons.editar_jogador",
+        pokemon_id=pokemon_id,
+        retorno=retorno,
+        _anchor="consulta-evolucao",
+    )
+    try:
+        resultado = evoluir_pokemon(
+            pokemon_id=pokemon.id,
+            relacao_id=relacao_id,
+            personagem_id=contexto.personagem.id,
+            campanha_id=contexto.personagem.campanha_id,
+            usuario_id=session.get("usuario_id"),
+        )
+        db.session.commit()
+    except PermissionError:
+        db.session.rollback()
+        return ("A evolução deve ser solicitada pelo dono do Pokémon.", 403)
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+        return redirect(destino)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao evoluir Pokémon no PostgreSQL.")
+        flash("Falha ao registrar a evolução; nenhum item foi consumido.", "erro")
+        return redirect(destino)
+    flash(
+        f"{resultado.origem_nome} evoluiu para {resultado.destino_nome}! "
+        + (
+            f"Material utilizado: {resultado.item_consumido}. "
+            if resultado.item_consumido else ""
+        )
+        + f"PV: {resultado.pv_novo}/{resultado.pv_maximo_novo}.",
+        "sucesso",
+    )
+    return redirect(destino)
 
 
 @pokemons_bp.post("/jogador/pokemon/<pokemon_id>/excluir")
