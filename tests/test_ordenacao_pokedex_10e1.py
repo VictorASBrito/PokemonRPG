@@ -123,6 +123,17 @@ def test_cartoes_exibem_numero_nacional_com_zeros_e_sem_alterar_banco(app_db, cl
     with app_db.app_context():
         especie = db.session.scalar(select(EspeciePokemon).where(EspeciePokemon.codigo == "bulbasaur"))
         assert especie.numero is None
+        db.session.add(
+            FormaPokemon(
+                especie=EspeciePokemon(
+                    codigo="pokemon-ankar", nome="Pokémon Inédito de Ankar",
+                    personalizada=True, numero=None, ativo=True,
+                ),
+                codigo="pokemon-ankar", nome="Pokémon Inédito de Ankar",
+                categoria="personalizada", ativo=True,
+            )
+        )
+        db.session.commit()
 
     assert client_db.post("/login", data={
         "login": "mestre-db", "senha": "senha-db"
@@ -133,7 +144,8 @@ def test_cartoes_exibem_numero_nacional_com_zeros_e_sem_alterar_banco(app_db, cl
     assert "#001 · Normal" in html
     assert "#004 · Normal" in html
     assert "#007 · Normal" in html
-    assert "#— · Personalizada" in html
+    assert "#460 · Personalizada" in html  # forma customizada de Abomasnow
+    assert "#— · Personalizada" in html   # espécie inédita sem número
 
     with app_db.app_context():
         especie = db.session.scalar(select(EspeciePokemon).where(EspeciePokemon.codigo == "bulbasaur"))
