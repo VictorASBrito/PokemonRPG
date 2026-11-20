@@ -226,6 +226,45 @@
     </div>
 </form>
 
+<section class="cartao secao-pokemon ui-card" id="consulta-evolucao" aria-labelledby="titulo-evolucoes">
+    <div class="titulo-secao-pokemon">
+        <div>
+            <p class="rotulo">Etapa 10E.3.1 · Consulta</p>
+            <h2 id="titulo-evolucoes">Evoluções de {{ especie.get('nome') }}</h2>
+            <p class="texto-suave">Opções calculadas com o nível do treinador ({{ consulta_evolucao.nivel_treinador }}), os vínculos ativos do catálogo e as pedras na mochila deste personagem.</p>
+        </div>
+    </div>
+    {% if consulta_evolucao.opcoes %}
+        <div class="evolucao-opcoes">
+            {% for opcao in consulta_evolucao.opcoes %}
+                <article class="evolucao-opcao">
+                    <div class="evolucao-destino">
+                        {% if opcao.destino_imagem %}
+                            <img src="{{ opcao.destino_imagem }}" alt="" loading="lazy" width="68" height="68">
+                        {% endif %}
+                        <div>
+                            <h3>{{ opcao.destino_nome }}</h3>
+                            <p class="texto-suave">{{ opcao.requisito_texto }}</p>
+                        </div>
+                    </div>
+                    <div class="evolucao-detalhes">
+                        <span class="evolucao-estado evolucao-estado-{{ opcao.estado }}">{{ opcao.estado_texto }}</span>
+                        <p>{{ opcao.orientacao }}</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        <p class="texto-suave evolucao-aviso">
+            <strong>Consulta somente leitura:</strong> cumprir um requisito não evolui o Pokémon.
+            Nenhuma pedra é consumida nesta tela, e evoluções especiais exigirão autorização
+            individual do mestre. A ação de evoluir será desenvolvida na próxima etapa.
+            <a href="{{ inventario_url }}">Consultar mochila</a>.
+        </p>
+    {% else %}
+        <p class="texto-suave">Esta forma não tem evoluções permanentes ativas cadastradas. Mega Evoluções e mudanças temporárias de forma não aparecem como evolução normal.</p>
+    {% endif %}
+</section>
+
 <form id="form-excluir-pokemon" method="post" action="{{ excluir_url }}" data-confirmacao="Tem certeza que deseja remover {{ nome_exibicao }} da ficha? Esta ação não pode ser desfeita.">
     <input type="hidden" name="retorno" value="{{ retorno }}">
 </form>

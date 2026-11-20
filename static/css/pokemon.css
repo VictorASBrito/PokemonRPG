@@ -486,3 +486,17 @@ progress::-moz-progress-bar { background: #3a9b61; border-radius: 999px; }
 }
 .campo-item-carregado { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 @media(max-width:640px){.campo-item-carregado{align-items:stretch;flex-direction:column}}
+
+/* 10E.3.1 — Consulta de evolução, apenas leitura. */
+.evolucao-opcoes{display:grid;gap:.8rem;margin-top:1rem}
+.evolucao-opcao{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border:1px solid var(--borda,#d5d8df);border-radius:12px}
+.evolucao-destino{display:flex;align-items:center;gap:.8rem;min-width:0}
+.evolucao-destino img{object-fit:contain;flex:0 0 68px}
+.evolucao-destino h3{margin:0;font-size:1rem}
+.evolucao-destino p,.evolucao-detalhes p{margin:.25rem 0 0;font-size:.86rem;overflow-wrap:anywhere}
+.evolucao-detalhes{max-width:330px;flex:1 1 220px;text-align:right}
+.evolucao-estado{display:inline-block;font-weight:650;font-size:.8rem;padding:.3rem .65rem;border:1px solid var(--borda,#d5d8df);border-radius:999px}
+.evolucao-estado-disponivel{border-color:#3d986d}
+.evolucao-estado-requer_mestre{border-color:#b58a3e}
+.evolucao-aviso{margin-top:1rem;font-size:.88rem}
+@media(max-width:650px){.evolucao-opcao{align-items:flex-start;flex-direction:column}.evolucao-detalhes{text-align:left;max-width:100%;flex-basis:auto}}

@@ -181,3 +181,27 @@ evolução, e as aves lendárias de Galar/Stunfisk Galar não evoluem.
 **Referência:** `docs/ETAPA_10E2_5_EVOLUCOES_REGIONAIS.md`.
 A liberação individual efetiva de Pokémon especiais continua
 na 10E.3 e a alternância Zen na 10E.4.
+
+
+## Etapa 10E.3.1 — Consulta evolutiva nas fichas (20/11/2026)
+
+Depois da importação nacional 10E.2.4 e da regional 10E.2.5,
+a etapa 10E.3.1 conecta as relações permanentes **ao Pokémon
+específico do treinador**, exibindo quais requisitos já são
+atendidos e o que ainda falta — sem evoluir nem consumir itens.
+
+**Classificação read-only:** nível do treinador atingido / nível
+insuficiente / pedra evolutiva disponível / pedra ausente /
+liberação individual do mestre obrigatória. Condições adicionais
+como gênero, noite, local, amizade, troca, item especial e
+relação de forma regional condicionada sempre dependem do mestre.
+Nenhuma aprovação geral de catálogo constitui autorização por
+instância. Usa `personagens.nivel` e inventário real do mesmo
+personagem, não XP/amigos numéricos.
+
+Implementação sem migration: `consulta_evolucao_service.py`,
+rotas já existentes de Pokémon (mestre/jogador), painel na ficha,
+testes de segurança e documentação
+`docs/ETAPA_10E3_1_CONSULTA_ELEGIBILIDADE.md`.
+Próxima etapa: 10E.3.2 autorizações individuais persistidas
+e só posteriormente ações de evolução/consumo.
