@@ -24,6 +24,7 @@ from app.extensions import db
 from app.models.db import EvolucaoPokemon, FormaPokemon, HistoricoAlteracao
 
 FRASE_CONFIRMACAO = "GERAR-ARVORES-ANKAR"
+FRASE_REGIONAIS = "COMPLETAR-REGIONAIS-ANKAR"
 ARQUIVO_FONTE = (
     Path(__file__).resolve().parents[2]
     / "data" / "referencias" / "pokedex_evolucoes_898_10e2_4.json"
