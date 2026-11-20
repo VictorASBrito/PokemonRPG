@@ -35,11 +35,6 @@
   document.querySelector('[data-campo-limpar]')?.addEventListener('submit', (evento) => {
     if (!window.confirm('Retirar todos os Pokémon do campo (incluindo NPCs e hordas)?')) evento.preventDefault();
   });
-  const adicionarNpc = document.querySelector('[data-campo-npc-adicionar]');
-  adicionarNpc?.addEventListener('submit', () => {
-    const grupo = adicionarNpc.querySelector('[data-campo-npc-grupo]')?.value;
-    adicionarNpc.action = '/campo/npcs/' + encodeURIComponent(grupo || '') + '/adicionar';
-  });
   document.addEventListener('submit', (evento) => {
     if (evento.target.matches('[data-campo-npc-remover]') &&
         !window.confirm('Retirar este grupo NPC ou horda e todos os seus Pokémon?')) {

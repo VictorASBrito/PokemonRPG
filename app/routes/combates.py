@@ -219,3 +219,16 @@ def retirar_npc(pokemon_id):
         campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
         pokemon_id=pokemon_id, usuario_id=session.get("usuario_id"),
     ))
+
+
+@combates_bp.post("/campo/npcs/adicionar")
+@login_obrigatorio
+def adicionar_npc_selecionado():
+    """Formulário estável fora do HTML atualizado por polling."""
+    grupo_id = request.form.get("grupo_id", "")
+    return _executar_npc(lambda: adicionar_pokemons_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        grupo_id=grupo_id, forma_id=request.form.get("forma_id"),
+        nivel=request.form.get("nivel"), quantidade=request.form.get("quantidade"),
+        usuario_id=session.get("usuario_id"),
+    ))

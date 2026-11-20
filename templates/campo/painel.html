@@ -84,7 +84,7 @@
         {% if contexto.grupos_npc %}
         <details class="campo-npc-adicionar">
             <summary>Adicionar Pokémon a um grupo existente</summary>
-            <form action="" method="post" class="campo-npc-form" data-campo-npc-adicionar>
+            <form action="{{ url_for('combates.adicionar_npc_selecionado') }}" method="post" class="campo-npc-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <label>Grupo
                     <select name="grupo_id" required data-campo-npc-grupo>
