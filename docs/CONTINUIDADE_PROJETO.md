@@ -560,3 +560,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Proteções:** queries SELECT (incluindo contagens agregadas) sob `db.session.no_autoflush`, sem `commit`/UPDATE/DELETE e sem coleta de dados pessoais. Nenhum Pokémon, FK, item, número de espécie ou JSON original alterado; nenhuma migration.
 - **Regressão:** `tests/test_auditoria_pokedex_10e2_1.py` + workflow `.github/workflows/test-auditoria-pokedex-10e2.yml`; status dos testes deve ser confirmado na execução do PR. Ver `docs/ETAPA_10E2_1_AUDITORIA_POKEDEX.md`.
 - **Pendência e próximo:** rodar o diagnóstico na instalação com dados reais, preservar relatório para análise, aprovar correções pontuais **após backup** e depois criar o editor de relações 10E.2.2. PR #9 antigo permanece separado; não o mesclar sem reconciliar com PR #8/#10.
+
+
+<!-- ANKAR_10E2_1_1_WINDOWS_CP1252_20261120 -->
+## 2026-11-20 — Correção 10E.2.1.1: auditoria da Pokédex no PowerShell/cp1252
+- **Sintoma real informado pelo mestre:** `flask --app app.py catalogo auditar-pokedex --json` sob Python 3.13/Windows falhou no `click.echo` com `UnicodeEncodeError` em `encodings/cp1252.py`, ao tentar exibir Nidoran♂ (U+2642).
+- **Causa:** o comando do PR #11 escrevia JSON com `json.dumps(..., ensure_ascii=False)`, e o `stdout` codificado como `cp1252` não comporta símbolos de gênero. Não é falha dos dados do PostgreSQL nem da construção do relatório.
+- **Correção:** `app/commands/catalogo.py` usa `ensure_ascii=True` no JSON, mantendo nomes Unicode após leitura por parser, e proteção de emissão da saída em texto, que substitui somente caracteres incompatíveis por escapes `\\uXXXX` (`_texto_compativel_saida`).
+- **Testes:** `tests/test_auditoria_pokedex_10e2_1.py` incorpora simulação de `cp1252`, parse JSON e preservação semântica de Nidoran♂. Confirmar resultado CI na branch `fix/10e2-1-auditoria-windows-encoding`.
+- **Banco e esquema:** sem migrations, sem alterações no PostgreSQL, fichas ou `data/catalogo`.
+- **Próximo:** mesclar correção após CI; obter o relatório da instalação Windows; revisar erros antes de qualquer saneamento real da 10E.2.
