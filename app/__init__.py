@@ -46,6 +46,7 @@ def create_app() -> Flask:
     from app.routes.jogadores import jogadores_bp
     from app.routes.inventario import inventario_bp
     from app.routes.mestre import mestre_bp
+    from app.routes.npcs import npcs_bp
     from app.routes.pokemons import pokemons_bp
 
     app.register_blueprint(auth_bp)
@@ -57,6 +58,7 @@ def create_app() -> Flask:
     app.register_blueprint(jogadores_bp)
     app.register_blueprint(inventario_bp)
     app.register_blueprint(mestre_bp)
+    app.register_blueprint(npcs_bp)
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
     app.register_blueprint(regiao_bp)

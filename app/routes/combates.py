@@ -232,3 +232,15 @@ def adicionar_npc_selecionado():
         nivel=request.form.get("nivel"), quantidade=request.form.get("quantidade"),
         usuario_id=session.get("usuario_id"),
     ))
+
+
+@combates_bp.post("/campo/npcs/pokemons/<pokemon_id>/capturavel")
+@login_obrigatorio
+def enviar_horda_capturaveis(pokemon_id):
+    from app.services.hordas_captura_service import encaminhar_horda
+    return _executar_npc(lambda: encaminhar_horda(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        pokemon_id=pokemon_id,
+        encontrador_id=request.form.get("encontrador_id"),
+        usuario_id=session.get("usuario_id"),
+    ))
