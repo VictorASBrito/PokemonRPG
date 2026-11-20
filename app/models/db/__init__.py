@@ -34,11 +34,13 @@ from app.models.db.pokemon_catalog import (
     FormaPokemonTipo,
     TipoPokemon,
 )
+from app.models.db.pokemon_evolution_auth import AutorizacaoEvolucaoPokemon
 from app.models.db.pokemon_instance import Pokemon, PokemonGolpe, PokemonStatus
 from app.models.db.rules import ConjuntoRegras, Regra, RegraValor
 
 __all__ = [
     "Atributo",
+    "AutorizacaoEvolucaoPokemon",
     "Campanha",
     "CampanhaMembro",
     "CategoriaGolpe",
