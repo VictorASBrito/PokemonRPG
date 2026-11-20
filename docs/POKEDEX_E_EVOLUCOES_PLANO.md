@@ -91,3 +91,6 @@ A fonte JSON foi lida integralmente, sem consultar ou alterar o PostgreSQL do me
 - O agrupamento de espécies da importação deve ser auditado após o reparo dos dois Nidoran. A mera existência de formas regionais NÃO comprova que os vínculos entre origem e destino estão corretos.
 
 **CI do PR #9:** workflow Pokédex concluído com sucesso: 10 testes passaram em 6,10 s no GitHub Actions (Python 3.12, SQLite de testes). Não substitui validação no PostgreSQL real.
+
+
+**Inventário comparativo das 38 formas regionais:** consultar `docs/AUDITORIA_FORMAS_REGIONAIS_P1.md`, com referência, tipos e diferenças nos seis atributos base por registro. É uma auditoria de fonte, não de vínculos do banco em produção.
