@@ -235,6 +235,8 @@ def test_rotas_mestre_csrf_escopo_e_restricao_jogador(app_db, client_db):
     assert client_db.post(base + "/autorizar").status_code == 302
     _login(client_db, "bartz-db", "abc123")
     assert client_db.post(base + "/autorizar", data={"motivo": "Só jogador"}).status_code == 302
+    # A proteção encerra a sessão em tentativas de acesso à área errada.
+    _login(client_db, "bartz-db", "abc123")
     assert client_db.get(f"/jogador/pokemon/{x['p1']}").status_code == 200
     assert "Liberar para este Pokémon" not in client_db.get(
         f"/jogador/pokemon/{x['p1']}"
@@ -277,11 +279,17 @@ def test_nao_aceita_forjar_outro_personagem_na_url(app_db, client_db):
     x = _montar(app_db)
     with app_db.app_context():
         jogador = db.session.get(Personagem, x["personagem"])
+        # Um usuário só pode ter um personagem por campanha. Criar outra
+        # conta preserva essa restrição ao testar a tentativa de falsificação.
+        outra_conta = Usuario(
+            login="outro-jogador-teste", nome="Outro jogador",
+            senha_hash="hash-nao-utilizado", perfil="jogador", ativo=True,
+        )
         fake = Personagem(
-            usuario_id=jogador.usuario_id, campanha_id=jogador.campanha_id,
+            usuario=outra_conta, campanha_id=jogador.campanha_id,
             nome="Outro personagem", nivel=8, ativo=True,
         )
-        db.session.add(fake)
+        db.session.add_all([outra_conta, fake])
         db.session.commit()
         fake_id = fake.id
     _login(client_db)
