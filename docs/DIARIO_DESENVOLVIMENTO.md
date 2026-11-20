@@ -353,3 +353,6 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 
 
 **Validação posterior no PR #9 (20/11/2026):** GitHub Actions `Pokédex - ordenação e recuperação` passou: `10 passed in 6.10s`. Testes em SQLite; aplicação do comando no PostgreSQL do mestre continua pendente. Auditoria preliminar da fonte: 38 regionais, 50 Mega, 105 alternativas e 871 normais, sem validação ainda das arestas de evolução.
+
+
+**Auditoria de origem P1:** publicado `docs/AUDITORIA_FORMAS_REGIONAIS_P1.md` com 38 linhas regionais; todos os registros têm base comparável na fonte, 38 têm diferença de tipos e 22 têm diferença em atributos. Não inclui vínculo evolutivo preenchido.
