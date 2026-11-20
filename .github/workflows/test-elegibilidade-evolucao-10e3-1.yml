@@ -25,4 +25,4 @@ jobs:
           python -m pip install -r requirements.txt pytest
       - name: Testar consulta de elegibilidade e regressões evolutivas
         run: |
-          python -m pytest -q tests/test_consulta_evolucao_10e3_1.py tests/test_evolucoes_regionais_10e2_5.py tests/test_importacao_evolucoes_10e2_4.py tests/test_arvore_evolutiva_10e2_3.py tests/test_evolucoes_admin_10e2_2.py tests/test_catalogo_admin.py tests/test_pokemon_db.py
+          python -m pytest -q tests/test_consulta_evolucao_10e3_1.py tests/test_evolucoes_regionais_10e2_5.py tests/test_importacao_evolucoes_10e2_4.py tests/test_arvore_evolutiva_10e2_3.py tests/test_evolucoes_admin_10e2_2.py tests/test_catalogo_admin.py tests/test_equipe_pokemon.py tests/test_boxes.py tests/test_itens_inventario.py
