@@ -350,3 +350,6 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 **Testes:** adicionados, mas não rodados nesta sessão. Fonte validada por inspeção do JSON no GitHub. Não anunciar como validado em PostgreSQL real. **Migration:** nenhuma; comando de reparo exige ação expressa no computador do mestre.
 
 **Próximo:** confirmar CI; aplicar em cópia de teste após backup; validar Bulbasaur → Ivysaur → Venusaur, Charmander #4, Nidoran e busca; auditar vínculos `EvolucaoPokemon`; construir editor/ações respeitando nível compartilhado, papéis e Mega temporária. Nenhuma dessas últimas funcionalidades foi implementada neste PR.
+
+
+**Validação posterior no PR #9 (20/11/2026):** GitHub Actions `Pokédex - ordenação e recuperação` passou: `10 passed in 6.10s`. Testes em SQLite; aplicação do comando no PostgreSQL do mestre continua pendente. Auditoria preliminar da fonte: 38 regionais, 50 Mega, 105 alternativas e 871 normais, sem validação ainda das arestas de evolução.
