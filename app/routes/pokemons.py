@@ -405,7 +405,17 @@ def evoluir_jogador(pokemon_id: str, relacao_id: str):
         db.session.commit()
     except PermissionError:
         db.session.rollback()
-        return ("A evolução deve ser solicitada pelo dono do Pokémon.", 403)
+        current_app.logger.warning(
+            "Evolução negada: perfil ou propriedade do Pokémon não conferem "
+            "(usuario_id=%s, personagem_id=%s, pokemon_id=%s).",
+            session.get("usuario_id"), contexto.personagem.id, pokemon_id,
+        )
+        flash(
+            "Não foi possível evoluir: a conta conectada precisa ser dona "
+            "deste Pokémon e estar ativa como jogador ou tester.",
+            "erro",
+        )
+        return redirect(destino)
     except ValueError as exc:
         db.session.rollback()
         flash(str(exc), "erro")

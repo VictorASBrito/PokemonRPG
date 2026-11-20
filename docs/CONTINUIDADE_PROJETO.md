@@ -659,3 +659,12 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Rotas/UI:** `app/routes/pokemons.py`, `templates/jogador/pokemon.html`, `static/css/pokemon.css`, `static/js/pokemon.js`, serviço de consulta fornece `pode_evoluir` e `bloqueio_execucao`.
 - **Testes/docs:** `tests/test_evolucao_efetiva_10e3_3_4.py`, CI `test-evolucao-efetiva-10e3-3-4.yml` e `docs/ETAPA_10E3_3_4_EVOLUCAO_EFETIVA.md`. Sem migration nova; confirmar que a migration `b93e21c031a2` da 10E.3.2 está aplicada na instalação.
 - **Próximo:** 10E.4 formas temporárias/Megas, política separada da evolução permanente.
+
+
+<!-- ANKAR_CORRECAO_EVOLUCAO_TESTER_URL_20261120 -->
+## 2026-11-20 — Correção de acesso à evolução para tester e ficha /p/<login> (após PR #20)
+- **Relato:** ao confirmar `Evoluir`, a aplicação mostrava a página branca `A evolução deve ser solicitada pelo dono do Pokémon.`. O serviço `evolucao_efetiva_service.py` só aceitava `Usuario.perfil == 'jogador'`, mas `perfil_obrigatorio('jogador')` admite também `tester` via `PERFIS_JOGADOR`. Assim, a conta tester com Pokémon próprio passava pela rota e era barrada pelo serviço. Não foi possível identificar o perfil exato do usuário a partir da captura; esta é uma incompatibilidade de código comprovada.
+- **Outra falha:** `app/services/fichas_url_service.py` não incluía `pokemons.evoluir_jogador` na allowlist da ficha isolada `/p/<login>/`, bloqueando POSTs válidos nesse acesso.
+- **Correção:** o serviço admite jogador **ou tester** ativos, mas continua exigindo `Personagem.usuario_id == usuario.id` e o Pokémon da personagem/campanha atual. A allowlist inclui **apenas** a ação pessoal de evoluir, não endpoints de mestre. Um `PermissionError` residual agora faz rollback, mostra mensagem amigável na ficha e registra warning, sem página branca.
+- **Arquivos:** `app/services/evolucao_efetiva_service.py`, `app/services/fichas_url_service.py`, `app/routes/pokemons.py`, `tests/test_correcao_evolucao_tester_url.py`, CI `test-correcao-evolucao-tester-url.yml`, docs/diário. Sem migration, sem reimportação, sem alteração ao PostgreSQL real por esta entrega.
+- **Regressões:** testar (1) conta tester evoluindo Pokémon próprio; (2) ficha isolada `/p/bartz-db` evoluindo e preservando a sessão do mestre em outra aba; (3) negação do mestre/outro usuário e (4) suites anteriores de autorização/consulta de evolução.
