@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, flash, jsonify, redirect, render_templ
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
+from app.services.numeracao_pokedex_service import numero_nacional_forma
 from app.routes.auth import perfil_obrigatorio
 from app.services.upload_service import (
     ErroUploadImagem,
@@ -182,6 +183,7 @@ def pokemons():
         tipos=opcoes.tipos,
         categorias=CATEGORIAS_FORMA,
         filtros=filtros,
+        numero_nacional_forma=numero_nacional_forma,
     )
 
 
