@@ -31,4 +31,4 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt pytest
       - name: Rodar regressões do Campo
-        run: python -m pytest -q tests/test_campo_npcs_10d4.py tests/test_campo_compartilhado.py
+        run: python -m pytest -q tests/test_campo_npcs_10d4.py tests/test_campo_compartilhado.py tests/test_migration_campo_npcs_10d4.py
