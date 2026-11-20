@@ -35,6 +35,7 @@ from app.services.auditoria_itens_service import auditar_itens
 from app.services.auditoria_pokedex_service import auditar_pokedex, carregar_fonte_pokedex
 from app.services.importacao_evolucoes_service import (
     FRASE_CONFIRMACAO,
+    FRASE_REGIONAIS,
     aplicar_plano_evolucoes,
     consultar_plano_evolucoes,
 )
@@ -612,5 +613,75 @@ def gerar_arvores_pokemon(
         ) from exc
     finally:
         # Garante a liberação de locks na simulação e em falhas.
+        if not aplicar:
+            db.session.rollback()
+
+
+@catalogo_group.command("completar-arvores-regionais")
+@click.option("--aplicar", is_flag=True, help="Aplica apenas relações regionais faltantes.")
+@click.option("--plano", "assinatura_informada", default="", help="SHA256 da simulação regional.")
+@click.option("--backup-confirmado", is_flag=True, help="Confirma backup restaurável verificado.")
+@click.option("--confirmar", default="", help="Frase COMPLETAR-REGIONAIS-ANKAR.")
+def completar_arvores_regionais(
+    aplicar: bool, assinatura_informada: str, backup_confirmado: bool, confirmar: str
+) -> None:
+    """Audita e, com autorização, completa vínculos de Alola e Galar."""
+    try:
+        plano = consultar_plano_evolucoes(
+            bloquear=aplicar, apenas_regionais=True
+        )
+        _eco_pokedex("Árvores regionais 10E.2.5 - " + (
+            "CONFERÊNCIA" if aplicar else "SIMULAÇÃO (SOMENTE LEITURA)"
+        ))
+        _eco_pokedex(
+            f"Fonte: {plano.auto_fonte} por nível/pedra, "
+            f"{plano.mestre_fonte} reservadas ao mestre."
+        )
+        _eco_pokedex(
+            f"A acrescentar: {plano.automaticas_pendentes} regulares e "
+            f"{plano.mestre_pendentes} especiais."
+        )
+        _eco_pokedex(f"Já existentes e preservadas: {plano.ja_existentes}.")
+        _eco_pokedex(f"Assinatura do plano: {plano.assinatura}")
+        if plano.bloqueios:
+            for erro in plano.bloqueios[:30]:
+                _eco_pokedex("BLOQUEIO: " + erro)
+            raise click.ClickException(
+                f"Encontrados {len(plano.bloqueios)} bloqueios. Nenhum dado gravado."
+            )
+        if not aplicar:
+            _eco_pokedex("SIMULAÇÃO concluída: nenhuma gravação no PostgreSQL.")
+            _eco_pokedex(
+                "Após backup real confirmado, use --aplicar --plano <assinatura> "
+                f"--backup-confirmado --confirmar {FRASE_REGIONAIS}"
+            )
+            return
+        if (assinatura_informada != plano.assinatura or not backup_confirmado
+                or confirmar != FRASE_REGIONAIS):
+            raise click.ClickException(
+                "Aplicação regional exige assinatura atual, backup restaurável "
+                f"conferido e --confirmar {FRASE_REGIONAIS}; nada foi gravado."
+            )
+        if not plano.pendentes:
+            db.session.rollback()
+            _eco_pokedex("Árvores regionais já completas: zero operações.")
+            return
+        resultado = aplicar_plano_evolucoes(plano)
+        db.session.commit()
+        _eco_pokedex(
+            f"APLICADO: {resultado['criadas']} novos vínculos regionais "
+            f"({resultado['automatica']} regulares e "
+            f"{resultado['mestre']} com liberação pelo mestre). "
+            "Nenhum Pokémon capturado foi modificado."
+        )
+    except click.ClickException:
+        db.session.rollback()
+        raise
+    except (OSError, ValueError, SQLAlchemyError) as exc:
+        db.session.rollback()
+        raise click.ClickException(
+            f"Falha: {_texto_compativel_saida(str(exc))}. Transação revertida."
+        ) from exc
+    finally:
         if not aplicar:
             db.session.rollback()
