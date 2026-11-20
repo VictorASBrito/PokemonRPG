@@ -16,7 +16,8 @@
       "status": "aprovavel",
       "criterio": "Pedra da Água: concordância entre livro (p. 60), Pokémon Database e cadeia da PokéAPI.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/67/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "eevee",
@@ -26,7 +27,8 @@
       "status": "aprovavel",
       "criterio": "Pedra do Trovão: concordância entre livro (p. 60), Pokémon Database e cadeia da PokéAPI.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/67/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "eevee",
@@ -36,7 +38,8 @@
       "status": "aprovavel",
       "criterio": "Pedra do Fogo: concordância entre livro (p. 60), Pokémon Database e cadeia da PokéAPI.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/67/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "eevee",
@@ -46,7 +49,8 @@
       "status": "aprovavel",
       "criterio": "Livro e jogos recentes permitem Pedra da Folha. Em alguns jogos também há evolução por Moss Rock; não habilitar local automaticamente.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/67/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "eevee",
@@ -56,7 +60,8 @@
       "status": "aprovavel",
       "criterio": "Livro e jogos recentes permitem Pedra do Gelo. Em alguns jogos também há evolução por Ice Rock; não habilitar local automaticamente.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/67/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "eevee",
@@ -93,7 +98,8 @@
       "status": "aprovavel",
       "criterio": "Livro (p. 60), PokémonDB e PokéAPI confirmam pedra; refere-se à forma padrão de Raichu, não à variante Alola.",
       "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/10/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "vulpix",
@@ -103,7 +109,8 @@
       "status": "aprovavel",
       "criterio": "Livro (p. 60) e PokémonDB: Pedra do Fogo para Vulpix padrão; Vulpix de Alola não deve usar esta relação.",
       "pokeapi": "https://pokeapi.co/api/v2/pokemon-species/vulpix/",
-      "pokemondb": "https://pokemondb.net/evolution/stone"
+      "pokemondb": "https://pokemondb.net/evolution/stone",
+      "alerta_ankar": "O livro v2.5 exige amizade máxima para usar materiais de evolução (cap. 16, p. impressa 59), mas Ankar não possui amizade numérica. A aprovação do mestre é necessária; nenhuma evolução ocorrerá automaticamente."
     },
     {
       "origem": "porygon",
