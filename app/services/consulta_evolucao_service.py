@@ -63,6 +63,8 @@ class OpcaoEvolucao:
     nivel_necessario: int | None = None
     pedra: str | None = None
     quantidade_pedra: int | None = None
+    pode_evoluir: bool = False
+    bloqueio_execucao: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -199,6 +201,17 @@ def consultar_evolucoes_pokemon(
         .order_by(EvolucaoPokemon.tipo_requisito, EvolucaoPokemon.forma_destino_id)
     ).all())
     saldos = _inventario_pedras(personagem.id) if relacoes else {}
+    # Itens materiais (inclusive consumibilidade) são checados
+    # separadamente: um item cadastrado só pelo nome não basta.
+    material_registros = db.session.execute(
+        select(Item.codigo, Item.nome, Item.consumivel, PersonagemItem.quantidade)
+        .join(PersonagemItem, PersonagemItem.item_id == Item.id)
+        .where(
+            PersonagemItem.personagem_id == personagem.id,
+            PersonagemItem.quantidade > 0,
+            Item.ativo.is_(True),
+        )
+    ).all() if relacoes else []
     # Autorização não é herança por espécie: relaciona Pokémon, destino
     # e forma de origem; revogações são desconsideradas.
     autorizadas = {
@@ -261,6 +274,47 @@ def consultar_evolucoes_pokemon(
                     "A pedra necessária não foi encontrada no inventário ativo "
                     "deste treinador."
                 )
+        pode_evoluir = estado in ("disponivel", "liberada_mestre")
+        bloqueio_execucao = None
+        if pode_evoluir:
+            # Import local: o mapeamento de materiais compartilha
+            # os aliases de pedras já usados pela consulta.
+            from app.services.materiais_evolucao_service import (
+                material_requerido_evolucao, item_corresponde_material,
+            )
+            try:
+                material_execucao = material_requerido_evolucao(
+                    relacao.tipo_requisito, requisitos
+                )
+                nivel_condicional = requisitos.get("nivel_informativo")
+                if nivel_condicional not in (None, ""):
+                    if (not str(nivel_condicional).isdigit()
+                        or int(nivel_condicional) < 1):
+                        raise ValueError("Nível evolutivo especial inválido.")
+                    if nivel_atual < int(nivel_condicional):
+                        bloqueio_execucao = (
+                            f"É necessário nível {nivel_condicional} do treinador."
+                        )
+                if material_execucao:
+                    correspondentes = [
+                        (consumivel, qtd)
+                        for codigo, nome, consumivel, qtd in material_registros
+                        if item_corresponde_material(codigo, nome, material_execucao)
+                    ]
+                    if not correspondentes:
+                        bloqueio_execucao = (
+                            f"Material necessário na mochila: {material_execucao.nome}."
+                        )
+                    elif not any(flag and qtd > 0 for flag, qtd in correspondentes):
+                        bloqueio_execucao = (
+                            f"{material_execucao.nome} precisa estar marcado "
+                            "como consumível no catálogo."
+                        )
+            except ValueError as exc:
+                bloqueio_execucao = str(exc)
+            if bloqueio_execucao:
+                pode_evoluir = False
+                orientacao = bloqueio_execucao
         opcoes.append(OpcaoEvolucao(
             relacao_id=relacao.id,
             destino_id=destino.id,
@@ -274,6 +328,8 @@ def consultar_evolucoes_pokemon(
             nivel_necessario=nivel,
             pedra=pedra,
             quantidade_pedra=quantidade,
+            pode_evoluir=pode_evoluir,
+            bloqueio_execucao=bloqueio_execucao,
         ))
     # Ordenação estável por situação, depois destino.
     ordem = {"disponivel": 0, "nivel_insuficiente": 1, "pedra_ausente": 2, "liberada_mestre": 3, "requer_mestre": 4}
