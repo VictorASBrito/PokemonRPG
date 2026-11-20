@@ -40,6 +40,9 @@ class Personagem(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     )
     nome: Mapped[str] = mapped_column(String(160), nullable=False)
     foto_url: Mapped[str | None] = mapped_column(String(500))
+    mega_habilitada: Mapped[bool] = mapped_column(
+        nullable=False, default=False, server_default="false"
+    )
     nivel: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
