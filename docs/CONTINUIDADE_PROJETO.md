@@ -539,3 +539,16 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
 - Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
 
+
+
+
+<!-- POKEDEX_P1_20261120 -->
+## Etapa P1 — ordenação da Pokédex nacional e preparação de evoluções (20/11/2026)
+
+- **Status:** implementação no branch `feature/pokedex-ordenacao-20261120`; PR sujeito a CI e revisão, sem deploy nem alteração no PostgreSQL do mestre.
+- **Causa confirmada no código:** `EspeciePokemon.numero` era criado como `NULL` pelo importador, apesar de a listagem administrativa já ordenar por essa coluna. A fonte original reúne 1.064 formas e 898 espécies; `ordem_catalogo` é a posição da forma e não é número nacional.
+- **Entregue:** `app/services/pokedex_service.py` com numeração por primeira espécie, importador preenchendo valores nulos, listagens e autocomplete ordenados por Pokédex, comando `catalogo pokedex-preencher` (simulação padrão, `--aplicar` após backup) e tratamento do agrupamento indevido de Nidoran♀/Nidoran♂. Dados manuais e espécies personalizadas não são reescritos.
+- **Arquivos:** `app/services/pokedex_service.py`, `app/services/importacao/catalogo_importer.py`, `app/services/pokemon_db_service.py`, `app/services/catalogo_admin_service.py`, `app/commands/catalogo.py`, `tests/test_pokedex_ordenacao.py`, `.github/workflows/test-pokedex.yml`, `docs/POKEDEX_E_EVOLUCOES_PLANO.md`, este documento e o diário.
+- **Migrations:** nenhuma. Não houve leitura/escrita no PostgreSQL real nem alteração em fichas, níveis, capturáveis, Campo ou inventário. Atualização dos números no banco existente exige execução explícita do comando pelo mestre.
+- **Verificações:** fonte original lida e conferida (Bulbasaur #1, Charmander #4, Nidoran♀ #29, Nidoran♂ #32, Abomasnow #460, Calyrex #898); testes de regressão foram escritos, **não executados localmente neste ambiente**. Acompanhar resultados da CI do PR antes de integrar.
+- **Próximo:** auditar as categorias e arestas existentes de `EvolucaoPokemon`, validar os mapeamentos regionais e confirmar políticas de troca de forma e de recálculo de PV antes de criar botões de evolução, formas e Mega. A especificação é uma proposta, não uma implementação.
