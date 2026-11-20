@@ -347,3 +347,17 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Decisões:** separar índice de 1.064 formas do número nacional de 898 espécies; Venusaur Mega compartilha #003 com Venusaur; Nidoran♀/#029 e Nidoran♂/#032 diferenciados pelo código original da forma, inclusive se a FK legada estiver incorreta; Pokémon criados pelo mestre respeitam número manual ou exibem `#—`.
 - **Testes:** acrescentados testes para cálculo e HTML com banco SQLite de fixture; execução a confirmar via workflow do PR. PostgreSQL real não acessado.
 - **Próxima ação:** validar workflow e revisão do PR; prosseguir 10E.2 com auditoria dos vínculos e números persistidos.
+
+
+### 2026-11-20 — Etapa 10E.2.1: diagnóstico dos números e vínculos oficiais
+- **Objetivo:** identificar, sem mutação, divergências entre a fonte da Pokédex, `EspeciePokemon`, `FormaPokemon` e vínculos com Pokémon de jogadores.
+- **Status:** IMPLEMENTADO EM BRANCH; testes CI a verificar; auditoria PostgreSQL real ainda não executada.
+- **Branch:** `feature/10e2-1-auditoria-pokedex`, criada da `main` após o PR #10.
+- **Arquivos modificados:** serviço novo `app/services/auditoria_pokedex_service.py`; comando `app/commands/catalogo.py`; testes `tests/test_auditoria_pokedex_10e2_1.py`; CI `.github/workflows/test-auditoria-pokedex-10e2.yml`; `docs/ETAPA_10E2_1_AUDITORIA_POKEDEX.md`; plano de evoluções; continuidade e diário.
+- **Esquema/migrations:** nenhuma. Só SELECT; sem writes/commits, `--aplicar` ou reimportação; sem ação nos registros de Pokémon existentes.
+- **Decisão:** referência com números por espécie distinta, e não índice de forma. Detectar Nidoran♀ #029 e Nidoran♂ #032 por nome exato; diferenças nas ligações e números cadastrados são erros, NULL e formas ausentes são avisos. Ankar personalizada sem número é válida; colisões de número regional são avisos.
+- **Testes escritos:** referência real, duplicatas na fonte, correção de Mega, Nidoran legado e impacto, número nacional divergente, índice de forma, formas ausentes, personalizadas e CLI texto/JSON sem alterações. CI configurado; resultado será indicado após a execução.
+- **Riscos:** a primeira execução no banco histórico pode exibir muitos avisos por `numero=NULL`; isso não justifica mudança automática ou afirmação sobre o estado atual do servidor.
+- **Próxima tarefa:** executar `flask --app app.py catalogo auditar-pokedex --json` no ambiente da campanha, revisar relatórios e preparar saneamento controlado antes do editor 10E.2.2.
+
+- **Resultado CI verificado:** workflow `Auditoria da Pokédex - 10E.2.1`, execução 44816417525, job 136565811738: `18 passed in 5.28s` para `tests/test_auditoria_pokedex_10e2_1.py tests/test_ordenacao_pokedex_10e1.py tests/test_catalogo_admin.py` no commit de código/documentação `1413bcd`. Não equivale a um teste no PostgreSQL real de Ankar.
