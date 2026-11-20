@@ -323,6 +323,42 @@ def _referencias_verificadas() -> tuple[dict[str, Any], ...]:
     return tuple(dados["relacoes"])
 
 
+@lru_cache(maxsize=1)
+def _referencias_revisadas_10e2_3() -> tuple[dict[str, Any], ...]:
+    """Expansão editorial local: não consulta internet nem altera catálogo."""
+    caminho = (
+        Path(__file__).resolve().parents[2]
+        / "data" / "referencias" / "evolucoes_revisadas_10e2_3.json"
+    )
+    dados = json.loads(caminho.read_text(encoding="utf-8"))
+    propostas = dados.get("relacoes")
+    if not isinstance(propostas, list):
+        raise ValueError("Fonte de revisões evolutivas sem lista de relações.")
+    chaves: set[tuple[str, str]] = set()
+    for proposta in propostas:
+        if not isinstance(proposta, dict):
+            raise ValueError("Referência evolutiva inválida.")
+        chave = (proposta.get("origem"), proposta.get("destino"))
+        if not all(isinstance(valor, str) and valor for valor in chave):
+            raise ValueError("Referência evolutiva sem origem ou destino.")
+        if chave in chaves:
+            raise ValueError("Duas propostas foram cadastradas para a mesma evolução.")
+        if proposta.get("status") not in {"aprovavel", "pendente_decisao"}:
+            raise ValueError("Referência com status de revisão desconhecido.")
+        chaves.add(chave)
+    return tuple(propostas)
+
+
+def _todas_sugestoes() -> tuple[dict[str, Any], ...]:
+    originais = [dict(item, status="aprovavel", tipo_requisito="nivel")
+                 for item in _referencias_verificadas()]
+    extras = list(_referencias_revisadas_10e2_3())
+    chaves = [(p["origem"], p["destino"]) for p in originais + extras]
+    if len(chaves) != len(set(chaves)):
+        raise ValueError("Evoluções duplicadas nas fontes editoriais.")
+    return tuple(originais + extras)
+
+
 def sugestoes_verificadas(forma: FormaPokemon) -> list[dict[str, Any]]:
     """Fonte editorial local, auditada fora do sistema; sem requisição externa."""
     existentes = {
@@ -335,7 +371,7 @@ def sugestoes_verificadas(forma: FormaPokemon) -> list[dict[str, Any]]:
     }
     return [
         dict(item)
-        for item in _referencias_verificadas()
+        for item in _todas_sugestoes()
         if item["origem"] == forma.codigo and item["destino"] not in existentes
     ]
 
@@ -346,28 +382,39 @@ def cadastrar_sugestao(
     *,
     usuario_id: str | uuid.UUID | None,
 ) -> tuple[EvolucaoPokemon | None, list[str]]:
+    """Aprovação individual; propostas conflitantes NUNCA cadastram por POST."""
     proposta = next(
-        (item for item in _referencias_verificadas()
+        (item for item in _todas_sugestoes()
          if item["origem"] == origem.codigo and item["destino"] == destino_codigo),
         None,
     )
     if not proposta:
-        return None, ["A evolução solicitada não está nas referências verificadas."]
+        return None, ["A evolução solicitada não está nas referências revisadas."]
+    if proposta.get("status") != "aprovavel":
+        return None, [
+            "Esta evolução depende de decisão narrativa do mestre. "
+            "Revise o livro e as fontes e cadastre uma regra manual na pesquisa."
+        ]
     destino = db.session.scalar(
         select(FormaPokemon).where(FormaPokemon.codigo == destino_codigo)
     )
     if destino is None:
         return None, ["A forma de destino ainda não existe no catálogo."]
+    tipo_requisito = proposta.get("tipo_requisito", "nivel")
+    observacoes = [
+        "Sugestão revisada: PokéAPI, Pokémon Database e livro PKMRPG v2.5.",
+        proposta.get("criterio", ""),
+        proposta.get("alerta_ankar", ""),
+        proposta.get("livro", ""),
+        "Regras de Ankar prevalecem; aprovação não concede evolução automática.",
+    ]
     return salvar_relacao(origem, {
         "destino_id": str(destino.id),
         "tipo_relacao": "evolucao",
-        "tipo_requisito": "nivel",
-        "nivel": str(proposta["nivel"]),
+        "tipo_requisito": tipo_requisito,
+        "nivel": str(proposta["nivel"]) if tipo_requisito == "nivel" else "",
+        "item_nome": proposta.get("item_nome") or "",
         "fonte": "combinada",
         "fonte_url": proposta["pokeapi"],
-        "observacoes": (
-            "Verificado: PokéAPI + Pokémon Database (evoluções por nível). "
-            + (proposta.get("livro") or "Manual v2.5: regra geral de evolução.")
-            + " Nível de Ankar = nível do treinador; nenhuma evolução automática."
-        ),
+        "observacoes": " ".join(p for p in observacoes if p),
     }, usuario_id=usuario_id)
