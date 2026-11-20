@@ -385,3 +385,15 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Validação:** testes novos para `cp1252` e `json.loads`; esperar CI do PR. Ambiente Windows real ainda não foi testado pelo assistente.
 - **Próximo:** após merge, repetir `flask --app app.py catalogo auditar-pokedex --json > auditoria-pokedex.json` no Windows e revisar o relatório.
 - **Validação CI confirmada:** workflow `Auditoria da Pokédex - 10E.2.1` (execução 44817271422, job 136568715353), commit `25066e0`: `19 passed in 7.17s` para a auditoria e regressões de ordenação/catálogo. O teste simula `cp1252`, porém a execução automatizada foi Linux; ainda conferir manualmente no PowerShell do mestre.
+
+
+### 2026-11-20 — Etapa 10E.2.2: cadastro e conferência de evoluções
+- **Objetivo:** desenvolver o editor mestre de vínculos entre formas e conferir os primeiros requisitos no livro, PokéAPI e Pokémon Database.
+- **Status:** IMPLEMENTADO EM BRANCH; CI e homologação PostgreSQL a verificar. Nenhuma evolução de jogador ativada.
+- **Branch:** `feature/10e2-2-editor-relacoes-pokemon` criada sobre main após PR #12 e #13 mesclados.
+- **Arquivos:** serviço `app/services/evolucoes_admin_service.py`; rotas `app/routes/catalogo_admin.py`; template novo `templates/mestre/catalogo/pokemon_relacoes.html`; links nas páginas `pokemon_form.html` e `pokemons.html`; referências `data/referencias/evolucoes_verificadas_10e2.json`; testes `tests/test_evolucoes_admin_10e2_2.py`; workflow `test-evolucoes-10e2-2.yml`; documentação `docs/ETAPA_10E2_2_RELACOES_POKEMON.md`, plano/continuidade/diário.
+- **Fontes externas:** PokéAPI evolution-chain/1 (Bulbasaur), /2 (Charmander), /3 (Squirtle); Pokémon Database /evolution/level. Livro PKMRPG v2.5 cap. 9 p. 44 confirma Charmander nível 16, regras de nível, item, amizade, Mega temporária. Seis pares documentados com verificação cruzada.
+- **Decisões:** relações permanentes são grafo acíclico; Mega/alternativa/regional são metadados distintos, sem arestas de retorno automáticas. Regras de Ankar seguem nível compartilhado e sem amizade numérica. O mestre aprova cada sugestão.
+- **Segurança/migration:** perfis mestre, validação de IDs/tipos/ciclos/duplicados, histórico na inclusão/edição/desativação; sem migration, sem alteração de PostgreSQL de produção pelo assistente e sem alterações em Pokémon de jogadores.
+- **Testes escritos:** autenticação, sugestões com aprovação explícita, histórico, edição, desativação, ciclos, duplicados, categoria de Mega, forma alternativa, vínculo regional, fontes inválidas e preservação de Pokémon. CI em workflow dedicado; resultado a registrar após execução.
+- **Próximo:** checar CI, homologar tela no PostgreSQL Ankar e implementar visualização em árvore 10E.2.3 e revisão de outras cadeias de evolução.
