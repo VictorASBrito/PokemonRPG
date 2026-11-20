@@ -18,17 +18,11 @@ from app.services.auditoria_pokedex_service import (
     auditar_pokedex,
     construir_referencia_pokedex,
 )
-from app.services.importacao.utils import nome_especie, slug, uuid_legado
+from app.services.importacao.utils import codigo_especie_oficial, uuid_legado
 
 CODIGO_NIDORAN_MACHO = "nidoran-m"
 CODIGO_FORMA_NIDORAN_MACHO = "nidoran-2"
 CONFIRMACAO_SANEAMENTO = "SANEAR-POKEDEX-ANKAR"
-
-
-def codigo_especie_oficial(nome_forma: str) -> str:
-    """Corrige a colisão do slug legado sem renomear espécies existentes."""
-    nome = nome_especie(nome_forma)
-    return CODIGO_NIDORAN_MACHO if nome == "Nidoran♂" else slug(nome)
 
 
 @dataclass(frozen=True, slots=True)
