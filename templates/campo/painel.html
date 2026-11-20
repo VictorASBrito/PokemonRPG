@@ -52,6 +52,7 @@
         <div>
             <p class="rotulo">Gerenciamento do mestre</p>
             <h2 id="campo-npc-criar-titulo">Novo NPC ou horda</h2>
+            <a class="botao botao-primario botao-link" href="{{ url_for('npcs.catalogo') }}">Gerador regional e catálogo de NPCs</a>
             <p>Adversários temporários independentes das fichas dos jogadores.</p>
         </div>
         <form action="{{ url_for('combates.criar_npc') }}" method="post" class="campo-npc-form">

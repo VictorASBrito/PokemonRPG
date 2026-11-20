@@ -53,6 +53,26 @@
                             <div class="campo-pokemon-tipos">{% for tipo in pokemon.tipos %}{{ selo_tipo(tipo) }}{% endfor %}</div>
                             <small>PV {{ pokemon.pv_atual }}/{{ pokemon.pv_maximo }}</small>
                             <progress value="{{ pokemon.pv_atual }}" max="{{ pokemon.pv_maximo }}"></progress>
+                            {% if grupo.tipo == "horda" %}
+                                {% if pokemon.enviado_captura %}
+                                    <small class="campo-npc-capturavel-aviso">Disponibilizado para captura</small>
+                                {% elif mestre %}
+                                    <form method="post" action="{{ url_for('combates.enviar_horda_capturaveis', pokemon_id=pokemon.id) }}" class="campo-npc-captura-form">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <label>Encontrado por
+                                            <select name="encontrador_id" required aria-label="Treinador que encontrou {{ pokemon.nome }}">
+                                                {% for treinador in contexto.encontradores %}
+                                                <option value="{{ treinador.id }}"
+                                                  {% if grupo.encontrador_id and grupo.encontrador_id != treinador.id %}disabled{% endif %}
+                                                  {% if grupo.encontrador_id == treinador.id %}selected{% endif %}>{{ treinador.nome }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <button type="submit" class="botao botao-secundario"
+                                          {% if not contexto.encontradores %}disabled{% endif %}>Adicionar aos Capturáveis</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
                             {% if mestre %}
                             <form action="{{ url_for('combates.pv_npc', pokemon_id=pokemon.id) }}" method="post" class="campo-npc-pv">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
