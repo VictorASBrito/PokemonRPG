@@ -19,7 +19,7 @@ from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.models.db import (
-    EvolucaoPokemon, FormaPokemon, Item, Personagem, PersonagemItem, Pokemon,
+    AutorizacaoEvolucaoPokemon, EvolucaoPokemon, FormaPokemon, Item, Personagem, PersonagemItem, Pokemon,
 )
 
 # Itens comuns admitidos como requisito direto. Itens específicos,
@@ -56,7 +56,7 @@ class OpcaoEvolucao:
     destino_nome: str
     destino_codigo: str
     destino_imagem: str | None
-    estado: str  # disponivel, nivel_insuficiente, pedra_ausente, requer_mestre
+    estado: str  # disponivel, nivel_insuficiente, pedra_ausente, requer_mestre, liberada_mestre
     estado_texto: str
     requisito_texto: str
     orientacao: str
@@ -199,6 +199,18 @@ def consultar_evolucoes_pokemon(
         .order_by(EvolucaoPokemon.tipo_requisito, EvolucaoPokemon.forma_destino_id)
     ).all())
     saldos = _inventario_pedras(personagem.id) if relacoes else {}
+    # Autorização não é herança por espécie: relaciona Pokémon, destino
+    # e forma de origem; revogações são desconsideradas.
+    autorizadas = {
+        a.relacao_id for a in db.session.scalars(
+            select(AutorizacaoEvolucaoPokemon).where(
+                AutorizacaoEvolucaoPokemon.pokemon_id == pokemon.id,
+                AutorizacaoEvolucaoPokemon.forma_origem_id == pokemon.forma_pokemon_id,
+                AutorizacaoEvolucaoPokemon.ativo.is_(True),
+                AutorizacaoEvolucaoPokemon.revogado_em.is_(None),
+            )
+        ).all()
+    } if relacoes else set()
     opcoes: list[OpcaoEvolucao] = []
     for relacao in relacoes:
         requisitos = relacao.requisitos if isinstance(relacao.requisitos, dict) else {}
@@ -208,10 +220,14 @@ def consultar_evolucoes_pokemon(
         if not destino or not destino.ativo or not destino.especie or not destino.especie.ativo:
             continue
         if _tem_condicoes_especiais(relacao, requisitos):
-            estado = "requer_mestre"
-            rotulo = "Depende do mestre"
+            liberada = relacao.id in autorizadas
+            estado = "liberada_mestre" if liberada else "requer_mestre"
+            rotulo = "Liberada pelo mestre" if liberada else "Depende do mestre"
             requisito = _texto_condicao(relacao, requisitos)
             orientacao = (
+                "O mestre liberou este destino somente para este Pokémon. "
+                "A evolução ainda não foi executada e não consome itens nesta etapa."
+                if liberada else
                 "Esta evolução requer liberação individual para este Pokémon. "
                 "O cadastro da árvore não constitui autorização."
             )
@@ -260,7 +276,7 @@ def consultar_evolucoes_pokemon(
             quantidade_pedra=quantidade,
         ))
     # Ordenação estável por situação, depois destino.
-    ordem = {"disponivel": 0, "nivel_insuficiente": 1, "pedra_ausente": 2, "requer_mestre": 3}
+    ordem = {"disponivel": 0, "nivel_insuficiente": 1, "pedra_ausente": 2, "liberada_mestre": 3, "requer_mestre": 4}
     opcoes.sort(key=lambda x: (ordem[x.estado], x.destino_nome.casefold(), str(x.relacao_id)))
     return ConsultaEvolucao(
         pokemon_id=pokemon.id,
