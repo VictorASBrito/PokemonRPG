@@ -10,6 +10,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
+from app.services.ordenacao_pokedex_service import ordem_formas_pokedex, ordem_especies_pokedex
 from app.models.db import (
     Atributo,
     EspeciePokemon,
@@ -151,11 +152,7 @@ def listar_formas_admin(
     total = int(db.session.scalar(select(func.count()).select_from(subconsulta)) or 0)
     itens = list(
         db.session.execute(
-            consulta.order_by(
-                EspeciePokemon.numero.asc().nullslast(),
-                func.lower(EspeciePokemon.nome),
-                func.lower(FormaPokemon.nome),
-            )
+            consulta.order_by(*ordem_formas_pokedex())
             .offset((pagina - 1) * por_pagina)
             .limit(por_pagina)
         ).scalars().unique()
@@ -194,7 +191,7 @@ def opcoes_catalogo(campanha_id: str | uuid.UUID | None = None) -> OpcoesCatalog
     especies = list(
         db.session.execute(
             select(EspeciePokemon).where(EspeciePokemon.ativo.is_(True)).order_by(
-                EspeciePokemon.numero.asc().nullslast(), func.lower(EspeciePokemon.nome)
+                *ordem_especies_pokedex()
             )
         ).scalars()
     )
