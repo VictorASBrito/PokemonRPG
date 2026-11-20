@@ -281,9 +281,13 @@ def listar_grupos_npc(*, campanha_id):
                 "imagem": imagem or forma.imagem_url or "", "tipos": tipos,
                 "nivel": pokemon.nivel, "pv_atual": pokemon.pv_atual,
                 "pv_maximo": pokemon.pv_maximo, "shiny": pokemon.shiny,
+                "natureza_id": str(pokemon.natureza_id) if pokemon.natureza_id else None,
+                "genero": pokemon.genero, "enviado_captura": pokemon.enviado_captura,
             })
         resultado.append({
             "id": str(grupo.id), "nome": grupo.nome, "tipo": grupo.tipo,
             "time_numero": grupo.time_numero, "pokemons": membros,
+            "encontrador_id": str(grupo.encontrado_por_personagem_id) if grupo.encontrado_por_personagem_id else None,
+            "local_id": grupo.local_id, "zona_nome": grupo.zona_nome, "terreno": grupo.terreno,
         })
     return resultado
