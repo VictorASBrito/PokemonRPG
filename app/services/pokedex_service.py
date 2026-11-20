@@ -5,18 +5,28 @@ representa a posição da forma, não o número nacional da espécie.
 """
 from __future__ import annotations
 
+import re
+import unicodedata
 from collections.abc import Iterable, Mapping
 from typing import Any
 
-from app.services.importacao.utils import nome_especie, slug
+
+def _slug_especie(valor: str) -> str:
+    texto = unicodedata.normalize("NFKD", str(valor or ""))
+    texto = texto.encode("ascii", "ignore").decode("ascii").lower()
+    return re.sub(r"[^a-z0-9]+", "-", texto).strip("-") or "registro"
+
+
+def _nome_especie(nome_forma: str) -> str:
+    return str(nome_forma).split(" (", 1)[0].strip()
 
 
 def codigo_especie_pokedex(nome_forma: str) -> str:
     """Mantém os códigos legados, separando a exceção Nidoran macho."""
-    nome = nome_especie(nome_forma)
+    nome = _nome_especie(nome_forma)
     if nome == "Nidoran♂":
         return "nidoran-m"
-    return slug(nome)
+    return _slug_especie(nome)
 
 
 def mapear_numeros_pokedex(registros: Iterable[Mapping[str, Any]]) -> dict[str, int]:
