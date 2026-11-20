@@ -29,6 +29,7 @@ class ContextoCampo:
     total_pokemons: int
     times_ocupados: int
     grupos_npc: list[dict[str, Any]] = field(default_factory=list)
+    encontradores: list[dict[str, str]] = field(default_factory=list)
 
 
 def _uuid(valor: str | uuid.UUID | None) -> uuid.UUID | None:
@@ -234,8 +235,11 @@ def carregar_campo(
         .options(selectinload(Pokemon.forma_pokemon), selectinload(Pokemon.personagem))
         .order_by(func.lower(Personagem.nome), Pokemon.posicao)
     ).scalars())
+    from app.services.npc_catalogo_service import encontrados_campanha
+    encontradores = encontrados_campanha(campanha.id) if mestre else []
     return ContextoCampo(
         times=times,
+        encontradores=encontradores,
         grupos_npc=grupos_npc,
         opcoes_pokemon=[{
             "id": str(p.id),

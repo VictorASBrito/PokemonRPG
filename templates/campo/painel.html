@@ -51,9 +51,12 @@
     <section class="campo-npc-criacao ui-card" aria-labelledby="campo-npc-criar-titulo">
         <div>
             <p class="rotulo">Gerenciamento do mestre</p>
-            <h2 id="campo-npc-criar-titulo">Novo NPC ou horda</h2>
-            <p>Adversários temporários independentes das fichas dos jogadores.</p>
+            <h2 id="campo-npc-criar-titulo">NPCs e hordas</h2>
+            <a class="botao botao-primario botao-link" href="{{ url_for('npcs.catalogo') }}">Gerador regional e catálogo de NPCs</a>
+            <p>Gere encontros nas rotas e cidades de Ankar. Use a criação manual abaixo apenas para exceções narrativas.</p>
         </div>
+        <details class="campo-npc-criacao-manual">
+            <summary>Criar manualmente um adversário específico (sem sorteio regional)</summary>
         <form action="{{ url_for('combates.criar_npc') }}" method="post" class="campo-npc-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <label>Tipo
@@ -80,6 +83,7 @@
             </label>
             <button class="botao botao-primario" type="submit">Criar adversários</button>
         </form>
+        </details>
         <small>Limites: 40 grupos, 80 Pokémon no total e até 24 por grupo. Sem captura ou combate automático.</small>
         {% if contexto.grupos_npc %}
         <details class="campo-npc-adicionar">

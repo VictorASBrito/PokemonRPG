@@ -7,7 +7,7 @@ from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, SmallInteg
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
-from app.models.db.base import TimestampMixin, UUIDPrimaryKeyMixin
+from app.models.db.base import JSON_DOCUMENT, ActiveMixin, TimestampMixin, UUIDPrimaryKeyMixin
 
 
 class GrupoNPCEmCampo(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
@@ -21,6 +21,11 @@ class GrupoNPCEmCampo(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
         ForeignKey("campanhas.id", ondelete="CASCADE"), nullable=False, index=True
     )
     nome: Mapped[str] = mapped_column(String(120), nullable=False)
+    modelo_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey('npcs_catalogo.id', ondelete='SET NULL'), index=True)
+    encontrado_por_personagem_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey('personagens.id', ondelete='SET NULL'), index=True)
+    local_id: Mapped[str | None] = mapped_column(String(120))
+    zona_nome: Mapped[str | None] = mapped_column(String(120))
+    terreno: Mapped[str | None] = mapped_column(String(120))
     tipo: Mapped[str] = mapped_column(String(12), nullable=False)
     time_numero: Mapped[int] = mapped_column(SmallInteger, nullable=False)
 
@@ -49,6 +54,9 @@ class PokemonNPCEmCampo(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
     pv_maximo: Mapped[int] = mapped_column(Integer, nullable=False)
     pv_atual: Mapped[int] = mapped_column(Integer, nullable=False)
     shiny: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    natureza_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey('naturezas.id', ondelete='SET NULL'), index=True)
+    genero: Mapped[str | None] = mapped_column(String(40))
+    enviado_captura: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default='false')
 
     grupo: Mapped[GrupoNPCEmCampo] = relationship(back_populates="pokemons")
     forma_pokemon = relationship("FormaPokemon")
