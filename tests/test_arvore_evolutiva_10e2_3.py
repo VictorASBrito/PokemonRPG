@@ -181,8 +181,9 @@ def test_fontes_ampliadas_e_propostas_pendentes_nao_podem_ser_aprovadas(app_db, 
         assert "amizade" in relacao.observacoes.lower()
         assert len(sugestoes_verificadas(f["eevee"])) == 7
         assert db.session.scalar(select(func.count(HistoricoAlteracao.id))) == 1
+        eevee_id = f["eevee"].id
 
-    eevee_id = f["eevee"].id
+
     _login(client_db)
     url = f"/mestre/catalogo/pokemons/{eevee_id}/relacoes"
     pagina = client_db.get(url)
