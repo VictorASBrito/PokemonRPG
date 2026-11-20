@@ -159,6 +159,15 @@ def adicionar_pokemons_npc(*, campanha_codigo, grupo_id, forma_id, nivel,
     qtd = _numero(quantidade, minimo=1, maximo=MAX_LOTE, nome="Quantidade")
     campanha = _campanha(campanha_codigo)
     grupo = _grupo(campanha.id, grupo_id)
+    nivel_grupo = db.session.scalar(
+        select(PokemonNPCEmCampo.nivel)
+        .where(PokemonNPCEmCampo.grupo_id == grupo.id)
+        .limit(1)
+    )
+    if nivel_grupo is not None and nivel_grupo != lvl:
+        raise ValueError(
+            f"Todos os Pokémon do grupo devem manter o nível {nivel_grupo}."
+        )
     _limites(campanha.id, novos_pokemons=qtd, grupo=grupo)
     forma = _forma(forma_id)
     pv = _pv_maximo(forma, lvl, carregar_regras_pokemon_db(campanha.id))

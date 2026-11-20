@@ -62,5 +62,11 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/npcs-ankar-10d4.js', v='10d4-3') }}" defer></script>
+<script>
+document.querySelectorAll('[data-npc-arquivar]').forEach(form => {
+    form.addEventListener('submit', event => {
+        if (!window.confirm('Arquivar este NPC fixo? As cópias em Campo serão preservadas.')) event.preventDefault();
+    });
+});
+</script>
 {% endblock %}

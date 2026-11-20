@@ -29,11 +29,14 @@ def espelhar_capturavel_campo(*, campanha, capturavel, encontrador,
     )
     if existente is not None:
         return
+    nivel = max(1, min(100, int(encontrador.nivel)))
+    # Separar por nível evita misturar níveis de treinadores diferentes.
+    identificador = f"{LOCAL_ESPALHAMENTO}-{nivel}"
     grupo = db.session.execute(
         select(GrupoNPCEmCampo).where(
             GrupoNPCEmCampo.campanha_id == campanha.id,
             GrupoNPCEmCampo.tipo == "horda",
-            GrupoNPCEmCampo.local_id == LOCAL_ESPALHAMENTO,
+            GrupoNPCEmCampo.local_id == identificador,
         )
     ).scalar_one_or_none()
     _limites(
@@ -42,14 +45,13 @@ def espelhar_capturavel_campo(*, campanha, capturavel, encontrador,
     )
     if grupo is None:
         grupo = GrupoNPCEmCampo(
-            campanha_id=campanha.id, nome=NOME_HORDA, tipo="horda",
-            time_numero=TIME_PADRAO, local_id=LOCAL_ESPALHAMENTO,
+            campanha_id=campanha.id, nome=f"{NOME_HORDA} · Nv. {nivel}", tipo="horda",
+            time_numero=TIME_PADRAO, local_id=identificador,
             zona_nome="Capturáveis", terreno="Encontro",
         )
         db.session.add(grupo)
         db.session.flush()
     forma = _forma(str(capturavel.forma_pokemon_id))
-    nivel = max(1, min(100, int(encontrador.nivel)))
     pv = _pv_maximo(forma, nivel, carregar_regras_pokemon_db(campanha.id))
     pokemon = PokemonNPCEmCampo(
         grupo_id=grupo.id,
