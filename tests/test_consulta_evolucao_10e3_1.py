@@ -295,6 +295,7 @@ def test_ficha_jogador_e_mestre_exibem_previa_sem_controles_de_evolucao(app_db, 
         db.session.commit()
         id_pokemon = pokemon.id
         id_personagem = personagem.id
+        forma_original_id = charmander.id
 
     assert client_db.get(f"/jogador/pokemon/{id_pokemon}").status_code == 302
     _login(client_db, "bartz-db", "abc123")
@@ -314,7 +315,7 @@ def test_ficha_jogador_e_mestre_exibem_previa_sem_controles_de_evolucao(app_db, 
     assert "Evoluções de Charmander" in mestre.get_data(as_text=True)
     with app_db.app_context():
         salvo = db.session.get(Pokemon, id_pokemon)
-        assert salvo.forma_pokemon_id == charmander.id
+        assert salvo.forma_pokemon_id == forma_original_id
         assert salvo.shiny is True
         assert salvo.pv_atual == 21
         assert db.session.scalar(select(func.count(PersonagemItem.id))) == 0
