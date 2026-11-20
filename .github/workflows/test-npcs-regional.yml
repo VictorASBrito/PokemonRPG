@@ -1,0 +1,38 @@
+name: NPCs regionais e hordas - Ankar
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "templates/mestre/npcs_catalogo.html"
+      - "templates/campo/**"
+      - "static/js/npcs-ankar-10d4.js"
+      - "migrations/versions/e31a6cf520d4_catalogo_npcs_regional.py"
+      - "tests/test_gerador_npcs_ankar.py"
+      - "tests/test_npcs_ankar_10d4.py"
+      - "tests/test_migration_npcs_regional.py"
+      - ".github/workflows/test-npcs-regional.yml"
+  push:
+    branches: ["feature/10d4-2-gerador-regional-npcs"]
+
+permissions:
+  contents: read
+
+jobs:
+  regressao-regional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pytest
+      - name: Testar NPCs, hordas e Campo anterior
+        run: |
+          python -m pytest -q tests/test_gerador_npcs_ankar.py tests/test_npcs_ankar_10d4.py tests/test_migration_npcs_regional.py tests/test_campo_npcs_10d4.py tests/test_campo_compartilhado.py
