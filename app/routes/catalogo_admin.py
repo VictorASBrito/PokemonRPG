@@ -794,3 +794,20 @@ def duplicar_item(item_id: str):
         return redirect(url_for("catalogo_admin.editar_item", item_id=item_id))
     flash("Cópia criada como item personalizado e inativo.", "sucesso")
     return redirect(url_for("catalogo_admin.editar_item", item_id=str(copia.id)))
+
+
+@catalogo_admin_bp.get("/npcs")
+@perfil_obrigatorio("mestre")
+def npcs():
+    """Modelos permanentes ficam no Catálogo, não na tela do gerador."""
+    from app.services.npc_catalogo_service import modelos_campanha
+    import secrets
+    try:
+        modelos = modelos_campanha(
+            campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"])
+        )
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar os modelos de NPCs.")
+        modelos = []
+    token = session.setdefault("npc_catalogo_csrf", secrets.token_urlsafe(32))
+    return render_template("mestre/catalogo/npcs.html", modelos=modelos, csrf_token=token)

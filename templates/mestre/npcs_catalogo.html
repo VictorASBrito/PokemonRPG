@@ -130,55 +130,10 @@
     </form>
   </section>
   {% endif %}
-  <section class="npcs-catalogo" aria-labelledby="npcs-catalogo-titulo">
-    <div class="npcs-secao-topo">
-      <div>
-        <p class="rotulo">Modelos persistentes</p>
-        <h2 id="npcs-catalogo-titulo">Catálogo de NPCs fixos</h2>
-      </div>
-      <span>{{ modelos|length }} NPCs salvos</span>
-    </div>
-    {% if modelos %}
-    <div class="npcs-cards">
-      {% for modelo in modelos %}
-      <article class="npcs-modelo-card ui-card">
-        <header>
-          <div>
-            <strong>{{ modelo.nome }}</strong>
-            <small>{{ modelo.local_id }} · {{ modelo.zona_nome }} / {{ modelo.terreno }}</small>
-          </div>
-          <span>{{ modelo.quantidade }}/6</span>
-        </header>
-        <div class="npcs-mini-equipe">
-          {% for pokemon in modelo.equipe %}
-          <div class="npcs-mini-pokemon" title="{{ pokemon.nome }} · Nível {{ pokemon.nivel }}">
-            {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="{{ pokemon.nome }}" loading="lazy">
-            {% else %}<span>◈</span>{% endif %}
-            <span>{{ pokemon.nome }}</span>
-            <small>Nv. {{ pokemon.nivel }}</small>
-          </div>
-          {% endfor %}
-        </div>
-        <form action="{{ url_for('npcs.usar_modelo', modelo_id=modelo.id) }}" method="post" class="npcs-card-acoes">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <label>Time
-            <select name="time_numero">
-              {% for n in range(1,17) %}<option value="{{ n }}">Time {{ n }}</option>{% endfor %}
-            </select>
-          </label>
-          <button class="botao botao-primario" type="submit">Colocar cópia no Campo</button>
-        </form>
-        <form action="{{ url_for('npcs.arquivar', modelo_id=modelo.id) }}" method="post" data-npc-arquivar>
-          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button type="submit" class="npcs-arquivar">Arquivar modelo</button>
-        </form>
-      </article>
-      {% endfor %}
-    </div>
-    {% else %}
-      <p class="ui-card npcs-vazio">Nenhum NPC fixo salvo ainda. Gere a primeira equipe acima para começar seu catálogo.</p>
-    {% endif %}
-  </section>
+  <div class="npcs-secao-topo">
+    <p>Os NPCs fixos ficam no Catálogo do RPG; aqui você monta ou sorteia equipes.</p>
+    <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Abrir Catálogo de NPCs</a>
+  </div>
 </div>
 <script id="npcs-dados-ankar" type="application/json">{{ localidades|tojson }}</script>
 {% endblock %}

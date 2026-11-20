@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block titulo %}Catálogo de NPCs | Pokémon RPG{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npcs-ankar-10d4.css', v='10d4-3') }}">
+{% endblock %}
+{% block conteudo %}
+<div class="npcs-ankar">
+<header class="npcs-cabecalho">
+  <div><p class="rotulo">Catálogo do RPG · Treinadores</p><h1>Catálogo de NPCs</h1>
+  <p class="texto-suave">Modelos fixos e reutilizáveis; o Campo recebe uma cópia independente.</p></div>
+  <a class="botao botao-primario botao-link" href="{{ url_for('npcs.catalogo') }}">Criar NPC / Gerar equipe</a>
+</header>
+  <section class="npcs-catalogo" aria-labelledby="npcs-catalogo-titulo">
+    <div class="npcs-secao-topo">
+      <div>
+        <p class="rotulo">Modelos persistentes</p>
+        <h2 id="npcs-catalogo-titulo">Catálogo de NPCs fixos</h2>
+      </div>
+      <span>{{ modelos|length }} NPCs salvos</span>
+    </div>
+    {% if modelos %}
+    <div class="npcs-cards">
+      {% for modelo in modelos %}
+      <article class="npcs-modelo-card ui-card">
+        <header>
+          <div>
+            <strong>{{ modelo.nome }}</strong>
+            <small>{{ modelo.local_id }} · {{ modelo.zona_nome }} / {{ modelo.terreno }}</small>
+          </div>
+          <span>{{ modelo.quantidade }}/6</span>
+        </header>
+        <div class="npcs-mini-equipe">
+          {% for pokemon in modelo.equipe %}
+          <div class="npcs-mini-pokemon" title="{{ pokemon.nome }} · Nível {{ pokemon.nivel }}">
+            {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="{{ pokemon.nome }}" loading="lazy">
+            {% else %}<span>◈</span>{% endif %}
+            <span>{{ pokemon.nome }}</span>
+            <small>Nv. {{ pokemon.nivel }}</small>
+          </div>
+          {% endfor %}
+        </div>
+        <form action="{{ url_for('npcs.usar_modelo', modelo_id=modelo.id) }}" method="post" class="npcs-card-acoes">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <label>Time
+            <select name="time_numero">
+              {% for n in range(1,17) %}<option value="{{ n }}">Time {{ n }}</option>{% endfor %}
+            </select>
+          </label>
+          <button class="botao botao-primario" type="submit">Colocar cópia no Campo</button>
+        </form>
+        <form action="{{ url_for('npcs.arquivar', modelo_id=modelo.id) }}" method="post" data-npc-arquivar>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="npcs-arquivar">Arquivar modelo</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="ui-card npcs-vazio">Nenhum NPC fixo salvo ainda. Use Criar NPC para cadastrar sua primeira equipe.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/npcs-ankar-10d4.js', v='10d4-3') }}" defer></script>
+{% endblock %}
