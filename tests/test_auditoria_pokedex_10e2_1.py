@@ -155,6 +155,41 @@ def test_personalizada_sem_numero_e_valida_mas_colisao_gera_aviso():
     assert any(a.tipo == "numero_personalizado_colide_nacional" for a in resultado.achados)
 
 
+def test_json_escapa_simbolos_windows_cp1252(app_db):
+    """Exportação JSON deve funcionar com stdout cp1252 do Windows."""
+    from app.services.auditoria_pokedex_service import (
+        auditar_pokedex, carregar_fonte_pokedex,
+    )
+    from app.commands.catalogo import _texto_compativel_saida
+
+    assert _texto_compativel_saida("Nidoran♂", codificacao="cp1252") == r"Nidoran\u2642"
+    assert _texto_compativel_saida("Nidoran♀", codificacao="cp1252") == r"Nidoran\u2640"
+    assert _texto_compativel_saida("Pokémon", codificacao="cp1252") == "Pokémon"
+    assert _texto_compativel_saida("Nidoran♂", codificacao="utf-8") == "Nidoran♂"
+
+    runner = app_db.test_cli_runner()
+    resposta = runner.invoke(args=["catalogo", "auditar-pokedex", "--json"])
+    assert resposta.exit_code == 0, resposta.output[-1800:]
+    assert "Nidoran\\u2642" in resposta.output
+    assert "Nidoran\\u2640" in resposta.output
+    resposta.output.encode("cp1252")  # não deve lançar UnicodeEncodeError
+    dados = json.loads(resposta.output)
+    assert any(
+        "Nidoran♂" in achado["mensagem"] for achado in dados["achados"]
+    )
+    assert dados["modo"] == "somente_leitura"
+
+    # Modo texto deve ser legível em terminais antigos: só símbolos
+    # fora de cp1252 são escapados, preservando acentos disponíveis.
+    resultado = auditar_pokedex([], [], carregar_fonte_pokedex())
+    aviso = next(
+        a.mensagem for a in resultado.achados if "Nidoran♂" in a.mensagem
+    )
+    legivel = _texto_compativel_saida(aviso, codificacao="cp1252")
+    assert r"Nidoran\u2642" in legivel
+    legivel.encode("cp1252")
+
+
 def test_cli_pokedex_texto_json_e_somente_leitura(app_db):
     with app_db.app_context():
         especie = db.session.scalar(

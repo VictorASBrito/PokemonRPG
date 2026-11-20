@@ -86,3 +86,28 @@ associações inválidas, ausência de mutação e saídas texto/JSON do CLI.
    de evolução, troca de forma, Mega e linhagens regionais.
 
 **Nenhuma migration foi criada e nenhum reparo é executado por esta etapa.**
+
+
+## 10E.2.1.1 — Compatibilidade da saída com Windows cp1252
+
+A exportação original de `--json` usava `ensure_ascii=False` e falhava
+ao imprimir Nidoran♂/♀ quando o Python 3.13 no Windows redirecionava
+`stdout` com codificação `cp1252` (`UnicodeEncodeError`).
+Isso ocorre **depois da auditoria**, ao gravar a saída; não significa
+que o PostgreSQL tenha sido alterado ou esteja corrompido.
+
+Correção:
+- `--json` agora emite escapes JSON ASCII para caracteres Unicode,
+  como `Nidoran\\u2642`; o arquivo é JSON válido e
+  `json.loads` recupera normalmente o nome `Nidoran♂`.
+- `--todos` e o resumo em texto preservam caracteres suportados
+  pela codificação do terminal e escapam somente os incompatíveis,
+  evitando que o diagnóstico falhe ao exibir Nidoran♂.
+- Nenhuma migration, nenhuma modificação de espécies, Pokémon, Box ou
+  arquivos de origem; apenas saída de console.
+- Testes simulam a codificação `cp1252` e confirmam a interpretação
+  do relatório e a saída em UTF-8.
+
+No PowerShell, caso esteja usando uma revisão anterior, é possível contornar
+o erro na sessão atual com `$env:PYTHONIOENCODING = "utf-8"` antes de
+executar o comando. A versão corrigida não exige essa variável.
