@@ -7,6 +7,7 @@ from typing import Any
 from sqlalchemy import select
 
 from app.extensions import db
+from app.services.saneamento_pokedex_service import codigo_especie_oficial
 from app.models.db import (
     Atributo,
     CategoriaGolpe,
@@ -159,7 +160,7 @@ class CatalogoImporter:
 
         for item in self.fontes.catalogo_pokemons.get("pokemons", []):
             base = nome_especie(str(item.get("nome", item.get("id", "Pokémon"))))
-            por_especie[slug(base)].append(item)
+            por_especie[codigo_especie_oficial(base)].append(item)
 
         for codigo_especie, formas in por_especie.items():
             nome_base = nome_especie(str(formas[0].get("nome", codigo_especie)))
@@ -185,7 +186,7 @@ class CatalogoImporter:
 
         for item in self.fontes.catalogo_pokemons.get("pokemons", []):
             codigo_forma = str(item.get("id") or slug(item.get("nome")))
-            base = slug(nome_especie(str(item.get("nome", codigo_forma))))
+            base = codigo_especie_oficial(str(item.get("nome", codigo_forma)))
             especie = self.especies[base]
             forma = formas_existentes.get(codigo_forma)
             configuracoes = {
