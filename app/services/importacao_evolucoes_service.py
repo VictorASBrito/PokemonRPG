@@ -274,6 +274,18 @@ def verificar_liberacao_individual(
     req = relacao.requisitos if isinstance(relacao.requisitos, dict) else {}
     if not relacao.ativo or req.get("tipo_relacao", "evolucao") != "evolucao":
         return False
-    if req.get("requer_liberacao_mestre", False):
-        return bool(autorizada_pelo_mestre)
-    return True
+    pedras_comuns = {
+        "Pedra da Água", "Pedra do Fogo", "Pedra do Trovão",
+        "Pedra da Folha", "Pedra da Lua", "Pedra do Sol",
+        "Pedra Brilhante", "Pedra do Crepúsculo",
+        "Pedra da Alvorada", "Pedra do Gelo",
+    }
+    especial = (
+        req.get("requer_liberacao_mestre") is True
+        or relacao.tipo_requisito in {"amizade", "troca", "especial"}
+        or (relacao.tipo_requisito == "item"
+            and req.get("item_nome") not in pedras_comuns)
+        or (relacao.tipo_requisito == "nivel"
+            and bool(req.get("condicao") or req.get("detalhes_pokeapi")))
+    )
+    return bool(autorizada_pelo_mestre) if especial else True
