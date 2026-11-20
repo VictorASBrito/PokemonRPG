@@ -914,6 +914,12 @@ def atualizar_pokemon_formulario(
         return None, erros
 
     recarregado = _recarregar_pokemon(pokemon.id, contexto.personagem.id)
+    # Limpar overlay ANTES de calcular PV da nova identidade.
+    if antes["forma_pokemon_id"] != str(recarregado.forma_pokemon_id):
+        recarregado.forma_temporaria_id = None
+        recarregado.tipo_transformacao = None
+        db.session.flush()
+        db.session.expire(recarregado, ["forma_temporaria"])
     calculos = calcular_pokemon(recarregado, contexto.personagem, contexto.regras)
     pv_maximo = int(calculos["totais"].get("pv", 0))
     pv_atual = _inteiro(formulario.get("pv_atual"), recarregado.pv_atual)
@@ -921,10 +927,6 @@ def atualizar_pokemon_formulario(
         db.session.rollback()
         return None, [f"Os PV atuais devem estar entre 0 e {pv_maximo}."]
     recarregado.pv_atual = pv_atual
-    # Evita sobrepor uma transformação ativa à troca manual de identidade.
-    if antes["forma_pokemon_id"] != str(recarregado.forma_pokemon_id):
-        recarregado.forma_temporaria_id = None
-        recarregado.tipo_transformacao = None
     if recarregado.tipo_transformacao == "mega" and pv_atual == 0:
         from app.services.transformacoes_service import encerrar_mega_desmaio
         encerrar_mega_desmaio(recarregado, usuario_responsavel_id)
