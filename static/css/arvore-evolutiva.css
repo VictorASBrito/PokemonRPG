@@ -1,0 +1,27 @@
+/* Árvore evolutiva 10E.2.3: estágios legíveis sem dependência JS. */
+.arvore-rolagem{overflow-x:auto;max-width:100%;padding:1rem 0 1.4rem}
+.arvore-estagios{display:flex;align-items:flex-start;gap:1rem;width:max-content;min-width:100%}
+.arvore-estagio{min-width:225px;width:250px;flex:0 0 250px}
+.arvore-estagio h3{font-size:.95rem;margin:0 0 .8rem;color:var(--texto-secundario,#747b88);font-weight:650}
+.arvore-coluna{display:flex;flex-direction:column;gap:.75rem}
+.arvore-separador{align-self:stretch;display:flex;align-items:center;justify-content:center;min-width:18px;font-size:1.6rem;opacity:.6}
+.arvore-no{border:1px solid var(--borda,#d5d8df);border-radius:14px;padding:.8rem;min-width:0;background:var(--fundo-card,#fff);box-shadow:0 1px 2px #0000000a}
+.arvore-no-selecionado{border:2px solid var(--cor-primaria,#4f77bb);padding:calc(.8rem - 1px)}
+.arvore-no-link{display:flex;align-items:center;gap:.7rem;color:inherit;text-decoration:none}
+.arvore-no-link:hover strong{text-decoration:underline}
+.arvore-no-link img,.arvore-sem-imagem{width:58px;height:58px;flex:0 0 58px;object-fit:contain;display:flex;align-items:center;justify-content:center}
+.arvore-sem-imagem{font-size:2rem;opacity:.4}
+.arvore-identidade{display:flex;flex-direction:column;gap:.2rem;min-width:0}
+.arvore-identidade strong{font-size:.95rem;overflow-wrap:anywhere}
+.arvore-identidade small{font-size:.76rem;opacity:.82}
+.arvore-foco{font-weight:700;color:var(--cor-primaria,#4f77bb)}
+.arvore-condicoes{list-style:none;padding:.55rem 0 0;margin:.55rem 0 0;border-top:1px solid var(--borda,#d5d8df);display:grid;gap:.35rem}
+.arvore-condicoes li{font-size:.75rem;line-height:1.45;overflow-wrap:anywhere}
+.arvore-seta{margin-right:.25rem;opacity:.6}
+.arvore-nota{font-size:.86rem;margin-top:.8rem}
+.arvore-alerta{padding:.75rem 1rem;border:1px solid #cf883b;border-radius:10px}
+.arvore-relacoes-especiais{display:grid;gap:.65rem}
+.arvore-especial{border:1px solid var(--borda,#d5d8df);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 1rem}
+.arvore-especial p{margin:.25rem 0}
+.arvore-especial small{font-size:.85rem}
+@media(max-width:650px){.arvore-estagio{width:205px;min-width:205px;flex-basis:205px}.arvore-estagios{gap:.45rem}.arvore-especial{align-items:flex-start;flex-direction:column}}
