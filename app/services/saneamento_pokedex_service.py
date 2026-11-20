@@ -217,6 +217,9 @@ def aplicar_saneamento(
             ativo=True,
         )
         db.session.add(macho)
+        # A FK da forma nidoran-2 depende da espécie nova: inserir
+        # primeiro na MESMA transação, antes de atualizar a FK.
+        db.session.flush()
         especies.append(macho)
         registrar(
             "especie_pokemon", macho.id, "saneamento_pokedex", None,
