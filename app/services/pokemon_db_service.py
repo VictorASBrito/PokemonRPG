@@ -394,7 +394,7 @@ def calcular_pokemon(
     regras: dict[str, Any],
 ) -> dict[str, Any]:
     nivel = max(1, personagem.nivel)
-    forma = pokemon.forma_pokemon
+    forma = pokemon.forma_temporaria or pokemon.forma_pokemon
     base_original = {
         _codigo_atributo(item.atributo.codigo): _inteiro(item.valor_base)
         for item in forma.atributos_base
@@ -511,6 +511,8 @@ def registro_detalhado(
     return {
         "pokemon": _pokemon_para_dict(pokemon),
         "especie": _forma_para_dict(pokemon.forma_pokemon),
+        "forma_visivel": _forma_para_dict(pokemon.forma_temporaria or pokemon.forma_pokemon),
+        "transformacao": pokemon.tipo_transformacao,
         "calculos": calcular_pokemon(pokemon, personagem, regras),
     }
 
@@ -912,6 +914,12 @@ def atualizar_pokemon_formulario(
         return None, erros
 
     recarregado = _recarregar_pokemon(pokemon.id, contexto.personagem.id)
+    # Limpar overlay ANTES de calcular PV da nova identidade.
+    if antes["forma_pokemon_id"] != str(recarregado.forma_pokemon_id):
+        recarregado.forma_temporaria_id = None
+        recarregado.tipo_transformacao = None
+        db.session.flush()
+        db.session.expire(recarregado, ["forma_temporaria"])
     calculos = calcular_pokemon(recarregado, contexto.personagem, contexto.regras)
     pv_maximo = int(calculos["totais"].get("pv", 0))
     pv_atual = _inteiro(formulario.get("pv_atual"), recarregado.pv_atual)
@@ -919,6 +927,9 @@ def atualizar_pokemon_formulario(
         db.session.rollback()
         return None, [f"Os PV atuais devem estar entre 0 e {pv_maximo}."]
     recarregado.pv_atual = pv_atual
+    if recarregado.tipo_transformacao == "mega" and pv_atual == 0:
+        from app.services.transformacoes_service import encerrar_mega_desmaio
+        encerrar_mega_desmaio(recarregado, usuario_responsavel_id)
     if antes["forma_pokemon_id"] != str(recarregado.forma_pokemon_id):
         # Evita que uma concessão antiga volte a valer se a espécie
         # for alterada e posteriormente restaurada.

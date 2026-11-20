@@ -154,7 +154,9 @@ class FormaPokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
         back_populates="forma_pokemon",
         cascade="all, delete-orphan",
     )
-    pokemons: Mapped[list[Pokemon]] = relationship(back_populates="forma_pokemon")
+    pokemons: Mapped[list[Pokemon]] = relationship(
+        back_populates="forma_pokemon", foreign_keys="Pokemon.forma_pokemon_id"
+    )
     evolucoes_origem: Mapped[list[EvolucaoPokemon]] = relationship(
         back_populates="forma_origem",
         foreign_keys="EvolucaoPokemon.forma_origem_id",

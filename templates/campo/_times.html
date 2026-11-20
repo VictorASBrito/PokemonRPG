@@ -26,6 +26,44 @@
                         </div>
                         {% if pokemon.shiny %}<span class="campo-shiny">Shiny</span>{% endif %}
                     </div>
+                    {% if pokemon.tipo_transformacao %}
+                    <span class="campo-transformacao-tipo">{{ 'Mega Evolução' if pokemon.tipo_transformacao == 'mega' else 'Forma alternativa' }}</span>
+                    {% endif %}
+                    {% if pokemon.pode_transformar %}
+                    <div class="campo-transformacoes-acoes">
+                      {% if pokemon.pode_reverter %}
+                      <form method="post" action="{{ url_for('combates.transformar_no_campo', pokemon_id=pokemon.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="tipo" value="reverter">
+                        <button type="submit">Reverter forma</button>
+                      </form>
+                      {% endif %}
+                      {% if pokemon.alternativas and pokemon.tipo_transformacao != 'mega' %}
+                      <form method="post" action="{{ url_for('combates.transformar_no_campo', pokemon_id=pokemon.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="tipo" value="alternativa">
+                        <label>Forma
+                          <select name="destino_id" required>
+                            {% for forma in pokemon.alternativas %}<option value="{{ forma.id }}">{{ forma.nome }}</option>{% endfor %}
+                          </select>
+                        </label>
+                        <button type="submit">Mudar forma</button>
+                      </form>
+                      {% endif %}
+                      {% if pokemon.mega_habilitada and pokemon.megas and not pokemon.tipo_transformacao %}
+                      <form method="post" action="{{ url_for('combates.transformar_no_campo', pokemon_id=pokemon.id) }}" data-campo-mega-confirmar>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="tipo" value="mega">
+                        <label>Megaforma
+                          <select name="destino_id" required>
+                            {% for forma in pokemon.megas %}<option value="{{ forma.id }}">{{ forma.nome }}</option>{% endfor %}
+                          </select>
+                        </label>
+                        <button type="submit">Mega Evoluir</button>
+                      </form>
+                      {% endif %}
+                    </div>
+                    {% endif %}
                     {% if pokemon.pode_retirar %}
                     <form action="{{ url_for('combates.retirar', pokemon_id=pokemon.id) }}" method="post" class="campo-retirar-form">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

@@ -41,5 +41,12 @@
       evento.preventDefault();
     }
   });
+
+  document.addEventListener('submit', (evento) => {
+    if (evento.target.matches('[data-campo-mega-confirmar]') &&
+        !window.confirm('Ativar Mega Evolução temporária? Apenas uma Mega por treinador pode estar ativa.')) {
+      evento.preventDefault();
+    }
+  });
   window.setInterval(atualizar, 6000);
 })();

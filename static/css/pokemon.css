@@ -514,3 +514,11 @@ progress::-moz-progress-bar { background: #3a9b61; border-radius: 999px; }
 .evolucao-form-confirmacao button{max-width:100%;white-space:normal}
 .evolucao-bloqueio{margin-top:.6rem;font-size:.86rem}
 @media(max-width:650px){.evolucao-form-confirmacao{justify-content:flex-start}}
+
+/* 10E.4 — Mega e forma reversível da ficha */
+.form-transformacao-pokemon{display:flex;align-items:end;flex-wrap:wrap;gap:.8rem;margin:.8rem 0 1rem}
+.form-transformacao-pokemon label{display:grid;gap:.3rem;flex:1 1 220px;font-weight:600}
+.form-transformacao-pokemon select{max-width:100%;border:1px solid var(--borda,#d5d8df);border-radius:9px;padding:.55rem}
+.transformacao-ativa{margin:.8rem 0;font-weight:500}
+.transformacao-lista{display:flex;gap:.5rem;flex-wrap:wrap}
+.transformacao-lista span{padding:.4rem .7rem;border:1px solid var(--borda,#d5d8df);border-radius:8px}

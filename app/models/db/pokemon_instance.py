@@ -33,6 +33,11 @@ class Pokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
         ),
         CheckConstraint("posicao IS NULL OR posicao > 0", name="posicao_positiva"),
         CheckConstraint("pv_atual >= 0", name="pv_atual_nao_negativo"),
+        CheckConstraint(
+            "(forma_temporaria_id IS NULL AND tipo_transformacao IS NULL) OR "
+            "(forma_temporaria_id IS NOT NULL AND tipo_transformacao IN ('mega', 'alternativa'))",
+            name="transformacao_temporaria_coerente",
+        ),
     )
 
     personagem_id: Mapped[uuid.UUID] = mapped_column(
@@ -45,6 +50,12 @@ class Pokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
         nullable=False,
         index=True,
     )
+    # Overlay reversível: identidade original preservada.
+    forma_temporaria_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("formas_pokemon.id", ondelete="SET NULL"), index=True
+    )
+    tipo_transformacao: Mapped[str | None] = mapped_column(String(20))
+
     apelido: Mapped[str | None] = mapped_column(String(160))
     genero: Mapped[str | None] = mapped_column(String(40))
     shiny: Mapped[bool] = mapped_column(
@@ -71,7 +82,12 @@ class Pokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     anotacoes: Mapped[str | None] = mapped_column(Text)
 
     personagem: Mapped[Personagem] = relationship(back_populates="pokemons")
-    forma_pokemon: Mapped[FormaPokemon] = relationship(back_populates="pokemons")
+    forma_pokemon: Mapped[FormaPokemon] = relationship(
+        back_populates="pokemons", foreign_keys=[forma_pokemon_id]
+    )
+    forma_temporaria: Mapped[FormaPokemon | None] = relationship(
+        foreign_keys=[forma_temporaria_id]
+    )
     natureza: Mapped[Natureza | None] = relationship(back_populates="pokemons")
     item_equipado: Mapped[Item | None] = relationship(back_populates="pokemons_equipados")
     bonus_atributos: Mapped[list[PokemonBonusAtributo]] = relationship(
