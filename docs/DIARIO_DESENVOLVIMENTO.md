@@ -336,3 +336,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
 - Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
 
+
+
+### 2026-11-20 — Etapa 10E.1.1: exibição do número nacional nos cartões Pokémon
+- **Objetivo:** substituir `#—` pelo número nacional correto junto à categoria da forma no catálogo do Mestre.
+- **Status:** IMPLEMENTADO EM BRANCH; testes automatizados do PR pendentes de verificação.
+- **Branch:** `feature/10e1-numeros-cartoes-pokedex`, baseada em `main` após merge do PR #8 (10E.1).
+- **Arquivos modificados:** serviço novo `app/services/numeracao_pokedex_service.py`; rota `app/routes/catalogo_admin.py`; template `templates/mestre/catalogo/pokemons.html`; regressões `tests/test_ordenacao_pokedex_10e1.py`; docs 10E.1, continuidade e diário.
+- **Migrations/banco:** nenhuma. Nenhuma alteração a números de espécie armazenados, Pokémon existentes ou arquivos de dados; numeração apresentada calculada a partir da fonte original, em cache.
+- **Decisões:** separar índice de 1.064 formas do número nacional de 898 espécies; Venusaur Mega compartilha #003 com Venusaur; Nidoran♀/#029 e Nidoran♂/#032 diferenciados pelo código original da forma, inclusive se a FK legada estiver incorreta; Pokémon criados pelo mestre respeitam número manual ou exibem `#—`.
+- **Testes:** acrescentados testes para cálculo e HTML com banco SQLite de fixture; execução a confirmar via workflow do PR. PostgreSQL real não acessado.
+- **Próxima ação:** validar workflow e revisão do PR; prosseguir 10E.2 com auditoria dos vínculos e números persistidos.

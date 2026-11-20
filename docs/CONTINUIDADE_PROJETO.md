@@ -539,3 +539,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
 - Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
 
+
+
+<!-- ANKAR_10E1_1_NUMEROS_POKEDEX_20261120 -->
+## 2026-11-20 — Etapa 10E.1.1: números nacionais nos cartões do catálogo
+- **Contexto:** a 10E.1 foi mesclada pelo PR #8 e ordena corretamente as 1.064 formas por `configuracoes["ordem_catalogo"]`; entretanto, `EspeciePokemon.numero` permanece nulo em registros importados, fazendo a interface mostrar `#—`.
+- **Solução incremental:** serviço de apresentação `app/services/numeracao_pokedex_service.py` consulta `data/catalogo/pokemons.json` em memória (cache por processo), atribuindo uma posição nacional a cada um dos 898 nomes-base únicos em ordem original e reutilizando-a em todas as formas; a rota administrativa passa a fornecer a função ao template.
+- **Exemplos:** Bulbasaur #001, Venusaur e Venusaur Mega #003, Charmander #004, Nidoran♀ #029, Nidoran♂ #032, Morpeko #877 e Calyrex #898. Para espécies personalizadas, o número manual é respeitado ou o cartão mantém `#—`.
+- **Integridade:** nenhuma escrita em PostgreSQL, nenhuma migração, nenhum ajuste em Pokémon de jogadores, nenhuma modificação da fonte JSON; a auditoria e o saneamento definitivo dos registros pertencem à 10E.2.
+- **Arquivos:** `app/services/numeracao_pokedex_service.py`, `app/routes/catalogo_admin.py`, `templates/mestre/catalogo/pokemons.html`, `tests/test_ordenacao_pokedex_10e1.py`, `docs/ETAPA_10E1_ORDEM_POKEDEX.md` e os documentos de continuidade.
+- **Validação:** testes incluídos no workflow de regressão existente, execução via PR; testes PostgreSQL locais não executados aqui.
+- **Próxima tarefa:** auditoria 10E.2 dos números persistidos e das relações de espécies/formas, principalmente Nidoran, sem renumerar automaticamente.
