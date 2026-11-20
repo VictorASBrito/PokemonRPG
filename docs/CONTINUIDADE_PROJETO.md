@@ -552,3 +552,6 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Migrations:** nenhuma. Não houve leitura/escrita no PostgreSQL real nem alteração em fichas, níveis, capturáveis, Campo ou inventário. Atualização dos números no banco existente exige execução explícita do comando pelo mestre.
 - **Verificações:** fonte original lida e conferida (Bulbasaur #1, Charmander #4, Nidoran♀ #29, Nidoran♂ #32, Abomasnow #460, Calyrex #898); testes de regressão foram escritos, **não executados localmente neste ambiente**. Acompanhar resultados da CI do PR antes de integrar.
 - **Próximo:** auditar as categorias e arestas existentes de `EvolucaoPokemon`, validar os mapeamentos regionais e confirmar políticas de troca de forma e de recálculo de PV antes de criar botões de evolução, formas e Mega. A especificação é uma proposta, não uma implementação.
+
+
+**Atualização da validação P1 (20/11/2026):** workflow `Pokédex - ordenação e recuperação` do PR #9 concluído com sucesso: `10 passed in 6.10s` (GitHub Actions, Python 3.12, SQLite de teste). Análise somente leitura do JSON: 871 formas normais, 38 regionais, 50 Mega e 105 alternativas conforme regra atual de classificação. Banco PostgreSQL real ainda não modificado ou validado; consultar `docs/POKEDEX_E_EVOLUCOES_PLANO.md`.
