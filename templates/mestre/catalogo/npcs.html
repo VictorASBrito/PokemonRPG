@@ -1,72 +1,146 @@
+{% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 {% block titulo %}Catálogo de NPCs | Pokémon RPG{% endblock %}
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/npcs-ankar-10d4.css', v='10d4-3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/painel-mestre.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/painel-mestre-10d2.css', v='10d2') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/painel-mestre-10d3.css', v='10d3-1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-4') }}">
 {% endblock %}
+
 {% block conteudo %}
-<div class="npcs-ankar">
-<header class="npcs-cabecalho">
-  <div><p class="rotulo">Catálogo do RPG · Treinadores</p><h1>Catálogo de NPCs</h1>
-  <p class="texto-suave">Modelos fixos e reutilizáveis; o Campo recebe uma cópia independente.</p></div>
-  <a class="botao botao-primario botao-link" href="{{ url_for('npcs.catalogo') }}">Criar NPC / Gerar equipe</a>
-</header>
-  <section class="npcs-catalogo" aria-labelledby="npcs-catalogo-titulo">
-    <div class="npcs-secao-topo">
-      <div>
-        <p class="rotulo">Modelos persistentes</p>
-        <h2 id="npcs-catalogo-titulo">Catálogo de NPCs fixos</h2>
-      </div>
-      <span>{{ modelos|length }} NPCs salvos</span>
+<div class="painel-mestre-central painel-mestre-10d3 npc-central">
+  <header class="cabecalho-pagina cabecalho-com-acoes painel-mestre-cabecalho">
+    <div>
+      <p class="rotulo">Catálogo do RPG · Fichas do Mestre</p>
+      <h1>Treinadores NPC</h1>
+      <p class="texto-suave">Vida, Status e equipe, como nos cards de jogadores. Anotações privadas nas fichas.</p>
     </div>
-    {% if modelos %}
-    <div class="npcs-cards">
-      {% for modelo in modelos %}
-      <article class="npcs-modelo-card ui-card">
-        <header>
-          <div>
-            <strong>{{ modelo.nome }}</strong>
-            <small>{{ modelo.local_id }} · {{ modelo.zona_nome }} / {{ modelo.terreno }}</small>
+    <div class="npc-acoes-topo">
+      <a href="{{ url_for('catalogo_admin.dashboard') }}" class="botao botao-secundario botao-link">Voltar ao catálogo</a>
+      <a href="{{ url_for('npcs.catalogo') }}" class="botao botao-secundario botao-link">Gerar equipe</a>
+      <a href="{{ url_for('catalogo_admin.novo_npc') }}" class="botao botao-primario botao-link">Novo NPC fixo</a>
+    </div>
+  </header>
+  {% if modelos %}
+  <section class="painel-mestre-jogadores npc-grade" aria-label="NPCs fixos salvos">
+    {% for npc in modelos %}
+    <article class="cartao painel-jogador-card npc-ficha-card">
+      <header class="painel-jogador-topo">
+        <a class="painel-jogador-identidade" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">
+          <img class="painel-jogador-avatar" src="{{ npc.foto_url or url_for('static', filename='img/pokebola.png') }}" alt="" loading="lazy" width="48" height="48">
+          <span class="painel-jogador-nomes">
+            <h2>{{ npc.nome }}</h2>
+            <p class="painel-jogador-subtitulo">Nível {{ npc.nivel }}{% if npc.classe %} · {{ npc.classe }}{% endif %}{% if npc.origem %} · {{ npc.origem }}{% endif %}</p>
+            <small class="painel-jogador-login">NPC fixo · {{ npc.quantidade }}/6 Pokémon</small>
+          </span>
+        </a>
+        <details class="painel-jogador-gestao">
+          <summary aria-label="Mais opções de {{ npc.nome }}" title="Mais opções">⋮</summary>
+          <div class="painel-jogador-gestao-conteudo">
+            <strong class="painel-menu-titulo">Gerenciar NPC</strong>
+            <nav class="painel-jogador-menu-links">
+              <a href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Abrir ficha</a>
+              <a href="{{ url_for('npcs.catalogo') }}">Gerar equipe</a>
+            </nav>
+            <form action="{{ url_for('npcs.arquivar', modelo_id=npc.id) }}" method="post" data-npc-arquivar>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button class="botao botao-secundario" type="submit">Arquivar NPC</button>
+            </form>
           </div>
-          <span>{{ modelo.quantidade }}/6</span>
-        </header>
-        <div class="npcs-mini-equipe">
-          {% for pokemon in modelo.equipe %}
-          <div class="npcs-mini-pokemon" title="{{ pokemon.nome }} · Nível {{ pokemon.nivel }}">
-            {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="{{ pokemon.nome }}" loading="lazy">
-            {% else %}<span>◈</span>{% endif %}
-            <span>{{ pokemon.nome }}</span>
-            <small>Nv. {{ pokemon.nivel }}</small>
+        </details>
+      </header>
+
+      <section class="painel-jogador-resumo" aria-label="Vida e atributos de {{ npc.nome }}">
+        <div class="painel-jogador-vida">
+          <h3 class="painel-bloco-titulo">Vida</h3>
+          <div class="painel-recurso painel-recurso-treinador">
+            <div class="painel-recurso-cabecalho">
+              <span>PV do treinador</span>
+              <strong>{{ npc.pv_atual }}/{{ npc.pv_maximo }}</strong>
+            </div>
+            <progress value="{{ [npc.pv_atual, 0]|max }}" max="{{ [npc.pv_maximo, 1]|max }}"></progress>
+            <form class="controle-pv-rapido" method="post" action="{{ url_for('catalogo_admin.npc_pv', modelo_id=npc.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="number" name="quantidade" value="10" min="1" max="9999" aria-label="Quantidade de PV do NPC" required>
+              <button type="submit" name="operacao" value="menos" aria-label="Diminuir PV de {{ npc.nome }}">−</button>
+              <button type="submit" name="operacao" value="mais" aria-label="Aumentar PV de {{ npc.nome }}">+</button>
+            </form>
           </div>
-          {% endfor %}
         </div>
-        <form action="{{ url_for('npcs.usar_modelo', modelo_id=modelo.id) }}" method="post" class="npcs-card-acoes">
+        <div class="painel-jogador-status">
+          <h3 class="painel-bloco-titulo">Status</h3>
+          <div class="painel-jogador-atributos">
+            {% for atr in npc.atributos %}
+            <div class="painel-atributo-personagem"><span>{{ atr.nome }}</span><strong>{{ atr.valor }}</strong></div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      {% if npc.alertas %}
+      <div class="painel-alertas-jogador">
+        {% for alerta in npc.alertas %}<span>{{ alerta }}</span>{% endfor %}
+      </div>
+      {% endif %}
+
+      <section class="painel-equipe-compacta" aria-label="Equipe Pokémon de {{ npc.nome }}">
+        {% for pokemon in npc.equipe %}
+        <article class="painel-pokemon-card">
+          <div class="painel-pokemon-link">
+            <div class="painel-pokemon-imagem">
+              {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="" loading="lazy">{% else %}<span>◈</span>{% endif %}
+              {% if pokemon.shiny %}<em>Shiny</em>{% endif %}
+            </div>
+            <div class="painel-pokemon-info">
+              <strong title="{{ pokemon.nome }}">{{ pokemon.nome }}</strong>
+              <small class="painel-pokemon-especie">Nv. {{ pokemon.nivel }}{% if pokemon.nome != pokemon.especie %} · {{ pokemon.especie }}{% endif %}</small>
+              <div class="painel-pokemon-tipos">{% for tipo in pokemon.tipos %}{{ selo_tipo(tipo) }}{% endfor %}</div>
+            </div>
+          </div>
+          <div class="painel-pokemon-vida">
+            <div><span>PV</span><strong>{{ pokemon.pv_atual }}/{{ pokemon.pv_maximo }}</strong></div>
+            <progress value="{{ [pokemon.pv_atual, 0]|max }}" max="{{ [pokemon.pv_maximo, 1]|max }}"></progress>
+            <form class="controle-pv-rapido controle-pv-pokemon" method="post"
+                  action="{{ url_for('catalogo_admin.npc_pokemon_pv', modelo_id=npc.id, indice=pokemon.indice) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="number" name="quantidade" value="10" min="1" max="9999" aria-label="PV de {{ pokemon.nome }}" required>
+              <button type="submit" name="operacao" value="menos" aria-label="Diminuir PV de {{ pokemon.nome }}">−</button>
+              <button type="submit" name="operacao" value="mais" aria-label="Aumentar PV de {{ pokemon.nome }}">+</button>
+            </form>
+          </div>
+        </article>
+        {% else %}
+        <div class="npc-sem-pokemon">Nenhum Pokémon na equipe. Abra a ficha para adicionar integrantes.</div>
+        {% endfor %}
+      </section>
+
+      {% if npc.anotacoes %}
+      <p class="npc-anotacao-resumo" title="Observações privadas do mestre">
+        <strong>Anotações:</strong> {{ npc.anotacoes|truncate(130) }}
+      </p>
+      {% endif %}
+      <footer class="npc-card-rodape">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Ficha NPC</a>
+        <form action="{{ url_for('npcs.usar_modelo', modelo_id=npc.id) }}" method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <label>Time
-            <select name="time_numero">
-              {% for n in range(1,17) %}<option value="{{ n }}">Time {{ n }}</option>{% endfor %}
-            </select>
+          <label class="npc-time">Time
+            <select name="time_numero">{% for n in range(1,17) %}<option value="{{ n }}">Time {{ n }}</option>{% endfor %}</select>
           </label>
-          <button class="botao botao-primario" type="submit">Colocar cópia no Campo</button>
+          <button class="botao botao-primario" type="submit" {% if not npc.equipe %}disabled title="Adicione Pokémon à equipe primeiro"{% endif %}>Colocar no Campo</button>
         </form>
-        <form action="{{ url_for('npcs.arquivar', modelo_id=modelo.id) }}" method="post" data-npc-arquivar>
-          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button type="submit" class="npcs-arquivar">Arquivar modelo</button>
-        </form>
-      </article>
-      {% endfor %}
-    </div>
-    {% else %}
-      <p class="ui-card npcs-vazio">Nenhum NPC fixo salvo ainda. Use Criar NPC para cadastrar sua primeira equipe.</p>
-    {% endif %}
+      </footer>
+    </article>
+    {% endfor %}
   </section>
+  {% else %}
+  <div class="cartao ui-card npc-vazio">
+    <p>Nenhum NPC fixo cadastrado ainda.</p>
+    <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.novo_npc') }}">Cadastrar primeiro NPC</a>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
 {% block scripts %}
-<script>
-document.querySelectorAll('[data-npc-arquivar]').forEach(form => {
-    form.addEventListener('submit', event => {
-        if (!window.confirm('Arquivar este NPC fixo? As cópias em Campo serão preservadas.')) event.preventDefault();
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/npc-fichas-10d4.js', v='10d4-4') }}" defer></script>
 {% endblock %}
