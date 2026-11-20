@@ -188,6 +188,8 @@ def sortear_encontros_regionais(tabelas, quantidade, *, nomes_habilitados,
         if especies:
             pools.append((meta, slots))
             todos.update(especies)
+    alertas["tabelas_aptas"] = len(pools)
+    alertas["tabelas_sem_encontros_validos"] = len(tabelas) - len(pools)
     if not pools:
         raise ValueError("Não há espécies com correspondência inequívoca nesse filtro de Ankar.")
     disponiveis = todos - usados

@@ -99,14 +99,54 @@
       <span>{{ rascunho.pokemons|length }} Pokémon</span>
     </div>
     {% set a = rascunho.avisos %}
-    {% if rascunho.modo == "aleatorio" and (a.rolagens_ambiguas or a.rolagens_sem_faixa or a.rolagens_sem_forma or a.reconstruidos or a.invalidos) %}
-    <p class="npcs-aviso">Tabela original: {{ a.rolagens_ambiguas }} faces d100 ambíguas,
-      {{ a.rolagens_sem_faixa }} sem faixa, {{ a.rolagens_sem_forma }} sem correspondência inequívoca no catálogo;
-      {{ a.reconstruidos }} linhas reconstruídas e {{ a.invalidos }} inválidas não foram usadas.
-      {% if a.total_sem_forma_unica %}
-        Espécies sem vínculo único: {{ a.nomes_sem_forma_unica|join(', ') }}.
+    <div class="npcs-geracao-resultado" role="status">
+      <strong>Prévia gerada com sucesso.</strong>
+      <span>{{ rascunho.pokemons|length }} Pokémon no nível {{ rascunho.nivel }}.
+      {% if rascunho.modo == "aleatorio" %}
+        Sorteio pela fauna de {{ rascunho.local_nome }}.
+        {% if a.rolagens_repetidas_ou_descartadas %}
+          {{ a.rolagens_repetidas_ou_descartadas }} tentativa(s) descartada(s) até completar a equipe.
+        {% else %}
+          Nenhuma rolagem precisou ser repetida.
+        {% endif %}
+      {% else %}
+        Espécies escolhidas manualmente.
       {% endif %}
-      Foram repetidas {{ a.rolagens_repetidas_ou_descartadas }} rolagens durante a geração.</p>
+      </span>
+    </div>
+    {% if rascunho.modo == "aleatorio" and
+          (a.rolagens_ambiguas or a.rolagens_sem_faixa or a.rolagens_sem_forma or
+           a.reconstruidos or a.invalidos or a.tabelas_sem_encontros_validos) %}
+    <details class="npcs-diagnostico-atlas">
+      <summary>Ver diagnóstico das tabelas de encontros
+        <small>{{ a.tabelas_consultadas }} tabela(s) consultada(s) · não impede esta geração</small>
+      </summary>
+      <div class="npcs-diagnostico-corpo">
+        <p><strong>Dados do Atlas, não erros desta equipe.</strong>
+          Os totais a seguir são a soma de todas as
+          <strong>{{ a.tabelas_consultadas }} tabelas</strong> consultadas no filtro,
+          não de uma única rota ou do Pokémon sorteado.
+          {{ a.tabelas_aptas }} tabela(s) possuem encontros aproveitáveis;
+          {{ a.tabelas_sem_encontros_validos }} ficaram fora do sorteio.
+          Não foram alteradas as probabilidades originais.</p>
+        <dl class="npcs-diagnostico-metricas">
+          <div><dt>Faces d100 sobrepostas</dt><dd>{{ a.rolagens_ambiguas }}</dd></div>
+          <div><dt>Faces sem intervalo válido preenchido</dt><dd>{{ a.rolagens_sem_faixa }}</dd></div>
+          <div><dt>Faces com forma sem correspondência única</dt><dd>{{ a.rolagens_sem_forma }}</dd></div>
+          <div><dt>Linhas reconstruídas excluídas</dt><dd>{{ a.reconstruidos }}</dd></div>
+          <div><dt>Linhas inválidas excluídas</dt><dd>{{ a.invalidos }}</dd></div>
+        </dl>
+        {% if a.total_sem_forma_unica %}
+        <p><strong>{{ a.total_sem_forma_unica }} nome(s) sem uma forma única:</strong>
+          {{ a.nomes_sem_forma_unica|join(', ') }}.
+          Essas espécies podem ter variantes no catálogo. O sorteio regional as deixa
+          de fora até que o mestre defina a regra de escolha da forma;
+          elas podem ser escolhidas diretamente no modo <strong>Manual</strong>.</p>
+        {% endif %}
+        <p>Faixas sobrepostas, intervalos ausentes e linhas reconstruídas não são
+          corrigidos automaticamente; o Atlas original permanece preservado.</p>
+      </div>
+    </details>
     {% endif %}
     <div class="npcs-equipe-grade">
       {% for pokemon in rascunho.pokemons %}
