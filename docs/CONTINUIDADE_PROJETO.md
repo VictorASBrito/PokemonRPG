@@ -555,3 +555,6 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 
 
 **Atualização da validação P1 (20/11/2026):** workflow `Pokédex - ordenação e recuperação` do PR #9 concluído com sucesso: `10 passed in 6.10s` (GitHub Actions, Python 3.12, SQLite de teste). Análise somente leitura do JSON: 871 formas normais, 38 regionais, 50 Mega e 105 alternativas conforme regra atual de classificação. Banco PostgreSQL real ainda não modificado ou validado; consultar `docs/POKEDEX_E_EVOLUCOES_PLANO.md`.
+
+
+**Complemento P1:** criado `docs/AUDITORIA_FORMAS_REGIONAIS_P1.md` com comparação individual das 38 formas regionais versus referência, incluindo Darmanitan Normal/Zen. Não representa validação de relacionamentos de evolução no PostgreSQL.
