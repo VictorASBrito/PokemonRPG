@@ -39,7 +39,7 @@ def _gerar(client, token, tipo="fixo", n=2, **extra):
     payload = {
         "csrf_token": token, "tipo": tipo, "nome": "Rival Regional",
         "local_id": "rota-teste", "zona_index": "0", "tabela_index": "0",
-        "quantidade": str(n), "nivel_min": "12", "nivel_max": "15",
+        "quantidade": str(n), "nivel": "12", "modo": "aleatorio",
     }
     payload.update(extra)
     return client.post("/mestre/npcs/gerar", data=payload, follow_redirects=True)
@@ -50,7 +50,8 @@ def test_criar_npc_fixo_salvar_catalogo_e_colocar_copia(app_db, client_db, monke
     _login(client_db)
     token = _token(client_db)
     pagina = client_db.get("/mestre/npcs").get_data(as_text=True)
-    assert "Catálogo de NPCs fixos" in pagina
+    assert "Gerar NPCs e Hordas" in pagina
+    assert "Seleção de Pokémon" in pagina
     resposta = _gerar(client_db, token)
     texto = resposta.get_data(as_text=True)
     assert "Prévia ainda não salva" in texto
