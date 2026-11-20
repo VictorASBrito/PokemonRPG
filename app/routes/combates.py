@@ -10,6 +10,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.extensions import db
 from app.routes.auth import login_obrigatorio
 from app.services.campo_service import carregar_campo, limpar_campo, posicionar_pokemon, retirar_pokemon
+from app.services.campo_npc_service import (
+    criar_grupo_npc, adicionar_pokemons_npc, mover_grupo_npc, ajustar_pv_npc,
+    retirar_pokemon_npc, remover_grupo_npc,
+)
 from app.services.permissoes_service import PERFIS_JOGADOR, PERFIS_MESTRE, perfil_usuario_atual
 
 combates_bp = Blueprint("combates", __name__)
@@ -63,7 +67,7 @@ def estado():
     except SQLAlchemyError:
         db.session.rollback()
         return ("Campo indisponível.", 503)
-    resposta = render_template("campo/_times.html", contexto=contexto, csrf_token=_token())
+    resposta = render_template("campo/_times.html", contexto=contexto, mestre=mestre, csrf_token=_token())
     return resposta, 200, {"Cache-Control": "no-store"}
 
 
@@ -135,3 +139,83 @@ def limpar():
         current_app.logger.exception("Falha ao limpar campo compartilhado.")
         flash("Não foi possível limpar o campo.", "erro")
     return redirect(url_for("combates.painel"))
+
+
+# 10D.4 — NPCs e hordas são exclusivos do mestre; validação no servidor.
+def _executar_npc(operacao):
+    if not _autorizacao():
+        abort(403)
+    _conferir_token()
+    try:
+        flash(operacao(), "sucesso")
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao gerenciar adversários do Campo.")
+        flash("Não foi possível atualizar os adversários.", "erro")
+    return redirect(url_for("combates.painel"))
+
+
+@combates_bp.post("/campo/npcs/criar")
+@login_obrigatorio
+def criar_npc():
+    return _executar_npc(lambda: criar_grupo_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        nome=request.form.get("nome"), tipo=request.form.get("tipo"),
+        time_numero=request.form.get("time_numero"),
+        forma_id=request.form.get("forma_id"), nivel=request.form.get("nivel"),
+        quantidade=request.form.get("quantidade"),
+        usuario_id=session.get("usuario_id"),
+    ))
+
+
+@combates_bp.post("/campo/npcs/<grupo_id>/adicionar")
+@login_obrigatorio
+def adicionar_npc(grupo_id):
+    return _executar_npc(lambda: adicionar_pokemons_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        grupo_id=grupo_id, forma_id=request.form.get("forma_id"),
+        nivel=request.form.get("nivel"), quantidade=request.form.get("quantidade"),
+        usuario_id=session.get("usuario_id"),
+    ))
+
+
+@combates_bp.post("/campo/npcs/<grupo_id>/mover")
+@login_obrigatorio
+def mover_npc(grupo_id):
+    return _executar_npc(lambda: mover_grupo_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        grupo_id=grupo_id, time_numero=request.form.get("time_numero"),
+        usuario_id=session.get("usuario_id"),
+    ))
+
+
+@combates_bp.post("/campo/npcs/<grupo_id>/retirar")
+@login_obrigatorio
+def remover_npc(grupo_id):
+    return _executar_npc(lambda: remover_grupo_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        grupo_id=grupo_id, usuario_id=session.get("usuario_id"),
+    ))
+
+
+@combates_bp.post("/campo/npcs/pokemons/<pokemon_id>/pv")
+@login_obrigatorio
+def pv_npc(pokemon_id):
+    return _executar_npc(lambda: ajustar_pv_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        pokemon_id=pokemon_id, quantidade=request.form.get("quantidade"),
+        operacao=request.form.get("operacao"),
+        usuario_id=session.get("usuario_id"),
+    ))
+
+
+@combates_bp.post("/campo/npcs/pokemons/<pokemon_id>/retirar")
+@login_obrigatorio
+def retirar_npc(pokemon_id):
+    return _executar_npc(lambda: retirar_pokemon_npc(
+        campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"]),
+        pokemon_id=pokemon_id, usuario_id=session.get("usuario_id"),
+    ))

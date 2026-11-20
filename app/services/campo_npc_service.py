@@ -250,7 +250,13 @@ def limpar_npcs_campo(*, campanha_id, usuario_id):
     for grupo in grupos:
         db.session.delete(grupo)
         _historico(usuario_id, grupo.id, "limpar", antes={"nome": grupo.nome})
-    return len(grupos)
+    quantidade = db.session.scalar(
+        select(func.count()).select_from(PokemonNPCEmCampo)
+        .join(GrupoNPCEmCampo)
+        .where(GrupoNPCEmCampo.campanha_id == campanha_id)
+    ) or 0
+    # Retorna o número de Pokémon, não de grupos.
+    return quantidade
 
 
 def listar_grupos_npc(*, campanha_id):

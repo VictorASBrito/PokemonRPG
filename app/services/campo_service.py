@@ -13,6 +13,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
+from app.services.campo_npc_service import listar_grupos_npc, limpar_npcs_campo
 from app.models.db import (
     Campanha, FormaPokemon, FormaPokemonTipo, HistoricoAlteracao,
     Personagem, Pokemon, PokemonEmCampo, Usuario,
@@ -163,8 +164,9 @@ def limpar_campo(*, campanha_codigo: str, usuario_id: str | None) -> int:
             usuario_id=usuario_id, pokemon_id=item.pokemon_id,
             acao="retirar", antes={"time": item.time_numero}, depois={"campo_limpo": True},
         )
+    quantidade_npc = limpar_npcs_campo(campanha_id=campanha.id, usuario_id=usuario_id)
     db.session.commit()
-    return len(registros)
+    return len(registros) + quantidade_npc
 
 
 def carregar_campo(
@@ -172,7 +174,7 @@ def carregar_campo(
     personagem_id: str | None,
 ) -> ContextoCampo:
     campanha = _campanha(campanha_codigo)
-    times = [{"numero": numero, "pokemons": []} for numero in range(1, TOTAL_TIMES + 1)]
+    times = [{"numero": numero, "pokemons": [], "grupos_npc": []} for numero in range(1, TOTAL_TIMES + 1)]
     if campanha is None:
         return ContextoCampo(times=times, opcoes_pokemon=[], total_pokemons=0, times_ocupados=0)
 
@@ -213,6 +215,10 @@ def carregar_campo(
             "pode_retirar": _pode_alterar(pokemon, mestre=mestre, personagem_id=personagem_id),
         })
 
+    grupos_npc = listar_grupos_npc(campanha_id=campanha.id)
+    for grupo in grupos_npc:
+        times[grupo["time_numero"] - 1]["grupos_npc"].append(grupo)
+
     opcoes = list(db.session.execute(
         select(Pokemon)
         .join(Personagem, Personagem.id == Pokemon.personagem_id)
@@ -231,6 +237,6 @@ def carregar_campo(
             "id": str(p.id),
             "rotulo": f"{p.personagem.nome} · {p.apelido or p.forma_pokemon.nome}" + (" (em campo)" if p.id in campo_ids else ""),
         } for p in opcoes],
-        total_pokemons=len(campos),
-        times_ocupados=sum(bool(item["pokemons"]) for item in times),
+        total_pokemons=len(campos) + sum(len(grupo["pokemons"]) for grupo in grupos_npc),
+        times_ocupados=sum(bool(item["pokemons"] or item["grupos_npc"]) for item in times),
     )
