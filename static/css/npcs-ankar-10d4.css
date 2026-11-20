@@ -55,3 +55,23 @@
 .npcs-grade-form .npcs-especies-manuais [hidden] {display:none;}
 .npcs-grade-form .npcs-especies-manuais label { min-width:0; }
 @media(max-width:700px){.npcs-grade-form .npcs-filtros-regionais,.npcs-grade-form .npcs-especies-manuais {grid-template-columns:1fr;}}
+
+/* 10D.4.5 — resultado de geração e diagnóstico informativo colapsado. */
+.npcs-geracao-resultado { display:flex; flex-wrap:wrap; align-items:baseline; gap:5px 10px;
+  border:1px solid var(--borda,#465268); background:var(--superficie-suave,#1b2431);
+  border-radius:10px; padding:11px 13px; font-size:.84rem; }
+.npcs-geracao-resultado strong { font-weight:800; }
+.npcs-diagnostico-atlas { border:1px solid var(--borda,#465268); border-radius:10px;
+  min-width:0; overflow:hidden; font-size:.78rem; }
+.npcs-diagnostico-atlas > summary { cursor:pointer; padding:11px 13px; display:flex; align-items:center;
+  flex-wrap:wrap; gap:5px 12px; font-weight:750; }
+.npcs-diagnostico-atlas > summary:before { content:"▸"; }
+.npcs-diagnostico-atlas[open] > summary:before { content:"▾"; }
+.npcs-diagnostico-atlas > summary small { font-weight:450; font-size:.74rem; opacity:.75; }
+.npcs-diagnostico-corpo { padding:0 13px 13px; display:grid; gap:10px; line-height:1.45; }
+.npcs-diagnostico-corpo p { margin:0; }
+.npcs-diagnostico-metricas { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:0; }
+.npcs-diagnostico-metricas div { display:flex; flex-wrap:wrap; gap:5px; justify-content:space-between;
+  padding:7px 8px; border-radius:7px; background:var(--superficie-suave,#1b2431); }
+.npcs-diagnostico-metricas dd { margin:0; font-weight:800; }
+@media(max-width:570px) { .npcs-diagnostico-metricas { grid-template-columns:1fr; } }
