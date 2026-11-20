@@ -624,3 +624,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Segurança:** importação só com simulação, assinatura, backup confirmado e `COMPLETAR-REGIONAIS-ANKAR`, mantendo os 430 vínculos anteriores intocados. Não apaga/reativa relações personalizadas, não muda Pokémon de jogadores e não utiliza migrations.
 - **Regra Ankar:** 8 novos arcos regulares por nível/pedra, 9 reservados ao mestre (noite, região, amizade, troca, Galarica Cuff/Wreath). Darmanitan Zen é alternância de modo e fica para 10E.4; 10E.3 evoluções efetivas individuais.
 - **Testes:** `tests/test_evolucoes_regionais_10e2_5.py`, workflow `test-evolucoes-regionais-10e2-5.yml`, resultado a verificar na CI.
+
+
+<!-- ANKAR_10E3_1_ELEGIBILIDADE_20261120 -->
+## 2026-11-20 — 10E.3.1: consultar evoluções possíveis por Pokémon
+- **Confirmação do mestre:** as árvores regionais 10E.2.5 já foram aplicadas no PostgreSQL local da campanha. Não executar importação novamente nesta etapa.
+- **Objetivo:** exibir na ficha de equipe/Box (tanto rota do jogador quanto mestre) as evoluções disponíveis ao Pokémon **específico**, com estado calculado a partir de `personagens.nivel`, relação permanente ativa e pedra real na mochila (`personagem_itens`).
+- **Regras:** quatro estados — requisito atendido, nível insuficiente, pedra ausente, depende do mestre. Itens não são consumidos; evolução ainda não é oferecida. O nível segue compartilhado e não há amizade/XP individual. Regiões e formas são distintas pelo UUID exato da origem.
+- **Proteção:** requisitos de amizade/troca/condição/itens especiais, flags mestre, sexo, horário, região e metadados ambíguos sempre ficam restritos. `aprovado_mestre` no catálogo não é autorização por Pokémon. O Pokémon precisa pertencer ao personagem autorizado pela sessão nas rotas existentes.
+- **Arquivos:** serviço `app/services/consulta_evolucao_service.py`; integração em `app/routes/pokemons.py`; seção read-only em `templates/jogador/pokemon.html`; CSS `static/css/pokemon.css`; `tests/test_consulta_evolucao_10e3_1.py`; CI `test-elegibilidade-evolucao-10e3-1.yml`; documentação `docs/ETAPA_10E3_1_CONSULTA_ELEGIBILIDADE.md`, plano/continuidade/diário.
+- **Bancos/migrations:** zero alterações de esquema e zero escrita automática. A consulta à ficha não cria, grava ou confirma evoluções, não muda Box, PV, atributos, ataques, inventário ou identidade. CI é SQLite; homologar no PostgreSQL real após merge.
+- **Próxima:** 10E.3.2 autorização persistida e individual por relação+Pokémon, com perfis de mestre, trilha de auditoria e proteção por transação; após, botão de evolução e consumo com recálculo.
