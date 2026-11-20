@@ -9,6 +9,7 @@
         <p class="texto-suave">Cadastre evoluções, Mega Evoluções e formas relacionadas. Esta tela configura o catálogo, mas não modifica os Pokémon de jogadores.</p>
     </div>
     <div class="acoes-cabecalho">
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.arvore_pokemon', forma_id=forma.id) }}">Ver árvore da família</a>
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar forma</a>
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar ao catálogo</a>
     </div>
@@ -76,17 +77,35 @@
 
 {% if sugestoes %}
 <section class="cartao secao-formulario espacamento-topo ui-card">
-    <div class="secao-titulo"><div><span>2</span><h2>Evoluções verificadas</h2></div><p>Dados cruzados com PokéAPI e Pokémon Database, sujeitos à aprovação do mestre.</p></div>
+    <div class="secao-titulo"><div><span>2</span><h2>Evoluções para revisão</h2></div><p>Fontes: PokéAPI, Pokémon Database e manual PKMRPG v2.5. Só o mestre pode aprovar; conflitos exigem regra narrativa.</p></div>
     <div class="lista-vinculos-golpe">
     {% for sugestao in sugestoes %}
         <article class="vinculo-golpe-item">
             <div class="vinculo-descricao">
                 <strong>{{ sugestao.origem|capitalize }} → {{ sugestao.destino|capitalize }}</strong>
-                <small>Nível {{ sugestao.nivel }} · <a href="{{ sugestao.pokeapi }}" target="_blank" rel="noopener noreferrer">PokéAPI</a> · <a href="{{ sugestao.pokemondb }}" target="_blank" rel="noopener noreferrer">Pokémon Database</a></small>
+                {% if sugestao.status == 'pendente_decisao' %}
+                    <small><strong>Pendente de decisão do mestre</strong> · Não será cadastrada por aprovação rápida.</small>
+                {% else %}
+                    <small>Conferida; requer aprovação explícita antes de gravar.</small>
+                {% endif %}
+                <small>
+                    {% if sugestao.tipo_requisito == 'nivel' %}Nível {{ sugestao.nivel }}
+                    {% elif sugestao.tipo_requisito == 'item' %}Item: {{ sugestao.item_nome }}
+                    {% else %}Condição especial / narrativa
+                    {% endif %}
+                    · <a href="{{ sugestao.pokeapi }}" target="_blank" rel="noopener noreferrer">PokéAPI</a>
+                    · <a href="{{ sugestao.pokemondb }}" target="_blank" rel="noopener noreferrer">Pokémon Database</a>
+                </small>
+                {% if sugestao.criterio %}<p class="texto-suave">{{ sugestao.criterio }}</p>{% endif %}
+                {% if sugestao.alerta_ankar %}<p class="texto-suave"><strong>Atenção às regras de Ankar:</strong> {{ sugestao.alerta_ankar }}</p>{% endif %}
             </div>
-            <form method="post" action="{{ url_for('catalogo_admin.registrar_evolucao_verificada', forma_id=forma.id, destino_codigo=sugestao.destino) }}">
-                <button type="submit" class="botao botao-primario">Aprovar e cadastrar</button>
-            </form>
+            {% if sugestao.status == 'aprovavel' %}
+                <form method="post" action="{{ url_for('catalogo_admin.registrar_evolucao_verificada', forma_id=forma.id, destino_codigo=sugestao.destino) }}">
+                    <button type="submit" class="botao botao-primario">Aprovar e cadastrar</button>
+                </form>
+            {% else %}
+                <span class="texto-suave">Defina e cadastre manualmente a regra apropriada abaixo.</span>
+            {% endif %}
         </article>
     {% endfor %}
     </div>
