@@ -82,7 +82,9 @@ class Pokemon(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
     anotacoes: Mapped[str | None] = mapped_column(Text)
 
     personagem: Mapped[Personagem] = relationship(back_populates="pokemons")
-    forma_pokemon: Mapped[FormaPokemon] = relationship(back_populates="pokemons")
+    forma_pokemon: Mapped[FormaPokemon] = relationship(
+        back_populates="pokemons", foreign_keys=[forma_pokemon_id]
+    )
     forma_temporaria: Mapped[FormaPokemon | None] = relationship(
         foreign_keys=[forma_temporaria_id]
     )
