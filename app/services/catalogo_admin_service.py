@@ -155,6 +155,7 @@ def listar_formas_admin(
                 EspeciePokemon.numero.asc().nullslast(),
                 func.lower(EspeciePokemon.nome),
                 func.lower(FormaPokemon.nome),
+                FormaPokemon.id,
             )
             .offset((pagina - 1) * por_pagina)
             .limit(por_pagina)
