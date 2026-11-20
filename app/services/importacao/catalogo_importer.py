@@ -20,6 +20,7 @@ from app.models.db import (
     StatusCondicao,
     TipoPokemon,
 )
+from app.services.pokedex_service import codigo_especie_pokedex, mapear_numeros_pokedex
 from app.services.importacao.utils import (
     categoria_forma,
     decimal,
@@ -156,10 +157,11 @@ class CatalogoImporter:
         especies_existentes = self._mapear(EspeciePokemon)
         formas_existentes = self._mapear(FormaPokemon)
         por_especie: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        numeros = mapear_numeros_pokedex(self.fontes.catalogo_pokemons.get("pokemons", []))
 
         for item in self.fontes.catalogo_pokemons.get("pokemons", []):
-            base = nome_especie(str(item.get("nome", item.get("id", "Pokémon"))))
-            por_especie[slug(base)].append(item)
+            base = str(item.get("nome", item.get("id", "Pokémon")))
+            por_especie[codigo_especie_pokedex(base)].append(item)
 
         for codigo_especie, formas in por_especie.items():
             nome_base = nome_especie(str(formas[0].get("nome", codigo_especie)))
@@ -169,7 +171,7 @@ class CatalogoImporter:
                     id=uuid_legado("especie", codigo_especie),
                     codigo=codigo_especie,
                     nome=nome_base,
-                    numero=None,
+                    numero=numeros.get(codigo_especie),
                     geracao=None,
                     personalizada=False,
                 )
@@ -177,6 +179,8 @@ class CatalogoImporter:
                 self.resumo.criado("especies_pokemon")
             else:
                 especie.nome = nome_base
+                if especie.numero is None:
+                    especie.numero = numeros.get(codigo_especie)
                 especie.ativo = True
                 self.resumo.atualizado("especies_pokemon")
             self.especies[codigo_especie] = especie
@@ -185,7 +189,7 @@ class CatalogoImporter:
 
         for item in self.fontes.catalogo_pokemons.get("pokemons", []):
             codigo_forma = str(item.get("id") or slug(item.get("nome")))
-            base = slug(nome_especie(str(item.get("nome", codigo_forma))))
+            base = codigo_especie_pokedex(str(item.get("nome", codigo_forma)))
             especie = self.especies[base]
             forma = formas_existentes.get(codigo_forma)
             configuracoes = {
