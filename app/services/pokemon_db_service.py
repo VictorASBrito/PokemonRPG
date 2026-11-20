@@ -10,6 +10,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
+from app.services.ordenacao_pokedex_service import ordem_formas_pokedex
 from app.models.db import (
     Atributo,
     Campanha,
@@ -572,8 +573,9 @@ def listar_formas_ativas() -> list[FormaPokemon]:
     return list(
         db.session.execute(
             select(FormaPokemon)
+            .join(EspeciePokemon, EspeciePokemon.id == FormaPokemon.especie_id)
             .where(FormaPokemon.ativo.is_(True))
-            .order_by(func.lower(FormaPokemon.nome))
+            .order_by(*ordem_formas_pokedex())
         ).scalars()
     )
 
@@ -1139,7 +1141,7 @@ def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
             )
         )
     formas = list(db.session.execute(
-        consulta.order_by(func.lower(FormaPokemon.nome)).limit(max(1, min(int(limite), 50)))
+        consulta.order_by(*ordem_formas_pokedex()).limit(max(1, min(int(limite), 50)))
     ).scalars())
     return [
         {
