@@ -1,10 +1,11 @@
 {
   "versao": "10E.4",
   "revisado_em": "2026-11-20",
-  "escopo": "Mecânica de estados de transformação; catálogo de formas existente. Mudanças narrativas manuais não automatizam clima, turnos, habilidades ou itens desconhecidos.",
+  "escopo": "Regras Ankar (mestre, 20/11/2026): formas alternativas são escolhas livres do dono; Mega é habilidade concedida pelo mestre ao TREINADOR e não exige Pedra Chave, Mega Pedras nem itens específicos. Uma Mega simultânea por treinador e apenas em Campo.",
   "fontes": [
     "PKMRPG Playtest v2.5 cap. 9 pp.44-45, cap.16 pp.60-62",
-    "Catálogo de Pokémon versionado do Ankar"
+    "Catálogo de Pokémon versionado do Ankar",
+    "Decisão explícita do mestre Ankar: alternativas livres e Mega por permissão de treinador, sem pedras"
   ],
   "mega": [
     {
@@ -12,360 +13,360 @@
       "dest": "venusaur-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Venusaurite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "charizard",
       "dest": "charizard-mega-x",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Charizardite X",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "charizard",
       "dest": "charizard-mega-y",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Charizardite Y",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "blastoise",
       "dest": "blastoise-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Blastoisinite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "beedrill",
       "dest": "beedrill-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Beedrillite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "pidgeot",
       "dest": "pidgeot-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Pidgeotite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "alakazam",
       "dest": "alakazam-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Alakazite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "slowbro",
       "dest": "slowbro-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Slowbronite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "gengar",
       "dest": "gengar-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Gengarite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "kangaskhan",
       "dest": "kangaskhan-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Kangaskhanite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "pinsir",
       "dest": "pinsir-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Pinsirite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "gyarados",
       "dest": "gyarados-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Gyaradosite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "aerodactyl",
       "dest": "aerodactyl-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Aerodactylite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "mewtwo",
       "dest": "mewtwo-mega-x",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Mewtwonite X",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "mewtwo",
       "dest": "mewtwo-mega-y",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Mewtwonite Y",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "ampharos",
       "dest": "ampharos-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Ampharosite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "steelix",
       "dest": "steelix-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Steelixite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "scizor",
       "dest": "scizor-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Scizorite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "heracross",
       "dest": "heracross-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Heracronite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "houndoom",
       "dest": "houndoom-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Houndoominite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "tyranitar",
       "dest": "tyranitar-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Tyranitarite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "sceptile",
       "dest": "sceptile-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Sceptilite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "blaziken",
       "dest": "blaziken-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Blazikenite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "swampert",
       "dest": "swampert-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Swampertite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "gardevoir",
       "dest": "gardevoir-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Gardevoirite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "sableye",
       "dest": "sableye-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Sablenite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "mawile",
       "dest": "mawile-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Mawilite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "aggron",
       "dest": "aggron-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Aggronite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "medicham",
       "dest": "medicham-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Medichamite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "manectric",
       "dest": "manectric-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Manectite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "sharpedo",
       "dest": "sharpedo-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Sharpedonite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "camerupt",
       "dest": "camerupt-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Cameruptite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "altaria",
       "dest": "altaria-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Altarianite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "banette",
       "dest": "banette-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Banettite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "absol",
       "dest": "absol-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Absolite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "glalie",
       "dest": "glalie-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Glalitite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "salamence",
       "dest": "salamence-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Salamencite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "metagross",
       "dest": "metagross-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Metagrossite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "latias",
       "dest": "latias-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Latiasite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "latios",
       "dest": "latios-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Latiosite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "rayquaza",
@@ -373,71 +374,71 @@
       "kind": "mega",
       "scope": "combate",
       "stone": null,
-      "move": "Ascenção do Dragão",
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "move": null,
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "lopunny",
       "dest": "lopunny-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Lopunnite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "garchomp",
       "dest": "garchomp-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Garchompite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "lucario",
       "dest": "lucario-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Lucarionite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "abomasnow",
       "dest": "abomasnow-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Abomasite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "gallade",
       "dest": "gallade-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Galladite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "audino",
       "dest": "audino-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Audinite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     },
     {
       "source": "diancie",
       "dest": "diancie-mega",
       "kind": "mega",
       "scope": "combate",
-      "stone": "Diancite",
+      "stone": null,
       "move": null,
-      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+      "note": "Mega temporária: o mestre habilita o treinador; uma Mega simultânea por treinador, somente em Campo; sem Pedra Chave, Mega Pedra ou golpe adicional."
     }
   ],
   "alternativas": [
@@ -447,7 +448,7 @@
       "kind": "alternativa",
       "scope": "livre",
       "actor": "dono",
-      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "rotom",
@@ -455,7 +456,7 @@
       "kind": "alternativa",
       "scope": "livre",
       "actor": "dono",
-      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "rotom",
@@ -463,7 +464,7 @@
       "kind": "alternativa",
       "scope": "livre",
       "actor": "dono",
-      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "rotom",
@@ -471,7 +472,7 @@
       "kind": "alternativa",
       "scope": "livre",
       "actor": "dono",
-      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "rotom",
@@ -479,335 +480,335 @@
       "kind": "alternativa",
       "scope": "livre",
       "actor": "dono",
-      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "darmanitan-normal",
       "dest": "darmanitan-zen",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Modo Zen com PV iguais ou inferiores à metade do máximo"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "darmanitan-galar-normal",
       "dest": "darmanitan-galar-zen",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Modo Zen de Galar com PV iguais ou inferiores à metade do máximo"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "castform",
       "dest": "castform-ensolarado",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "castform",
       "dest": "castform-chuvoso",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "castform",
       "dest": "castform-nevado",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "aegislash-escudo",
       "dest": "aegislash-lamina",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Mudança de postura validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "meloetta-melodia",
       "dest": "meloetta-pirueta",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Canto Relíquia ou evento de combate validado pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "wishiwashi-sozinho",
       "dest": "wishiwashi-cardume",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Formação de cardume e PV verificados pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "minior-meteoro",
       "dest": "minior-nucleo",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Escudo rompido, validado pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "eiscue-congelado",
       "dest": "eiscue-revelado",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Cabeça de gelo quebrada, validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "morpeko-satisfeito",
       "dest": "morpeko-faminto",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Troca de fome a cada turno; o Campo não controla turnos"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "zygarde-50",
       "dest": "zygarde-100",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Forma Completa sob condição especial, validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "giratina-alternativa",
       "dest": "giratina-origem",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Item ou ambiente especial, validado pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "deoxys-normal",
       "dest": "deoxys-ataque",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Mudança de forma validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "deoxys-normal",
       "dest": "deoxys-defense",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Mudança de forma validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "deoxys-normal",
       "dest": "deoxys-velocidade",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Mudança de forma validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "shaymin-terra",
       "dest": "shaymin-ceu",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Flor Gracídea e condições de horário, validadas pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "hoopa-confinado",
       "dest": "hoopa-livre",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Garrafa Prisional e prazo, validados pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "kyogre",
       "dest": "kyogre-primitivo",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Esfera Azul e Reversão Primitiva, validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "groudon",
       "dest": "groudon-primitivo",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Esfera Vermelha e Reversão Primitiva, validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "necrozma",
       "dest": "necrozma-crepusculo-mane",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Fusão N-Solarizer/N-Lunarizer, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "necrozma",
       "dest": "necrozma-alvorada",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Fusão N-Solarizer/N-Lunarizer, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "zacian-heroi",
       "dest": "zacian-espada",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Espada enferrujada, validada pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "zamazenta-heroi",
       "dest": "zamazenta-escudo",
       "kind": "alternativa",
-      "scope": "combate",
-      "actor": "mestre",
-      "condition": "Escudo enferrujado, validado pelo mestre"
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-agua",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-dragao",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-eletrico",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-fada",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-fantasma",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-fogo",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-gelo",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-grama",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-inseto",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-lutador",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-metal",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-noturno",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-pedra",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-psiquico",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-terra",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-veneno",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     },
     {
       "source": "arceus",
       "dest": "arceus-voador",
       "kind": "alternativa",
       "scope": "livre",
-      "actor": "mestre",
-      "condition": "Placa de tipo correspondente, validada pelo mestre"
+      "actor": "dono",
+      "condition": "Troca manual pelo dono do Pokémon que possui a forma alternativa; sem permissão do mestre e sem automatização de clima/turnos/habilidades."
     }
   ],
   "totais": {
