@@ -572,8 +572,14 @@ def listar_formas_ativas() -> list[FormaPokemon]:
     return list(
         db.session.execute(
             select(FormaPokemon)
+            .join(EspeciePokemon, EspeciePokemon.id == FormaPokemon.especie_id)
             .where(FormaPokemon.ativo.is_(True))
-            .order_by(func.lower(FormaPokemon.nome))
+            .order_by(
+                EspeciePokemon.numero.asc().nullslast(),
+                func.lower(EspeciePokemon.nome),
+                func.lower(FormaPokemon.nome),
+                FormaPokemon.id,
+            )
         ).scalars()
     )
 
@@ -1139,7 +1145,12 @@ def pesquisar_formas_autocomplete(termo: str, *, limite: int = 20) -> list[dict[
             )
         )
     formas = list(db.session.execute(
-        consulta.order_by(func.lower(FormaPokemon.nome)).limit(max(1, min(int(limite), 50)))
+        consulta.order_by(
+            EspeciePokemon.numero.asc().nullslast(),
+            func.lower(EspeciePokemon.nome),
+            func.lower(FormaPokemon.nome),
+            FormaPokemon.id,
+        ).limit(max(1, min(int(limite), 50)))
     ).scalars())
     return [
         {
