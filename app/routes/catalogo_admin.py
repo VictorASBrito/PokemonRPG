@@ -68,6 +68,7 @@ from app.services.catalogo_admin_service import (
 
 from app.services.importacao_evolucoes_service import (
     FRASE_CONFIRMACAO,
+    FRASE_REGIONAIS,
     aplicar_plano_evolucoes,
     consultar_plano_evolucoes,
 )
@@ -219,8 +220,12 @@ def gerar_arvores_pokemon_admin():
     """Tela com prévia e confirmação para gerar toda a Pokédex evolutiva."""
     token = session.setdefault("arvores_pokemon_csrf", secrets.token_urlsafe(32))
     aplicar = request.method == "POST"
+    regional = request.args.get("regionais") == "1"
+    frase_esperada = FRASE_REGIONAIS if regional else FRASE_CONFIRMACAO
     try:
-        plano = consultar_plano_evolucoes(bloquear=aplicar)
+        plano = consultar_plano_evolucoes(
+            bloquear=aplicar, apenas_regionais=regional
+        )
         if aplicar:
             assinatura = request.form.get("assinatura", "")
             confirmado = request.form.get("backup_confirmado") == "1"
@@ -233,7 +238,7 @@ def gerar_arvores_pokemon_admin():
                 flash("A fonte ou o banco apresenta divergências: a importação foi bloqueada.", "erro")
                 db.session.rollback()
             elif (assinatura != plano.assinatura or not confirmado
-                  or frase != FRASE_CONFIRMACAO):
+                  or frase != frase_esperada):
                 flash("Confirme o plano atual, backup PostgreSQL e a frase de autorização.", "erro")
                 db.session.rollback()
             elif not plano.pendentes:
@@ -251,7 +256,10 @@ def gerar_arvores_pokemon_admin():
                     "Pokémon dos jogadores preservados.",
                     "sucesso",
                 )
-                return redirect(url_for("catalogo_admin.gerar_arvores_pokemon_admin"))
+                return redirect(url_for(
+                    "catalogo_admin.gerar_arvores_pokemon_admin",
+                    **({"regionais": 1} if regional else {}),
+                ))
         # Libera transação iniciada por SELECT na tela de pré-visualização.
         if not aplicar:
             db.session.rollback()
@@ -259,7 +267,8 @@ def gerar_arvores_pokemon_admin():
             "mestre/catalogo/gerar_arvores_pokemon.html",
             plano=plano,
             csrf_token=token,
-            frase=FRASE_CONFIRMACAO,
+            frase=frase_esperada,
+            modo_regional=regional,
         )
     except (SQLAlchemyError, OSError, ValueError):
         db.session.rollback()

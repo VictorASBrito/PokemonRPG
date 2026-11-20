@@ -24,6 +24,7 @@ from app.extensions import db
 from app.models.db import EvolucaoPokemon, FormaPokemon, HistoricoAlteracao
 
 FRASE_CONFIRMACAO = "GERAR-ARVORES-ANKAR"
+FRASE_REGIONAIS = "COMPLETAR-REGIONAIS-ANKAR"
 ARQUIVO_FONTE = (
     Path(__file__).resolve().parents[2]
     / "data" / "referencias" / "pokedex_evolucoes_898_10e2_4.json"
@@ -60,6 +61,59 @@ def carregar_base_evolutiva() -> dict[str, Any]:
         row = next((r for r in registros if r["destino"] == codigo), None)
         if row is None or row["classe"] != "mestre":
             raise ValueError("Evolução especial de Eevee não pode ser liberada automaticamente.")
+    return dados
+
+
+ARQUIVO_REGIONAIS = (
+    Path(__file__).resolve().parents[2]
+    / "data" / "referencias" / "evolucoes_regionais_10e2_5.json"
+)
+
+
+@lru_cache(maxsize=1)
+def carregar_base_regional() -> dict[str, Any]:
+    """Complemento separado: mantém o importador de 430 relações intacto."""
+    dados = json.loads(ARQUIVO_REGIONAIS.read_text(encoding="utf-8"))
+    registros = dados.get("relacoes", [])
+    if not isinstance(registros, list) or len(registros) != 17:
+        raise ValueError("Fonte regional inesperada; revisar antes de inserir vínculos.")
+    pares = [(r["origem"], r["destino"]) for r in registros]
+    if len(set(pares)) != 17:
+        raise ValueError("Fonte regional contém relações duplicadas.")
+    contagem = Counter(r.get("classe") for r in registros)
+    if contagem != {"automatica": 8, "mestre": 9}:
+        raise ValueError("Quantidade de relações regionais mudou: exige revisão.")
+    codigos_criticos = {
+        ("rattata-alola", "raticate-alola"): "mestre",
+        ("pikachu", "raichu-alola"): "mestre",
+        ("meowth-alola", "persian-alola"): "mestre",
+        ("graveler-alola", "golem-alola"): "mestre",
+        ("exeggcute", "exeggutor-alola"): "mestre",
+        ("cubone", "marowak-alola"): "mestre",
+        ("slowpoke-galar", "slowbro-galar"): "mestre",
+        ("slowpoke-galar", "slowking-galar"): "mestre",
+        ("koffing", "weezing-galar"): "mestre",
+    }
+    for r in registros:
+        par = (r.get("origem"), r.get("destino"))
+        simples = r.get("classe") == "automatica"
+        if par in codigos_criticos and r.get("classe") != codigos_criticos[par]:
+            raise ValueError(f"Condição regional sensível indevidamente liberada: {par}.")
+        if r.get("requer_liberacao_mestre") is not (not simples):
+            raise ValueError(f"Proteção da evolução regional inconsistente: {par}.")
+        if not isinstance(r.get("origem_numero"), int) or not isinstance(r.get("destino_numero"), int):
+            raise ValueError(f"Número nacional regional inválido: {par}.")
+        if simples:
+            if r.get("metodo") == "nivel":
+                if type(r.get("nivel")) is not int or r["nivel"] < 1:
+                    raise ValueError(f"Nível regional ausente: {par}.")
+            elif r.get("metodo") == "pedra":
+                if r.get("pedra_codigo") != "ice-stone" or r.get("pedra") != "Pedra do Gelo":
+                    raise ValueError(f"Pedra regional inesperada: {par}.")
+            else:
+                raise ValueError(f"Método automático regional não validado: {par}.")
+        elif r.get("metodo") != "especial" or not r.get("condicao"):
+            raise ValueError(f"Condição mestre regional não documentada: {par}.")
     return dados
 
 
@@ -183,8 +237,13 @@ def planejar_importacao_evolucoes(
     )
 
 
-def consultar_plano_evolucoes(*, bloquear: bool = False) -> PlanoImportacaoEvolucoes:
-    fonte = carregar_base_evolutiva()["relacoes"]
+def consultar_plano_evolucoes(
+    *, bloquear: bool = False, apenas_regionais: bool = False
+) -> PlanoImportacaoEvolucoes:
+    fonte = (
+        carregar_base_regional()["relacoes"] if apenas_regionais
+        else carregar_base_evolutiva()["relacoes"]
+    )
     consulta_formas = select(FormaPokemon).options(selectinload(FormaPokemon.especie))
     consulta_vinculos = select(EvolucaoPokemon)
     if bloquear:
@@ -213,7 +272,14 @@ def aplicar_plano_evolucoes(
             "item_codigo_pokeapi": r.get("pedra_codigo"),
             "fonte": "pokeapi",
             "fonte_url": r.get("fonte_url"),
-            "origem_importacao": "10E.2.4",
+            "origem_importacao": (
+                "10E.2.5" if r.get("fonte") == "pokeapi-csv-regional" else "10E.2.4"
+            ),
+            "condicao": r.get("condicao"),
+            "nivel_informativo": r.get("nivel_informativo"),
+            "item_especifico_pokeapi": r.get("item_especifico"),
+            "forma_regional_origem": r.get("id_forma_pokeapi_origem"),
+            "forma_regional_destino": r.get("id_forma_pokeapi_destino"),
             "requer_liberacao_mestre": not simples,
             "liberacao_individual": not simples,
             "liberacao": "mestre_por_pokemon" if not simples else "requisito_regular",
@@ -224,10 +290,10 @@ def aplicar_plano_evolucoes(
         # 'aprovado_mestre' false aqui significa "nenhuma autorização
         # individual registrada"; não significa falta de revisão da fonte.
         observacao = (
-            "Evolução especial: aprovação individual do mestre obrigatória. "
-            "Não liberar por amizade, troca ou outros itens automaticamente."
+            "Evolução especial: liberação individual do mestre obrigatória. "
+            + (str(r.get("condicao") or "Não liberar por amizade, troca ou itens especiais automaticamente."))
             if not simples else
-            "Evolução padrão por nível ou pedra. Não evoluir a instância "
+            "Evolução regular por nível ou pedra. Não evoluir a instância "
             "sem escolha do treinador e validação da condição."
         )
         relacao = EvolucaoPokemon(

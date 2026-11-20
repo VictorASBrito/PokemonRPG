@@ -613,3 +613,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Divergência PKMRPG:** livro p. 59 exige amizade 100 para qualquer material; amizade numérica retirada de Ankar. Pedido explícito libera pedras comuns sem esse requisito no cadastro, mas não define consumo/ativação automática. Itens especiais requerem mestre.
 - **Proteções:** consulta/simulação read-only, aplicação aditiva, não apagar/alterar vínculos antigos, trava e assinatura, backup externo informado, não tocar em Box/natureza/PV/IV/nível, idempotência. Sem alterações de esquema.
 - **Arquivo de referência:** `docs/ETAPA_10E2_4_GERACAO_COMPLETA_EVOLUCOES.md`; testes `tests/test_importacao_evolucoes_10e2_4.py` e workflow `test-importacao-evolucoes-10e2-4.yml`. Validar CI e depois homologar geração real no PostgreSQL.
+
+
+<!-- ANKAR_10E2_5_REGIONAIS_20261120 -->
+## 2026-11-20 — 10E.2.5: revisão e complemento das formas regionais
+- **Pedido:** mestre importou grande parte das árvores, mas percebeu ausência sistemática das famílias de Alola/Galar. Foi auditado o `data/catalogo/pokemons.json` e o arquivo `pokedex_evolucoes_898_10e2_4.json` da main (PR #16 já mesclado). São 38 formas regionais ou correlatas: 18 Alola sem vínculo, 18 Galar com seis vínculos anteriores, mais duas formas de Darmanitan Galar.
+- **Causa:** a primeira importação operava por espécie, não por `required_pokemon_form_id` / `evolved_pokemon_form_id` / `region_id` da PokéAPI; caminhos de variantes regionais não apareciam mesmo com código das formas no catálogo. A análise não consultou o PostgreSQL real, e formas sem evolução não são erros.
+- **Fonte:** novos 17 caminhos regionais revisados nos CSV `pokemon_evolution.csv` da PokéAPI, Pokémon Database e adaptações do manual. Documento `docs/ETAPA_10E2_5_EVOLUCOES_REGIONAIS.md` contém tabela completa de oito vínculos simples e nove especiais.
+- **Alterações:** `data/referencias/evolucoes_regionais_10e2_5.json`; `app/services/importacao_evolucoes_service.py` com loader e plano isolado regional; comando `flask --app app.py catalogo completar-arvores-regionais`; rota mestre `/mestre/catalogo/pokemons/gerar-arvores?regionais=1`; template `gerar_arvores_pokemon.html` em modo regional; link `Completar árvores regionais` na lista do catálogo; testes/CI e docs.
+- **Segurança:** importação só com simulação, assinatura, backup confirmado e `COMPLETAR-REGIONAIS-ANKAR`, mantendo os 430 vínculos anteriores intocados. Não apaga/reativa relações personalizadas, não muda Pokémon de jogadores e não utiliza migrations.
+- **Regra Ankar:** 8 novos arcos regulares por nível/pedra, 9 reservados ao mestre (noite, região, amizade, troca, Galarica Cuff/Wreath). Darmanitan Zen é alternância de modo e fica para 10E.4; 10E.3 evoluções efetivas individuais.
+- **Testes:** `tests/test_evolucoes_regionais_10e2_5.py`, workflow `test-evolucoes-regionais-10e2-5.yml`, resultado a verificar na CI.
