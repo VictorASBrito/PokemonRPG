@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import hmac
+import secrets
+
 from flask import (
     Blueprint,
     current_app,
@@ -15,6 +18,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import login_obrigatorio, perfil_obrigatorio
+from app.services.autorizacao_evolucao_service import (
+    autorizar_evolucao_individual,
+    revogar_evolucao_individual,
+)
 from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 from app.services.permissoes_service import pode_criar_pokemon, pode_editar_identidade_pokemon
 from app.services.pokemon_db_service import (
@@ -231,6 +238,11 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         "jogador/pokemon.html",
         jogador=contexto.jogador,
         pokemon=pokemon,
+        jogador_id=jogador_id,
+        csrf_evolucao=(
+            session.setdefault("csrf_autorizacao_evolucao", secrets.token_urlsafe(32))
+            if modo_mestre else None
+        ),
         consulta_evolucao=consulta_evolucao,
         especie=registro["especie"],
         calculos=registro["calculos"],
@@ -394,6 +406,83 @@ def editar_mestre(jogador_id: str, pokemon_id: str):
     if contexto is None:
         return redirect(url_for("mestre.dashboard"))
     return _editar(contexto, pokemon_id, modo_mestre=True)
+
+
+def _decidir_autorizacao_evolucao_mestre(
+    jogador_id: str, pokemon_id: str, relacao_id: str, *, revogar: bool
+):
+    """Autoriza ou revoga somente na ficha real do mestre, com CSRF."""
+    contexto = _carregar(jogador_id)
+    if contexto is None:
+        return ("Personagem fora da campanha ativa.", 404)
+    pokemon = _localizar_pokemon(contexto, pokemon_id)
+    if pokemon is None:
+        return ("Pokémon não pertence ao personagem informado.", 404)
+    token_atual = session.get("csrf_autorizacao_evolucao", "")
+    token_enviado = request.form.get("csrf_token", "")
+    if not token_atual or not token_enviado or not hmac.compare_digest(token_atual, token_enviado):
+        return ("Confirmação de formulário inválida.", 403)
+    destino = url_for(
+        "pokemons.editar_mestre",
+        jogador_id=jogador_id,
+        pokemon_id=pokemon_id,
+        retorno="boxes" if request.form.get("retorno") == "boxes" else "equipe",
+        _anchor="consulta-evolucao",
+    )
+    try:
+        dados = {
+            "pokemon_id": pokemon.id,
+            "relacao_id": relacao_id,
+            "usuario_id": session.get("usuario_id"),
+            "campanha_id": contexto.personagem.campanha_id,
+            "motivo": request.form.get("motivo", ""),
+        }
+        if revogar:
+            alterado = revogar_evolucao_individual(**dados)
+        else:
+            _, alterado = autorizar_evolucao_individual(**dados)
+        db.session.commit()
+    except PermissionError:
+        db.session.rollback()
+        return ("Apenas mestre autorizado na campanha pode realizar esta operação.", 403)
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+        return redirect(destino)
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao registrar autorização evolutiva.")
+        flash("Não foi possível registrar a decisão evolutiva no PostgreSQL.", "erro")
+        return redirect(destino)
+    if alterado:
+        flash(
+            "Autorização evolutiva revogada para este Pokémon."
+            if revogar else "Evolução especial liberada para este Pokémon.",
+            "sucesso",
+        )
+    else:
+        flash("Nenhuma alteração necessária nessa autorização.", "aviso")
+    return redirect(destino)
+
+
+@pokemons_bp.post(
+    "/mestre/jogadores/<jogador_id>/pokemon/<pokemon_id>/evolucoes/<relacao_id>/autorizar"
+)
+@perfil_obrigatorio("mestre")
+def autorizar_evolucao_mestre(jogador_id: str, pokemon_id: str, relacao_id: str):
+    return _decidir_autorizacao_evolucao_mestre(
+        jogador_id, pokemon_id, relacao_id, revogar=False,
+    )
+
+
+@pokemons_bp.post(
+    "/mestre/jogadores/<jogador_id>/pokemon/<pokemon_id>/evolucoes/<relacao_id>/revogar"
+)
+@perfil_obrigatorio("mestre")
+def revogar_evolucao_mestre(jogador_id: str, pokemon_id: str, relacao_id: str):
+    return _decidir_autorizacao_evolucao_mestre(
+        jogador_id, pokemon_id, relacao_id, revogar=True,
+    )
 
 
 @pokemons_bp.post(
