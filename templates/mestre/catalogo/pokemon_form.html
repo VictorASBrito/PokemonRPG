@@ -4,7 +4,7 @@
 {% block conteudo %}
 <section class="cabecalho-pagina cabecalho-com-acoes">
     <div><p class="rotulo">Catálogo Pokémon</p><h1>{{ 'Nova espécie ou forma' if modo == 'novo' else forma.nome }}</h1><p class="texto-suave">A ficha dos jogadores usará estas informações imediatamente.</p></div>
-    <div class="acoes-cabecalho"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar</a>{% if forma %}<form method="post" action="{{ url_for('catalogo_admin.duplicar_pokemon', forma_id=forma.id) }}"><button class="botao botao-secundario" type="submit">Duplicar forma</button></form>{% endif %}</div>
+    <div class="acoes-cabecalho"><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar</a>{% if forma %}<a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">Evoluções e formas relacionadas</a><form method="post" action="{{ url_for('catalogo_admin.duplicar_pokemon', forma_id=forma.id) }}"><button class="botao botao-secundario" type="submit">Duplicar forma</button></form>{% endif %}</div>
 </section>
 
 <form id="catalogo-forma-form" class="formulario-catalogo" method="post" enctype="multipart/form-data" data-simulacao-url="{{ url_for('catalogo_admin.simular_pokemon') }}">

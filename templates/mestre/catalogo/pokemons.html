@@ -34,7 +34,7 @@
         <div class="forma-admin-topo"><div><small>#{% if numero_pokedex is not none %}{{ "%03d"|format(numero_pokedex) }}{% else %}—{% endif %} · {{ forma.categoria|capitalize }}</small><h2>{{ forma.nome }}</h2><p>{{ forma.especie.nome }}</p></div></div>
         <div class="chips-tipos">{% for relacao in forma.tipos|sort(attribute='posicao') %}{{ selo_tipo(relacao.tipo.nome) }}{% endfor %}</div>
         <code>{{ forma.codigo }}</code>
-        <div class="acoes-card"><a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar</a><form method="post" action="{{ url_for('catalogo_admin.atividade_pokemon', forma_id=forma.id) }}"><input type="hidden" name="ativo" value="{{ '0' if forma.ativo else '1' }}"><button class="botao botao-secundario" type="submit">{{ 'Desativar' if forma.ativo else 'Reativar' }}</button></form></div>
+        <div class="acoes-card"><a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar</a><a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">Relações</a><form method="post" action="{{ url_for('catalogo_admin.atividade_pokemon', forma_id=forma.id) }}"><input type="hidden" name="ativo" value="{{ '0' if forma.ativo else '1' }}"><button class="botao botao-secundario" type="submit">{{ 'Desativar' if forma.ativo else 'Reativar' }}</button></form></div>
     </div>
 </article>
 {% endfor %}

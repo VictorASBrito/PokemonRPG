@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block titulo %}Relações de {{ forma.nome }} | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Catálogo Pokémon · Relações</p>
+        <h1>{{ forma.nome }}</h1>
+        <p class="texto-suave">Cadastre evoluções, Mega Evoluções e formas relacionadas. Esta tela configura o catálogo, mas não modifica os Pokémon de jogadores.</p>
+    </div>
+    <div class="acoes-cabecalho">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.editar_pokemon', forma_id=forma.id) }}">Editar forma</a>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar ao catálogo</a>
+    </div>
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo"><div><span>1</span><h2>Relações cadastradas</h2></div><p>{{ saida|length }} saída(s) e {{ entrada|length }} entrada(s).</p></div>
+    {% if entrada %}
+    <h3>Pré-evoluções e formas de origem</h3>
+    <div class="lista-vinculos-golpe">
+        {% for relacao in entrada %}
+        <article class="vinculo-golpe-item">
+            <div class="vinculo-descricao">
+                <strong><a href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=relacao.forma_origem_id) }}">{{ relacao.forma_origem.nome }}</a> → {{ forma.nome }}</strong>
+                <small>{{ (relacao.requisitos or {}).get('tipo_relacao', 'evolucao') }} · {{ relacao.tipo_requisito }} · {{ 'Ativa' if relacao.ativo else 'Inativa' }}</small>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if saida %}
+    <div class="lista-vinculos-golpe">
+    {% for relacao in saida %}
+        {% set req = relacao.requisitos or {} %}
+        <article class="vinculo-golpe-item">
+            <div class="vinculo-descricao">
+                <strong>{{ forma.nome }} → <a href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=relacao.forma_destino_id) }}">{{ relacao.forma_destino.nome }}</a></strong>
+                <small>{{ req.get('tipo_relacao', 'evolucao') }} · {{ 'Ativa' if relacao.ativo else 'Inativa' }} · {{ relacao.forma_destino.codigo }}</small>
+            </div>
+            <form class="grade-vinculo-form" method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">
+                <input type="hidden" name="relacao_id" value="{{ relacao.id }}">
+                <input type="hidden" name="destino_id" value="{{ relacao.forma_destino_id }}">
+                <div class="campo">
+                    <label for="tipo-{{ relacao.id }}">Tipo de relação</label>
+                    <select name="tipo_relacao" id="tipo-{{ relacao.id }}">
+                        {% for chave, nome in tipos_relacao %}<option value="{{ chave }}" {% if req.get('tipo_relacao','evolucao') == chave %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="gatilho-{{ relacao.id }}">Requisito</label>
+                    <select name="tipo_requisito" id="gatilho-{{ relacao.id }}">
+                        {% for chave, nome in gatilhos %}<option value="{{ chave }}" {% if relacao.tipo_requisito == chave %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="campo"><label for="nivel-{{ relacao.id }}">Nível</label><input type="number" min="1" max="999" name="nivel" id="nivel-{{ relacao.id }}" value="{{ req.get('nivel') or '' }}"></div>
+                <div class="campo"><label for="item-{{ relacao.id }}">Item / Mega Pedra</label><input name="item_nome" id="item-{{ relacao.id }}" maxlength="140" value="{{ req.get('item_nome') or '' }}"></div>
+                <div class="campo campo-largo"><label for="condicao-{{ relacao.id }}">Condição / observação de regras</label><input name="condicao" id="condicao-{{ relacao.id }}" maxlength="500" value="{{ req.get('condicao') or '' }}"></div>
+                <div class="campo"><label for="fonte-{{ relacao.id }}">Fonte</label><select id="fonte-{{ relacao.id }}" name="fonte">{% for chave, nome in fontes %}<option value="{{ chave }}" {% if req.get('fonte', 'mestre') == chave %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
+                <div class="campo"><label for="url-{{ relacao.id }}">Referência HTTPS</label><input id="url-{{ relacao.id }}" name="fonte_url" type="url" maxlength="500" value="{{ req.get('fonte_url') or '' }}"></div>
+                <div class="campo campo-largo"><label for="obs-{{ relacao.id }}">Notas do mestre</label><input id="obs-{{ relacao.id }}" name="observacoes" maxlength="1500" value="{{ relacao.observacoes or '' }}"></div>
+                <button class="botao botao-secundario" type="submit">{{ 'Reativar e salvar' if not relacao.ativo else 'Salvar alterações' }}</button>
+            </form>
+            {% if relacao.ativo %}
+            <form method="post" action="{{ url_for('catalogo_admin.desativar_relacao_pokemon', forma_id=forma.id, relacao_id=relacao.id) }}">
+                <button class="botao botao-secundario botao-perigo" type="submit">Desativar</button>
+            </form>
+            {% endif %}
+        </article>
+    {% endfor %}
+    </div>
+    {% else %}
+    <div class="efeitos-vazio"><strong>Esta forma ainda não possui relações de saída.</strong><span>Registre uma das sugestões verificadas ou pesquise um destino abaixo.</span></div>
+    {% endif %}
+</section>
+
+{% if sugestoes %}
+<section class="cartao secao-formulario espacamento-topo ui-card">
+    <div class="secao-titulo"><div><span>2</span><h2>Evoluções verificadas</h2></div><p>Dados cruzados com PokéAPI e Pokémon Database, sujeitos à aprovação do mestre.</p></div>
+    <div class="lista-vinculos-golpe">
+    {% for sugestao in sugestoes %}
+        <article class="vinculo-golpe-item">
+            <div class="vinculo-descricao">
+                <strong>{{ sugestao.origem|capitalize }} → {{ sugestao.destino|capitalize }}</strong>
+                <small>Nível {{ sugestao.nivel }} · <a href="{{ sugestao.pokeapi }}" target="_blank" rel="noopener noreferrer">PokéAPI</a> · <a href="{{ sugestao.pokemondb }}" target="_blank" rel="noopener noreferrer">Pokémon Database</a></small>
+            </div>
+            <form method="post" action="{{ url_for('catalogo_admin.registrar_evolucao_verificada', forma_id=forma.id, destino_codigo=sugestao.destino) }}">
+                <button type="submit" class="botao botao-primario">Aprovar e cadastrar</button>
+            </form>
+        </article>
+    {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="cartao secao-formulario espacamento-topo ui-card">
+    <div class="secao-titulo"><div><span>3</span><h2>Criar relação personalizada</h2></div><p>Busque pelo nome da forma ou espécie. Informações ainda não verificadas devem ser registradas como regra do mestre.</p></div>
+    <form method="get" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}" class="pesquisa-vinculos">
+        <div class="campo"><label for="q">Buscar destino</label><input id="q" name="q" type="search" value="{{ termo }}" placeholder="Ex.: Eevee, Charmeleon, Morpeko" minlength="2"></div>
+        <button type="submit" class="botao botao-secundario">Buscar</button>
+    </form>
+    {% if candidatos %}
+    <form method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}" class="formulario-catalogo">
+        <div class="grade-formulario grade-tres-colunas ui-grade">
+            <div class="campo campo-largo"><label for="destino_id">Forma de destino</label><select id="destino_id" name="destino_id" required>{% for destino in candidatos %}<option value="{{ destino.id }}">{{ destino.nome }} · {{ destino.codigo }} ({{ destino.categoria }})</option>{% endfor %}</select></div>
+            <div class="campo"><label for="tipo_relacao">Tipo de relação</label><select id="tipo_relacao" name="tipo_relacao">{% for chave, nome in tipos_relacao %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
+            <div class="campo"><label for="tipo_requisito">Requisito</label><select id="tipo_requisito" name="tipo_requisito">{% for chave, nome in gatilhos %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
+            <div class="campo"><label for="nivel">Nível (se aplicável)</label><input id="nivel" type="number" min="1" max="999" name="nivel" placeholder="Ex.: 16"></div>
+            <div class="campo"><label for="item_nome">Item / Mega Pedra (se aplicável)</label><input id="item_nome" name="item_nome" maxlength="140" placeholder="Ex.: Pedra do Fogo"></div>
+            <div class="campo campo-largo"><label for="condicao">Condição especial / autorização narrativa</label><input id="condicao" name="condicao" maxlength="500" placeholder="Obrigatória para condições especiais, amizade, troca e parentesco"></div>
+            <div class="campo"><label for="fonte">Origem da regra</label><select id="fonte" name="fonte">{% for chave, nome in fontes %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
+            <div class="campo"><label for="fonte_url">Referência externa HTTPS</label><input id="fonte_url" name="fonte_url" type="url" maxlength="500" placeholder="https://..."></div>
+            <div class="campo campo-largo"><label for="observacoes">Notas do mestre</label><textarea id="observacoes" name="observacoes" maxlength="1500" placeholder="Descreva diferenças entre os jogos, o manual e as regras de Ankar"></textarea></div>
+        </div>
+        <button class="botao botao-primario" type="submit">Registrar relação</button>
+    </form>
+    {% elif termo %}
+    <p class="texto-suave">Nenhuma forma ativa encontrada para essa pesquisa.</p>
+    {% else %}
+    <p class="texto-suave">Pesquise uma forma para cadastrar manualmente um novo relacionamento.</p>
+    {% endif %}
+</section>
+
+<section class="cartao secao-formulario espacamento-topo ui-card">
+    <div class="secao-titulo"><div><span>!</span><h2>Regras importantes de Ankar</h2></div></div>
+    <p>O nível do Pokémon acompanha o do treinador. Amizade e experiência individual não são mecânicas ativas na campanha; requisitos desse tipo exigem decisão narrativa do mestre. Mega Evolução é temporária, requer validação de recursos e não é tratada como evolução permanente. Parentesco regional não autoriza troca de forma.</p>
+    <p class="texto-suave">Manual PKMRPG v2.5: capítulo 9, páginas 44–45, e pedras de Mega Evolução no capítulo 16. A habilitação de evoluções nas fichas será desenvolvida na etapa 10E.3.</p>
+</section>
+{% endblock %}

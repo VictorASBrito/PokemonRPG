@@ -578,3 +578,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Testes:** `tests/test_auditoria_pokedex_10e2_1.py` incorpora simulação de `cp1252`, parse JSON e preservação semântica de Nidoran♂. Confirmar resultado CI na branch `fix/10e2-1-auditoria-windows-encoding`.
 - **Banco e esquema:** sem migrations, sem alterações no PostgreSQL, fichas ou `data/catalogo`.
 - **Próximo:** mesclar correção após CI; obter o relatório da instalação Windows; revisar erros antes de qualquer saneamento real da 10E.2.
+
+
+<!-- ANKAR_10E2_2_EDITOR_RELACOES_20261120 -->
+## 2026-11-20 — Etapa 10E.2.2: edição de evoluções e formas no Catálogo
+- **Contexto:** saneamento 10E.2.1.2 concluído pelo mestre, com auditoria reportada de 898 espécies, 1066 formas, zero erros e avisos. O código da nova etapa foi criado após verificar que PR #12 e #13 já estavam mesclados na main.
+- **Fontes verificadas:** PDF `pkmrpg-playtest-2_5.pdf`, cap. 9 pp. 44–45 (evolução opcional por nível, amizade, item; Mega temporária); cap. 16 p. 60 (pedras Mega); PokéAPI `/api/v2/evolution-chain/{id}/` (cadeias 1, 2, 3); Pokémon Database `/evolution/level`. Hierarquia: regras de Ankar > manual > jogos. Não reintroduzir amizade individual, experiência ou mudança automática de forma.
+- **Funcionalidade:** `app/services/evolucoes_admin_service.py`, rotas `/mestre/catalogo/pokemons/<id>/relacoes`, template `pokemon_relacoes.html` e links nos cartões/edição. Relações de entrada/saída, criação, edição, desativação, histórico. Tipos: evolução permanente, Mega temporária, alternativa reversível e parentesco regional. Valida pré-condições, duplicação e ciclos apenas nas evoluções permanentes.
+- **Dados referenciados:** seis sugestões cruzadas de iniciais em `data/referencias/evolucoes_verificadas_10e2.json`. Só registra após clique explícito do mestre; nenhuma importação automática nem consulta externa em runtime.
+- **Modelagem:** reaproveita `EvolucaoPokemon.tipo_requisito` para gatilho e `requisitos['tipo_relacao']` para natureza do vínculo. Sem migration, sem tocar nos Pokémon dos jogadores, itens, PV ou nível de treinador.
+- **Testes:** `tests/test_evolucoes_admin_10e2_2.py`, workflow `.github/workflows/test-evolucoes-10e2-2.yml`; verificar execução na PR. Ver `docs/ETAPA_10E2_2_RELACOES_POKEMON.md`.
+- **Próximo:** verificar CI, revisar na interface, depois 10E.2.3 árvore visual e comparações das demais famílias; 10E.3 elegibilidade real sob as regras de Ankar.

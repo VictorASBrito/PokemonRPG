@@ -63,6 +63,18 @@ from app.services.catalogo_admin_service import (
     simular_atributos_forma,
 )
 
+from app.services.evolucoes_admin_service import (
+    FONTES,
+    GATILHOS,
+    TIPOS_RELACAO,
+    buscar_formas_relacao,
+    cadastrar_sugestao,
+    desativar_relacao,
+    listar_relacoes,
+    salvar_relacao,
+    sugestoes_verificadas,
+)
+
 catalogo_admin_bp = Blueprint("catalogo_admin", __name__, url_prefix="/mestre/catalogo")
 
 
@@ -318,6 +330,99 @@ def editar_pokemon(forma_id: str):
         categorias=CATEGORIAS_FORMA,
         modo="editar",
     )
+
+
+@catalogo_admin_bp.route("/pokemons/<forma_id>/relacoes", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def relacoes_pokemon(forma_id: str):
+    """Relacionamentos de catálogo, sem mutar instâncias dos jogadores."""
+    try:
+        forma = carregar_forma_admin(forma_id)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar forma para relacionamentos.")
+        return redirect(url_for("catalogo_admin.pokemons"))
+    if forma is None:
+        flash("Forma Pokémon não encontrada.", "erro")
+        return redirect(url_for("catalogo_admin.pokemons"))
+
+    if request.method == "POST":
+        try:
+            _, erros = salvar_relacao(
+                forma, request.form, usuario_id=session.get("usuario_id")
+            )
+        except SQLAlchemyError:
+            _erro_banco("Falha ao salvar relação evolutiva.")
+            erros = ["Não foi possível salvar a relação no banco."]
+        if not erros:
+            flash("Relação Pokémon salva. Nenhuma ficha de jogador foi alterada.", "sucesso")
+            return redirect(url_for("catalogo_admin.relacoes_pokemon", forma_id=forma_id))
+        for erro in erros:
+            flash(erro, "erro")
+
+    termo = request.args.get("q", "").strip()[:100]
+    try:
+        saida, entrada = listar_relacoes(forma.id)
+        candidatos = buscar_formas_relacao(termo, excluir_id=forma.id)
+        sugestoes = sugestoes_verificadas(forma)
+    except (SQLAlchemyError, OSError, ValueError):
+        _erro_banco("Falha ao consultar relações Pokémon.")
+        saida, entrada, candidatos, sugestoes = [], [], [], []
+    return render_template(
+        "mestre/catalogo/pokemon_relacoes.html",
+        forma=forma,
+        saida=saida,
+        entrada=entrada,
+        candidatos=candidatos,
+        sugestoes=sugestoes,
+        termo=termo,
+        tipos_relacao=TIPOS_RELACAO,
+        gatilhos=GATILHOS,
+        fontes=FONTES,
+    )
+
+
+@catalogo_admin_bp.post("/pokemons/<forma_id>/relacoes/<relacao_id>/desativar")
+@perfil_obrigatorio("mestre")
+def desativar_relacao_pokemon(forma_id: str, relacao_id: str):
+    forma = carregar_forma_admin(forma_id)
+    if forma is None:
+        flash("Forma Pokémon não encontrada.", "erro")
+        return redirect(url_for("catalogo_admin.pokemons"))
+    try:
+        removida = desativar_relacao(
+            forma, relacao_id, usuario_id=session.get("usuario_id")
+        )
+    except SQLAlchemyError:
+        _erro_banco("Falha ao desativar relacionamento Pokémon.")
+    else:
+        flash(
+            "Relação desativada; histórico preservado." if removida else
+            "Relação ausente ou já desativada.",
+            "sucesso" if removida else "aviso",
+        )
+    return redirect(url_for("catalogo_admin.relacoes_pokemon", forma_id=forma_id))
+
+
+@catalogo_admin_bp.post("/pokemons/<forma_id>/relacoes/verificada/<destino_codigo>")
+@perfil_obrigatorio("mestre")
+def registrar_evolucao_verificada(forma_id: str, destino_codigo: str):
+    forma = carregar_forma_admin(forma_id)
+    if forma is None:
+        flash("Forma Pokémon não encontrada.", "erro")
+        return redirect(url_for("catalogo_admin.pokemons"))
+    try:
+        _, erros = cadastrar_sugestao(
+            forma, destino_codigo, usuario_id=session.get("usuario_id")
+        )
+    except SQLAlchemyError:
+        _erro_banco("Falha ao cadastrar evolução verificada.")
+        erros = ["Não foi possível registrar a sugestão no banco."]
+    if erros:
+        for erro in erros:
+            flash(erro, "erro")
+    else:
+        flash("Evolução verificada registrada no catálogo com aprovação do mestre.", "sucesso")
+    return redirect(url_for("catalogo_admin.relacoes_pokemon", forma_id=forma_id))
 
 
 @catalogo_admin_bp.post("/pokemons/<forma_id>/atividade")
