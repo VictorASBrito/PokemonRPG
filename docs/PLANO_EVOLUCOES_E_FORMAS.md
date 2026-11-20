@@ -266,3 +266,29 @@ consulta `consulta_evolucao_service.py`,
 CSS/JS, testes e CI. **Sem migration adicional**.
 Documentação `docs/ETAPA_10E3_3_4_EVOLUCAO_EFETIVA.md`.
 Próxima: 10E.4 Mega Evoluções e formas temporárias.
+
+
+## Etapa 10E.4 — Megas por permissão do treinador + alternativas livres (20/11/2026)
+
+**Regras confirmadas pelo mestre:** Mega Evolução não exige Pedra Chave,
+Mega Pedra ou golpe específico; o mestre libera a habilidade para o
+**treinador** no Campo. Esse treinador pode ativar uma única Megaforma
+simultânea em Pokémon seu presente no Campo. Retirar o Pokémon, encerrar
+o Campo, revogar a permissão ou desmaiar encerra a Mega.
+
+Pokémon com **formas alternativas** (ex. Morpeko Satisfeito/Faminto)
+podem trocar manualmente entre elas, pela ficha ou Campo, sem
+autorização de mestre. O controle manual substitui a automação de
+habilidades/turnos/clima ainda inexistente; não altera a forma
+permanente. Referências: 48 Megas e 46 caminhos alternativos
+revisados em `data/referencias/transformacoes_10e4.json`, com
+fallback seguro para outras formas do mesmo Pokémon marcadas
+`categoria='alternativa'`.
+
+Migration aditiva `c42e10040001`: permissão
+`personagens.mega_habilitada` (default false), overlay
+`pokemons.forma_temporaria_id` + `tipo_transformacao`.
+`calcular_pokemon` usa bases temporárias, mantendo dano absoluto
+já sofrido e PV 0. O Campo mostra forma, sprite e tipos atuais.
+Não muda UUID, Box ou `forma_pokemon_id` e não consome itens.
+Consulte `docs/ETAPA_10E4_MEGAS_FORMAS_ALTERNATIVAS.md`.
