@@ -1,0 +1,817 @@
+{
+  "versao": "10E.4",
+  "revisado_em": "2026-11-20",
+  "escopo": "Mecânica de estados de transformação; catálogo de formas existente. Mudanças narrativas manuais não automatizam clima, turnos, habilidades ou itens desconhecidos.",
+  "fontes": [
+    "PKMRPG Playtest v2.5 cap. 9 pp.44-45, cap.16 pp.60-62",
+    "Catálogo de Pokémon versionado do Ankar"
+  ],
+  "mega": [
+    {
+      "source": "venusaur",
+      "dest": "venusaur-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Venusaurite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "charizard",
+      "dest": "charizard-mega-x",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Charizardite X",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "charizard",
+      "dest": "charizard-mega-y",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Charizardite Y",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "blastoise",
+      "dest": "blastoise-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Blastoisinite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "beedrill",
+      "dest": "beedrill-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Beedrillite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "pidgeot",
+      "dest": "pidgeot-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Pidgeotite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "alakazam",
+      "dest": "alakazam-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Alakazite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "slowbro",
+      "dest": "slowbro-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Slowbronite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "gengar",
+      "dest": "gengar-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Gengarite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "kangaskhan",
+      "dest": "kangaskhan-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Kangaskhanite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "pinsir",
+      "dest": "pinsir-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Pinsirite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "gyarados",
+      "dest": "gyarados-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Gyaradosite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "aerodactyl",
+      "dest": "aerodactyl-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Aerodactylite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "mewtwo",
+      "dest": "mewtwo-mega-x",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Mewtwonite X",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "mewtwo",
+      "dest": "mewtwo-mega-y",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Mewtwonite Y",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "ampharos",
+      "dest": "ampharos-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Ampharosite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "steelix",
+      "dest": "steelix-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Steelixite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "scizor",
+      "dest": "scizor-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Scizorite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "heracross",
+      "dest": "heracross-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Heracronite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "houndoom",
+      "dest": "houndoom-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Houndoominite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "tyranitar",
+      "dest": "tyranitar-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Tyranitarite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "sceptile",
+      "dest": "sceptile-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Sceptilite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "blaziken",
+      "dest": "blaziken-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Blazikenite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "swampert",
+      "dest": "swampert-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Swampertite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "gardevoir",
+      "dest": "gardevoir-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Gardevoirite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "sableye",
+      "dest": "sableye-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Sablenite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "mawile",
+      "dest": "mawile-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Mawilite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "aggron",
+      "dest": "aggron-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Aggronite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "medicham",
+      "dest": "medicham-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Medichamite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "manectric",
+      "dest": "manectric-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Manectite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "sharpedo",
+      "dest": "sharpedo-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Sharpedonite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "camerupt",
+      "dest": "camerupt-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Cameruptite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "altaria",
+      "dest": "altaria-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Altarianite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "banette",
+      "dest": "banette-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Banettite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "absol",
+      "dest": "absol-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Absolite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "glalie",
+      "dest": "glalie-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Glalitite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "salamence",
+      "dest": "salamence-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Salamencite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "metagross",
+      "dest": "metagross-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Metagrossite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "latias",
+      "dest": "latias-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Latiasite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "latios",
+      "dest": "latios-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Latiosite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "rayquaza",
+      "dest": "rayquaza-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": null,
+      "move": "Ascenção do Dragão",
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "lopunny",
+      "dest": "lopunny-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Lopunnite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "garchomp",
+      "dest": "garchomp-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Garchompite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "lucario",
+      "dest": "lucario-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Lucarionite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "abomasnow",
+      "dest": "abomasnow-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Abomasite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "gallade",
+      "dest": "gallade-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Galladite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "audino",
+      "dest": "audino-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Audinite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    },
+    {
+      "source": "diancie",
+      "dest": "diancie-mega",
+      "kind": "mega",
+      "scope": "combate",
+      "stone": "Diancite",
+      "move": null,
+      "note": "Mega Evolução temporária: apenas uma por treinador; Pedra Chave e Mega Pedra equipada (exceto Rayquaza, com golpe específico)."
+    }
+  ],
+  "alternativas": [
+    {
+      "source": "rotom",
+      "dest": "rotom-microondas",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+    },
+    {
+      "source": "rotom",
+      "dest": "rotom-maquina-de-lavar",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+    },
+    {
+      "source": "rotom",
+      "dest": "rotom-geladeira",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+    },
+    {
+      "source": "rotom",
+      "dest": "rotom-ventilador",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+    },
+    {
+      "source": "rotom",
+      "dest": "rotom-aparador",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "dono",
+      "condition": "Troca de eletrodoméstico; mestre pode revisar o contexto narrativo"
+    },
+    {
+      "source": "darmanitan-normal",
+      "dest": "darmanitan-zen",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Modo Zen com PV iguais ou inferiores à metade do máximo"
+    },
+    {
+      "source": "darmanitan-galar-normal",
+      "dest": "darmanitan-galar-zen",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Modo Zen de Galar com PV iguais ou inferiores à metade do máximo"
+    },
+    {
+      "source": "castform",
+      "dest": "castform-ensolarado",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+    },
+    {
+      "source": "castform",
+      "dest": "castform-chuvoso",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+    },
+    {
+      "source": "castform",
+      "dest": "castform-nevado",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Clima correspondente, verificado pelo mestre (clima não automatizado)"
+    },
+    {
+      "source": "aegislash-escudo",
+      "dest": "aegislash-lamina",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Mudança de postura validada pelo mestre"
+    },
+    {
+      "source": "meloetta-melodia",
+      "dest": "meloetta-pirueta",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Canto Relíquia ou evento de combate validado pelo mestre"
+    },
+    {
+      "source": "wishiwashi-sozinho",
+      "dest": "wishiwashi-cardume",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Formação de cardume e PV verificados pelo mestre"
+    },
+    {
+      "source": "minior-meteoro",
+      "dest": "minior-nucleo",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Escudo rompido, validado pelo mestre"
+    },
+    {
+      "source": "eiscue-congelado",
+      "dest": "eiscue-revelado",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Cabeça de gelo quebrada, validada pelo mestre"
+    },
+    {
+      "source": "morpeko-satisfeito",
+      "dest": "morpeko-faminto",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Troca de fome a cada turno; o Campo não controla turnos"
+    },
+    {
+      "source": "zygarde-50",
+      "dest": "zygarde-100",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Forma Completa sob condição especial, validada pelo mestre"
+    },
+    {
+      "source": "giratina-alternativa",
+      "dest": "giratina-origem",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Item ou ambiente especial, validado pelo mestre"
+    },
+    {
+      "source": "deoxys-normal",
+      "dest": "deoxys-ataque",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Mudança de forma validada pelo mestre"
+    },
+    {
+      "source": "deoxys-normal",
+      "dest": "deoxys-defense",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Mudança de forma validada pelo mestre"
+    },
+    {
+      "source": "deoxys-normal",
+      "dest": "deoxys-velocidade",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Mudança de forma validada pelo mestre"
+    },
+    {
+      "source": "shaymin-terra",
+      "dest": "shaymin-ceu",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Flor Gracídea e condições de horário, validadas pelo mestre"
+    },
+    {
+      "source": "hoopa-confinado",
+      "dest": "hoopa-livre",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Garrafa Prisional e prazo, validados pelo mestre"
+    },
+    {
+      "source": "kyogre",
+      "dest": "kyogre-primitivo",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Esfera Azul e Reversão Primitiva, validada pelo mestre"
+    },
+    {
+      "source": "groudon",
+      "dest": "groudon-primitivo",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Esfera Vermelha e Reversão Primitiva, validada pelo mestre"
+    },
+    {
+      "source": "necrozma",
+      "dest": "necrozma-crepusculo-mane",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Fusão N-Solarizer/N-Lunarizer, validada pelo mestre"
+    },
+    {
+      "source": "necrozma",
+      "dest": "necrozma-alvorada",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Fusão N-Solarizer/N-Lunarizer, validada pelo mestre"
+    },
+    {
+      "source": "zacian-heroi",
+      "dest": "zacian-espada",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Espada enferrujada, validada pelo mestre"
+    },
+    {
+      "source": "zamazenta-heroi",
+      "dest": "zamazenta-escudo",
+      "kind": "alternativa",
+      "scope": "combate",
+      "actor": "mestre",
+      "condition": "Escudo enferrujado, validado pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-agua",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-dragao",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-eletrico",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-fada",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-fantasma",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-fogo",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-gelo",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-grama",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-inseto",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-lutador",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-metal",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-noturno",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-pedra",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-psiquico",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-terra",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-veneno",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    },
+    {
+      "source": "arceus",
+      "dest": "arceus-voador",
+      "kind": "alternativa",
+      "scope": "livre",
+      "actor": "mestre",
+      "condition": "Placa de tipo correspondente, validada pelo mestre"
+    }
+  ],
+  "totais": {
+    "mega": 48,
+    "alternativas": 46
+  }
+}
