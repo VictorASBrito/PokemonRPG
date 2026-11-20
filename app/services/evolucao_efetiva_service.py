@@ -144,8 +144,10 @@ def evoluir_pokemon(
     uid = _uuid(usuario_id, "usuário")
 
     usuario = db.session.get(Usuario, uid)
-    if usuario is None or not usuario.ativo or usuario.perfil != "jogador":
-        raise PermissionError("A escolha de evoluir pertence ao jogador autenticado.")
+    # 'tester' acessa a própria ficha com perfil de sessão 'jogador'.
+    # Manter a propriedade no Personagem.usuario_id (validada abaixo).
+    if usuario is None or not usuario.ativo or usuario.perfil not in {"jogador", "tester"}:
+        raise PermissionError("A evolução exige um jogador ou tester ativo, dono do Pokémon.")
 
     personagem = db.session.scalar(select(Personagem).where(
         Personagem.id == dono_id,
