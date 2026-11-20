@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block titulo %}Catálogo de NPCs | Pokémon RPG{% endblock %}
+{% block titulo %}Gerar NPCs e Hordas | Pokémon RPG{% endblock %}
 {% block estilos %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/npcs-ankar-10d4.css', v='10d4-2') }}">
 {% endblock %}
@@ -8,65 +8,85 @@
   <header class="npcs-cabecalho">
     <div>
       <p class="rotulo">Campanha {{ campanha.nome }} · Ankar</p>
-      <h1>NPCs e Hordas</h1>
+      <h1>Gerar NPCs e Hordas</h1>
       <p class="texto-suave">Gere encontros a partir das rotas e cidades oficiais. NPCs fixos são preservados no catálogo.</p>
     </div>
     <a class="botao botao-secundario botao-link" href="{{ url_for('combates.painel') }}">Abrir Campo</a>
   </header>
   <section class="npcs-formulario ui-card" aria-labelledby="titulo-geracao">
-    <h2 id="titulo-geracao">Gerar equipe regional</h2>
-    <form action="{{ url_for('npcs.gerar') }}" method="post" class="npcs-grade-form">
+    <h2 id="titulo-geracao">Montar equipe de 1 a 6 Pokémon</h2>
+    <form action="{{ url_for('npcs.gerar') }}" method="post" class="npcs-grade-form" data-gerador-npc>
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <label>Tipo de encontro
         <select name="tipo" id="npc-tipo" required>
-          <option value="fixo">Treinador NPC fixo (catálogo)</option>
+          <option value="fixo">Treinador NPC fixo</option>
           <option value="temporario">Treinador NPC temporário</option>
           <option value="horda">Horda selvagem</option>
         </select>
       </label>
       <label>Nome
-        <input type="text" name="nome" maxlength="120" required placeholder="Ex.: Recruta da Rota 1">
+        <input type="text" name="nome" maxlength="120" required placeholder="Nome do treinador ou horda">
       </label>
-      <label>Localidade de Ankar
-        <select name="local_id" id="npc-local" required>
-          <option value="">Selecione uma rota, cidade ou ponto de interesse</option>
-          {% for local in localidades %}
-          <option value="{{ local.id }}">{{ local.nome }} · {{ local.tipo }}</option>
-          {% endfor %}
+      <label>Seleção de Pokémon
+        <select name="modo" id="npc-modo" required>
+          <option value="aleatorio">Aleatória (fauna de Ankar)</option>
+          <option value="manual">Manual (escolher cada Pokémon)</option>
         </select>
       </label>
-      <label>Zona da localidade
-        <select name="zona_index" id="npc-zona" required disabled>
-          <option value="">Selecione a localidade primeiro</option>
-        </select>
+      <label>Quantidade de Pokémon
+        <input type="number" name="quantidade" id="npc-quantidade" min="1" max="6" value="3" required>
       </label>
-      <label>Terreno / tabela de encontros
-        <select name="tabela_index" id="npc-tabela" required disabled>
-          <option value="">Selecione a zona primeiro</option>
-        </select>
-      </label>
-      <label>Quantidade (1–6)
-        <input type="number" name="quantidade" min="1" max="6" value="3" required>
-      </label>
-      <label>Nível mínimo
-        <input type="number" name="nivel_min" min="1" max="100" value="10" required>
-      </label>
-      <label>Nível máximo
-        <input type="number" name="nivel_max" min="1" max="100" value="15" required>
+      <label>Nível do treinador / horda
+        <input type="number" name="nivel" min="1" max="100" value="10" required>
       </label>
       <label class="npcs-check"><input type="checkbox" name="repeticoes" value="1">
         Permitir espécies repetidas em equipes NPC
       </label>
+      <div class="npcs-filtros-regionais" data-modo-aleatorio>
+        <p class="texto-suave">O sorteio considera toda Ankar. Para restringir, escolha uma localidade; zona e terreno são opcionais.</p>
+        <label>Localidade (opcional)
+          <select name="local_id" id="npc-local">
+            <option value="">Toda a região de Ankar</option>
+            {% for local in localidades %}
+            <option value="{{ local.id }}">{{ local.nome }} · {{ local.tipo }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Zona (opcional)
+          <select name="zona_index" id="npc-zona" disabled>
+            <option value="">Todas as zonas</option>
+          </select>
+        </label>
+        <label>Terreno (opcional)
+          <select name="tabela_index" id="npc-tabela" disabled>
+            <option value="">Todos os terrenos</option>
+          </select>
+        </label>
+      </div>
+      <div class="npcs-especies-manuais" data-modo-manual hidden>
+        <p class="texto-suave">Escolha um Pokémon para cada vaga. Todos terão o mesmo nível definido acima.</p>
+        {% for numero in range(1, 7) %}
+        <label data-npc-manual-vaga="{{ numero }}">
+          Pokémon {{ numero }}
+          <input type="search" name="forma_nome_manual"
+                 data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+                 data-seletor-visual="pokemon"
+                 data-seletor-alvo="npc-manual-{{ numero }}"
+                 placeholder="Pesquisar Pokémon no catálogo" autocomplete="off" disabled>
+          <input type="hidden" id="npc-manual-{{ numero }}" name="forma_id_manual" disabled>
+        </label>
+        {% endfor %}
+      </div>
       <label class="npcs-encontrador" data-npc-encontrador hidden>
-        Encontrado por (define rolagens Shiny)
+        Encontrado por (define o sorteio Shiny da horda)
         <select name="encontrador_id" id="npc-encontrador">
-          <option value="">Selecione o treinador da campanha</option>
+          <option value="">Selecione o treinador</option>
           {% for p in encontrados %}<option value="{{ p.id }}">{{ p.nome }}</option>{% endfor %}
         </select>
       </label>
-      <button class="botao botao-primario" type="submit">Gerar prévia de 1 a 6 Pokémon</button>
+      <button class="botao botao-primario" type="submit">Gerar prévia da equipe</button>
     </form>
-    <small>Probabilidades derivadas do d100 da localidade. Faixas ambíguas/reconstruídas e formas não identificadas são descartadas e informadas, nunca alteradas silenciosamente.</small>
+    <small>Modo aleatório usa as tabelas d100 de Ankar; modo manual usa espécies escolhidas do catálogo. Todos os integrantes recebem o mesmo nível.</small>
   </section>
   {% if rascunho %}
   <section class="npcs-previa ui-card" id="npc-previa">
@@ -74,12 +94,12 @@
       <div>
         <p class="rotulo">Prévia ainda não salva</p>
         <h2>{{ rascunho.nome }} · {{ 'Horda' if rascunho.tipo == 'horda' else 'Treinador NPC' }}</h2>
-        <p class="texto-suave">{{ rascunho.local_nome }} / {{ rascunho.zona_nome }} / {{ rascunho.terreno }}</p>
+        <p class="texto-suave">Nível {{ rascunho.nivel }} · {{ "Manual" if rascunho.modo == "manual" else "Aleatória" }} · {{ rascunho.local_nome }}{% if rascunho.zona_nome %} / {{ rascunho.zona_nome }}{% endif %}{% if rascunho.terreno %} / {{ rascunho.terreno }}{% endif %}</p>
       </div>
       <span>{{ rascunho.pokemons|length }} Pokémon</span>
     </div>
     {% set a = rascunho.avisos %}
-    {% if a.rolagens_ambiguas or a.rolagens_sem_faixa or a.rolagens_sem_forma or a.reconstruidos or a.invalidos %}
+    {% if rascunho.modo == "aleatorio" and (a.rolagens_ambiguas or a.rolagens_sem_faixa or a.rolagens_sem_forma or a.reconstruidos or a.invalidos) %}
     <p class="npcs-aviso">Tabela original: {{ a.rolagens_ambiguas }} faces d100 ambíguas,
       {{ a.rolagens_sem_faixa }} sem faixa, {{ a.rolagens_sem_forma }} sem correspondência inequívoca no catálogo;
       {{ a.reconstruidos }} linhas reconstruídas e {{ a.invalidos }} inválidas não foram usadas.
@@ -96,14 +116,17 @@
           {% else %}<span class="npcs-sem-imagem">◈</span>{% endif %}
           <div>
             <strong>{{ pokemon.nome }}</strong>
-            <small>Nv. {{ pokemon.nivel }} · d100 {{ pokemon.d100 }} {% if pokemon.shiny %}· Shiny{% endif %}</small>
+            <small>Nv. {{ pokemon.nivel }}{% if pokemon.d100 %} · d100 {{ pokemon.d100 }}{% endif %} {% if pokemon.shiny %}· Shiny{% endif %}</small>
+            {% if pokemon.local_nome %}<small>{{ pokemon.local_nome }} · {{ pokemon.terreno }}</small>{% endif %}
             <small>{{ pokemon.natureza }} · {{ pokemon.genero }}</small>
           </div>
         </div>
+        {% if rascunho.modo == "aleatorio" %}
         <form action="{{ url_for('npcs.refazer', indice=loop.index0) }}" method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <button type="submit" class="botao botao-secundario">Sortear novamente</button>
         </form>
+        {% endif %}
       </article>
       {% endfor %}
     </div>
@@ -138,5 +161,6 @@
 <script id="npcs-dados-ankar" type="application/json">{{ localidades|tojson }}</script>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/npcs-ankar-10d4.js', v='10d4-2') }}" defer></script>
+<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4-3') }}" defer></script>
+<script src="{{ url_for('static', filename='js/npcs-ankar-10d4.js', v='10d4-3') }}" defer></script>
 {% endblock %}

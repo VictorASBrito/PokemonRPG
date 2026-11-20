@@ -84,7 +84,9 @@ def gerar():
             zona_index=request.form.get("zona_index"),
             tabela_index=request.form.get("tabela_index"),
             quantidade=request.form.get("quantidade"),
-            nivel_min=request.form.get("nivel_min"), nivel_max=request.form.get("nivel_max"),
+            nivel=request.form.get("nivel"),
+            modo=request.form.get("modo"),
+            formas_manuais=request.form.getlist("forma_id_manual"),
             encontrador_id=request.form.get("encontrador_id"),
             permitir_repetidos=request.form.get("repeticoes") == "1",
         ) and "Equipe regional gerada. Revise os Pokémon antes de confirmar."

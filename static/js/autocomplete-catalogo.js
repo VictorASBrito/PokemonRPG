@@ -218,6 +218,7 @@
         });
         if (alvo) {
             campo.closest('form')?.addEventListener('submit', (evento) => {
+                if (campo.disabled) return;
                 if (!alvo.value || campo.value !== nomeSelecionado) {
                     evento.preventDefault();
                     campo.setCustomValidity('Selecione um item na lista de resultados.');

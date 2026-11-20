@@ -46,3 +46,12 @@
 .campo-npc-captura-form select { min-width:0; width:100%; min-height:34px; border:1px solid var(--ui-border,#465268); border-radius:7px; background:var(--ui-surface,#1b2431); color:inherit; }
 .campo-npc-captura-form .botao { padding:7px; font-size:.72rem; }
 .campo-npc-capturavel-aviso { font-size:.74rem; font-weight:700; }
+
+.npcs-grade-form .npcs-filtros-regionais,
+.npcs-grade-form .npcs-especies-manuais { grid-column: 1 / -1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.npcs-filtros-regionais > p,.npcs-especies-manuais > p { grid-column: 1 / -1; margin:0; }
+.npcs-grade-form .npcs-filtros-regionais[hidden],
+.npcs-grade-form .npcs-especies-manuais[hidden],
+.npcs-grade-form .npcs-especies-manuais [hidden] {display:none;}
+.npcs-grade-form .npcs-especies-manuais label { min-width:0; }
+@media(max-width:700px){.npcs-grade-form .npcs-filtros-regionais,.npcs-grade-form .npcs-especies-manuais {grid-template-columns:1fr;}}
