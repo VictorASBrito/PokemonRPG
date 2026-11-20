@@ -182,8 +182,9 @@ def test_fontes_ampliadas_e_propostas_pendentes_nao_podem_ser_aprovadas(app_db, 
         assert len(sugestoes_verificadas(f["eevee"])) == 7
         assert db.session.scalar(select(func.count(HistoricoAlteracao.id))) == 1
 
+    eevee_id = f["eevee"].id
     _login(client_db)
-    url = f"/mestre/catalogo/pokemons/{f['eevee'].id}/relacoes"
+    url = f"/mestre/catalogo/pokemons/{eevee_id}/relacoes"
     pagina = client_db.get(url)
     assert pagina.status_code == 200
     html = pagina.get_data(as_text=True)
@@ -208,7 +209,7 @@ def test_arvore_url_visivel_e_permissoes_mestre(app_db, client_db):
     assert client_db.get(url).status_code == 302
     _login(client_db, "bartz-db", "abc123")
     assert client_db.get(url).status_code == 302
-    client_db.get("/sair")
+    client_db.post("/logout")
     _login(client_db)
     pagina = client_db.get(url)
     assert pagina.status_code == 200
