@@ -27,6 +27,7 @@ ENDPOINTS_JOGADOR = frozenset({
     "pokemons.autocomplete_formas", "pokemons.autocomplete_golpes",
     "pokemons.equipe_jogador", "pokemons.novo_jogador",
     "pokemons.editar_jogador", "pokemons.excluir_jogador",
+    "pokemons.evoluir_jogador",
     "boxes.boxes_jogador", "boxes.mover_jogador", "boxes.renomear_jogador",
     "inventario.inventario_jogador", "inventario.usar_jogador",
     "inventario.equipar_jogador", "inventario.desequipar_jogador",
