@@ -74,6 +74,9 @@ def catalogo():
 @npcs_bp.post("/gerar")
 @perfil_obrigatorio("mestre")
 def gerar():
+    _verificar()
+    # Nunca deixar um rascunho anterior após nova tentativa inválida.
+    session.pop(CHAVE_RASCUNHO, None)
     return _operacao(lambda: (
         gerar_rascunho(
             campanha_codigo=_codigo(), nome=request.form.get("nome"),
