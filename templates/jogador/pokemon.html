@@ -229,7 +229,7 @@
 <section class="cartao secao-pokemon ui-card" id="consulta-evolucao" aria-labelledby="titulo-evolucoes">
     <div class="titulo-secao-pokemon">
         <div>
-            <p class="rotulo">Etapa 10E.3.1 · Consulta</p>
+            <p class="rotulo">Evolução de Pokémon · 10E.3.3/4</p>
             <h2 id="titulo-evolucoes">Evoluções de {{ especie.get('nome') }}</h2>
             <p class="texto-suave">Opções calculadas com o nível do treinador ({{ consulta_evolucao.nivel_treinador }}), os vínculos ativos do catálogo e as pedras na mochila deste personagem.</p>
         </div>
@@ -267,15 +267,28 @@
                             </button>
                         </form>
                         {% endif %}
+                        {% if not modo_mestre and opcao.pode_evoluir %}
+                        <form class="evolucao-form-confirmacao" method="post"
+                              action="{{ url_for('pokemons.evoluir_jogador', pokemon_id=pokemon.get('id'), relacao_id=opcao.relacao_id) }}"
+                              data-confirmacao="Confirma evoluir {{ nome_exibicao }} para {{ opcao.destino_nome }}? A evolução não poderá ser desfeita nesta tela{% if opcao.pedra %} e uma unidade de {{ opcao.pedra }} será consumida{% endif %}.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_acao_evolucao }}">
+                            <input type="hidden" name="retorno" value="{{ retorno }}">
+                            <button class="botao botao-primario" type="submit">
+                                Evoluir para {{ opcao.destino_nome }}
+                            </button>
+                        </form>
+                        {% elif not modo_mestre and opcao.bloqueio_execucao %}
+                        <p class="evolucao-bloqueio"><strong>Ainda não pode evoluir:</strong> {{ opcao.bloqueio_execucao }}</p>
+                        {% endif %}
                     </div>
                 </article>
             {% endfor %}
         </div>
         <p class="texto-suave evolucao-aviso">
-            <strong>Consulta somente leitura:</strong> cumprir um requisito não evolui o Pokémon.
-            Nenhuma pedra é consumida nesta tela. As liberações individuais do mestre
-            são registradas e podem ser revogadas, mas não executam a evolução.
-            A ação de evoluir será desenvolvida na próxima etapa.
+            A evolução é opcional e só acontece depois da confirmação do jogador.
+            Os requisitos e materiais são conferidos novamente antes de gravar a transformação.
+            Evoluções especiais exigem liberação individual do mestre; materiais usados
+            são consumidos da mochila. Mega Evoluções e alterações temporárias ficam fora desta etapa.
             <a href="{{ inventario_url }}">Consultar mochila</a>.
         </p>
     {% else %}

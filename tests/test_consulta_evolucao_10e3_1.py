@@ -284,7 +284,7 @@ def test_rejeita_consulta_de_pokemon_de_outro_treinador(app_db):
             consultar_evolucoes_pokemon(pokemon, outro)
 
 
-def test_ficha_jogador_e_mestre_exibem_previa_sem_controles_de_evolucao(app_db, client_db):
+def test_ficha_jogador_pode_confirmar_evolucao_e_mestre_so_consulta(app_db, client_db):
     with app_db.app_context():
         personagem = _personagem(app_db)
         charmander, charmeleon = _form("charmander"), _form("charmeleon")
@@ -304,15 +304,16 @@ def test_ficha_jogador_e_mestre_exibem_previa_sem_controles_de_evolucao(app_db, 
     html = ficha.get_data(as_text=True)
     assert "Evoluções de Charmander" in html
     assert "Requisito atendido" in html
-    assert "Consulta somente leitura" in html
-    assert "A ação de evoluir será desenvolvida" in html
-    assert "Evoluir agora" not in html
+    assert "A evolução é opcional" in html
+    assert "Evoluir para Charmeleon" in html
+    assert "csrf_acao_evolucao" not in html  # o token é renderizado como valor, não nome
 
     client_db.post("/logout")
     _login(client_db)
     mestre = client_db.get(f"/mestre/jogadores/{id_personagem}/pokemon/{id_pokemon}")
     assert mestre.status_code == 200
     assert "Evoluções de Charmander" in mestre.get_data(as_text=True)
+    assert "Evoluir para Charmeleon" not in mestre.get_data(as_text=True)
     with app_db.app_context():
         salvo = db.session.get(Pokemon, id_pokemon)
         assert salvo.forma_pokemon_id == forma_original_id

@@ -646,3 +646,16 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Rotas/visão:** `app/routes/pokemons.py` com endpoints mestre POST autorizar/revogar protegidos por sessão/CSRF; `app/services/consulta_evolucao_service.py` marca o ramo liberado só para a instância+origem atual; painel na ficha `templates/jogador/pokemon.html`, CSS `static/css/pokemon.css`. O jogador vê apenas o status.
 - **Testes:** `tests/test_autorizacao_evolucao_10e3_2.py`, workflow `test-autorizacao-evolucao-10e3-2.yml` e regressões anteriores. Confirmar CI e validar migration no PostgreSQL real após merge; testes CI usam SQLite.
 - **Limites:** nenhum botão de evolução, nenhuma mudança de `Pokemon.forma_pokemon_id` por autorização, nenhum consumo de item ou recálculo. Evolução real e inventário transacional na 10E.3.3/4.
+
+
+<!-- ANKAR_10E3_3_4_EVOLUCAO_EFETIVA_20261120 -->
+## 2026-11-20 — Evolução permanente opt-in e atomicidade 10E.3.3/4
+- **Pedido:** após mestre confirmar que encontrou as permissões especiais, avançar para evolução real. PR #19 da 10E.3.2 já mesclado; nesta etapa não reimportar árvores, não executar alterações em PostgreSQL remoto.
+- **Fluxo:** jogador na própria ficha encontra `Evoluir para ...` somente se `pode_evoluir`; tela exige confirmação via JS, formulário com token CSRF, POST exclusivo do jogador. Mestre continua autorizando caminhos especiais, mas não inicia evolução na ficha do jogador.
+- **Serviço:** `app/services/evolucao_efetiva_service.py` valida dono via `Usuario`/campanha/personagem, Pokémon ativo fora do Campo, origem/destino e vínculo ativos, nível compartilhado, permissão individual especial vigente, material real ativo/consumível; locks `FOR UPDATE`; faz flush sem commit, endpoint comita só após todos os passos ou faz rollback.
+- **Itens:** `app/services/materiais_evolucao_service.py` usa mapeamento explícito de dez pedras e materiais especiais do PKMRPG v2.5 cap. 16/PokéAPI, correspondência exata de código/nome; requer estoque do mesmo personagem, consome uma unidade na mesma transação, audita, não usa equipamento fora da mochila, bloqueia item desconhecido/não consumível. Ex.: Galarica Cuff/Wreath exigem mestre e item.
+- **PV/atributos:** `calcular_pokemon` refaz os atributos da nova `FormaPokemon` com a regra vigente, nível igual do treinador, Shiny/natureza/bônus/status; `pv_atual` preserva o dano absoluto, Pokémon desmaiado permanece com 0. Esta política de PV é adaptação de engenharia, não regra expressa no manual. Conserva UUID, golpes, posição, Box, item equipado, apelido, natureza, Shiny e anotação.
+- **Autorizações:** ao mudar de forma por evolução, todas permissões anteriores do Pokémon são encerradas transacionalmente com motivo correto; não podem ser reutilizadas. Relacionamentos não permanentes como Mega não são evoluídos.
+- **Rotas/UI:** `app/routes/pokemons.py`, `templates/jogador/pokemon.html`, `static/css/pokemon.css`, `static/js/pokemon.js`, serviço de consulta fornece `pode_evoluir` e `bloqueio_execucao`.
+- **Testes/docs:** `tests/test_evolucao_efetiva_10e3_3_4.py`, CI `test-evolucao-efetiva-10e3-3-4.yml` e `docs/ETAPA_10E3_3_4_EVOLUCAO_EFETIVA.md`. Sem migration nova; confirmar que a migration `b93e21c031a2` da 10E.3.2 está aplicada na instalação.
+- **Próximo:** 10E.4 formas temporárias/Megas, política separada da evolução permanente.

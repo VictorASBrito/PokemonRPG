@@ -231,3 +231,38 @@ controle transacional e idempotência. Veja
 Próximo: 10E.3.3–4, botão e execução transacional de evolução
 com verificação de autorização/requisitos, consumo correto de itens
 e recálculo; não implementados nesta etapa.
+
+
+## 10E.3.3 + 10E.3.4 — Evolução voluntária com consumo atômico (20/11/2026)
+
+O jogador agora pode escolher evoluir um Pokémon quando sua
+relação permanente estiver habilitada. Caminhos simples por nível
+usam **`personagens.nivel`**; pedras comuns exigem 1 unidade real
+na mochila e a consomem. Caminhos narrativos exigem a autorização
+individual persistida na 10E.3.2, com materiais correspondentes,
+quando existirem.
+
+O endpoint POST exclusivo do jogador verifica novamente a propriedade
+do Pokémon, status da campanha, relação e forma atuais, requisito
+de nível, permissão do mestre, material, Campo e CSRF. Tudo acontece
+em uma transação única com locks do Pokémon, personagem e estoque:
+desconto do material, mudança de forma, recálculo dos atributos e PV,
+auditoria e encerramento de autorizações antigas. Em falha, rollback.
+Nenhum botão de evolução aparece para o mestre nesta fase. Não é
+possível evoluir Pokémon em Campo.
+
+**Política explicitada de PV:** preservar o dano absoluto sofrido;
+se desmaiado, mantém zero PV. Essa é uma decisão de implementação,
+pois o livro PKMRPG v2.5 cap. 9 apenas determina recálculo dos
+atributos-base. O capítulo 16 lista materiais, mas Ankar não possui
+amizade numérica. Para materiais especiais, exigir 1 unidade
+consumível na mochila e autorização narrativa; catalogação
+ambígua bloqueia a evolução para revisão humana.
+
+**Arquivos:** `app/services/evolucao_efetiva_service.py`,
+`app/services/materiais_evolucao_service.py`, extensão da
+consulta `consulta_evolucao_service.py`,
+`app/routes/pokemons.py`, ficha `pokemon.html`,
+CSS/JS, testes e CI. **Sem migration adicional**.
+Documentação `docs/ETAPA_10E3_3_4_EVOLUCAO_EFETIVA.md`.
+Próxima: 10E.4 Mega Evoluções e formas temporárias.

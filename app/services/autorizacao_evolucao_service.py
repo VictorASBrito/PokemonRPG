@@ -211,6 +211,7 @@ def revogar_evolucao_individual(
 
 def invalidar_autorizacoes_por_troca_forma(
     pokemon: Pokemon, *, usuario_id: uuid.UUID | str | None,
+    motivo: str = "Mudança manual da forma do Pokémon; autorização anterior invalidada.",
 ) -> int:
     """Desativa concessões quando a espécie/forma é editada manualmente.
 
@@ -228,7 +229,7 @@ def invalidar_autorizacoes_por_troca_forma(
     for a in registros:
         _marcar_revogada(
             a, usuario_id=uid,
-            motivo="Mudança manual da forma do Pokémon; autorização anterior invalidada.",
+            motivo=motivo,
         )
     if registros:
         db.session.flush()
