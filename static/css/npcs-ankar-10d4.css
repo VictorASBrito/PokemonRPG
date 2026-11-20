@@ -1,0 +1,48 @@
+/* Etapa 10D.4.2: NPCs e encontros regionais, isolado da Central do Mestre. */
+.npcs-ankar { display:grid; gap:18px; min-width:0; }
+.npcs-ankar :is(h1,h2) { margin:0; }
+.npcs-cabecalho,.npcs-secao-topo { display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; }
+.npcs-cabecalho { padding:12px 0; }
+.npcs-cabecalho p { margin:5px 0 0; }
+.npcs-ankar .ui-card { padding:16px; }
+.npcs-formulario,.npcs-previa { display:grid; gap:12px; }
+.npcs-formulario > small { opacity:.78; font-size:.78rem; }
+.npcs-grade-form { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:end; gap:12px; }
+.npcs-grade-form label,.npcs-confirmacao label,.npcs-card-acoes label { display:grid; gap:5px; font-size:.82rem; font-weight:700; min-width:0; }
+.npcs-ankar :is(input:not([type=checkbox]),select) { min-height:39px; padding:7px 9px; min-width:0; width:100%; box-sizing:border-box; background:var(--ui-surface,#1b2431); color:inherit; border:1px solid var(--ui-border,#465268); border-radius:8px; }
+.npcs-grade-form > .npcs-check { display:flex; flex-direction:row; align-items:center; gap:9px; }
+.npcs-grade-form > .npcs-check input { width:18px; height:18px; }
+.npcs-grade-form > button { min-height:39px; }
+.npcs-grade-form > .npcs-encontrador[hidden] { display:none; }
+.npcs-ankar .npcs-aviso { padding:12px; border:1px solid var(--ui-border,#465268); border-radius:9px; font-size:.8rem; line-height:1.5; }
+.npcs-equipe-grade { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+.npcs-pokemon-card { padding:11px; display:grid; gap:9px; background:color-mix(in srgb,currentColor 5%,transparent); border:1px solid var(--ui-border,#465268); border-radius:12px; min-width:0; }
+.npcs-pokemon-identidade { display:flex; gap:10px; min-width:0; align-items:center; }
+.npcs-pokemon-identidade img { width:60px; height:60px; object-fit:contain; flex-shrink:0; }
+.npcs-pokemon-identidade > div { display:grid; min-width:0; gap:3px; }
+.npcs-pokemon-identidade small { font-size:.75rem; opacity:.75; }
+.npcs-pokemon-card button { width:100%; }
+.npcs-confirmacao { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+.npcs-confirmacao label { flex:0 1 240px; }
+.npcs-catalogo { display:grid; gap:12px; }
+.npcs-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; align-items:start; }
+.npcs-modelo-card { display:grid; gap:12px; min-width:0; border-radius:15px; }
+.npcs-modelo-card > header { display:flex; justify-content:space-between; align-items:start; gap:9px; }
+.npcs-modelo-card > header > div { display:grid; gap:4px; min-width:0; }
+.npcs-modelo-card > header strong { font-size:1.1rem; overflow-wrap:anywhere; }
+.npcs-modelo-card small { font-size:.73rem; opacity:.77; overflow-wrap:anywhere; }
+.npcs-mini-equipe { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.npcs-mini-pokemon { display:grid; justify-items:center; text-align:center; gap:3px; background:color-mix(in srgb,currentColor 5%,transparent); border-radius:9px; min-width:0; padding:6px 3px; font-size:.74rem; }
+.npcs-mini-pokemon img { width:48px; height:48px; object-fit:contain; }
+.npcs-mini-pokemon span { font-weight:700; overflow-wrap:anywhere; }
+.npcs-card-acoes { display:grid; grid-template-columns:100px 1fr; gap:9px; align-items:end; }
+.npcs-arquivar { border:0; background:transparent; color:inherit; cursor:pointer; text-decoration:underline; font-size:.75rem; padding:5px; }
+.npcs-vazio { padding:22px; opacity:.75; }
+@media(max-width:1200px) { .npcs-cards,.npcs-equipe-grade { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:800px) { .npcs-grade-form { grid-template-columns:repeat(2,minmax(0,1fr)); } .npcs-cards { grid-template-columns:1fr; } }
+@media(max-width:520px) { .npcs-grade-form,.npcs-equipe-grade { grid-template-columns:1fr; } .npcs-card-acoes { grid-template-columns:1fr; } .npcs-ankar .ui-card { padding:12px; } .npcs-confirmacao label { flex:1 1 100%; } }
+.campo-npc-captura-form { display:grid; gap:5px; margin-top:7px; }
+.campo-npc-captura-form label { display:grid; gap:3px; font-size:.76rem; }
+.campo-npc-captura-form select { min-width:0; width:100%; min-height:34px; border:1px solid var(--ui-border,#465268); border-radius:7px; background:var(--ui-surface,#1b2431); color:inherit; }
+.campo-npc-captura-form .botao { padding:7px; font-size:.72rem; }
+.campo-npc-capturavel-aviso { font-size:.74rem; font-weight:700; }

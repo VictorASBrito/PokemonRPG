@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block titulo %}Catálogo de NPCs | Pokémon RPG{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npcs-ankar-10d4.css', v='10d4-2') }}">
+{% endblock %}
+{% block conteudo %}
+<div class="npcs-ankar" data-npcs-ankar>
+  <header class="npcs-cabecalho">
+    <div>
+      <p class="rotulo">Campanha {{ campanha.nome }} · Ankar</p>
+      <h1>NPCs e Hordas</h1>
+      <p class="texto-suave">Gere encontros a partir das rotas e cidades oficiais. NPCs fixos são preservados no catálogo.</p>
+    </div>
+    <a class="botao botao-secundario botao-link" href="{{ url_for('combates.painel') }}">Abrir Campo</a>
+  </header>
+  <section class="npcs-formulario ui-card" aria-labelledby="titulo-geracao">
+    <h2 id="titulo-geracao">Gerar equipe regional</h2>
+    <form action="{{ url_for('npcs.gerar') }}" method="post" class="npcs-grade-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>Tipo de encontro
+        <select name="tipo" id="npc-tipo" required>
+          <option value="fixo">Treinador NPC fixo (catálogo)</option>
+          <option value="temporario">Treinador NPC temporário</option>
+          <option value="horda">Horda selvagem</option>
+        </select>
+      </label>
+      <label>Nome
+        <input type="text" name="nome" maxlength="120" required placeholder="Ex.: Recruta da Rota 1">
+      </label>
+      <label>Localidade de Ankar
+        <select name="local_id" id="npc-local" required>
+          <option value="">Selecione uma rota, cidade ou ponto de interesse</option>
+          {% for local in localidades %}
+          <option value="{{ local.id }}">{{ local.nome }} · {{ local.tipo }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Zona da localidade
+        <select name="zona_index" id="npc-zona" required disabled>
+          <option value="">Selecione a localidade primeiro</option>
+        </select>
+      </label>
+      <label>Terreno / tabela de encontros
+        <select name="tabela_index" id="npc-tabela" required disabled>
+          <option value="">Selecione a zona primeiro</option>
+        </select>
+      </label>
+      <label>Quantidade (1–6)
+        <input type="number" name="quantidade" min="1" max="6" value="3" required>
+      </label>
+      <label>Nível mínimo
+        <input type="number" name="nivel_min" min="1" max="100" value="10" required>
+      </label>
+      <label>Nível máximo
+        <input type="number" name="nivel_max" min="1" max="100" value="15" required>
+      </label>
+      <label class="npcs-check"><input type="checkbox" name="repeticoes" value="1">
+        Permitir espécies repetidas em equipes NPC
+      </label>
+      <label class="npcs-encontrador" data-npc-encontrador hidden>
+        Encontrado por (define rolagens Shiny)
+        <select name="encontrador_id" id="npc-encontrador">
+          <option value="">Selecione o treinador da campanha</option>
+          {% for p in encontrados %}<option value="{{ p.id }}">{{ p.nome }}</option>{% endfor %}
+        </select>
+      </label>
+      <button class="botao botao-primario" type="submit">Gerar prévia de 1 a 6 Pokémon</button>
+    </form>
+    <small>Probabilidades derivadas do d100 da localidade. Faixas ambíguas/reconstruídas e formas não identificadas são descartadas e informadas, nunca alteradas silenciosamente.</small>
+  </section>
+  {% if rascunho %}
+  <section class="npcs-previa ui-card" id="npc-previa">
+    <div class="npcs-secao-topo">
+      <div>
+        <p class="rotulo">Prévia ainda não salva</p>
+        <h2>{{ rascunho.nome }} · {{ 'Horda' if rascunho.tipo == 'horda' else 'Treinador NPC' }}</h2>
+        <p class="texto-suave">{{ rascunho.local_nome }} / {{ rascunho.zona_nome }} / {{ rascunho.terreno }}</p>
+      </div>
+      <span>{{ rascunho.pokemons|length }} Pokémon</span>
+    </div>
+    {% set a = rascunho.avisos %}
+    {% if a.rolagens_ambiguas or a.rolagens_sem_faixa or a.rolagens_sem_forma or a.reconstruidos or a.invalidos %}
+    <p class="npcs-aviso">Tabela original: {{ a.rolagens_ambiguas }} faces d100 ambíguas,
+      {{ a.rolagens_sem_faixa }} sem faixa, {{ a.rolagens_sem_forma }} sem correspondência inequívoca no catálogo;
+      {{ a.reconstruidos }} linhas reconstruídas e {{ a.invalidos }} inválidas não foram usadas.
+      {% if a.total_sem_forma_unica %}
+        Espécies sem vínculo único: {{ a.nomes_sem_forma_unica|join(', ') }}.
+      {% endif %}
+      Foram repetidas {{ a.rolagens_repetidas_ou_descartadas }} rolagens durante a geração.</p>
+    {% endif %}
+    <div class="npcs-equipe-grade">
+      {% for pokemon in rascunho.pokemons %}
+      <article class="npcs-pokemon-card">
+        <div class="npcs-pokemon-identidade">
+          {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="" loading="lazy">
+          {% else %}<span class="npcs-sem-imagem">◈</span>{% endif %}
+          <div>
+            <strong>{{ pokemon.nome }}</strong>
+            <small>Nv. {{ pokemon.nivel }} · d100 {{ pokemon.d100 }} {% if pokemon.shiny %}· Shiny{% endif %}</small>
+            <small>{{ pokemon.natureza }} · {{ pokemon.genero }}</small>
+          </div>
+        </div>
+        <form action="{{ url_for('npcs.refazer', indice=loop.index0) }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="botao botao-secundario">Sortear novamente</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+    <form action="{{ url_for('npcs.confirmar') }}" method="post" class="npcs-confirmacao">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {% if rascunho.tipo == 'fixo' %}
+        <button class="botao botao-primario" type="submit" name="acao" value="salvar_fixo">Salvar novo NPC no catálogo</button>
+        {% if modelos %}
+        <label>Ou substituir equipe de
+          <select name="modelo_id">
+            {% for modelo in modelos %}<option value="{{ modelo.id }}">{{ modelo.nome }}</option>{% endfor %}
+          </select>
+        </label>
+        <button class="botao botao-secundario" type="submit" name="acao" value="atualizar_fixo">Atualizar NPC selecionado</button>
+        {% endif %}
+      {% else %}
+        <label>Time
+          <select name="time_numero">
+            {% for numero in range(1,17) %}<option value="{{ numero }}">Time {{ numero }}</option>{% endfor %}
+          </select>
+        </label>
+        <button class="botao botao-primario" type="submit" name="acao" value="colocar_campo">Colocar grupo no Campo</button>
+      {% endif %}
+    </form>
+  </section>
+  {% endif %}
+  <section class="npcs-catalogo" aria-labelledby="npcs-catalogo-titulo">
+    <div class="npcs-secao-topo">
+      <div>
+        <p class="rotulo">Modelos persistentes</p>
+        <h2 id="npcs-catalogo-titulo">Catálogo de NPCs fixos</h2>
+      </div>
+      <span>{{ modelos|length }} NPCs salvos</span>
+    </div>
+    {% if modelos %}
+    <div class="npcs-cards">
+      {% for modelo in modelos %}
+      <article class="npcs-modelo-card ui-card">
+        <header>
+          <div>
+            <strong>{{ modelo.nome }}</strong>
+            <small>{{ modelo.local_id }} · {{ modelo.zona_nome }} / {{ modelo.terreno }}</small>
+          </div>
+          <span>{{ modelo.quantidade }}/6</span>
+        </header>
+        <div class="npcs-mini-equipe">
+          {% for pokemon in modelo.equipe %}
+          <div class="npcs-mini-pokemon" title="{{ pokemon.nome }} · Nível {{ pokemon.nivel }}">
+            {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="{{ pokemon.nome }}" loading="lazy">
+            {% else %}<span>◈</span>{% endif %}
+            <span>{{ pokemon.nome }}</span>
+            <small>Nv. {{ pokemon.nivel }}</small>
+          </div>
+          {% endfor %}
+        </div>
+        <form action="{{ url_for('npcs.usar_modelo', modelo_id=modelo.id) }}" method="post" class="npcs-card-acoes">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <label>Time
+            <select name="time_numero">
+              {% for n in range(1,17) %}<option value="{{ n }}">Time {{ n }}</option>{% endfor %}
+            </select>
+          </label>
+          <button class="botao botao-primario" type="submit">Colocar cópia no Campo</button>
+        </form>
+        <form action="{{ url_for('npcs.arquivar', modelo_id=modelo.id) }}" method="post" data-npc-arquivar>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="npcs-arquivar">Arquivar modelo</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="ui-card npcs-vazio">Nenhum NPC fixo salvo ainda. Gere a primeira equipe acima para começar seu catálogo.</p>
+    {% endif %}
+  </section>
+</div>
+<script id="npcs-dados-ankar" type="application/json">{{ localidades|tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/npcs-ankar-10d4.js', v='10d4-2') }}" defer></script>
+{% endblock %}
