@@ -11,12 +11,12 @@
     "livro": "pkmrpg-playtest-2_5.pdf, capítulos 9 e 16; diferenças entre regras exigem revisão do mestre"
   },
   "resumo": {
-    "total": 423,
-    "auto": 336,
-    "level": 293,
+    "total": 430,
+    "auto": 340,
+    "level": 297,
     "stones": 43,
-    "manual": 87,
-    "unmapped": 7,
+    "manual": 90,
+    "unmapped": 0,
     "conflicting": 0
   },
   "relacoes": [
@@ -5925,6 +5925,23 @@
       "requer_liberacao_mestre": false
     },
     {
+      "origem": "spewpa",
+      "destino": "vivillon",
+      "origem_numero": 665,
+      "destino_numero": 666,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 341,
+      "version_group_id": 15,
+      "classe": "automatica",
+      "metodo": "nivel",
+      "nivel": 12,
+      "pedra": null,
+      "pedra_codigo": null,
+      "requer_liberacao_mestre": false,
+      "observacao": "Padrão de Vivillon pode variar visualmente com o padrão geográfico; estágio evolutivo normal."
+    },
+    {
       "origem": "litleo",
       "destino": "pyroar",
       "origem_numero": 667,
@@ -7513,6 +7530,123 @@
       "requer_liberacao_mestre": false
     },
     {
+      "origem": "linoone-galar",
+      "destino": "obstagoon",
+      "origem_numero": 264,
+      "destino_numero": 862,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 457,
+      "version_group_id": 20,
+      "classe": "mestre",
+      "metodo": "especial",
+      "gatilho_api": "1",
+      "nivel_informativo": 35,
+      "item_especifico": null,
+      "condicoes_api": {
+        "time_of_day": "night",
+        "minimum_level": "35",
+        "required_pokemon_form_id": "10334"
+      },
+      "requer_liberacao_mestre": true,
+      "liberacao": "por_pokemon",
+      "observacao": "Linha regional (Galar) exige liberação individual e validação do requisito especial pelo mestre."
+    },
+    {
+      "origem": "meowth-galar",
+      "destino": "perrserker",
+      "origem_numero": 52,
+      "destino_numero": 863,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 451,
+      "version_group_id": 20,
+      "classe": "automatica",
+      "metodo": "nivel",
+      "nivel": 28,
+      "pedra": null,
+      "pedra_codigo": null,
+      "requer_liberacao_mestre": false,
+      "observacao": "Somente variante Galar desta espécie pode evoluir nesta linhagem."
+    },
+    {
+      "origem": "corsola-galar",
+      "destino": "cursola",
+      "origem_numero": 222,
+      "destino_numero": 864,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 456,
+      "version_group_id": 20,
+      "classe": "automatica",
+      "metodo": "nivel",
+      "nivel": 38,
+      "pedra": null,
+      "pedra_codigo": null,
+      "requer_liberacao_mestre": false,
+      "observacao": "Somente variante Galar desta espécie pode evoluir nesta linhagem."
+    },
+    {
+      "origem": "farfetch-d-galar",
+      "destino": "sirfetch-d",
+      "origem_numero": 83,
+      "destino_numero": 865,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 454,
+      "version_group_id": 20,
+      "classe": "mestre",
+      "metodo": "especial",
+      "gatilho_api": "8",
+      "nivel_informativo": null,
+      "item_especifico": null,
+      "condicoes_api": {
+        "required_pokemon_form_id": "10325"
+      },
+      "requer_liberacao_mestre": true,
+      "liberacao": "por_pokemon",
+      "observacao": "Linha regional (Galar) exige liberação individual e validação do requisito especial pelo mestre."
+    },
+    {
+      "origem": "mr-mime-galar",
+      "destino": "mr-rime",
+      "origem_numero": 122,
+      "destino_numero": 866,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 455,
+      "version_group_id": 20,
+      "classe": "automatica",
+      "metodo": "nivel",
+      "nivel": 42,
+      "pedra": null,
+      "pedra_codigo": null,
+      "requer_liberacao_mestre": false,
+      "observacao": "Somente variante Galar desta espécie pode evoluir nesta linhagem."
+    },
+    {
+      "origem": "yamask-galar",
+      "destino": "runerigus",
+      "origem_numero": 562,
+      "destino_numero": 867,
+      "fonte": "pokeapi-csv",
+      "fonte_url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_evolution.csv",
+      "linha_pokeapi": 459,
+      "version_group_id": 20,
+      "classe": "mestre",
+      "metodo": "especial",
+      "gatilho_api": "9",
+      "nivel_informativo": null,
+      "item_especifico": null,
+      "condicoes_api": {
+        "minimum_damage_taken": "49",
+        "required_pokemon_form_id": "10338"
+      },
+      "requer_liberacao_mestre": true,
+      "liberacao": "por_pokemon",
+      "observacao": "Linha regional (Galar) exige liberação individual e validação do requisito especial pelo mestre."
+    },
+    {
       "origem": "milcery",
       "destino": "alcremie",
       "origem_numero": 868,
@@ -7631,49 +7765,6 @@
       "observacao": "Requer decisão e liberação individual pelo mestre na campanha."
     }
   ],
-  "pendentes_variantes": [
-    {
-      "origem": "spewpa",
-      "destino": "vivillon",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 666
-    },
-    {
-      "origem": "linoone",
-      "destino": "obstagoon",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 862
-    },
-    {
-      "origem": "meowth",
-      "destino": "perrserker",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 863
-    },
-    {
-      "origem": "corsola",
-      "destino": "cursola",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 864
-    },
-    {
-      "origem": "farfetch-d",
-      "destino": "sirfetch-d",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 865
-    },
-    {
-      "origem": "mr-mime",
-      "destino": "mr-rime",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 866
-    },
-    {
-      "origem": "yamask",
-      "destino": "runerigus",
-      "motivo": "Somente formas regionais/alternativas no CSV; associar à variante correta manualmente.",
-      "numero": 867
-    }
-  ],
+  "pendentes_variantes": [],
   "conflitos_csv": []
 }
