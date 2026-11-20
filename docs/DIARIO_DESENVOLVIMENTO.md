@@ -359,3 +359,5 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Testes escritos:** referência real, duplicatas na fonte, correção de Mega, Nidoran legado e impacto, número nacional divergente, índice de forma, formas ausentes, personalizadas e CLI texto/JSON sem alterações. CI configurado; resultado será indicado após a execução.
 - **Riscos:** a primeira execução no banco histórico pode exibir muitos avisos por `numero=NULL`; isso não justifica mudança automática ou afirmação sobre o estado atual do servidor.
 - **Próxima tarefa:** executar `flask --app app.py catalogo auditar-pokedex --json` no ambiente da campanha, revisar relatórios e preparar saneamento controlado antes do editor 10E.2.2.
+
+- **Resultado CI verificado:** workflow `Auditoria da Pokédex - 10E.2.1`, execução 44816417525, job 136565811738: `18 passed in 5.28s` para `tests/test_auditoria_pokedex_10e2_1.py tests/test_ordenacao_pokedex_10e1.py tests/test_catalogo_admin.py` no commit de código/documentação `1413bcd`. Não equivale a um teste no PostgreSQL real de Ankar.
