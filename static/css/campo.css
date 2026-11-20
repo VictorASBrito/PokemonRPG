@@ -37,3 +37,16 @@
 @media (max-width: 1400px) { .campo-times-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 950px) { .campo-times-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 650px) { .campo-cabecalho { display: grid; } .campo-resumo { display: flex; flex-wrap: wrap; } .campo-times-grade { grid-template-columns: 1fr; } .campo-acoes, .campo-controles { align-items: stretch; } .campo-controles { display: grid; } .campo-pokemon-select { max-width: none; } }
+
+/* 10E.4 — Permissões de treinador e transformações */
+.campo-mega-permissoes{margin:1rem 0;padding:1rem}
+.campo-mega-permissoes h2{margin-top:0}
+.campo-mega-treinadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.6rem}
+.campo-mega-treinador-form{border:1px solid var(--borda,#3a4658);border-radius:9px;padding:.7rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.campo-mega-treinador-form small{display:block}
+.campo-transformacao-tipo{font-size:.75rem;font-weight:700;align-self:center}
+.campo-transformacoes-acoes{display:grid;gap:.4rem;width:100%;margin-top:.5rem}
+.campo-transformacoes-acoes form{display:flex;align-items:end;gap:.3rem;flex-wrap:wrap}
+.campo-transformacoes-acoes label{display:grid;gap:.2rem;min-width:0;font-size:.75rem;flex:1 1 130px}
+.campo-transformacoes-acoes select{max-width:100%;min-width:0;padding:.3rem;border-radius:6px}
+.campo-transformacoes-acoes button{padding:.38rem .55rem;border-radius:7px;cursor:pointer}
