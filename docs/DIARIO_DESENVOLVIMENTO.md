@@ -397,3 +397,5 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Segurança/migration:** perfis mestre, validação de IDs/tipos/ciclos/duplicados, histórico na inclusão/edição/desativação; sem migration, sem alteração de PostgreSQL de produção pelo assistente e sem alterações em Pokémon de jogadores.
 - **Testes escritos:** autenticação, sugestões com aprovação explícita, histórico, edição, desativação, ciclos, duplicados, categoria de Mega, forma alternativa, vínculo regional, fontes inválidas e preservação de Pokémon. CI em workflow dedicado; resultado a registrar após execução.
 - **Próximo:** checar CI, homologar tela no PostgreSQL Ankar e implementar visualização em árvore 10E.2.3 e revisão de outras cadeias de evolução.
+
+- **CI verificado:** workflow `Editor de evoluções e formas - 10E.2.2`, execução 44821837943, job 136584377839, commit `4b8b20a3`: `27 passed in 11.83s` na suíte de relações, catálogo e Pokédex. Também passaram os workflows de NPCs, Campo, fichas, auditoria, ordenação e saneamento nessa revisão. Execução foi em SQLite/Linux; testes manuais no PostgreSQL real e homologação visual ainda pendentes.
