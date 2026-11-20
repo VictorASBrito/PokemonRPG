@@ -265,7 +265,10 @@ def salvar_relacao(
         return None, erros
 
     if existente is None:
-        relacao = EvolucaoPokemon(forma_origem_id=origem.id, forma_destino_id=destino.id)
+        relacao = EvolucaoPokemon(
+            forma_origem_id=origem.id, forma_destino_id=destino.id,
+            tipo_requisito=gatilho, requisitos={},
+        )
         db.session.add(relacao)
         db.session.flush()
         antes = None
