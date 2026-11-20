@@ -268,3 +268,32 @@ def test_bloqueia_numero_nacional_incorreto_sem_sobrescrever(app_db):
         )
         assert especie.numero == 999
         assert db.session.scalar(select(func.count(HistoricoAlteracao.id))) == 0
+
+
+def test_erro_no_meio_da_aplicacao_desfaz_escritas_ja_executadas(app_db, monkeypatch):
+    """Uma falha apos flush deve acionar rollback, nao commit parcial."""
+    _preparar_legado_completo(app_db)
+    assinatura, _ = _simular(app_db)
+
+    def interromper(plano, especies, formas, fonte):
+        bulbasaur = next(e for e in especies if e.codigo == "bulbasaur")
+        bulbasaur.numero = 1
+        db.session.flush()
+        raise ValueError("falha injetada apos o flush")
+
+    monkeypatch.setattr("app.commands.catalogo.aplicar_saneamento", interromper)
+    resultado = app_db.test_cli_runner().invoke(args=[
+        "catalogo", "sanear-pokedex", "--aplicar",
+        "--plano", assinatura, "--backup-confirmado",
+        "--confirmar", CONFIRMACAO_SANEAMENTO,
+    ])
+    assert resultado.exit_code != 0
+    with app_db.app_context():
+        bulbasaur = db.session.scalar(
+            select(EspeciePokemon).where(EspeciePokemon.codigo == "bulbasaur")
+        )
+        assert bulbasaur.numero is None
+        assert db.session.scalar(select(func.count(HistoricoAlteracao.id))) == 0
+        assert db.session.scalar(
+            select(EspeciePokemon).where(EspeciePokemon.codigo == "nidoran-m")
+        ) is None
