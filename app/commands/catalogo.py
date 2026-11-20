@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import click
 import json
+import sys
 from flask import Blueprint
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
@@ -44,6 +45,23 @@ def catalogo_group() -> None:
     """Diagnósticos do catálogo administrável."""
 
 
+def _texto_compativel_saida(texto: str, *, codificacao: str | None = None) -> str:
+    """Escapa somente caracteres que a saída não consegue codificar.
+
+    No Windows, o stdout redirecionado pode usar cp1252, que não
+    representa símbolos como o macho (U+2642) de Nidoran.
+    """
+    encoding = codificacao or getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        return texto.encode(encoding, errors="backslashreplace").decode(encoding)
+    except LookupError:
+        return texto.encode("ascii", errors="backslashreplace").decode("ascii")
+
+
+def _eco_pokedex(texto: str) -> None:
+    click.echo(_texto_compativel_saida(texto))
+
+
 @catalogo_group.command("auditar-pokedex")
 @click.option("--todos", is_flag=True, help="Mostra todos os achados (padrão: primeiros 50).")
 @click.option("--json", "saida_json", is_flag=True, help="Emite relatório JSON completo, sem gravar arquivos.")
@@ -77,33 +95,33 @@ def auditar_pokedex_comando(todos: bool, saida_json: bool) -> None:
             raise click.ClickException(f"Fonte da Pokédex inválida: {exc}") from exc
 
     if saida_json:
-        click.echo(json.dumps(resultado.para_dict(), ensure_ascii=False, indent=2))
+        _eco_pokedex(json.dumps(resultado.para_dict(), ensure_ascii=True, indent=2))
     else:
-        click.echo("Auditoria da Pokédex 10E.2.1 (SOMENTE LEITURA).")
-        click.echo(
+        _eco_pokedex("Auditoria da Pokédex 10E.2.1 (SOMENTE LEITURA).")
+        _eco_pokedex(
             f"Fonte: {resultado.especies_fonte} espécie(s) nacional(is), "
             f"{resultado.formas_fonte} forma(s)."
         )
-        click.echo(
+        _eco_pokedex(
             f"Banco: {resultado.especies_banco} espécie(s), {resultado.formas_banco} forma(s); "
             f"{resultado.formas_oficiais_presentes} forma(s) da fonte presentes; "
             f"{resultado.especies_personalizadas} espécie(s) personalizada(s)."
         )
-        click.echo(f"Resultado: {resultado.erros} erro(s), {resultado.avisos} aviso(s).")
+        _eco_pokedex(f"Resultado: {resultado.erros} erro(s), {resultado.avisos} aviso(s).")
         for tipo, quantidade in resultado.tipos.items():
-            click.echo(f"  {tipo}: {quantidade}")
+            _eco_pokedex(f"  {tipo}: {quantidade}")
         itens = resultado.achados if todos else resultado.achados[:50]
         for achado in itens:
             impacto = (
                 f" [Pokémon ativos vinculados: {achado.pokemons_ativos}]"
                 if achado.pokemons_ativos else ""
             )
-            click.echo(
+            _eco_pokedex(
                 f"- [{achado.nivel.upper()}] {achado.tipo} / {achado.codigo}: "
                 f"{achado.mensagem}{impacto}",
             )
         if len(itens) < len(resultado.achados):
-            click.echo(
+            _eco_pokedex(
                 f"... {len(resultado.achados) - len(itens)} achado(s) oculto(s); "
                 "use --todos ou --json para o relatório completo."
             )
@@ -112,7 +130,7 @@ def auditar_pokedex_comando(todos: bool, saida_json: bool) -> None:
             "Existem vínculos ou números inconsistentes; nenhuma alteração foi aplicada."
         )
     if not saida_json:
-        click.echo("Auditoria concluída: nenhum registro do PostgreSQL foi alterado.")
+        _eco_pokedex("Auditoria concluída: nenhum registro do PostgreSQL foi alterado.")
 
 
 @catalogo_group.command("verificar")
