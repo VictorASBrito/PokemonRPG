@@ -67,7 +67,7 @@ def _validar_contexto(
 
 def _auditar(
     autorizacao: AutorizacaoEvolucaoPokemon, *,
-    usuario_id: uuid.UUID, acao: str, antes: dict | None,
+    usuario_id: uuid.UUID | None, acao: str, antes: dict | None,
 ) -> None:
     depois = {
         "pokemon_id": str(autorizacao.pokemon_id),
@@ -176,7 +176,7 @@ def autorizar_evolucao_individual(
 
 
 def _marcar_revogada(
-    autorizacao: AutorizacaoEvolucaoPokemon, *, usuario_id: uuid.UUID,
+    autorizacao: AutorizacaoEvolucaoPokemon, *, usuario_id: uuid.UUID | None,
     motivo: str,
 ) -> None:
     antes = _anterior(autorizacao)
@@ -217,9 +217,7 @@ def invalidar_autorizacoes_por_troca_forma(
     Chamado dentro da MESMA transação da edição de identidade, antes do
     commit; impede reuso se um Pokémon voltar depois à forma anterior.
     """
-    if usuario_id is None:
-        raise ValueError("A mudança de forma precisa de ator para auditoria.")
-    uid = _uuid(usuario_id)
+    uid = _uuid(usuario_id) if usuario_id is not None else None
     registros = list(db.session.scalars(
         select(AutorizacaoEvolucaoPokemon)
         .where(
