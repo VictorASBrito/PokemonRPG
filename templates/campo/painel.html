@@ -18,6 +18,25 @@
         </div>
     </section>
 
+    {% if mestre %}
+    <section class="campo-mega-permissoes ui-card" aria-labelledby="campo-mega-titulo">
+      <h2 id="campo-mega-titulo">Permissões de Mega Evolução</h2>
+      <p>O mestre libera a capacidade ao <strong>treinador</strong>. Depois, o jogador ativa uma Megaforma de seus próprios Pokémon no Campo. Não há Pedra Chave ou Mega Pedra para equipar.</p>
+      <div class="campo-mega-treinadores">
+        {% for treinador in contexto.treinadores_mega %}
+        <form method="post" action="{{ url_for('combates.conceder_mega_treinador', personagem_id=treinador.id) }}" class="campo-mega-treinador-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="habilitar" value="{{ '0' if treinador.habilitada else '1' }}">
+          <span><strong>{{ treinador.nome }}</strong>
+            <small>{{ 'Mega liberada' if treinador.habilitada else 'Mega bloqueada' }}</small>
+          </span>
+          <button class="botao botao-secundario" type="submit">{{ 'Revogar Mega' if treinador.habilitada else 'Liberar Mega' }}</button>
+        </form>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
     <section class="campo-acoes ui-card" aria-label="Controles do campo">
         <form action="{{ url_for('combates.posicionar') }}" method="post" class="campo-controles">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
