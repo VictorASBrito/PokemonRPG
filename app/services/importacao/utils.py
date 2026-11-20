@@ -57,6 +57,16 @@ def nome_especie(nome_forma: str) -> str:
     return str(nome_forma).split(" (", 1)[0].strip()
 
 
+def codigo_especie_oficial(nome_forma: str) -> str:
+    """Identifica espécies oficiais e diferencia Nidoran♀ de Nidoran♂.
+
+    O slug antigo reduz os dois nomes a 'nidoran'. A exceção específica
+    evita modificar os códigos históricos de todas as outras espécies.
+    """
+    nome = nome_especie(nome_forma)
+    return "nidoran-m" if nome == "Nidoran♂" else slug(nome)
+
+
 def categoria_forma(registro: dict[str, Any]) -> str:
     codigo = str(registro.get("id", "")).lower()
     nome = str(registro.get("nome", "")).lower()
