@@ -65,7 +65,7 @@ def test_mestre_cria_horda_compartilhada_e_jogador_so_visualiza(app_db, client_d
     pagina = client_db.get("/campo").get_data(as_text=True)
     assert "Horda de teste" in pagina and "Bulbasaur" in pagina
     assert 'aria-label="Time 2"' in pagina
-    assert "Novo NPC ou horda" in pagina
+    assert "Gerador regional e catálogo de NPCs" in pagina
 
     assert client_db.post("/logout").status_code == 302
     _entrar(client_db, "bartz-db", "abc123")
