@@ -372,3 +372,5 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Migrations:** nenhuma; não cria colunas nem altera tabelas. Pokémon capturados não são regravados.
 - **Testes:** novos testes do código do importador, simulação, assinatura divergente, bloqueio sem backup, implantação idempotente, histórico de mudanças e preservação de fichas; execução GitHub Actions a confirmar.
 - **Próxima tarefa:** revisar PR e CI; mesclar após aprovação; executar simulação local e analisar assinatura; conferir backup antes de qualquer aplicação; após auditoria limpa iniciar editor 10E.2.2.
+
+- **CI verificado no código da entrega:** commit `350ed716`, workflow `Saneamento controlado da Pokédex - 10E.2.1.2` (run 44819074574, job 136574937493), `26 passed in 14.03s`. Inclui importação repetida, simulação com 897 números NULL e duas formas extras, guardas de backup/assinatura, aprovação transacional, verificação posterior, idempotência, preservação de Pokémon e rollback após flush. Demais regressões do Campo, fichas de NPCs, ordenação e auditoria passaram; teste real em PostgreSQL ainda **não foi executado** pelo assistente.
