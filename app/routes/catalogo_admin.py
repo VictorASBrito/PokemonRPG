@@ -800,10 +800,10 @@ def duplicar_item(item_id: str):
 @perfil_obrigatorio("mestre")
 def npcs():
     """Modelos permanentes ficam no Catálogo, não na tela do gerador."""
-    from app.services.npc_catalogo_service import modelos_campanha
+    from app.services.npc_ficha_service import cards_catalogo_npc
     import secrets
     try:
-        modelos = modelos_campanha(
+        modelos = cards_catalogo_npc(
             campanha_codigo=str(current_app.config["CAMPANHA_PADRAO"])
         )
     except SQLAlchemyError:

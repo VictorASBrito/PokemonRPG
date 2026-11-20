@@ -333,14 +333,22 @@ def aplicar_rascunho(*, campanha_codigo, acao, time_numero=None,
         if acao == "atualizar_fixo":
             modelo = _modelo(campanha.id, modelo_id)
             modelo.nome = rascunho["nome"]
+            modelo.nivel = rascunho["nivel"]
             modelo.equipe = rascunho["pokemons"]
             modelo.local_id, modelo.zona_nome, modelo.terreno = (
                 rascunho["local_id"], rascunho["zona_nome"], rascunho["terreno"]
             )
             acao_historico = "atualizar_modelo"
         else:
+            from app.services.npc_ficha_service import (
+                atributos_iniciais, regras_npc, _pv_maximo_npc
+            )
+            regras_ficha = regras_npc(campanha.id)
+            atributos = atributos_iniciais(regras_ficha)
             modelo = NPCModelo(
                 campanha_id=campanha.id, nome=rascunho["nome"],
+                nivel=rascunho["nivel"], atributos=atributos,
+                pv_atual=_pv_maximo_npc(atributos, regras_ficha),
                 local_id=rascunho["local_id"], zona_nome=rascunho["zona_nome"],
                 terreno=rascunho["terreno"], equipe=rascunho["pokemons"],
                 ativo=True,
