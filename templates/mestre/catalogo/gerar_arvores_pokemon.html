@@ -1,14 +1,15 @@
 {% extends "base.html" %}
-{% block titulo %}Gerar árvores evolutivas | Pokémon RPG{% endblock %}
+{% block titulo %}{{ 'Completar árvores regionais' if modo_regional else 'Gerar árvores evolutivas' }} | Pokémon RPG{% endblock %}
 {% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
 {% block conteudo %}
 <section class="cabecalho-pagina cabecalho-com-acoes">
     <div>
         <p class="rotulo">Catálogo Pokémon · Importação de relações</p>
-        <h1>Gerar árvores evolutivas</h1>
-        <p class="texto-suave">Importação aditiva das 898 espécies. Evoluções simples entram como relações regulares; condições especiais ficam reservadas para liberação individual pelo mestre.</p>
+        <h1>{{ 'Completar árvores regionais' if modo_regional else 'Gerar árvores evolutivas' }}</h1>
+        {% if modo_regional %}<p class="texto-suave">Complemento aditivo de 17 relações de Alola e Galar não incluídas na primeira carga. Nível e pedras simples são regulares; noite, amizade, troca, região e itens especiais dependem do mestre.</p>{% else %}<p class="texto-suave">Importação aditiva das 898 espécies. Evoluções simples entram como relações regulares; condições especiais ficam reservadas para liberação individual pelo mestre.</p>{% endif %}
     </div>
     <div class="acoes-cabecalho">
+        {% if modo_regional %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.gerar_arvores_pokemon_admin') }}">Importação nacional</a>{% else %}<a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.gerar_arvores_pokemon_admin', regionais=1) }}">Completar árvores regionais</a>{% endif %}
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar ao catálogo</a>
     </div>
 </section>
@@ -38,7 +39,8 @@
 
 <section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>2</span><h2>O que será gerado</h2></div></div>
-    <p>As árvores são montadas a partir de todas as relações cadastradas. Evoluções por nível simples usam <strong>o nível compartilhado com o treinador</strong>; evoluções por pedras requerem a pedra correspondente e a escolha do treinador. O cadastro da relação <strong>não consome itens nem altera Pokémon da Box</strong>.</p>
+    <p>As árvores são montadas a partir das relações cadastradas. Evoluções por nível usam <strong>o nível compartilhado com o treinador</strong>; pedras requerem a pedra correspondente e a escolha do treinador. O cadastro da relação <strong>não consome itens nem altera Pokémon da Box</strong>.</p>
+    {% if modo_regional %}<p><strong>Diferenças regionais:</strong> Rattata de Alola exige noite; Raichu e Exeggutor de Alola e Weezing de Galar dependem de região; Slowbro/Slowking de Galar usam itens especiais. Darmanitan de Galar (Zen) é forma de combate, não estágio evolutivo.</p>{% endif %}
     <p><strong>Exige liberação do mestre para o Pokémon específico:</strong> amizade, troca, materiais especiais, horário, sexo, movimentos, localização, clima, requisitos regionais e outras condições adicionais. Umbreon, Espeon e Sylveon estão nessa categoria.</p>
     <p class="texto-suave">As relações existentes não serão apagadas, reativadas nem sobrescritas. O sistema ignora pares já cadastrados e cria somente os ausentes.</p>
 </section>
@@ -46,7 +48,7 @@
 <section class="cartao secao-formulario ui-card">
     <div class="secao-titulo"><div><span>3</span><h2>Aplicar no PostgreSQL</h2></div><p>Exige backup real verificado e confirmação explícita.</p></div>
     {% if not plano.bloqueios and plano.pendentes %}
-    <form method="post" action="{{ url_for('catalogo_admin.gerar_arvores_pokemon_admin') }}" class="formulario-catalogo">
+    <form method="post" action="{{ url_for('catalogo_admin.gerar_arvores_pokemon_admin', regionais=1) if modo_regional else url_for('catalogo_admin.gerar_arvores_pokemon_admin') }}" class="formulario-catalogo">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <input type="hidden" name="assinatura" value="{{ plano.assinatura }}">
         <label class="alternador-linha">
@@ -57,12 +59,12 @@
             <label for="confirmar">Para confirmar, digite exatamente: <code>{{ frase }}</code></label>
             <input id="confirmar" name="confirmar" required autocomplete="off" maxlength="50">
         </div>
-        <button class="botao botao-primario" type="submit">Gerar as árvores agora</button>
+        <button class="botao botao-primario" type="submit">{{ 'Complementar árvores regionais' if modo_regional else 'Gerar as árvores agora' }}</button>
     </form>
     {% elif plano.bloqueios %}
         <p class="texto-suave">Corrija os conflitos indicados antes de realizar a importação.</p>
     {% else %}
-        <p><strong>Todas as 430 relações da fonte já estão representadas no catálogo.</strong> Não é necessário importar novamente.</p>
+        <p><strong>{{ 'As 17 relações regionais' if modo_regional else 'Todas as 430 relações da fonte' }} já estão representadas no catálogo.</strong> Não é necessário importar novamente.</p>
     {% endif %}
 </section>
 
