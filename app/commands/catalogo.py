@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import click
+import json
 from flask import Blueprint
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
@@ -29,6 +30,7 @@ from app.models.db import (
 from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, efeitos_para_editor
 from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
 from app.services.auditoria_itens_service import auditar_itens
+from app.services.auditoria_pokedex_service import auditar_pokedex, carregar_fonte_pokedex
 from app.services.reparo_natureza_importada import (
     campo_item_repetido_da_natureza,
     elegivel_para_desvincular,
@@ -40,6 +42,77 @@ catalogo_cli = Blueprint("catalogo_cli", __name__)
 @catalogo_cli.cli.group("catalogo")
 def catalogo_group() -> None:
     """Diagnósticos do catálogo administrável."""
+
+
+@catalogo_group.command("auditar-pokedex")
+@click.option("--todos", is_flag=True, help="Mostra todos os achados (padrão: primeiros 50).")
+@click.option("--json", "saida_json", is_flag=True, help="Emite relatório JSON completo, sem gravar arquivos.")
+def auditar_pokedex_comando(todos: bool, saida_json: bool) -> None:
+    """Compara números nacionais e vínculos com a fonte da Pokédex: SOMENTE LEITURA.
+
+    Não cria, corrige, renumera, importa ou exclui registros no PostgreSQL.
+    Os erros levam a código de saída diferente de zero. Ausência de números
+    (NULL) e formas faltantes são avisos até haver decisão de saneamento.
+    """
+    try:
+        referencia = carregar_fonte_pokedex()
+    except (OSError, ValueError) as exc:
+        raise click.ClickException(f"Não foi possível carregar a fonte da Pokédex: {exc}") from exc
+
+    # Uma consulta por tabela + agregação: não percorre as fichas dos jogadores.
+    with db.session.no_autoflush:
+        especies = list(db.session.scalars(select(EspeciePokemon)).all())
+        formas = list(db.session.scalars(select(FormaPokemon)).all())
+        vinculados = dict(db.session.execute(
+            select(Pokemon.forma_pokemon_id, func.count(Pokemon.id))
+            .where(Pokemon.ativo.is_(True))
+            .group_by(Pokemon.forma_pokemon_id)
+        ).all())
+
+        try:
+            resultado = auditar_pokedex(
+                especies, formas, referencia, pokemons_por_forma=vinculados,
+            )
+        except ValueError as exc:
+            raise click.ClickException(f"Fonte da Pokédex inválida: {exc}") from exc
+
+    if saida_json:
+        click.echo(json.dumps(resultado.para_dict(), ensure_ascii=False, indent=2))
+    else:
+        click.echo("Auditoria da Pokédex 10E.2.1 (SOMENTE LEITURA).")
+        click.echo(
+            f"Fonte: {resultado.especies_fonte} espécie(s) nacional(is), "
+            f"{resultado.formas_fonte} forma(s)."
+        )
+        click.echo(
+            f"Banco: {resultado.especies_banco} espécie(s), {resultado.formas_banco} forma(s); "
+            f"{resultado.formas_oficiais_presentes} forma(s) da fonte presentes; "
+            f"{resultado.especies_personalizadas} espécie(s) personalizada(s)."
+        )
+        click.echo(f"Resultado: {resultado.erros} erro(s), {resultado.avisos} aviso(s).")
+        for tipo, quantidade in resultado.tipos.items():
+            click.echo(f"  {tipo}: {quantidade}")
+        itens = resultado.achados if todos else resultado.achados[:50]
+        for achado in itens:
+            impacto = (
+                f" [Pokémon ativos vinculados: {achado.pokemons_ativos}]"
+                if achado.pokemons_ativos else ""
+            )
+            click.echo(
+                f"- [{achado.nivel.upper()}] {achado.tipo} / {achado.codigo}: "
+                f"{achado.mensagem}{impacto}",
+            )
+        if len(itens) < len(resultado.achados):
+            click.echo(
+                f"... {len(resultado.achados) - len(itens)} achado(s) oculto(s); "
+                "use --todos ou --json para o relatório completo."
+            )
+    if resultado.erros:
+        raise click.ClickException(
+            "Existem vínculos ou números inconsistentes; nenhuma alteração foi aplicada."
+        )
+    if not saida_json:
+        click.echo("Auditoria concluída: nenhum registro do PostgreSQL foi alterado.")
 
 
 @catalogo_group.command("verificar")
