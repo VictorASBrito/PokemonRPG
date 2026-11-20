@@ -165,6 +165,8 @@ def evoluir_pokemon(
     ).with_for_update())
     if pokemon is None:
         raise ValueError("Pokémon não encontrado na ficha deste treinador.")
+    if pokemon.forma_temporaria_id is not None:
+        raise ValueError("Reverta a transformação temporária antes da evolução permanente.")
     if db.session.scalar(select(PokemonEmCampo.id).where(
         PokemonEmCampo.pokemon_id == pokemon.id
     )) is not None:
