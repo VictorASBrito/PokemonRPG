@@ -23,6 +23,7 @@ from app.services.autorizacao_evolucao_service import (
     revogar_evolucao_individual,
 )
 from app.services.evolucao_efetiva_service import evoluir_pokemon
+from app.services.transformacoes_service import listar_formas_temporarias, transformar_pokemon
 from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 from app.services.permissoes_service import pode_criar_pokemon, pode_editar_identidade_pokemon
 from app.services.pokemon_db_service import (
@@ -245,6 +246,9 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
             if modo_mestre else None
         ),
         consulta_evolucao=consulta_evolucao,
+        formas_temporarias=listar_formas_temporarias(pokemon_model),
+        forma_visivel=registro["forma_visivel"],
+        tipo_transformacao=registro["transformacao"],
         csrf_acao_evolucao=(
             session.setdefault("csrf_acao_evolucao", secrets.token_urlsafe(32))
             if not modo_mestre else None
@@ -434,6 +438,47 @@ def evoluir_jogador(pokemon_id: str, relacao_id: str):
         + f"PV: {resultado.pv_novo}/{resultado.pv_maximo_novo}.",
         "sucesso",
     )
+    return redirect(destino)
+
+
+@pokemons_bp.post("/jogador/pokemon/<pokemon_id>/transformar")
+@perfil_obrigatorio("jogador")
+def transformar_jogador(pokemon_id: str):
+    token = session.get("csrf_acao_evolucao", "")
+    informado = request.form.get("csrf_token", "")
+    if not token or not informado or not hmac.compare_digest(token, informado):
+        return ("Confirmação de transformação inválida.", 403)
+    referencia = str(session.get("personagem_id", ""))
+    contexto = _carregar(referencia)
+    if contexto is None:
+        return ("Treinador não encontrado nesta campanha.", 403)
+    pokemon = _localizar_pokemon(contexto, pokemon_id)
+    if pokemon is None:
+        return ("Pokémon não pertence ao treinador autenticado.", 404)
+    retorno = "boxes" if request.form.get("retorno") == "boxes" else "equipe"
+    destino = url_for(
+        "pokemons.editar_jogador",
+        pokemon_id=pokemon_id,
+        retorno=retorno,
+        _anchor="transformacoes-temporarias",
+    )
+    try:
+        mensagem = transformar_pokemon(
+            pokemon_id=pokemon.id, destino_id=request.form.get("destino_id"),
+            tipo=str(request.form.get("tipo", "")),
+            usuario_id=session.get("usuario_id"),
+            personagem_id=contexto.personagem.id,
+            campanha_id=contexto.personagem.campanha_id,
+        )
+        db.session.commit()
+        flash(mensagem, "sucesso")
+    except (ValueError, PermissionError) as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha na transformação temporária.")
+        flash("Não foi possível transformar este Pokémon.", "erro")
     return redirect(destino)
 
 
