@@ -500,3 +500,11 @@ progress::-moz-progress-bar { background: #3a9b61; border-radius: 999px; }
 .evolucao-estado-requer_mestre{border-color:#b58a3e}
 .evolucao-aviso{margin-top:1rem;font-size:.88rem}
 @media(max-width:650px){.evolucao-opcao{align-items:flex-start;flex-direction:column}.evolucao-detalhes{text-align:left;max-width:100%;flex-basis:auto}}
+
+/* 10E.3.2 — Liberações individuais, formulário fora da edição geral. */
+.evolucao-estado-liberada_mestre{border-color:#3d986d}
+.evolucao-form-autorizacao{display:grid;gap:.4rem;margin-top:.7rem;text-align:left}
+.evolucao-form-autorizacao label{font-size:.82rem;font-weight:650}
+.evolucao-form-autorizacao textarea{width:100%;min-width:0;max-width:100%;font:inherit;padding:.55rem .65rem;border:1px solid var(--borda,#d5d8df);border-radius:8px}
+.evolucao-form-autorizacao button{justify-self:end}
+@media(max-width:650px){.evolucao-form-autorizacao button{justify-self:start}}

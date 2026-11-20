@@ -250,14 +250,32 @@
                     <div class="evolucao-detalhes">
                         <span class="evolucao-estado evolucao-estado-{{ opcao.estado }}">{{ opcao.estado_texto }}</span>
                         <p>{{ opcao.orientacao }}</p>
+                        {% if modo_mestre and opcao.estado in ('requer_mestre', 'liberada_mestre') %}
+                        <form class="evolucao-form-autorizacao" method="post"
+                              action="{{ url_for('pokemons.revogar_evolucao_mestre' if opcao.estado == 'liberada_mestre' else 'pokemons.autorizar_evolucao_mestre', jogador_id=jogador_id, pokemon_id=pokemon.get('id'), relacao_id=opcao.relacao_id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_evolucao }}">
+                            <input type="hidden" name="retorno" value="{{ retorno }}">
+                            <label for="motivo-evolucao-{{ opcao.relacao_id }}">
+                                {{ 'Motivo da revogação' if opcao.estado == 'liberada_mestre' else 'Justificativa da liberação' }}
+                            </label>
+                            <textarea id="motivo-evolucao-{{ opcao.relacao_id }}" name="motivo"
+                                      rows="2" minlength="5" maxlength="500" required
+                                      placeholder="Descreva a decisão narrativa da campanha"></textarea>
+                            <button class="botao {{ 'botao-secundario' if opcao.estado == 'liberada_mestre' else 'botao-primario' }}"
+                                    type="submit">
+                                {{ 'Revogar liberação' if opcao.estado == 'liberada_mestre' else 'Liberar para este Pokémon' }}
+                            </button>
+                        </form>
+                        {% endif %}
                     </div>
                 </article>
             {% endfor %}
         </div>
         <p class="texto-suave evolucao-aviso">
             <strong>Consulta somente leitura:</strong> cumprir um requisito não evolui o Pokémon.
-            Nenhuma pedra é consumida nesta tela, e evoluções especiais exigirão autorização
-            individual do mestre. A ação de evoluir será desenvolvida na próxima etapa.
+            Nenhuma pedra é consumida nesta tela. As liberações individuais do mestre
+            são registradas e podem ser revogadas, mas não executam a evolução.
+            A ação de evoluir será desenvolvida na próxima etapa.
             <a href="{{ inventario_url }}">Consultar mochila</a>.
         </p>
     {% else %}

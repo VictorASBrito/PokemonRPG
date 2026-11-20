@@ -205,3 +205,29 @@ testes de segurança e documentação
 `docs/ETAPA_10E3_1_CONSULTA_ELEGIBILIDADE.md`.
 Próxima etapa: 10E.3.2 autorizações individuais persistidas
 e só posteriormente ações de evolução/consumo.
+
+
+## 10E.3.2 — Autorização de evolução por Pokémon (20/11/2026)
+
+A etapa 10E.3.1 já foi mesclada; a 10E.3.2 introduz permissões
+narrativas **por instância Pokémon + relação evolutiva específica**.
+O mestre pode conceder, revogar e justificar decisões nas fichas
+dos jogadores. Concessão não evolui Pokémon nem consome itens.
+
+A autorização persiste na nova tabela
+`autorizacoes_evolucao_pokemon`, criada pela migration
+`b93e21c031a2` (filha de `a14d4e4044a1`), com registro de mestre,
+origem da forma, timestamps, justificativa e revogação.
+O HistóricoAlteracao acompanha as decisões, e mudar manualmente
+a forma revoga concessões antigas na mesma transação.
+
+A visualização 10E.3.1 passa a mostrar **Liberada pelo mestre**
+somente ao Pokémon e ramo efetivamente autorizados; demais Eevee
+e alternativas seguem bloqueados. Segurança: perfil e membro da
+campanha checados no banco, CSRF, validação de vínculo ativo,
+controle transacional e idempotência. Veja
+`docs/ETAPA_10E3_2_AUTORIZACAO_INDIVIDUAL.md`.
+
+Próximo: 10E.3.3–4, botão e execução transacional de evolução
+com verificação de autorização/requisitos, consumo correto de itens
+e recálculo; não implementados nesta etapa.
