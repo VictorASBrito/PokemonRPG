@@ -442,3 +442,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Próximos passos:** confirmar CI, revisar PR, aplicar complemento somente após backup e simulação no PostgreSQL, validar árvores de Vulpix/Geodude/Slowpoke de Galar, continuar 10E.3 e 10E.4.
 
 - **CI validada:** workflow `Evoluções regionais 10E.2.5`, execução `44829302699`, job `136609875932`, commit `75d3164e`: **43 passed in 26.67s**. Testes regionais e regressões 10E.2.1/2/3/4 aprovados; outros 10 workflows de Campo, NPCs, saneamento e catálogo também concluíram com `success` no mesmo commit. Os testes são em SQLite/Linux; ainda falta a simulação e revisão do mestre no PostgreSQL real de Ankar. O PR #17 está aberto, mesclável, não mesclado automaticamente.
+
+
+### 2026-11-20 — Etapa 10E.3.1: elegibilidade de evolução por Pokémon
+- **Motivação:** importar as árvores não era suficiente para decidir se um Pokémon individual poderia evoluir. O mestre confirmou a aplicação do complemento regional no PostgreSQL.
+- **Status:** implementado na branch `feature/10e3-1-consulta-elegibilidade`; CI e homologação visual no PostgreSQL a verificar nesta entrada.
+- **Implementação:** `app/services/consulta_evolucao_service.py`, consulta a `EvolucaoPokemon` pela forma exata e à mochila do personagem, avaliação pelo nível compartilhado, validação conservadora de requerimento do mestre; `app/routes/pokemons.py` integra no fluxo já autorizado do jogador/mestre; painel no template `templates/jogador/pokemon.html` e CSS `static/css/pokemon.css`.
+- **Estados:** requisito atendido, nível insuficiente, pedra ausente, depende do mestre. Não existe botão de evolução, nem consumo/alterações por GET. Formas regionais são separadas pelo UUID exato; Mega/reversíveis ficam de fora.
+- **Cuidado:** aprovação editorial do catálogo não dá permissão para Pokémon individual; Espeon/Umbreon/Sylveon, Gallade (gênero), Slowpoke de Galar (item especial), Rattata de Alola (noite) e demais requisitos condicionais ficam sempre com mestre.
+- **Bancos:** sem migration, sem alteração de PostgreSQL real pelo assistente, nenhuma atualização de ficha ou inventário. Testes em `tests/test_consulta_evolucao_10e3_1.py` e CI `test-elegibilidade-evolucao-10e3-1.yml` incluindo regressões das árvores. Consultar `docs/ETAPA_10E3_1_CONSULTA_ELEGIBILIDADE.md`.
+- **Próximas etapas:** 10E.3.2 permissão persistida por Pokémon/relação; 10E.3.3 ação de evolução com confirmação; 10E.3.4 consumo transacional e recálculo de atributos/PV.
