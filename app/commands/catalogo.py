@@ -5,6 +5,7 @@ import json
 import sys
 from flask import Blueprint
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
@@ -32,6 +33,12 @@ from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, 
 from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
 from app.services.auditoria_itens_service import auditar_itens
 from app.services.auditoria_pokedex_service import auditar_pokedex, carregar_fonte_pokedex
+from app.services.importacao_evolucoes_service import (
+    FRASE_CONFIRMACAO,
+    aplicar_plano_evolucoes,
+    consultar_plano_evolucoes,
+)
+
 from app.services.saneamento_pokedex_service import (
     CONFIRMACAO_SANEAMENTO,
     aplicar_saneamento,
@@ -534,3 +541,72 @@ def sanear_pokedex_comando(
     click.echo("Execute: flask --app app.py catalogo auditar-pokedex")
 
 
+
+
+@catalogo_group.command("gerar-arvores-pokemon")
+@click.option("--aplicar", is_flag=True, help="Confirma inserção aditiva após backup e simulação.")
+@click.option("--plano", "assinatura_informada", default="", help="Assinatura SHA256 da simulação.")
+@click.option("--backup-confirmado", is_flag=True, help="Declara backup PostgreSQL validado e restaurável.")
+@click.option("--confirmar", default="", help="Frase GERAR-ARVORES-ANKAR.")
+def gerar_arvores_pokemon(
+    aplicar: bool, assinatura_informada: str, backup_confirmado: bool, confirmar: str
+) -> None:
+    """Carrega todas as árvores oficiais sem evoluir Pokémon capturados."""
+    try:
+        plano = consultar_plano_evolucoes(bloquear=aplicar)
+        _eco_pokedex(
+            f"Pokédex evolutiva 10E.2.4 — {'APLICAÇÃO' if aplicar else 'SIMULAÇÃO'}."
+        )
+        _eco_pokedex(
+            f"Fonte: {plano.auto_fonte} relações por nível/pedra; "
+            f"{plano.mestre_fonte} reservadas ao mestre."
+        )
+        _eco_pokedex(
+            f"Novas relações: {plano.automaticas_pendentes} regulares + "
+            f"{plano.mestre_pendentes} com liberação individual."
+        )
+        _eco_pokedex(f"Relações já cadastradas preservadas: {plano.ja_existentes}.")
+        _eco_pokedex(f"Assinatura do plano: {plano.assinatura}")
+        if plano.bloqueios:
+            for bloqueio in plano.bloqueios[:30]:
+                _eco_pokedex("  BLOQUEIO: " + bloqueio)
+            raise click.ClickException(
+                f"{len(plano.bloqueios)} conflito(s) impedem a importação. "
+                "Nenhum dado foi alterado."
+            )
+
+        if not aplicar:
+            _eco_pokedex("SIMULAÇÃO: somente leitura; nenhum dado alterado.")
+            _eco_pokedex(
+                "Para gravar após BACKUP: --aplicar --plano <assinatura> "
+                f"--backup-confirmado --confirmar {FRASE_CONFIRMACAO}"
+            )
+            return
+        if (
+            assinatura_informada != plano.assinatura
+            or not backup_confirmado
+            or confirmar != FRASE_CONFIRMACAO
+        ):
+            raise click.ClickException(
+                "Aplicação exige assinatura atual da simulação, backup PostgreSQL "
+                f"verificado e --confirmar {FRASE_CONFIRMACAO}. Nenhuma alteração."
+            )
+        if not plano.pendentes:
+            _eco_pokedex("Nenhuma mudança necessária; importação idempotente.")
+            return
+        resultado = aplicar_plano_evolucoes(plano)
+        db.session.commit()
+        _eco_pokedex(
+            f"APLICADO: {resultado['criadas']} relações criadas "
+            f"({resultado['automatica']} regulares e {resultado['mestre']} "
+            "reservadas ao mestre). Nenhum Pokémon de jogador foi evoluído."
+        )
+    except (OSError, ValueError, SQLAlchemyError) as exc:
+        db.session.rollback()
+        raise click.ClickException(
+            f"Erro: {_texto_compativel_saida(str(exc))}. Nenhum commit foi realizado."
+        ) from exc
+    finally:
+        # Garante a liberação de locks na simulação e em falhas.
+        if not aplicar:
+            db.session.rollback()
