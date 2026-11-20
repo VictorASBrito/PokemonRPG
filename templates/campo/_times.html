@@ -1,12 +1,12 @@
 {% from "componentes/tipos.html" import selo_tipo %}
 <div class="campo-times-grade">
     {% for time in contexto.times %}
-    <section class="campo-time ui-card{% if time.pokemons %} campo-time-ativo{% else %} campo-time-vazio{% endif %}" aria-label="Time {{ time.numero }}">
+    <section class="campo-time ui-card{% if time.pokemons or time.grupos_npc %} campo-time-ativo{% else %} campo-time-vazio{% endif %}" aria-label="Time {{ time.numero }}">
         <header class="campo-time-cabecalho">
             <h2>Time {{ time.numero }}</h2>
-            <span>{{ time.pokemons|length }} Pokémon</span>
+            <span>{{ time.pokemons|length + time.get("npc_total", 0) }} Pokémon</span>
         </header>
-        {% if time.pokemons %}
+        {% if time.pokemons or time.grupos_npc %}
             <div class="campo-time-lista">
                 {% for pokemon in time.pokemons %}
                 <article class="campo-pokemon">
@@ -33,6 +33,64 @@
                     </form>
                     {% endif %}
                 </article>
+                {% endfor %}
+                {% for grupo in time.grupos_npc %}
+                <section class="campo-npc-grupo" aria-label="{{ 'Horda' if grupo.tipo == 'horda' else 'Treinador NPC' }}: {{ grupo.nome }}">
+                    <header class="campo-npc-grupo-topo">
+                        <div><span class="campo-npc-badge">{{ 'Horda' if grupo.tipo == 'horda' else 'NPC' }}</span>
+                            <strong>{{ grupo.nome }}</strong></div>
+                        <small>{{ grupo.pokemons|length }} Pokémon</small>
+                    </header>
+                    {% for pokemon in grupo.pokemons %}
+                    <article class="campo-pokemon campo-pokemon--npc">
+                        <div class="campo-pokemon-arte">
+                            {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="Sprite de {{ pokemon.nome }}" loading="lazy">
+                            {% else %}<span class="campo-sprite-vazio" aria-hidden="true">◈</span>{% endif %}
+                        </div>
+                        <div class="campo-pokemon-info">
+                            <h3>{{ pokemon.nome }}</h3>
+                            <small class="campo-treinador">Nível {{ pokemon.nivel }} · {{ grupo.nome }}</small>
+                            <div class="campo-pokemon-tipos">{% for tipo in pokemon.tipos %}{{ selo_tipo(tipo) }}{% endfor %}</div>
+                            <small>PV {{ pokemon.pv_atual }}/{{ pokemon.pv_maximo }}</small>
+                            <progress value="{{ pokemon.pv_atual }}" max="{{ pokemon.pv_maximo }}"></progress>
+                            {% if mestre %}
+                            <form action="{{ url_for('combates.pv_npc', pokemon_id=pokemon.id) }}" method="post" class="campo-npc-pv">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <input type="number" name="quantidade" min="1" max="9999" value="10" aria-label="Quantidade de PV" required>
+                                <button type="submit" name="operacao" value="menos" aria-label="Diminuir PV de {{ pokemon.nome }}">−</button>
+                                <button type="submit" name="operacao" value="mais" aria-label="Curar {{ pokemon.nome }}">+</button>
+                            </form>
+                            <form action="{{ url_for('combates.retirar_npc', pokemon_id=pokemon.id) }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="campo-npc-remover">Retirar {{ pokemon.nome }}</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </article>
+                    {% endfor %}
+                    {% if mestre %}
+                    <details class="campo-npc-gestao">
+                        <summary>Gerenciar {{ grupo.nome }}</summary>
+                        <div class="campo-npc-gestao-acoes">
+                            <form action="{{ url_for('combates.mover_npc', grupo_id=grupo.id) }}" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <label>Mover para
+                                    <select name="time_numero">
+                                        {% for numero in range(1, 17) %}
+                                        <option value="{{ numero }}" {% if numero == grupo.time_numero %}selected{% endif %}>Time {{ numero }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                <button class="botao botao-secundario" type="submit">Mover grupo</button>
+                            </form>
+                            <form action="{{ url_for('combates.remover_npc', grupo_id=grupo.id) }}" method="post" data-campo-npc-remover>
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <button class="botao botao-secundario" type="submit">Retirar grupo inteiro</button>
+                            </form>
+                        </div>
+                    </details>
+                    {% endif %}
+                </section>
                 {% endfor %}
             </div>
         {% else %}

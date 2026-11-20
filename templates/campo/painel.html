@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block titulo %}Campo de Batalha | Pokémon RPG{% endblock %}
-{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/campo.css') }}">{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/campo.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/campo-npcs-10d4.css', v='10d4') }}">
+{% endblock %}
 {% block conteudo %}
 <div class="campo-pagina">
     <section class="campo-cabecalho ui-card">
@@ -44,6 +47,66 @@
             </form>
         {% endif %}
     </section>
+    {% if mestre %}
+    <section class="campo-npc-criacao ui-card" aria-labelledby="campo-npc-criar-titulo">
+        <div>
+            <p class="rotulo">Gerenciamento do mestre</p>
+            <h2 id="campo-npc-criar-titulo">Novo NPC ou horda</h2>
+            <p>Adversários temporários independentes das fichas dos jogadores.</p>
+        </div>
+        <form action="{{ url_for('combates.criar_npc') }}" method="post" class="campo-npc-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label>Tipo
+                <select name="tipo" required>
+                    <option value="npc">Treinador NPC</option>
+                    <option value="horda">Horda selvagem</option>
+                </select>
+            </label>
+            <label>Nome
+                <input type="text" name="nome" maxlength="120" placeholder="Ex.: Equipe Rocket ou Horda de Zubat" required>
+            </label>
+            <label>Pokémon / forma
+                <input type="search" name="forma_nome" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+                    data-seletor-visual="pokemon" data-seletor-alvo="campo-npc-forma-id"
+                    autocomplete="off" placeholder="Pesquisar espécie" required>
+                <input type="hidden" id="campo-npc-forma-id" name="forma_id">
+            </label>
+            <label>Nível <input type="number" name="nivel" value="10" min="1" max="100" required></label>
+            <label>Quantidade <input type="number" name="quantidade" value="1" min="1" max="12" required></label>
+            <label>Time
+                <select name="time_numero" required>
+                    {% for numero in range(1, 17) %}<option value="{{ numero }}">Time {{ numero }}</option>{% endfor %}
+                </select>
+            </label>
+            <button class="botao botao-primario" type="submit">Criar adversários</button>
+        </form>
+        <small>Limites: 40 grupos, 80 Pokémon no total e até 24 por grupo. Sem captura ou combate automático.</small>
+        {% if contexto.grupos_npc %}
+        <details class="campo-npc-adicionar">
+            <summary>Adicionar Pokémon a um grupo existente</summary>
+            <form action="{{ url_for('combates.adicionar_npc_selecionado') }}" method="post" class="campo-npc-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <label>Grupo
+                    <select name="grupo_id" required data-campo-npc-grupo>
+                        {% for grupo in contexto.grupos_npc %}
+                        <option value="{{ grupo.id }}">{{ grupo.nome }} · Time {{ grupo.time_numero }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>Pokémon / forma
+                    <input type="search" name="forma_nome" data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
+                        data-seletor-visual="pokemon" data-seletor-alvo="campo-npc-forma-adicional"
+                        placeholder="Pesquisar espécie" autocomplete="off" required>
+                    <input type="hidden" id="campo-npc-forma-adicional" name="forma_id">
+                </label>
+                <label>Nível <input type="number" name="nivel" value="10" min="1" max="100" required></label>
+                <label>Quantidade <input type="number" name="quantidade" value="1" min="1" max="12" required></label>
+                <button class="botao botao-secundario" type="submit">Adicionar ao grupo</button>
+            </form>
+        </details>
+        {% endif %}
+    </section>
+    {% endif %}
     <p class="campo-ajuda">
         {% if mestre %}Como mestre, você pode posicionar e retirar Pokémon de qualquer treinador.{% else %}Você só pode colocar e retirar Pokémon da sua própria equipe.{% endif %}
         Pokémon que forem enviados à Box sairão automaticamente do campo.
@@ -54,4 +117,7 @@
     <p class="campo-atualizacao" data-campo-atualizacao aria-live="polite">Atualização compartilhada a cada 6 segundos.</p>
 </div>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='js/campo.js', v='campo-07') }}" defer></script>{% endblock %}
+{% block scripts %}
+{% if mestre %}<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4') }}"></script>{% endif %}
+<script src="{{ url_for('static', filename='js/campo.js', v='campo-10d4') }}" defer></script>
+{% endblock %}
