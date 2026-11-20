@@ -372,3 +372,4 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Migrations:** nenhuma. Apenas serialização e impressão; não consulta adicional nem mutações em PostgreSQL.
 - **Validação:** testes novos para `cp1252` e `json.loads`; esperar CI do PR. Ambiente Windows real ainda não foi testado pelo assistente.
 - **Próximo:** após merge, repetir `flask --app app.py catalogo auditar-pokedex --json > auditoria-pokedex.json` no Windows e revisar o relatório.
+- **Validação CI confirmada:** workflow `Auditoria da Pokédex - 10E.2.1` (execução 44817271422, job 136568715353), commit `25066e0`: `19 passed in 7.17s` para a auditoria e regressões de ordenação/catálogo. O teste simula `cp1252`, porém a execução automatizada foi Linux; ainda conferir manualmente no PowerShell do mestre.
