@@ -592,6 +592,7 @@ def gerar_arvores_pokemon(
                 f"verificado e --confirmar {FRASE_CONFIRMACAO}. Nenhuma alteração."
             )
         if not plano.pendentes:
+            db.session.rollback()
             _eco_pokedex("Nenhuma mudança necessária; importação idempotente.")
             return
         resultado = aplicar_plano_evolucoes(plano)
@@ -601,6 +602,9 @@ def gerar_arvores_pokemon(
             f"({resultado['automatica']} regulares e {resultado['mestre']} "
             "reservadas ao mestre). Nenhum Pokémon de jogador foi evoluído."
         )
+    except click.ClickException:
+        db.session.rollback()
+        raise
     except (OSError, ValueError, SQLAlchemyError) as exc:
         db.session.rollback()
         raise click.ClickException(
