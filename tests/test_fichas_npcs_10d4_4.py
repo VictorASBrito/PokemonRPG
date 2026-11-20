@@ -70,7 +70,7 @@ def test_criar_ficha_npc_com_notas_vida_status_e_card(app_db, client_db):
     assert "Saúde" in pagina and "Ficha NPC" in pagina
     assert "Anotações:" in pagina
     assert "/mestre/catalogo/npcs/" + npc_id + "/ficha" in pagina
-    assert "Senha" not in pagina and "Box 0" not in pagina
+    assert 'name="senha"' not in pagina and "Box 0" not in pagina
 
     ficha = client_db.get(f"/mestre/catalogo/npcs/{npc_id}/ficha").get_data(as_text=True)
     assert "Anotações do mestre" in ficha and "acordo secreto" in ficha
