@@ -811,3 +811,170 @@ def npcs():
         modelos = []
     token = session.setdefault("npc_catalogo_csrf", secrets.token_urlsafe(32))
     return render_template("mestre/catalogo/npcs.html", modelos=modelos, csrf_token=token)
+
+
+# --- ETAPA 10D.4.4: fichas permanentes dos NPCs, apenas para o mestre ---
+def _npc_ficha_token():
+    import secrets
+    return session.setdefault("npc_catalogo_csrf", secrets.token_urlsafe(32))
+
+
+def _npc_ficha_verificar():
+    import hmac
+    from flask import abort
+    if not hmac.compare_digest(
+        _npc_ficha_token(), str(request.form.get("csrf_token") or "")
+    ):
+        abort(400, description="Token de formulário inválido.")
+
+
+def _npc_ficha_codigo():
+    return str(current_app.config["CAMPANHA_PADRAO"])
+
+
+def _npc_ficha_editar_pagina(modelo_id=None):
+    from app.services.npc_ficha_service import dados_ficha_npc, ficha_card_npc
+    dados = dados_ficha_npc(
+        campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+    )
+    card = (ficha_card_npc(campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id)
+            if modelo_id else None)
+    return render_template(
+        "mestre/catalogo/npc_ficha.html",
+        ficha=dados, card=card,
+        csrf_token=_npc_ficha_token(),
+    )
+
+
+@catalogo_admin_bp.route("/npcs/novo", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def novo_npc():
+    if request.method == "POST":
+        _npc_ficha_verificar()
+        from app.services.npc_ficha_service import salvar_ficha_npc
+        try:
+            npc_id = salvar_ficha_npc(
+                campanha_codigo=_npc_ficha_codigo(), modelo_id=None,
+                dados=request.form, usuario_id=session.get("usuario_id"),
+            )
+            flash("NPC fixo cadastrado com sucesso.", "sucesso")
+            return redirect(url_for("catalogo_admin.ficha_npc", modelo_id=npc_id))
+        except ValueError as exc:
+            db.session.rollback()
+            flash(str(exc), "erro")
+        except SQLAlchemyError:
+            _erro_banco("Falha ao cadastrar ficha de NPC.")
+        return redirect(url_for("catalogo_admin.novo_npc"))
+    try:
+        return _npc_ficha_editar_pagina()
+    except SQLAlchemyError:
+        _erro_banco("Falha ao abrir criação de NPC.")
+        return redirect(url_for("catalogo_admin.npcs"))
+
+
+@catalogo_admin_bp.route("/npcs/<modelo_id>/ficha", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def ficha_npc(modelo_id):
+    if request.method == "POST":
+        _npc_ficha_verificar()
+        from app.services.npc_ficha_service import salvar_ficha_npc
+        try:
+            salvar_ficha_npc(
+                campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+                dados=request.form, usuario_id=session.get("usuario_id"),
+            )
+            flash("Ficha do NPC salva.", "sucesso")
+        except ValueError as exc:
+            db.session.rollback()
+            flash(str(exc), "erro")
+        except SQLAlchemyError:
+            _erro_banco("Falha ao editar ficha NPC.")
+        return redirect(url_for("catalogo_admin.ficha_npc", modelo_id=modelo_id))
+    from app.services.npc_ficha_service import dados_ficha_npc
+    try:
+        return _npc_ficha_editar_pagina(modelo_id)
+    except ValueError:
+        return ("NPC não encontrado nesta campanha.", 404)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao abrir ficha NPC.")
+        return redirect(url_for("catalogo_admin.npcs"))
+
+
+def _npc_ficha_acao(funcao, modelo_id, *, origem=None):
+    _npc_ficha_verificar()
+    try:
+        sucesso = funcao()
+        flash(sucesso, "sucesso")
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        _erro_banco("Falha ao alterar NPC.")
+    destino = (
+        "catalogo_admin.ficha_npc"
+        if (origem == "ficha" or request.form.get("origem") == "ficha")
+        else "catalogo_admin.npcs"
+    )
+    return redirect(url_for(destino, **({"modelo_id": modelo_id} if destino.endswith("ficha_npc") else {})))
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/pv")
+@perfil_obrigatorio("mestre")
+def npc_pv(modelo_id):
+    from app.services.npc_ficha_service import ajustar_pv_npc
+    return _npc_ficha_acao(
+        lambda: (
+            ajustar_pv_npc(
+                campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+                delta=int(request.form.get("quantidade", "0")) * (
+                    1 if request.form.get("operacao") == "mais" else -1
+                    if request.form.get("operacao") == "menos" else 0
+                ),
+                usuario_id=session.get("usuario_id"),
+            ) and "PV do treinador atualizados."
+        ), modelo_id,
+    )
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/pv")
+@perfil_obrigatorio("mestre")
+def npc_pokemon_pv(modelo_id, indice):
+    from app.services.npc_ficha_service import ajustar_pv_npc
+    return _npc_ficha_acao(
+        lambda: (
+            ajustar_pv_npc(
+                campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+                pokemon_indice=indice,
+                delta=int(request.form.get("quantidade", "0")) * (
+                    1 if request.form.get("operacao") == "mais" else -1
+                    if request.form.get("operacao") == "menos" else 0
+                ),
+                usuario_id=session.get("usuario_id"),
+            ) and "PV do Pokémon atualizados."
+        ), modelo_id,
+    )
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/adicionar")
+@perfil_obrigatorio("mestre")
+def npc_adicionar_pokemon(modelo_id):
+    from app.services.npc_ficha_service import adicionar_pokemon_ficha
+    return _npc_ficha_acao(
+        lambda: adicionar_pokemon_ficha(
+            campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+            forma_id=request.form.get("forma_id"),
+            usuario_id=session.get("usuario_id"),
+        ), modelo_id, origem="ficha",
+    )
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/retirar")
+@perfil_obrigatorio("mestre")
+def npc_retirar_pokemon(modelo_id, indice):
+    from app.services.npc_ficha_service import remover_pokemon_ficha
+    return _npc_ficha_acao(
+        lambda: remover_pokemon_ficha(
+            campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+            indice=indice, usuario_id=session.get("usuario_id"),
+        ), modelo_id, origem="ficha",
+    )
