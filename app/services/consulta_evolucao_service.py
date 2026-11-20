@@ -103,11 +103,24 @@ def _tem_condicoes_especiais(
     relacao: EvolucaoPokemon, requisitos: dict[str, Any]
 ) -> bool:
     """Falha fechada para metadata desconhecida e cadastros legados."""
-    if (
-        requisitos.get("requer_liberacao_mestre") is True
-        or requisitos.get("liberacao_individual") is True
-        or requisitos.get("liberacao") == "mestre_por_pokemon"
+    campos_conhecidos = {
+        "tipo_relacao", "nivel", "item_nome", "item_codigo_pokeapi",
+        "fonte", "fonte_url", "origem_importacao", "requer_liberacao_mestre",
+        "liberacao_individual", "liberacao", "aprovado_mestre",
+        "detalhes_pokeapi", "gatilho_pokeapi", "condicao",
+        "nivel_informativo", "item_especifico_pokeapi",
+        "forma_regional_origem", "forma_regional_destino",
+    }
+    # Cadastros particulares com outros requisitos não podem ser
+    # interpretados automaticamente como um nível/pedra simples.
+    if set(requisitos) - campos_conhecidos:
+        return True
+    if any(
+        requisitos.get(chave) not in (None, False)
+        for chave in ("requer_liberacao_mestre", "liberacao_individual")
     ):
+        return True
+    if requisitos.get("liberacao") not in (None, "requisito_regular"):
         return True
     if relacao.tipo_requisito in {"amizade", "troca", "especial"}:
         return True
@@ -119,6 +132,9 @@ def _tem_condicoes_especiais(
     )):
         return True
     if relacao.tipo_requisito == "item":
+        # Pedra + nível ou qualquer segunda condição não é caminho simples.
+        if requisitos.get("nivel") not in (None, ""):
+            return True
         nome = requisitos.get("item_nome")
         if not isinstance(nome, str) or _normalizar(nome) not in PEDRAS_ALIAS:
             return True
