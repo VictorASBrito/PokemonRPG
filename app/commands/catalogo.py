@@ -32,6 +32,11 @@ from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, 
 from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
 from app.services.auditoria_itens_service import auditar_itens
 from app.services.auditoria_pokedex_service import auditar_pokedex, carregar_fonte_pokedex
+from app.services.saneamento_pokedex_service import (
+    CONFIRMACAO_SANEAMENTO,
+    aplicar_saneamento,
+    planejar_saneamento,
+)
 from app.services.reparo_natureza_importada import (
     campo_item_repetido_da_natureza,
     elegivel_para_desvincular,
@@ -432,3 +437,100 @@ def revisar_naturezas_importadas(aplicar: bool) -> None:
         f"Corrigidos {len(candidatos)} vínculo(s) em uma transação; "
         "itens do catálogo e inventários não foram modificados."
     )
+
+
+@catalogo_group.command("sanear-pokedex")
+@click.option("--aplicar", is_flag=True, help="Grava o plano depois da simulacao e backup.")
+@click.option("--plano", "assinatura_informada", default="", help="Assinatura SHA256 exibida pela simulacao.")
+@click.option("--backup-confirmado", is_flag=True, help="Declara que foi feito backup PostgreSQL verificavel.")
+@click.option("--confirmar", default="", help="Frase de confirmacao fornecida na documentacao.")
+def sanear_pokedex_comando(
+    aplicar: bool, assinatura_informada: str, backup_confirmado: bool, confirmar: str
+) -> None:
+    """Saneamento restrito da Pokédex: SIMULACAO por padrao, nunca autoexecucao.
+
+    Nao reimporta o catalogo; preenche somente numeros NULL de especies
+    oficiais e corrige o vinculo da forma nidoran-2. Preserva Pokemon,
+    formas extras e numeros ja cadastrados.
+    """
+    try:
+        fonte = carregar_fonte_pokedex()
+        # No PostgreSQL, travar as linhas envolvidas entre a nova conferência
+        # do plano e a aplicação; no SQLite a trava FOR UPDATE é ignorada.
+        consulta_especies = select(EspeciePokemon)
+        consulta_formas = select(FormaPokemon)
+        if aplicar:
+            consulta_especies = consulta_especies.with_for_update()
+            consulta_formas = consulta_formas.with_for_update()
+        with db.session.no_autoflush:
+            especies = list(db.session.scalars(consulta_especies).all())
+            formas = list(db.session.scalars(consulta_formas).all())
+            plano = planejar_saneamento(especies, formas, fonte)
+    except (OSError, ValueError) as exc:
+        db.session.rollback()
+        raise click.ClickException(
+            f"Nao foi possivel planejar o saneamento: {str(exc).encode('ascii', 'backslashreplace').decode('ascii')}"
+        ) from exc
+
+    click.echo("SANEAMENTO POKEDEX 10E.2.1.2 - SIMULACAO" if not aplicar else "SANEAMENTO POKEDEX - CONFERENCIA")
+    click.echo(f"Fonte: {plano.total_especies_fonte} especies / {plano.total_formas_fonte} formas.")
+    click.echo(f"Numeros nacionais NULL a preencher: {len(plano.numeros)}.")
+    click.echo(f"Criar especie Nidoran macho (nidoran-m): {'sim' if plano.criar_nidoran_macho else 'nao'}.")
+    click.echo(f"Religar forma nidoran-2: {'sim' if plano.religar_nidoran_macho else 'nao'}.")
+    click.echo(f"Formas extras preservadas: {len(plano.formas_extras)}.")
+    for codigo in plano.formas_extras[:20]:
+        click.echo("  Forma extra (nao modificar): " + codigo.encode('ascii', 'backslashreplace').decode('ascii'))
+    if len(plano.formas_extras) > 20:
+        click.echo(f"  ... e mais {len(plano.formas_extras) - 20} formas extras.")
+    click.echo(f"Operacoes propostas: {plano.operacoes}.")
+    click.echo(f"Assinatura do plano: {plano.assinatura}")
+    if plano.bloqueios:
+        click.echo(f"BLOQUEADO: {len(plano.bloqueios)} inconsistencia(s) fora do escopo seguro.")
+        for bloqueio in plano.bloqueios[:25]:
+            click.echo("  - " + bloqueio.encode("ascii", "backslashreplace").decode("ascii"))
+        db.session.rollback()
+        raise click.ClickException("Plano nao aplicavel. Nenhuma alteracao foi feita.")
+
+    if not aplicar:
+        db.session.rollback()
+        click.echo("SIMULACAO: nenhuma gravacao foi feita no banco.")
+        click.echo(
+            "Para aplicar: realizar e testar backup PostgreSQL, executar de novo com "
+            "--aplicar --plano <assinatura> --backup-confirmado "
+            f"--confirmar {CONFIRMACAO_SANEAMENTO}."
+        )
+        return
+
+    if not assinatura_informada or assinatura_informada != plano.assinatura:
+        db.session.rollback()
+        raise click.ClickException(
+            "Assinatura ausente ou divergente; execute a simulacao novamente. "
+            "Nenhuma alteracao foi feita."
+        )
+    if not backup_confirmado or confirmar != CONFIRMACAO_SANEAMENTO:
+        db.session.rollback()
+        raise click.ClickException(
+            "Aplicacao exige backup PostgreSQL conferido, --backup-confirmado "
+            f"e --confirmar {CONFIRMACAO_SANEAMENTO}. Nenhuma alteracao foi feita."
+        )
+    if plano.operacoes == 0:
+        db.session.rollback()
+        click.echo("Banco ja saneado. Nenhuma alteracao necessaria.")
+        return
+
+    try:
+        resultado = aplicar_saneamento(plano, especies, formas, fonte)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    click.echo(
+        "APLICADO em transacao unica: "
+        f"{resultado['numeros_preenchidos']} numeros, "
+        f"{resultado['especies_criadas']} especie criada, "
+        f"{resultado['vinculos_corrigidos']} vinculo corrigido, "
+        f"{resultado['formas_extras_preservadas']} formas extras preservadas."
+    )
+    click.echo("Execute: flask --app app.py catalogo auditar-pokedex")
+
+
