@@ -7,7 +7,6 @@ from typing import Any
 from sqlalchemy import select
 
 from app.extensions import db
-from app.services.saneamento_pokedex_service import codigo_especie_oficial
 from app.models.db import (
     Atributo,
     CategoriaGolpe,
@@ -23,6 +22,7 @@ from app.models.db import (
 )
 from app.services.importacao.utils import (
     categoria_forma,
+    codigo_especie_oficial,
     decimal,
     nome_especie,
     slug,
