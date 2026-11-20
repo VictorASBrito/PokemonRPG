@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import click
-from flask import Blueprint
+from flask import Blueprint, current_app
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
@@ -29,6 +31,8 @@ from app.models.db import (
 from app.services.golpe_admin_service import METODOS_APRENDIZADO, TIPOS_EFEITO, efeitos_para_editor
 from app.services.item_admin_service import TIPOS_EFEITO_ITEM, efeitos_item_para_editor
 from app.services.auditoria_itens_service import auditar_itens
+from app.services.json_service import ler_json
+from app.services.pokedex_service import mapear_numeros_pokedex
 from app.services.reparo_natureza_importada import (
     campo_item_repetido_da_natureza,
     elegivel_para_desvincular,
@@ -340,4 +344,106 @@ def revisar_naturezas_importadas(aplicar: bool) -> None:
     click.echo(
         f"Corrigidos {len(candidatos)} vínculo(s) em uma transação; "
         "itens do catálogo e inventários não foram modificados."
+    )
+
+
+@catalogo_group.command("pokedex-preencher")
+@click.option(
+    "--aplicar", is_flag=True,
+    help="Preenche apenas números vazios no PostgreSQL após backup; o padrão é simulação.",
+)
+def pokedex_preencher(aplicar: bool) -> None:
+    """Corrige a numeração nacional sem reimportar o catálogo nem sobrescrever edições."""
+    fonte = Path(current_app.root_path).parent / "data" / "catalogo" / "pokemons.json"
+    if not fonte.is_file():
+        raise click.ClickException(f"Fonte oficial do catálogo não encontrada: {fonte}")
+    documento = ler_json(fonte, {"pokemons": []})
+    numeros = mapear_numeros_pokedex(documento.get("pokemons", []))
+    if len(numeros) != 898:
+        raise click.ClickException(
+            f"Fonte incompleta ou fora de ordem: {len(numeros)} espécies, esperadas 898. "
+            "Nenhuma atualização foi aplicada."
+        )
+    especies = {
+        especie.codigo: especie
+        for especie in db.session.execute(select(EspeciePokemon)).scalars()
+    }
+    candidatos = [
+        (especie, numeros[codigo])
+        for codigo, especie in especies.items()
+        if codigo in numeros and especie.numero is None and not especie.personalizada
+    ]
+    conflitos = [
+        (especie, numeros[codigo])
+        for codigo, especie in especies.items()
+        if codigo in numeros and especie.numero is not None
+        and especie.numero != numeros[codigo]
+    ]
+
+    # O importador antigo fundia Nidoran macho e fêmea sob o mesmo código.
+    macho = db.session.execute(
+        select(FormaPokemon).where(
+            FormaPokemon.codigo == "nidoran-2",
+            FormaPokemon.nome == "Nidoran♂",
+        )
+    ).scalar_one_or_none()
+    origem_esperada = documento.get("origem")
+    macho_legado = (
+        macho is not None
+        and macho.especie.codigo == "nidoran"
+        and (macho.configuracoes or {}).get("origem") == origem_esperada
+    )
+    click.echo(
+        f"Pokédex fonte: {len(numeros)} espécie(s) nacionais. "
+        f"No banco: {len(especies)} espécie(s), {len(candidatos)} número(s) vazio(s) elegível(is)."
+    )
+    click.echo(f"Números existentes divergentes preservados: {len(conflitos)}.")
+    for especie, esperado in conflitos[:15]:
+        click.echo(f"  Revisar {especie.codigo}: atual #{especie.numero}, fonte #{esperado}.")
+    if len(conflitos) > 15:
+        click.echo(f"  ... mais {len(conflitos) - 15} divergência(s).")
+    click.echo(f"Vínculo legado de Nidoran♂ a corrigir: {1 if macho_legado else 0}.")
+    if not aplicar:
+        click.echo("SIMULAÇÃO: nenhuma mudança feita. Faça backup antes de executar com --aplicar.")
+        return
+
+    for especie, numero in candidatos:
+        db.session.add(HistoricoAlteracao(
+            usuario_id=None,
+            entidade="especie_pokemon",
+            registro_id=especie.id,
+            acao="preencher_pokedex",
+            dados_anteriores={"numero": None},
+            dados_novos={"numero": numero},
+        ))
+        especie.numero = numero
+    if macho_legado:
+        especie_macho = especies.get("nidoran-m")
+        if especie_macho is None:
+            especie_macho = EspeciePokemon(
+                codigo="nidoran-m", nome="Nidoran♂",
+                numero=numeros["nidoran-m"],
+                geracao=1, personalizada=False, ativo=True,
+            )
+            db.session.add(especie_macho)
+            db.session.flush()
+            db.session.add(HistoricoAlteracao(
+                usuario_id=None, entidade="especie_pokemon",
+                registro_id=especie_macho.id, acao="correcao_pokedex",
+                dados_anteriores=None,
+                dados_novos={"codigo": "nidoran-m", "numero": numeros["nidoran-m"]},
+            ))
+        anterior = str(macho.especie_id)
+        macho.especie_id = especie_macho.id
+        db.session.add(HistoricoAlteracao(
+            usuario_id=None, entidade="forma_pokemon",
+            registro_id=macho.id, acao="correcao_vinculo_especie",
+            dados_anteriores={"especie_id": anterior},
+            dados_novos={"especie_id": str(especie_macho.id)},
+        ))
+    db.session.commit()
+    click.echo(
+        f"Aplicado: {len(candidatos)} número(s) preenchido(s); "
+        f"{1 if macho_legado else 0} vínculo(s) Nidoran corrigido(s). "
+        "Pokémon dos jogadores, inventários e formas não foram removidos."
     )
