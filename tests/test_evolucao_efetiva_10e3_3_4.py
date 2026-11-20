@@ -287,7 +287,7 @@ def test_condicao_regional_com_nivel_informativo_ainda_exige_nivel_e_mestre(app_
         db.session.commit()
         resultado = _evoluir(app_db, p, rel)
         db.session.commit()
-        assert resultado.destino_nome == "Raticate-Alola"
+        assert resultado.destino_nome == "Raticate-alola"
 
 
 def test_desmaio_permanece_desmaiado_sem_cura_automatica(app_db):
@@ -353,7 +353,7 @@ def test_rota_somente_jogador_com_csrf_e_confirmacao_da_ficha(app_db, client_db)
         rel = _relacao(origem, destino)
         p = _pokemon(app_db, origem)
         db.session.commit()
-        pid, relid, origem_id = p.id, rel.id, origem.id
+        pid, relid, origem_id, destino_id = p.id, rel.id, origem.id, destino.id
     url = f"/jogador/pokemon/{pid}/evolucoes/{relid}/evoluir"
     assert client_db.post(url).status_code == 302
     assert _login(client_db, "mestre-db", "senha-db").status_code == 302
@@ -372,7 +372,7 @@ def test_rota_somente_jogador_com_csrf_e_confirmacao_da_ficha(app_db, client_db)
     resposta = client_db.post(url, data={"csrf_token": csrf, "retorno": "boxes"})
     assert resposta.status_code == 302
     with app_db.app_context():
-        assert db.session.get(Pokemon, pid).forma_pokemon_id == destino.id
+        assert db.session.get(Pokemon, pid).forma_pokemon_id == destino_id
     pagina = client_db.get(f"/jogador/pokemon/{pid}")
     assert "Evoluir para Charmeleon" not in pagina.get_data(as_text=True)
 
