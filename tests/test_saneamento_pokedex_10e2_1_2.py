@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import uuid
 from types import SimpleNamespace
 
 from sqlalchemy import func, select
@@ -83,7 +84,7 @@ def _preparar_legado_completo(app_db):
         db.session.flush()
 
         # O reparo do catálogo não deve alterar a instância capturada.
-        personagem_id = app_db.config["TEST_IDS"]["personagem"]
+        personagem_id = uuid.UUID(app_db.config["TEST_IDS"]["personagem"])
         pokemon = Pokemon(
             personagem_id=personagem_id,
             forma_pokemon_id=formas_existentes["nidoran-2"].id,
