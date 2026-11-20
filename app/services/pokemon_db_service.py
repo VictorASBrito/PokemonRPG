@@ -10,6 +10,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
+from app.services.autorizacao_evolucao_service import invalidar_autorizacoes_por_troca_forma
 from app.services.ordenacao_pokedex_service import ordem_formas_pokedex
 from app.models.db import (
     Atributo,
@@ -918,6 +919,12 @@ def atualizar_pokemon_formulario(
         db.session.rollback()
         return None, [f"Os PV atuais devem estar entre 0 e {pv_maximo}."]
     recarregado.pv_atual = pv_atual
+    if antes["forma_pokemon_id"] != str(recarregado.forma_pokemon_id):
+        # Evita que uma concessão antiga volte a valer se a espécie
+        # for alterada e posteriormente restaurada.
+        invalidar_autorizacoes_por_troca_forma(
+            recarregado, usuario_id=usuario_responsavel_id
+        )
     _auditar(
         usuario_id=usuario_responsavel_id,
         pokemon=recarregado,
