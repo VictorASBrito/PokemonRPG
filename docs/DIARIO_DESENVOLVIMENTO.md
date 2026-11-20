@@ -361,3 +361,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Próxima tarefa:** executar `flask --app app.py catalogo auditar-pokedex --json` no ambiente da campanha, revisar relatórios e preparar saneamento controlado antes do editor 10E.2.2.
 
 - **Resultado CI verificado:** workflow `Auditoria da Pokédex - 10E.2.1`, execução 44816417525, job 136565811738: `18 passed in 5.28s` para `tests/test_auditoria_pokedex_10e2_1.py tests/test_ordenacao_pokedex_10e1.py tests/test_catalogo_admin.py` no commit de código/documentação `1413bcd`. Não equivale a um teste no PostgreSQL real de Ankar.
+
+
+### 2026-11-20 — Correção 10E.2.1.1: stdout Windows cp1252
+- **Objetivo:** corrigir o traceback `UnicodeEncodeError` no comando `catalogo auditar-pokedex --json` relatado pelo mestre no PowerShell/Python 3.13 (`Nidoran♂`).
+- **Status:** IMPLEMENTADO EM BRANCH; CI pendente de execução/verificação nesta entrada.
+- **Branch:** `fix/10e2-1-auditoria-windows-encoding`, a partir da `main` com PR #11 já mesclado.
+- **Arquivos:** `app/commands/catalogo.py`, `tests/test_auditoria_pokedex_10e2_1.py`, `docs/ETAPA_10E2_1_AUDITORIA_POKEDEX.md`, continuidade e diário.
+- **Comportamento:** `--json` usa JSON ASCII escapado válido (`ensure_ascii=True`); texto usa `_texto_compativel_saida` para substituir somente caracteres incompatíveis com o `stdout` atual, sem perder acentos disponíveis.
+- **Migrations:** nenhuma. Apenas serialização e impressão; não consulta adicional nem mutações em PostgreSQL.
+- **Validação:** testes novos para `cp1252` e `json.loads`; esperar CI do PR. Ambiente Windows real ainda não foi testado pelo assistente.
+- **Próximo:** após merge, repetir `flask --app app.py catalogo auditar-pokedex --json > auditoria-pokedex.json` no Windows e revisar o relatório.
