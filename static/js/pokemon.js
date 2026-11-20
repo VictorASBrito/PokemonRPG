@@ -90,3 +90,22 @@
         });
     });
 })();
+
+
+/* 10E.3.3/4: confirmação explícita antes de evoluir; o servidor
+   revalida autorização, nível, material e origem independentemente do JS. */
+(() => {
+    document.querySelectorAll("form.evolucao-form-confirmacao[data-confirmacao]")
+        .forEach((formulario) => {
+            formulario.addEventListener("submit", (evento) => {
+                const mensagem = formulario.dataset.confirmacao
+                    || "Confirmar a evolução deste Pokémon?";
+                if (!window.confirm(mensagem)) {
+                    evento.preventDefault();
+                    return;
+                }
+                const botao = formulario.querySelector('button[type="submit"]');
+                if (botao) botao.disabled = true;
+            });
+        });
+})();
