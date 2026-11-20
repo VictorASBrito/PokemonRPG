@@ -336,3 +336,17 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - Arquivos: `scripts/instalar_avisos_toast_10c4_1.py`, `static/css/avisos-toast-10c4-1.css`, `static/js/avisos-toast-10c4-1.js`.
 - Pendencia visual anterior mantida: autocomplete do catalogo/rodape da mochila do mestre pode ser cortado com altura reduzida; precisa de ajuste separado.
 
+
+
+
+### 20/11/2026 — P1: Pokédex numérica e roteiro das transições
+
+**Demanda:** evitar Abomasnow em primeiro por ordenação alfabética; consolidar formas, evoluções, Megas e vínculos administrativos.
+
+**Constatação:** `EspeciePokemon.numero` era sempre `None` na carga inicial; fonte legada contém 898 espécies e 1.064 formas. Também havia colisão entre Nidoran♀ e Nidoran♂ no código da espécie.
+
+**Entrega no branch de PR:** serviço puro de mapeamento nacional; importador agora numera somente dados sem número e separa Nidoran macho; ordem por número nas listas/autocomplete; CLI `flask --app app.py catalogo pokedex-preencher` (dry-run por padrão; `--aplicar` depois de backup) com correção do vínculo legado, auditoria e preservação de números definidos manualmente; testes novos e workflow CI; plano detalhado em `docs/POKEDEX_E_EVOLUCOES_PLANO.md`.
+
+**Testes:** adicionados, mas não rodados nesta sessão. Fonte validada por inspeção do JSON no GitHub. Não anunciar como validado em PostgreSQL real. **Migration:** nenhuma; comando de reparo exige ação expressa no computador do mestre.
+
+**Próximo:** confirmar CI; aplicar em cópia de teste após backup; validar Bulbasaur → Ivysaur → Venusaur, Charmander #4, Nidoran e busca; auditar vínculos `EvolucaoPokemon`; construir editor/ações respeitando nível compartilhado, papéis e Mega temporária. Nenhuma dessas últimas funcionalidades foi implementada neste PR.
