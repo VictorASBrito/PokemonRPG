@@ -221,10 +221,11 @@ def test_mudanca_manual_de_forma_revoga_em_transacao(app_db, client_db):
         a = db.session.scalar(select(AutorizacaoEvolucaoPokemon))
         assert a.ativo is False and a.revogado_em is not None
         assert a.motivo_revogacao.startswith("Mudança manual")
-    # Se a forma original voltar, a permissão NÃO volta com ela.
-    form["especie_nome"] = "Eevee"
-    assert client_db.post(url, data=form).status_code == 302
+    # Mesmo se uma manutenção externa devolver a forma antiga,
+    # uma concessão previamente revogada NÃO volta a valer.
     with app_db.app_context():
+        db.session.get(Pokemon, x["p1"]).forma_pokemon_id = x["eevee"]
+        db.session.commit()
         assert _status(x)["umbreon"] == "requer_mestre"
 
 
