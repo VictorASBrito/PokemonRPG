@@ -114,9 +114,13 @@ def test_entrada_por_url_de_jogador_permite_evolucao_sem_trocar_conta_mestre(
     pagina = client_db.get(ficha)
     assert pagina.status_code == 200
     assert f"/p/bartz-db/jogador/pokemon/{pid}/evolucoes/{rid}/evoluir" in pagina.get_data(as_text=True)
-    # O cookie e o CSRF desta ficha são independentes da conta mestre.
-    with client_db.session_transaction(path=ficha) as sessao:
-        token = sessao["csrf_acao_evolucao"]
+    # O token deve sair do formulário da ficha isolada, não do
+    # cookie principal (que continua pertencendo ao mestre).
+    import re
+    form = pagina.get_data(as_text=True)
+    token_match = re.search(r'name="csrf_token" value="([^"]+)"', form)
+    assert token_match
+    token = token_match.group(1)
     resposta = client_db.post(
         f"/p/bartz-db/jogador/pokemon/{pid}/evolucoes/{rid}/evoluir",
         data={"csrf_token": token, "retorno": "boxes"},
