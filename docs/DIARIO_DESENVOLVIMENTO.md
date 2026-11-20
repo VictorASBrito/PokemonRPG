@@ -361,3 +361,14 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Próxima tarefa:** executar `flask --app app.py catalogo auditar-pokedex --json` no ambiente da campanha, revisar relatórios e preparar saneamento controlado antes do editor 10E.2.2.
 
 - **Resultado CI verificado:** workflow `Auditoria da Pokédex - 10E.2.1`, execução 44816417525, job 136565811738: `18 passed in 5.28s` para `tests/test_auditoria_pokedex_10e2_1.py tests/test_ordenacao_pokedex_10e1.py tests/test_catalogo_admin.py` no commit de código/documentação `1413bcd`. Não equivale a um teste no PostgreSQL real de Ankar.
+
+### 2026-11-20 — Etapa 10E.2.1.2: plano de saneamento controlado
+- **Objetivo:** resolver a causa dos 2 erros/897 avisos da auditoria real com proteção contra alterações não aprovadas no PostgreSQL.
+- **Status:** IMPLEMENTADO EM BRANCH; testes CI e aplicação no banco de campanha pendentes.
+- **Branch:** `feature/10e2-1-2-saneamento-controlado` (base `main` após PR #11).
+- **Arquivos:** `app/services/importacao/utils.py`, `app/services/importacao/catalogo_importer.py`, `app/services/saneamento_pokedex_service.py`, `app/commands/catalogo.py`, `tests/test_saneamento_pokedex_10e2_1_2.py`, `.github/workflows/test-saneamento-pokedex-10e2.yml`, `docs/ETAPA_10E2_1_2_SANEAMENTO_POKEDEX.md`, plano/continuidade/diário.
+- **Dados confirmados no relatório:** fonte 898 espécies e 1.064 formas; PostgreSQL 897 espécies e 1.066 formas; 897 números NULL e ausência de Nidoran♂ como espécie própria; `nidoran-2` pertence erroneamente à fêmea; 2 formas extras intocadas.
+- **Proteções:** simulação por padrão, assinatura SHA-256 do estado do catálogo, aplicação só com backup PostgreSQL previamente realizado/verificado e declaração explícita do mestre, bloqueios em alterações inesperadas, log por ajuste, verificação pós-mudança e commit único. Nenhum backup automático.
+- **Migrations:** nenhuma; não cria colunas nem altera tabelas. Pokémon capturados não são regravados.
+- **Testes:** novos testes do código do importador, simulação, assinatura divergente, bloqueio sem backup, implantação idempotente, histórico de mudanças e preservação de fichas; execução GitHub Actions a confirmar.
+- **Próxima tarefa:** revisar PR e CI; mesclar após aprovação; executar simulação local e analisar assinatura; conferir backup antes de qualquer aplicação; após auditoria limpa iniciar editor 10E.2.2.
