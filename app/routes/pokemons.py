@@ -247,6 +247,7 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         ),
         consulta_evolucao=consulta_evolucao,
         formas_temporarias=listar_formas_temporarias(pokemon_model),
+        mega_permitida=bool(contexto.personagem.mega_habilitada),
         forma_visivel=registro["forma_visivel"],
         tipo_transformacao=registro["transformacao"],
         csrf_acao_evolucao=(
