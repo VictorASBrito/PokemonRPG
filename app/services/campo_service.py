@@ -14,6 +14,7 @@ from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.services.campo_npc_service import listar_grupos_npc, limpar_npcs_campo
+from app.services.transformacoes_service import listar_formas_temporarias, reverter_mega_campo
 from app.models.db import (
     Campanha, FormaPokemon, FormaPokemonTipo, HistoricoAlteracao,
     Personagem, Pokemon, PokemonEmCampo, Usuario,
@@ -30,6 +31,7 @@ class ContextoCampo:
     times_ocupados: int
     grupos_npc: list[dict[str, Any]] = field(default_factory=list)
     encontradores: list[dict[str, str]] = field(default_factory=list)
+    treinadores_mega: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _uuid(valor: str | uuid.UUID | None) -> uuid.UUID | None:
@@ -144,6 +146,7 @@ def retirar_pokemon(
     if pokemon is None or not _pode_alterar(pokemon, mestre=mestre, personagem_id=personagem_id):
         raise PermissionError("Você só pode retirar Pokémon da sua própria equipe.")
     time = registro.time_numero
+    reverter_mega_campo(pokemon, usuario_id, "recolhido")
     db.session.delete(registro)
     _registrar_historico(
         usuario_id=usuario_id, pokemon_id=identificador,
@@ -161,6 +164,9 @@ def limpar_campo(*, campanha_codigo: str, usuario_id: str | None) -> int:
         select(PokemonEmCampo).where(PokemonEmCampo.campanha_id == campanha.id)
     ).scalars())
     for item in registros:
+        pokemon = db.session.scalar(select(Pokemon).where(Pokemon.id == item.pokemon_id).with_for_update())
+        if pokemon is not None:
+            reverter_mega_campo(pokemon, usuario_id, "campo_encerrado")
         db.session.delete(item)
         _registrar_historico(
             usuario_id=usuario_id, pokemon_id=item.pokemon_id,
@@ -193,6 +199,8 @@ def carregar_campo(
         .options(
             selectinload(PokemonEmCampo.pokemon).selectinload(Pokemon.forma_pokemon)
             .selectinload(FormaPokemon.tipos).selectinload(FormaPokemonTipo.tipo),
+            selectinload(PokemonEmCampo.pokemon).selectinload(Pokemon.forma_temporaria)
+            .selectinload(FormaPokemon.tipos).selectinload(FormaPokemonTipo.tipo),
             selectinload(PokemonEmCampo.pokemon).selectinload(Pokemon.personagem),
         )
         .order_by(PokemonEmCampo.time_numero, PokemonEmCampo.criado_em, PokemonEmCampo.id)
@@ -201,7 +209,8 @@ def carregar_campo(
     campo_ids: set[uuid.UUID] = set()
     for item in campos:
         pokemon = item.pokemon
-        forma = pokemon.forma_pokemon
+        forma = pokemon.forma_temporaria or pokemon.forma_pokemon
+        opcoes_forma = listar_formas_temporarias(pokemon)
         campo_ids.add(pokemon.id)
         imagem = (forma.imagem_shiny_url if pokemon.shiny else forma.imagem_url) or forma.imagem_url or forma.imagem_shiny_url or ""
         tipos = [rel.tipo.nome for rel in forma.tipos if rel.tipo and rel.tipo.ativo]
@@ -215,6 +224,16 @@ def carregar_campo(
             "shiny": bool(pokemon.shiny),
             "pv_atual": pokemon.pv_atual,
             "pode_retirar": _pode_alterar(pokemon, mestre=mestre, personagem_id=personagem_id),
+            "pode_transformar": not mestre and _pode_alterar(pokemon, mestre=False, personagem_id=personagem_id),
+            "mega_habilitada": bool(pokemon.personagem.mega_habilitada),
+            "tipo_transformacao": pokemon.tipo_transformacao,
+            "megas": [
+                {"id": str(f.id), "nome": f.nome} for f in opcoes_forma["mega"]
+            ] if pokemon.forma_temporaria_id is None else [],
+            "alternativas": [
+                {"id": str(f.id), "nome": f.nome} for f in opcoes_forma["alternativas"]
+            ] if pokemon.tipo_transformacao != "mega" else [],
+            "pode_reverter": pokemon.forma_temporaria_id is not None,
         })
 
     grupos_npc = listar_grupos_npc(campanha_id=campanha.id)
@@ -237,9 +256,19 @@ def carregar_campo(
     ).scalars())
     from app.services.npc_catalogo_service import encontrados_campanha
     encontradores = encontrados_campanha(campanha.id) if mestre else []
+    treinadores_mega = [
+        {"id": str(p.id), "nome": p.nome, "habilitada": bool(p.mega_habilitada)}
+        for p in db.session.scalars(
+            select(Personagem).join(Usuario, Usuario.id == Personagem.usuario_id)
+            .where(Personagem.campanha_id == campanha.id,
+                   Personagem.ativo.is_(True), Usuario.ativo.is_(True))
+            .order_by(func.lower(Personagem.nome))
+        )
+    ] if mestre else []
     return ContextoCampo(
         times=times,
         encontradores=encontradores,
+        treinadores_mega=treinadores_mega,
         grupos_npc=grupos_npc,
         opcoes_pokemon=[{
             "id": str(p.id),
