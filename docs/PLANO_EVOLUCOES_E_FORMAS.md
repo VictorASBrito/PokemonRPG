@@ -84,3 +84,13 @@ Para um botão "Evoluir ao atingir o nível X" há duas possibilidades:
 (B) introduzir nível individual por Pokémon, o que exige mudar
 `Pokemon`, cálculos, equipe, Box, NPCs/hordas e telas de captura.
 **Não implementar essa parte antes de decidir qual regra vale.**
+
+**10E.2.1.2 — Saneamento controlado (em branch):** o relatório real
+apontou 897 números NULL, Nidoran♂ ausente e forma `nidoran-2`
+vinculada à espécie feminina. Implementados plano de simulação com
+assinatura SHA-256, bloqueios para divergências, comando
+`flask --app app.py catalogo sanear-pokedex`, aplicação sob backup
+explicitamente confirmado, histórico e rollback. O importador agora
+distingue Nidoran♂/♀. **Nenhuma correção foi aplicada no PostgreSQL
+real.** Consultar `docs/ETAPA_10E2_1_2_SANEAMENTO_POKEDEX.md`.
+O editor de relações 10E.2.2 depende da revisão pós-saneamento.
