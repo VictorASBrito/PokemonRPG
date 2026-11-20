@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import hmac
+import secrets
+import uuid
 
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import SQLAlchemyError
@@ -61,6 +64,12 @@ from app.services.catalogo_admin_service import (
     opcoes_catalogo,
     resumo_catalogo,
     simular_atributos_forma,
+)
+
+from app.services.importacao_evolucoes_service import (
+    FRASE_CONFIRMACAO,
+    aplicar_plano_evolucoes,
+    consultar_plano_evolucoes,
 )
 
 from app.services.arvore_evolutiva_service import (
@@ -202,6 +211,61 @@ def pokemons():
         filtros=filtros,
         numero_nacional_forma=numero_nacional_forma,
     )
+
+
+@catalogo_admin_bp.route("/pokemons/gerar-arvores", methods=["GET", "POST"])
+@perfil_obrigatorio("mestre")
+def gerar_arvores_pokemon_admin():
+    """Tela com prévia e confirmação para gerar toda a Pokédex evolutiva."""
+    token = session.setdefault("arvores_pokemon_csrf", secrets.token_urlsafe(32))
+    aplicar = request.method == "POST"
+    try:
+        plano = consultar_plano_evolucoes(bloquear=aplicar)
+        if aplicar:
+            assinatura = request.form.get("assinatura", "")
+            confirmado = request.form.get("backup_confirmado") == "1"
+            frase = request.form.get("confirmar", "")
+            token_enviado = request.form.get("csrf_token", "")
+            if not token_enviado or not hmac.compare_digest(token_enviado, token):
+                flash("Confirmação inválida. Reabra a tela e tente novamente.", "erro")
+                db.session.rollback()
+            elif plano.bloqueios:
+                flash("A fonte ou o banco apresenta divergências: a importação foi bloqueada.", "erro")
+                db.session.rollback()
+            elif (assinatura != plano.assinatura or not confirmado
+                  or frase != FRASE_CONFIRMACAO):
+                flash("Confirme o plano atual, backup PostgreSQL e a frase de autorização.", "erro")
+                db.session.rollback()
+            elif not plano.pendentes:
+                flash("As árvores já estão cadastradas. Nenhuma relação foi alterada.", "sucesso")
+                db.session.rollback()
+            else:
+                usuario = session.get("usuario_id")
+                usuario_id = uuid.UUID(usuario) if usuario else None
+                resultado = aplicar_plano_evolucoes(plano, usuario_id=usuario_id)
+                db.session.commit()
+                flash(
+                    f"Importadas {resultado['criadas']} relações: "
+                    f"{resultado['automatica']} regulares e {resultado['mestre']} "
+                    "reservadas para autorização do mestre. "
+                    "Pokémon dos jogadores preservados.",
+                    "sucesso",
+                )
+                return redirect(url_for("catalogo_admin.gerar_arvores_pokemon_admin"))
+        # Libera transação iniciada por SELECT na tela de pré-visualização.
+        if not aplicar:
+            db.session.rollback()
+        return render_template(
+            "mestre/catalogo/gerar_arvores_pokemon.html",
+            plano=plano,
+            csrf_token=token,
+            frase=FRASE_CONFIRMACAO,
+        )
+    except (SQLAlchemyError, OSError, ValueError):
+        db.session.rollback()
+        current_app.logger.exception("Falha ao preparar ou aplicar importação evolutiva.")
+        flash("Não foi possível gerar as árvores; nenhuma alteração parcial foi confirmada.", "erro")
+        return redirect(url_for("catalogo_admin.pokemons"))
 
 
 @catalogo_admin_bp.route("/pokemons/novo", methods=["GET", "POST"])

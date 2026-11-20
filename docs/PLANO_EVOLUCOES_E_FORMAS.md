@@ -128,3 +128,33 @@ foram preservadas como **alerta editorial**: a campanha Ankar
 não possui amizade numérica, então a elegibilidade real precisa de
 uma regra do mestre na 10E.3. Nada é importado em massa ou aplicado
 a Pokémon de jogadores nesta etapa. Sem migration.
+
+
+## 10E.2.4 — Geração integral das relações da Pokédex (20/11/2026)
+
+Nova decisão do mestre: **todas as evoluções simples por nível ou
+pedra** são cadastradas em lote e usadas pela árvore evolutiva;
+amizade, troca, itens específicos e condições complexas devem ser
+**liberadas pelo mestre para cada Pokémon** na campanha.
+
+A versão de 898 espécies da PokéAPI contém **430 relações**:
+297 exclusivamente por nível, 43 por pedras comuns e 90
+casos que exigem liberação narrativa. Inclui a origem exata de
+linhagens regionais de Galar para evitar associação à forma errada.
+O manual PKMRPG 2.5 exige amizade máxima 100 para materiais, mas
+Ankar não usa amizade numérica; a regra explícita atual autoriza
+pedras comuns como caminhos regulares. Itens especiais ainda são
+restritos. Árvores são pré-configuradas, mas Pokémon capturados
+**não evoluem automaticamente**.
+
+O serviço `importacao_evolucoes_service.py` e a tela do mestre
+`Catálogo → Gerar árvores evolutivas` carregam as 430 relações
+de modo aditivo e idempotente após simulação, backup verificado e
+confirmação, sem reescrever vínculos preexistentes. Dados estão em
+`data/referencias/pokedex_evolucoes_898_10e2_4.json`; mais
+detalhes em `docs/ETAPA_10E2_4_GERACAO_COMPLETA_EVOLUCOES.md`.
+
+**10E.3:** próxima etapa precisa de autorização transacional
+por Pokémon para evoluções especiais, escolha do jogador,
+consumo correto de pedra e recálculo dos atributos. Não confundir
+sinalização no catálogo com autorização individual já implementada.

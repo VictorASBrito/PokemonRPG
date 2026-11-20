@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block titulo %}Gerar árvores evolutivas | Pokémon RPG{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div>
+        <p class="rotulo">Catálogo Pokémon · Importação de relações</p>
+        <h1>Gerar árvores evolutivas</h1>
+        <p class="texto-suave">Importação aditiva das 898 espécies. Evoluções simples entram como relações regulares; condições especiais ficam reservadas para liberação individual pelo mestre.</p>
+    </div>
+    <div class="acoes-cabecalho">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.pokemons') }}">Voltar ao catálogo</a>
+    </div>
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo"><div><span>1</span><h2>Resultado da simulação</h2></div><p>Este diagnóstico é somente leitura. Não altera os Pokémon dos jogadores.</p></div>
+    <div class="grade-formulario grade-tres-colunas ui-grade">
+        <div><strong>{{ plano.auto_fonte }}</strong><p class="texto-suave">Relações simples da fonte: nível ou pedra</p></div>
+        <div><strong>{{ plano.mestre_fonte }}</strong><p class="texto-suave">Relações especiais: liberação individual</p></div>
+        <div><strong>{{ plano.ja_existentes }}</strong><p class="texto-suave">Relações já existentes, preservadas</p></div>
+        <div><strong>{{ plano.automaticas_pendentes }}</strong><p class="texto-suave">Relações regulares a cadastrar</p></div>
+        <div><strong>{{ plano.mestre_pendentes }}</strong><p class="texto-suave">Relações restritas a cadastrar</p></div>
+        <div><strong>{{ plano.pendentes|length }}</strong><p class="texto-suave">Total de novos vínculos</p></div>
+    </div>
+    <p><strong>Assinatura de revisão</strong></p>
+    <p><code style="overflow-wrap:anywhere">{{ plano.assinatura }}</code></p>
+
+    {% if plano.bloqueios %}
+    <div role="alert">
+        <h3>Aplicação bloqueada</h3>
+        <p>Foram detectados {{ plano.bloqueios|length }} conflitos no catálogo. Nenhum registro foi alterado.</p>
+        <ul>{% for erro in plano.bloqueios[:30] %}<li>{{ erro }}</li>{% endfor %}</ul>
+        {% if plano.bloqueios|length > 30 %}<p>Há mais ocorrências; confira o diagnóstico via CLI.</p>{% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo"><div><span>2</span><h2>O que será gerado</h2></div></div>
+    <p>As árvores são montadas a partir de todas as relações cadastradas. Evoluções por nível simples usam <strong>o nível compartilhado com o treinador</strong>; evoluções por pedras requerem a pedra correspondente e a escolha do treinador. O cadastro da relação <strong>não consome itens nem altera Pokémon da Box</strong>.</p>
+    <p><strong>Exige liberação do mestre para o Pokémon específico:</strong> amizade, troca, materiais especiais, horário, sexo, movimentos, localização, clima, requisitos regionais e outras condições adicionais. Umbreon, Espeon e Sylveon estão nessa categoria.</p>
+    <p class="texto-suave">As relações existentes não serão apagadas, reativadas nem sobrescritas. O sistema ignora pares já cadastrados e cria somente os ausentes.</p>
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo"><div><span>3</span><h2>Aplicar no PostgreSQL</h2></div><p>Exige backup real verificado e confirmação explícita.</p></div>
+    {% if not plano.bloqueios and plano.pendentes %}
+    <form method="post" action="{{ url_for('catalogo_admin.gerar_arvores_pokemon_admin') }}" class="formulario-catalogo">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="assinatura" value="{{ plano.assinatura }}">
+        <label class="alternador-linha">
+            <input type="checkbox" name="backup_confirmado" value="1" required>
+            <span>Realizei e verifiquei um backup restaurável do PostgreSQL da campanha.</span>
+        </label>
+        <div class="campo">
+            <label for="confirmar">Para confirmar, digite exatamente: <code>{{ frase }}</code></label>
+            <input id="confirmar" name="confirmar" required autocomplete="off" maxlength="50">
+        </div>
+        <button class="botao botao-primario" type="submit">Gerar as árvores agora</button>
+    </form>
+    {% elif plano.bloqueios %}
+        <p class="texto-suave">Corrija os conflitos indicados antes de realizar a importação.</p>
+    {% else %}
+        <p><strong>Todas as 430 relações da fonte já estão representadas no catálogo.</strong> Não é necessário importar novamente.</p>
+    {% endif %}
+</section>
+
+<section class="cartao secao-formulario ui-card">
+    <div class="secao-titulo"><div><span>4</span><h2>Fontes</h2></div></div>
+    <p>PokéAPI: <a href="https://pokeapi.co/docs/v2" target="_blank" rel="noopener noreferrer">evolution chains</a>. Comparação e exceções: <a href="https://pokemondb.net/evolution" target="_blank" rel="noopener noreferrer">Pokémon Database</a>; livro PKMRPG v2.5 (capítulos 9 e 16).</p>
+    <p class="texto-suave">O manual exige amizade máxima para materiais de evolução. Como Ankar não usa amizade numérica, a execução efetiva será definida na etapa de evolução dos jogadores, sem reintroduzir essa mecânica.</p>
+</section>
+{% endblock %}

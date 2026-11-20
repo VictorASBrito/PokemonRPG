@@ -76,6 +76,8 @@ def descrever_requisito(relacao: EvolucaoPokemon) -> str:
         partes.append(relacao.tipo_requisito.replace("_", " ").capitalize())
     if condicao:
         partes.append(str(condicao)[:180])
+    if requisitos.get("requer_liberacao_mestre"):
+        partes.insert(0, "Reservada: liberação individual pelo mestre")
     return " · ".join(partes) or "Requisito não documentado"
 
 

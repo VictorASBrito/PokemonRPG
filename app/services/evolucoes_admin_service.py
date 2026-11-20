@@ -279,7 +279,20 @@ def salvar_relacao(
         acao = "editar_relacao"
     relacao.forma_destino_id = destino.id
     relacao.tipo_requisito = gatilho
+    requisitos_preservados = {}
+    if existente is not None:
+        # Editar metadados não deve retirar proteção individual do mestre
+        # das relações especiais importadas de forma controlada.
+        for chave in (
+            "origem_importacao", "requer_liberacao_mestre",
+            "liberacao_individual", "liberacao",
+            "detalhes_pokeapi", "gatilho_pokeapi",
+            "item_codigo_pokeapi",
+        ):
+            if chave in (existente.requisitos or {}):
+                requisitos_preservados[chave] = existente.requisitos[chave]
     relacao.requisitos = {
+        **requisitos_preservados,
         "tipo_relacao": tipo,
         "nivel": nivel,
         "item_nome": item or None,
