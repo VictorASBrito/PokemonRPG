@@ -1,0 +1,18 @@
+{
+  "versao": "10E.2.2",
+  "verificado_em": "2026-11-20",
+  "politica": "Sugestoes revisadas individualmente por mestre; nao importar em massa ou conceder evolucao automaticamente.",
+  "fontes": {
+    "pokeapi": "https://pokeapi.co/docs/v2",
+    "pokemondb": "https://pokemondb.net/evolution/level",
+    "livro": "Pokémon RPG v2.5, capitulo 9, pp. 44-45 (regras gerais e Charmander nivel 16)"
+  },
+  "relacoes": [
+    {"origem": "bulbasaur", "destino": "ivysaur", "nivel": 16, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/1/", "pokemondb": "https://pokemondb.net/evolution/level"},
+    {"origem": "ivysaur", "destino": "venusaur", "nivel": 32, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/1/", "pokemondb": "https://pokemondb.net/evolution/level"},
+    {"origem": "charmander", "destino": "charmeleon", "nivel": 16, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/2/", "pokemondb": "https://pokemondb.net/evolution/level", "livro": "capitulo 9, pagina 44: Charmander evolui no nivel 16"},
+    {"origem": "charmeleon", "destino": "charizard", "nivel": 36, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/2/", "pokemondb": "https://pokemondb.net/evolution/level"},
+    {"origem": "squirtle", "destino": "wartortle", "nivel": 16, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/3/", "pokemondb": "https://pokemondb.net/evolution/level"},
+    {"origem": "wartortle", "destino": "blastoise", "nivel": 36, "pokeapi": "https://pokeapi.co/api/v2/evolution-chain/3/", "pokemondb": "https://pokemondb.net/evolution/level"}
+  ]
+}
