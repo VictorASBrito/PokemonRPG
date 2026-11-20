@@ -94,3 +94,18 @@ explicitamente confirmado, histórico e rollback. O importador agora
 distingue Nidoran♂/♀. **Nenhuma correção foi aplicada no PostgreSQL
 real.** Consultar `docs/ETAPA_10E2_1_2_SANEAMENTO_POKEDEX.md`.
 O editor de relações 10E.2.2 depende da revisão pós-saneamento.
+
+
+## Entrega 10E.2.2 — Editor administrativo de relações (2026-11-20)
+
+**Implementação preparada em branch:** `feature/10e2-2-editor-relacoes-pokemon`.
+Utiliza a tabela `EvolucaoPokemon` já existente. A interface do mestre
+cadastra relações de evolução permanente, Mega temporária, forma alternativa
+e parentesco regional, distinguindo metadados e impedindo ciclos permanentes.
+Seis evoluções de iniciais foram conferidas com PokéAPI e Pokémon Database,
+com Charmander → Charmeleon também confirmado no manual PKMRPG v2.5
+(cap. 9, p. 44). Consulte `docs/ETAPA_10E2_2_RELACOES_POKEMON.md`.
+
+**Limite da entrega:** não altera fichas nem cria comandos de evolução
+para jogadores. Não reintroduz amizade/XP individuais. A árvore completa
+e importações assistidas de outras cadeias ficam para 10E.2.3.
