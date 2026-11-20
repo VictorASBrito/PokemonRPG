@@ -158,3 +158,26 @@ detalhes em `docs/ETAPA_10E2_4_GERACAO_COMPLETA_EVOLUCOES.md`.
 por Pokémon para evoluções especiais, escolha do jogador,
 consumo correto de pedra e recálculo dos atributos. Não confundir
 sinalização no catálogo com autorização individual já implementada.
+
+
+## 10E.2.5 — Complemento de árvores regionais (20/11/2026)
+
+Auditoria do `data/catalogo/pokemons.json`: 38 formas regionais
+ou associadas a Galar (18 Alola, 18 Galar, 2 modos de
+Darmanitan), mas somente seis tinham vínculo na base de 430
+relações da 10E.2.4. A causa foi o uso de `pokemon_species.csv`
+sem importar as arestas de forma `required_pokemon_form_id` e
+`evolved_pokemon_form_id`.
+
+**Correção incremental:** novo arquivo versionado de **17 pares
+regionais** verificados com PokéAPI/PokémonDB:
+**8 por nível/pedra sem condição adicional**, **9 com condições
+noturnas, amizades, trocas, região ou itens especiais**. Os 430 pares
+anteriores não são refeitos, mesclados ou sobrescritos. O mestre
+pode completar esses 17 vínculos no painel administrativo com
+simulação, backup e confirmação. Darmanitan Galar Zen não é
+evolução, e as aves lendárias de Galar/Stunfisk Galar não evoluem.
+
+**Referência:** `docs/ETAPA_10E2_5_EVOLUCOES_REGIONAIS.md`.
+A liberação individual efetiva de Pokémon especiais continua
+na 10E.3 e a alternância Zen na 10E.4.
