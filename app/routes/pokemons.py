@@ -15,6 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import login_obrigatorio, perfil_obrigatorio
+from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 from app.services.permissoes_service import pode_criar_pokemon, pode_editar_identidade_pokemon
 from app.services.pokemon_db_service import (
     BOX_ID,
@@ -217,6 +218,10 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         contexto.regras,
     )
     pokemon = registro["pokemon"]
+    # 10E.3.1: consulta não escreve no banco e não disponibiliza evolução.
+    consulta_evolucao = consultar_evolucoes_pokemon(
+        pokemon_model, contexto.personagem
+    )
     limite_golpes = int(contexto.regras["limites"]["golpes_por_pokemon"])
     parametros_acao = {"pokemon_id": pokemon_id, "retorno": retorno}
     if modo_mestre:
@@ -226,6 +231,7 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
         "jogador/pokemon.html",
         jogador=contexto.jogador,
         pokemon=pokemon,
+        consulta_evolucao=consulta_evolucao,
         especie=registro["especie"],
         calculos=registro["calculos"],
         regras=contexto.regras,
