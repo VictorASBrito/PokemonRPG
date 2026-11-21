@@ -47,6 +47,15 @@ Para observar o navegador na sua máquina, acrescente `--headed`. Os casos cobre
 
 O workflow `.github/workflows/test-playwright-ui-10f6.yml` instala Chromium no GitHub Actions, executa essa suíte em PRs para `main` e publica screenshots/traces como artefatos da execução. A automação é independente do ChatGPT Work e do TinyFish. Falhas visuais exigem inspeção das evidências antes de qualquer merge.
 
+**Auditoria ampliada (10F.7):** `tests/visual/test_auditoria_telas_10f7.py` verifica as principais rotas de jogador e mestre, formulários de edição, navegação mobile, consoles JavaScript e transbordamento horizontal em 320/390/768/1366px. Os screenshots são salvos em `test-results/auditoria-telas/`. Rode somente a auditoria com:
+
+```bash
+python -m pytest -q tests/visual/test_auditoria_telas_10f7.py --browser chromium --screenshot only-on-failure --tracing retain-on-failure --output test-results
+```
+
+A região de Ankar em `/regiao/ankar` é **exclusiva do mestre**. A auditoria não reinterpreta um redirecionamento de jogador como erro visual. Os testes cobrem cenários de fixture, não garantem ausência de problemas em todas as combinações de dados reais ou estados de formulários.
+
+
 ## Mapa do repositório
 
 | Diretório | Responsabilidade |
