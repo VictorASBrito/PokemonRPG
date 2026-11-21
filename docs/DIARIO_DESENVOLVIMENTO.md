@@ -23,12 +23,12 @@ Copie este modelo ao concluir uma mudança:
 
 ### 2026-11-21 — Etapa 10F.1: correção da navegação mobile
 - **Objetivo:** eliminar o conflito de especificidade CSS que podia manter o menu visível quando fechado, e evitar interferência de `grid-template-areas` no cabeçalho móvel.
-- **Status:** IMPLEMENTADO NA BRANCH; CI E INSPEÇÃO VISUAL EM NAVEGADOR PENDENTES.
+- **Status:** IMPLEMENTADO NA BRANCH; CI DO CONTRATO VISUAL APROVADA; INSPEÇÃO VISUAL EM NAVEGADOR PENDENTE.
 - **Branch:** `fix/mobile-nav-global-css-20261121` (origem `main`); Pull Request para `main`, sem merge.
 - **Arquivos modificados:** `static/css/sistema-ui.css`, `static/css/visual-global-10c5.css`, `templates/base.html`, `tests/test_sistema_ui.py`, `tests/test_navegacao_mobile_10f1.py` (novo), `.github/workflows/test-contrato-ui-repositorio.yml`, `docs/ARQUITETURA_FRONTEND.md`, `docs/CONTINUIDADE_PROJETO.md` e este diário.
 - **Esquema/migrations:** nenhuma. Banco e regras de campanha preservados.
 - **Decisões:** layout/estados do cabeçalho ficam em `visual-global-10c5.css`; `sistema-ui.css` não redefine a navegação; o botão Menu e o comportamento JS preexistente permanecem.
-- **Testes executados e resultados:** revisão estática dos seletores e das regras concorrentes feita por inspeção do código; regressões automatizadas adicionadas e incluídas no workflow do GitHub, sem declarar resultado antes da execução da CI. Teste manual real não executado nesta entrega.
+- **Testes executados e resultados:** revisão estática dos seletores (aprovada); GitHub Actions [Contrato visual e organização do repositório](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44865434964), execução da PR #32 em 21/11/2026: `python -m pytest -q` com **40 passed in 2.97s**, incluindo a nova regressão. Inspeção visual manual no navegador ainda não executada.
 - **Riscos/pendências:** checar visualmente master/jogador/prévia e URLs de ficha, 320–1440px, ambos temas e zoom 200%; verificar status de CI do PR. Alteração limitada ao frontend.
 - **Próxima ação:** validar a PR e o menu no navegador antes do merge; depois revisar o dashboard de jogador/NPC em outra etapa.
 
