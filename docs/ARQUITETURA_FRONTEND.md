@@ -88,6 +88,10 @@ A visão normal mantém seis posições de equipe, seis atributos base e quatro 
 
 Testar em Chromium com equipe completa, golpes e slots vazios, temas e resoluções 1720×864, 1366×768 e 390×844; evidências em `test-results/dashboard-10f8`. Testes prévios de foco e navegação continuam obrigatórios.
 
+## Etiquetas e atributos do dashboard (10F.9)
+
+As etiquetas comuns em `tipos.css` usam altura automática, mínimo de 24px geral (21–25px nos contextos reduzidos e expandidos), fonte legível de 0,69–0,78rem no painel e line-height 1,2, sem sombra de texto; paletas dos tipos não mudam. Não usar altura fixa ou fonte de 9px nos selos. O card normal agora mostra os seis totais e bases fornecidos pelo servidor (a mesma fonte dos dados do expandido), com título Atributos e fonte de 1rem nos totais. Classe `.atributos-base-pokemon` é mantida para compatibilidade, apesar de agora conter totais e bases. A grade tem mínimos de 52px; celular mantém empilhamento. Os templates do jogador/prévia e NPC seguem a mesma hierarquia. Testar igualdade dos valores e limites dos textos dos selos com dois tipos e seis Pokémon no Playwright; manter as regressões anteriores.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
