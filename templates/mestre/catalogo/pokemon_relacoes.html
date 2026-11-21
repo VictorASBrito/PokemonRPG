@@ -39,7 +39,7 @@
                 <strong>{{ forma.nome }} → <a href="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=relacao.forma_destino_id) }}">{{ relacao.forma_destino.nome }}</a></strong>
                 <small>{{ req.get('tipo_relacao', 'evolucao') }} · {{ 'Ativa' if relacao.ativo else 'Inativa' }} · {{ relacao.forma_destino.codigo }}</small>
             </div>
-            <form class="grade-vinculo-form" method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">
+            <form class="grade-vinculo-form" data-relacao-editor method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}">
                 <input type="hidden" name="relacao_id" value="{{ relacao.id }}">
                 <input type="hidden" name="destino_id" value="{{ relacao.forma_destino_id }}">
                 <div class="campo">
@@ -119,14 +119,18 @@
         <button type="submit" class="botao botao-secundario">Buscar</button>
     </form>
     {% if candidatos %}
-    <form method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}" class="formulario-catalogo">
+    <form method="post" action="{{ url_for('catalogo_admin.relacoes_pokemon', forma_id=forma.id) }}" class="formulario-catalogo" data-relacao-editor data-relacao-nova>
         <div class="grade-formulario grade-tres-colunas ui-grade">
-            <div class="campo campo-largo"><label for="destino_id">Forma de destino</label><select id="destino_id" name="destino_id" required>{% for destino in candidatos %}<option value="{{ destino.id }}">{{ destino.nome }} · {{ destino.codigo }} ({{ destino.categoria }})</option>{% endfor %}</select></div>
+            <div class="campo campo-largo"><label for="destino_id">Forma de destino</label><select id="destino_id" name="destino_id" required>{% for destino in candidatos %}<option value="{{ destino.id }}" data-categoria="{{ destino.categoria }}">{{ destino.nome }} · {{ destino.codigo }} ({{ destino.categoria }})</option>{% endfor %}</select></div>
             <div class="campo"><label for="tipo_relacao">Tipo de relação</label><select id="tipo_relacao" name="tipo_relacao">{% for chave, nome in tipos_relacao %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
             <div class="campo"><label for="tipo_requisito">Requisito</label><select id="tipo_requisito" name="tipo_requisito">{% for chave, nome in gatilhos %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
             <div class="campo"><label for="nivel">Nível (se aplicável)</label><input id="nivel" type="number" min="1" max="999" name="nivel" placeholder="Ex.: 16"></div>
             <div class="campo"><label for="item_nome">Item / Mega Pedra (se aplicável)</label><input id="item_nome" name="item_nome" maxlength="140" placeholder="Ex.: Pedra do Fogo"></div>
             <div class="campo campo-largo"><label for="condicao">Condição especial / autorização narrativa</label><input id="condicao" name="condicao" maxlength="500" placeholder="Obrigatória para condições especiais, amizade, troca e parentesco"></div>
+            <p class="campo-largo texto-suave" data-mega-relacao-ajuda hidden>
+                <strong>Mega Evolução em Ankar:</strong> escolha o Pokémon base como origem, a Megaforma da mesma espécie como destino e o requisito
+                “Evento ou condição especial”. A permissão Mega do treinador é verificada na ativação. Não é necessário cadastrar pedra ou item.
+            </p>
             <div class="campo"><label for="fonte">Origem da regra</label><select id="fonte" name="fonte">{% for chave, nome in fontes %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}</select></div>
             <div class="campo"><label for="fonte_url">Referência externa HTTPS</label><input id="fonte_url" name="fonte_url" type="url" maxlength="500" placeholder="https://..."></div>
             <div class="campo campo-largo"><label for="observacoes">Notas do mestre</label><textarea id="observacoes" name="observacoes" maxlength="1500" placeholder="Descreva diferenças entre os jogos, o manual e as regras de Ankar"></textarea></div>
@@ -142,7 +146,9 @@
 
 <section class="cartao secao-formulario espacamento-topo ui-card">
     <div class="secao-titulo"><div><span>!</span><h2>Regras importantes de Ankar</h2></div></div>
-    <p>O nível do Pokémon acompanha o do treinador. Amizade e experiência individual não são mecânicas ativas na campanha; requisitos desse tipo exigem decisão narrativa do mestre. Mega Evolução é temporária, requer validação de recursos e não é tratada como evolução permanente. Parentesco regional não autoriza troca de forma.</p>
-    <p class="texto-suave">Manual PKMRPG v2.5: capítulo 9, páginas 44–45, e pedras de Mega Evolução no capítulo 16. A habilitação de evoluções nas fichas será desenvolvida na etapa 10E.3.</p>
+    <p>O nível do Pokémon acompanha o do treinador. Amizade e experiência individual não são mecânicas ativas na campanha; requisitos desse tipo exigem decisão narrativa do mestre. Mega Evolução é temporária e depende da permissão do treinador concedida pelo mestre, sem necessidade de pedra ou item em Ankar. Parentesco regional não autoriza troca de forma.</p>
+    <p class="texto-suave">Manual PKMRPG v2.5: capítulo 9, páginas 44–45, e pedras de Mega Evolução no capítulo 16. Para Ankar prevalece a permissão concedida ao treinador, sem consumo de itens. Cadastrar uma relação Mega habilita o destino no Painel somente quando a Mega estiver autorizada.</p>
 </section>
 {% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/relacoes-pokemon.js', v='10e4-4') }}" defer></script>{% endblock %}
