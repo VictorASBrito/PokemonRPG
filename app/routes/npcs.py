@@ -106,6 +106,8 @@ def refazer(indice):
 @perfil_obrigatorio("mestre")
 def confirmar():
     acao = request.form.get("acao")
+    if acao == "colocar_campo" and not current_app.config.get("CAMPO_OPERACOES_ATIVAS", False):
+        abort(403, description="O envio ao Campo está em pausa.")
     return _operacao(lambda: aplicar_rascunho(
         campanha_codigo=_codigo(), acao=acao,
         time_numero=request.form.get("time_numero"), modelo_id=request.form.get("modelo_id"),
@@ -116,6 +118,8 @@ def confirmar():
 @npcs_bp.post("/modelos/<modelo_id>/campo")
 @perfil_obrigatorio("mestre")
 def usar_modelo(modelo_id):
+    if not current_app.config.get("CAMPO_OPERACOES_ATIVAS", False):
+        abort(403, description="O envio ao Campo está em pausa.")
     return _operacao(lambda: colocar_modelo(
         campanha_codigo=_codigo(), modelo_id=modelo_id,
         time_numero=request.form.get("time_numero"),
