@@ -97,6 +97,7 @@
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
         <a class="botao botao-primario botao-link" href="{{ equipe_url }}">Abrir equipe</a>
+        {% if not modo_mestre %}<a class="botao botao-primario botao-link" href="{{ url_for('trocas.central') }}">Trocas Pokémon</a>{% endif %}
     </div>
 </section>
 
