@@ -21,6 +21,7 @@ from app.services.personagem_service import (
     carregar_contexto_ficha,
 )
 from app.services.painel_acoes_pokemon_service import carregar_acoes_equipe_dashboard
+from app.services.entrada_personagens_service import sprite_personagem_por_login
 from app.services.pokemon_db_service import (
     carregar_contexto_pokemon,
     equipe_detalhada_db,
@@ -79,6 +80,7 @@ def dashboard():
         nome_jogador=ficha.personagem.usuario.nome,
         jogador=ficha.jogador,
         treinador=treinador,
+        sprite_personagem_url=sprite_personagem_por_login(ficha.personagem.usuario.login),
         atributos_config=ficha.regras.get("atributos", []),
         equipe=equipe,
         limite_equipe=int(contexto_pokemon.regras["limites"]["tamanho_equipe"]),

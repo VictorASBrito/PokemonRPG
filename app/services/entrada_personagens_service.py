@@ -51,6 +51,27 @@ def configuracao_login() -> list[dict]:
     return resultado
 
 
+
+def sprite_personagem_por_login(login: str) -> str:
+    """Retorna sprite configurado da entrada visual sem alterar a autorização.
+
+    O dashboard já validou a identidade e a campanha; este mapeamento serve
+    apenas para exibição. Se não houver sprite válido, a tela usa o retrato
+    anterior ou o placeholder habitual.
+    """
+    login_normalizado = str(login or "").strip().lower()
+    if not login_normalizado:
+        return ""
+    for item in configuracao_login():
+        if item["login"] != login_normalizado:
+            continue
+        sprite = item["sprite"]
+        if sprite and (Path(current_app.static_folder) / sprite).is_file():
+            return url_for("static", filename=sprite)
+        return ""
+    return ""
+
+
 def _consulta_jogadores(logins: list[str], campanha_codigo: str):
     return db.session.execute(
         select(Usuario, Personagem)

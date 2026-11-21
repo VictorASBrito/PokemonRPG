@@ -59,6 +59,17 @@ O modo de foco de `static/css/dashboard.css` é compartilhado pelo dashboard do 
 
 **Regressão estática:** `tests/test_dashboard_foco_baixa_altura_10f4.py`, integrado à suíte de contrato visual, verifica a exceção de altura, o desktop preservado, controles e os dois templates. **Validação visual complementar:** conferir 1024×600, 1366×768, 1440×900, navegador com zoom 200%, jogador e NPC, equipe de 1 a 6 Pokémon, modal de confirmação, botões Recolher/Editar e opções de Mega/forma. Teste de CSS não substitui uso real no navegador.
 
+## Identidade do personagem e quadro de atributos — contrato 10F.5
+
+- O painel do jogador recebe seu sprite a partir da configuração **já validada** de `data/entrada_personagens.json` (`configuracao_login()`), consultando `sprite_personagem_por_login(ficha.personagem.usuario.login)`. O mesmo mapeamento é usado na prévia autenticada do mestre. Nunca selecionar um sprite pela posição do personagem na tela nem pelo texto de seu nome.
+- Se um slot não possui sprite local válido, o dashboard preserva a imagem `foto_url` anterior ou a inicial, sem gravar nada no PostgreSQL. O arquivo original da foto continua editável na ficha.
+- O ícone do treinador em `templates/jogador/dashboard.html` é um link com rótulo acessível para `dashboard_ficha_url`. Esse destino usa `jogadores.ficha` para jogador e `mestre.ficha_jogador` na prévia; as rotas, permissões, edição de atributos e botão **Editar** continuam intactos.
+- O menu de `templates/base.html` não mostra mais `Minha ficha` nos perfis jogador e prévia. A página **não foi excluída**; apenas seu acesso principal saiu da barra de navegação.
+- Para que `.painel-atributos-treinador` não encolha ao expandir um Pokémon, `dashboard-pokemon.js` mede a altura **antes** de aplicar a classe `dashboard-foco-aberto`, atribui-a à variável CSS `--dashboard-altura-atributos-original` e a remove ao recolher o Pokémon. O CSS aplica essa altura mínima somente em `.dashboard-jogador:not(.npc-painel)`; o NPC não recebe esse ajuste.
+- Atualizar o cache de `dashboard.css` e `dashboard-pokemon.js` nos templates de jogador e NPC quando houver alterações nesses arquivos compartilhados.
+
+**Regressão:** `tests/test_dashboard_sprite_ficha_atributos_10f5.py` valida o mapeamento por login, o link da ficha, a fallback de foto e a preservação do quadro, no workflow visual. `tests/test_fichas_por_url_10b3_flask.py` verifica que duas URLs de personagem exibem sprites distintos, com base na configuração isolada do próprio teste. Testar no navegador abertura/recolhimento do Pokémon, zoom de 200%, troca de perfil, prévia do mestre e acesso por URL de ficha. Não remover as rotas GET/POST da ficha.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.

@@ -40,6 +40,13 @@ def test_duas_fichas_no_mesmo_navegador(configurados):
     assert "Treinador 2" in b.get_data(as_text=True)
     assert "/p/bartz-db/jogador/ficha" in a.get_data(as_text=True)
     assert "/p/jogador2/jogador/ficha" in b.get_data(as_text=True)
+    # Cada URL de ficha mantém o sprite do próprio slot configurado.
+    html_a = a.get_data(as_text=True)
+    html_b = b.get_data(as_text=True)
+    assert "foto-treinador-link" in html_a and "foto-treinador-link" in html_b
+    assert "img/login-personagens/slot-01.png" in html_a
+    assert "img/login-personagens/slot-02.png" in html_b
+    assert ">Minha ficha</a>" not in html_a and ">Minha ficha</a>" not in html_b
     assert c.get("/p/bartz-db/jogador/ficha").status_code == 200
     assert c.get("/p/jogador2/jogador/ficha").status_code == 200
 
