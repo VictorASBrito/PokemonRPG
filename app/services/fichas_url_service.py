@@ -33,6 +33,8 @@ ENDPOINTS_JOGADOR = frozenset({
     "inventario.inventario_jogador", "inventario.usar_jogador",
     "inventario.equipar_jogador", "inventario.desequipar_jogador",
     "inventario.transferir_jogador",
+    # Preferências pessoais: os próprios endpoints revalidam o titular.
+    "inventario.ordem_jogador", "aparencia.salvar",
     "combates.painel", "combates.estado", "combates.posicionar",
     "combates.retirar",
     "capturas.campo_jogador",
