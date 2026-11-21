@@ -6,6 +6,7 @@
 
   const panel = root.querySelector('.inventario-nds-bag');
   const tabs = [...root.querySelectorAll('[data-aba-botao]')];
+  const tabStrip = root.querySelector('.inventario-nds-abas');
   const rows = [...root.querySelectorAll('[data-item-id]')];
   const details = [...root.querySelectorAll('[data-detalhe-item]')];
   const bagArt = [...root.querySelectorAll('[data-arte-bolsa]')];
@@ -74,13 +75,27 @@
     panel.dataset.aba = key;
   }
 
+  // Ao abrir em uma bolsa à direita (ex.: Item-chave), revela a aba ativa
+  // dentro da própria faixa, sem deslocar a página verticalmente.
+  function revealSelectedBag(tab) {
+    if (!tabStrip || !tab || tabStrip.scrollWidth <= tabStrip.clientWidth) return;
+    const stripBounds = tabStrip.getBoundingClientRect();
+    const tabBounds = tab.getBoundingClientRect();
+    tabStrip.scrollLeft += tabBounds.left - stripBounds.left
+      + (tabBounds.width - stripBounds.width) / 2;
+  }
+
   function selectBag(key) {
     if (!metadata[key]) return;
     activeBag = key;
     applyBagVisual(key);
+    let selectedTab = null;
     for (const tab of tabs) {
-      tab.setAttribute('aria-pressed', tab.dataset.abaBotao === key ? 'true' : 'false');
+      const selected = tab.dataset.abaBotao === key;
+      tab.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      if (selected) selectedTab = tab;
     }
+    revealSelectedBag(selectedTab);
     if (filter) filter.value = '';
     refresh();
   }

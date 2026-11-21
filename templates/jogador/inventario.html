@@ -269,6 +269,6 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
-<script src="{{ url_for('static', filename='js/inventario.js', v=versao_inventario) }}" defer></script>
+<script src="{{ url_for('static', filename='js/inventario.js', v=versao_inventario ~ '-mobile-10f2') }}" defer></script>
 <script src="{{ url_for('static', filename='js/inventario-uso-10c4.js', v='10c4-2') }}" defer></script>
 {% endblock %}

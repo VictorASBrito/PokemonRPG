@@ -28,6 +28,15 @@ A folha legada `refinamento.css` foi absorvida por `sistema-ui.css`. Não reintr
 **Validação manual complementar:** conferir largura 320, 390, 768, 900, 901, 1100, 1101 e 1440px, em claro/escuro e com zoom de 200%. Testar mestre, jogador, prévia de mestre e URLs de ficha; abrir/fechar Menu, selecionar link, usar Escape, clicar fora, alternar tamanho da janela e conferir que ações de conta permanecem acessíveis. Essa inspeção real em navegador não é coberta pelos testes estáticos.
 
 
+## Inventário mobile — contrato 10F.2
+
+- A disposição horizontal da equipe até 799px é definida em `static/css/visual-inventario-10c5.css`: `.inventario-nds-equipe-lista` usa `display: flex`, `overflow-x: auto` e cartões com `flex: 0 0 224px`. Isso permite rolar pelos Pokémon sem ampliar a largura do documento.
+- `static/css/sistema-ui.css` continua protegendo textos longos e barras de PV, mas **não** pode forçar `overflow-x: hidden` no carrossel nem sobrescrever as dimensões de cards/fotos em celular e tablet. Valores compactos globais de cards só se aplicam a partir de 1200px.
+- A faixa `.inventario-nds-abas` já tem rolagem horizontal; `static/js/inventario.js` centraliza **apenas a faixa** na aba selecionada, inclusive quando a mochila inicia na primeira categoria com itens. Não usar `scrollIntoView()` que também possa saltar a página inteira.
+- Em mudanças de layout ou JavaScript, atualizar os parâmetros `v=` do CSS global e do JS no template, para evitar cache móvel.
+
+**Regressão:** `tests/test_inventario_mobile_10f2.py` examina a cascata global, o contrato CSS responsivo, a seleção da aba e a versão de cache. O workflow de contrato visual executa esses testes sem banco. Conferir manualmente em Android/Chrome, 320–430px, retrato/paisagem, zoom 200%, equipe com 1–6 Pokémon e bolsas com itens em categorias à direita.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
@@ -77,6 +86,7 @@ As ações de Mega/forma pertencem aos services/rotas; CSS e JS só apresentam o
 
 - `tests/test_sistema_ui.py` — CSS de base e compilação de templates.
 - `tests/test_navegacao_mobile_10f1.py` — estados fechado/aberto e ausência de regras globais concorrentes.
+- `tests/test_inventario_mobile_10f2.py` — rolagem móvel de Pokémon e aba ativa visível.
 - `tests/test_visual_10c5.py` — navegação responsiva e rolagem.
 - `tests/test_padrao_visual_10d1.py` — contexto do catálogo.
 - `tests/test_refinamento_frontend.py` — modos claro/escuro, fichas e Painel.

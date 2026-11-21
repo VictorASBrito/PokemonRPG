@@ -27,7 +27,10 @@ def test_nav_movel_visivel_e_cartoes_sem_overflow():
     assert "grid-template-areas" not in css
     assert '.topo[data-ui-nav-open="true"] .navegacao-principal { display: flex; }' in visual
     assert "overflow-x: hidden" in css
+    # Card de Pokémon mantém dimensionamento desktop; mobile pertence ao CSS do inventário.
+    assert "@media (min-width: 1200px)" in css
     assert "grid-template-columns: clamp(54px, 4.4vw, 74px) minmax(0, 1fr)" in css
+    assert "body.app-shell .inventario-nds-equipe-lista {" not in css
     assert "-webkit-line-clamp: 2" in css
     assert "max-width: 100%" in css
     assert 'body.app-shell [hidden] { display: none !important; }' in css

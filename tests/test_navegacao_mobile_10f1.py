@@ -73,7 +73,8 @@ def test_toggle_e_css_versionados_no_template_base():
     script = (RAIZ / "static/js/visual-navegacao-10c5.js").read_text(encoding="utf-8")
     assert 'data-ui-nav-toggle aria-controls="ui-navegacao-principal"' in base
     assert 'data-ui-navegacao aria-label="Navegação principal"' in base
-    assert "filename='css/sistema-ui.css', v='ui2-20261121-nav-10f1'" in base
+    # Valida cache busting sem congelar o identificador de versões futuras.
+    assert "filename='css/sistema-ui.css', v='ui2-20261121-" in base
     assert "filename='css/visual-global-10c5.css', v='ui2-20261121-nav-10f1'" in base
     for trecho in ("aria-expanded", "Escape", "pointerdown", "max-width: 1100px"):
         assert trecho in script

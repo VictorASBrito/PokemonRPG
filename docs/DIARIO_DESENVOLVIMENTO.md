@@ -21,6 +21,19 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.2: Bag mobile, carrossel e abas
+- **Objetivo:** corrigir a equipe Pokémon truncada e a aba Item-chave parcialmente oculta no Android/Chrome.
+- **Status:** IMPLEMENTADO NA BRANCH; CI APROVADA; VERIFICAÇÃO EM APARELHO PENDENTE.
+- **Branch:** `fix/inventario-mobile-rolagem-20261121` (nova, sobre `main`; etapa 10F.1/PR #32 já mesclada).
+- **Arquivos:** `static/css/sistema-ui.css`, `static/js/inventario.js`, `templates/base.html`, `templates/jogador/inventario.html`, `tests/test_sistema_ui.py`, `tests/test_inventario_mobile_10f2.py` (novo), `.github/workflows/test-contrato-ui-repositorio.yml`, `docs/ARQUITETURA_FRONTEND.md`, `docs/CONTINUIDADE_PROJETO.md` e este diário.
+- **Esquema/migrations:** nenhuma; dados de Ankar, jogadores, itens e permissões intocados.
+- **Diagnóstico confirmado:** `overflow-x: hidden` global com especificidade maior que a faixa horizontal da equipe em `visual-inventario-10c5.css`; código de seleção de bolsa não posicionava aba ativa.
+- **Solução:** delegar tamanho/rolagem de cartões no tablet e mobile ao CSS da mochila; centralizar aba selecionada apenas dentro da faixa, sem alterar scroll vertical; forçar cache atualizado.
+- **Testes executados:** inspeção estática dos seletores; GitHub Actions `Contrato visual e organização do repositório` na PR #33: primeiro run, `1 failed, 44 passed` por teste 10F.1 fixado a versão antiga de cache; teste atualizado para aceitar versionamento incremental; [segundo run](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44867035422), `45 passed in 1.43s` e `node --check static/js/inventario.js` aprovado. Teste real de rolagem por toque não executado.
+- **Pendências:** conferir largura da página (área vazia à direita no print) no mesmo aparelho, todos os Pokémon via deslize, abas à direita, zoom 200%, orientações e papéis jogador/mestre.
+- **Próxima ação:** aprovar PR após CI e reprodução no celular; não fazer merge antes da revisão.
+
+
 ### 2026-11-21 — Etapa 10F.1: correção da navegação mobile
 - **Objetivo:** eliminar o conflito de especificidade CSS que podia manter o menu visível quando fechado, e evitar interferência de `grid-template-areas` no cabeçalho móvel.
 - **Status:** IMPLEMENTADO NA BRANCH; CI DO CONTRATO VISUAL APROVADA; INSPEÇÃO VISUAL EM NAVEGADOR PENDENTE.
