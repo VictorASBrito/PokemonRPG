@@ -740,11 +740,11 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
 }
 
 .pokemon-dashboard-golpe-detalhado > div > strong,
-.pokemon-dashboard-golpe-detalhado > div > span {
+.pokemon-dashboard-golpe-detalhado > div > span:not(.etiqueta-tipo) {
     display: block;
 }
 
-.pokemon-dashboard-golpe-detalhado > div > span {
+.pokemon-dashboard-golpe-detalhado > div > span:not(.etiqueta-tipo) {
     margin-top: 3px;
     color: var(--texto-suave);
     font-size: .7rem;
@@ -1333,7 +1333,7 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
         font-size: .72rem;
     }
 
-    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-golpe-detalhado > div > span {
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-golpe-detalhado > div > span:not(.etiqueta-tipo) {
         margin-top: 1px;
         font-size: .58rem;
     }
@@ -1473,9 +1473,10 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
 
 
 /* 10F.4 — Acesso aos detalhes em notebooks baixos e zoom elevado.
-   O modo normal de desktop preserva a primeira dobra; quando ela é curta,
-   o foco pode crescer e a página rolar sem cortar golpes e ações. */
-@media (min-width: 901px) and (max-height: 760px) {
+   10F.9: as etiquetas maiores e nomes quebráveis exigem mais espaço lateral.
+   Em desktop estreito ou baixo, permitir crescimento e rolagem da página,
+   sem reduzir a fonte dos tipos para encaixar cinco cartões à força. */
+@media (min-width: 901px) and (max-height: 820px), (min-width: 901px) and (max-width: 1450px) {
     body.dashboard-foco-aberto {
         overflow-x: hidden;
         overflow-y: auto;
@@ -1541,6 +1542,10 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
 
     .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .pokemon-dashboard-topo {
         height: auto;
+    }
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .dados-pokemon-dashboard {
+        min-width: 0;
+        min-height: min-content;
     }
 }
 
