@@ -41,11 +41,24 @@ def test_arte_decorativa_nao_expande_a_largura_do_documento():
     css = VISUAL.read_text(encoding="utf-8")
     tablet = _regras_em_media(css, "(max-width: 1199px)")
     assert tablet[".inventario-nds-bag"]["overflow"] == "visible"
-    arte = tablet[".inventario-nds-bag::after"]
+    # O mesmo desenho nao pode escapar nem no desktop >=1200px.
+    regra_raiz = [
+        no for no in tinycss2.parse_stylesheet(
+            css, skip_whitespace=True, skip_comments=True
+        )
+        if no.type == "qualified-rule"
+        and tinycss2.serialize(no.prelude).strip() == ".inventario-nds-bag::after"
+    ]
+    assert len(regra_raiz) == 1
+    arte = {
+        dec.lower_name: tinycss2.serialize(dec.value).strip()
+        for dec in tinycss2.parse_declaration_list(
+            regra_raiz[0].content, skip_whitespace=True, skip_comments=True
+        )
+        if dec.type == "declaration"
+    }
     assert arte["right"] == "0"
     assert arte["width"] == "min(380px, 100%)"
-    # Mantemos o overflow do painel por conta do autocomplete do mestre;
-    # quem fica contida dentro do painel é a decoração.
     assert "overflow: hidden" not in arte.values()
 
 
@@ -94,6 +107,6 @@ def test_css_valido_e_versao_de_cache_atualizada():
         encoding="utf-8"
     )
     assert (
-        "filename='css/visual-inventario-10c5.css', v='10c5-mobile-10f3'"
+        "filename='css/visual-inventario-10c5.css', v='10c5-ring-10f7'"
         in template
     )
