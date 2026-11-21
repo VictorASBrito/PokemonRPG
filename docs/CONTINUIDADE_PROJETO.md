@@ -5,6 +5,18 @@
 > **Base examinada:** `PokemonRPG.zip`, ramo Git `feature/att-frontend`, commit `9517d8a` (23/10/2026).  
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
+
+## Atualização de arquitetura visual e limpeza de repositório — 21/11/2026
+
+A revisão de novembro mantém **o mesmo Flask/PostgreSQL e as regras ativas de Ankar**. Foi criada a branch `refactor/visual-system-repo-cleanup-2026` para:
+- concentrar tokens e densidade em `static/css/sistema-ui.css`, remover `refinamento.css` e conflitos legados de cabeçalhos em `geral.css`;
+- manter `visual-global-10c5.css` e `padrao-visual-10d1.css` para comportamento responsivo e navegação, usando tokens de base;
+- remover 37 backups versionados (com recuperação pelo histórico Git), arquivar READMEs e instruções legadas fora da raiz e documentar instaladores antigos;
+- criar `README.md`, `docs/ARQUITETURA_FRONTEND.md`, `docs/ORGANIZACAO_REPOSITORIO.md` e o teste de contrato `tests/test_contrato_visual_repositorio.py`.
+
+**Atenção:** referências de versões anteriores neste documento são históricas. O código da `main`, o README principal e os documentos atualizados de arquitetura prevalecem. Não remover migrações, sprites, uploads ou dados privados para reduzir o número de arquivos. Não executar instaladores PowerShell legados sobre a versão atual. A revisão é exclusivamente visual/organizacional, sem migrations ou alteração de dados reais.
+
+
 ## 1. Missão e instrução para o próximo assistente
 
 Você está continuando, **não recriando**, o site de gerenciamento da campanha Pokémon RPG da região fictícia de **Ankar**. Trabalhe incrementalmente no código existente, preservando dados, permissões, rotas e comportamentos que já funcionam. Use este documento como orientação inicial, porém **confirme os detalhes no código da cópia mais recente**: uma implementação posterior prevalece sobre descrições históricas.
