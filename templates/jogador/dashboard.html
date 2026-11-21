@@ -4,7 +4,7 @@
 {% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f5-sprite-atributos') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f8-combate-legibilidade') }}">
 {% endblock %}
 
 {% block conteudo %}
@@ -201,8 +201,11 @@
                                     {% if indice_golpe < golpes_pokemon|length %}
                                         {% set golpe = golpes_pokemon[indice_golpe] %}
                                         <div class="golpe-dashboard-preenchido">
-                                            <span title="{{ golpe.get('nome') }}">{{ golpe.get('nome') }}</span>
-                                            <small title="{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}">{{ golpe.get('dano') or 'Estado' }} · {{ golpe.get('tipo', '—') }}</small>
+                                            <span class="golpe-dashboard-nome" title="{{ golpe.get('nome') }}">{{ golpe.get('nome') }}</span>
+                                            <div class="golpe-dashboard-meta">
+                                                <small class="golpe-dashboard-dano" title="Dano: {{ golpe.get('dano') or 'Estado' }}">{{ golpe.get('dano') or 'Estado' }}</small>
+                                                <small class="golpe-dashboard-tipo" title="{{ golpe.get('tipo', '—') }}">{{ golpe.get('tipo', '—') }}</small>
+                                            </div>
                                         </div>
                                     {% else %}
                                         <div class="golpe-dashboard-vazio"><span>Sem golpe definido</span></div>
