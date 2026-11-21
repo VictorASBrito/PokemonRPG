@@ -1237,10 +1237,12 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
         margin-top: 0;
         display: grid;
         grid-template-columns: minmax(0, 1.05fr) minmax(210px, .8fr);
-        grid-template-rows: auto minmax(0, 1fr) auto auto;
+        grid-template-rows: auto auto;
+        grid-auto-rows: auto;
         gap: 8px;
-        align-content: stretch;
-        overflow: hidden;
+        align-content: start;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-painel-detalhe {
@@ -1311,10 +1313,10 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     }
 
     .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-lista-golpes-detalhados {
-        height: calc(100% - 18px);
+        height: auto;
         min-height: 0;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: minmax(0, 1fr);
+        grid-auto-rows: minmax(48px, auto);
         gap: 5px;
         margin-top: 5px;
     }
@@ -1699,12 +1701,22 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     overflow: hidden;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon span {
-    font-size: .57rem;
-    line-height: 1.1;
+    color: var(--texto-suave);
+    font-size: .69rem;
+    line-height: 1.15;
+    letter-spacing: .025em;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon strong {
-    font-size: .79rem;
-    line-height: 1.15;
+    color: var(--texto);
+    font-size: clamp(1.1rem, 1.35vw, 1.45rem);
+    font-weight: 850;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon > div {
+    background: var(--superficie);
+    border-color: color-mix(in srgb, var(--borda) 75%, var(--texto-suave));
+    gap: 3px;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard {
     display: flex;
@@ -1726,12 +1738,45 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     min-width: 0;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard small {
-    flex: 0 1 auto;
     min-width: 0;
-    max-width: 44%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > .golpe-dashboard-preenchido {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 2px;
+    padding: 3px 6px;
+    border: 1px solid var(--borda);
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-nome {
+    color: var(--texto);
+    font-size: .76rem;
+    font-weight: 780;
+    line-height: 1.15;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    min-width: 0;
+    line-height: 1.05;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-meta .golpe-dashboard-dano {
+    color: var(--texto);
+    flex: 0 0 auto;
+    font-size: .66rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+}
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-meta .golpe-dashboard-tipo {
+    color: var(--texto-suave);
+    flex: 1 1 auto;
+    text-align: right;
+    font-size: .65rem;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
     display: grid;
@@ -1869,7 +1914,7 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     flex: 1 1 auto;
     display: grid;
     min-height: 0;
-    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(32px, 1fr));
     gap: 4px;
 }
 
@@ -1925,7 +1970,7 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     }
 
     .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
-        min-height: 22px;
+        min-height: 34px;
     }
 }
 
@@ -1937,7 +1982,13 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
         min-height: 0;
     }
     .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpes-pokemon-dashboard > div {
-        min-height: 26px;
+        min-height: 38px;
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .conteudo-pokemon-dashboard {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .atributos-base-pokemon > div {
+        min-height: 46px;
     }
 }
 
@@ -1962,34 +2013,60 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
 .pokemon-dashboard-golpes-detalhados .pokemon-dashboard-golpe-nome {
     display: block;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: .75rem;
-    line-height: 1.15;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: .86rem;
+    line-height: 1.2;
 }
 .pokemon-dashboard-golpes-detalhados .pokemon-dashboard-golpe-resumo {
     display: flex;
     flex-direction: row;
     align-items: center;
     min-width: 0;
-    gap: 5px;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 .pokemon-dashboard-golpes-detalhados .pokemon-dashboard-golpe-resumo small {
     color: var(--texto-suave);
-    font-size: .62rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: .73rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
+/* 10F.8 — O conteúdo, e não a altura livre do painel, dimensiona os golpes. */
 .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-golpes-detalhados {
-    align-self: stretch;
+    align-self: start;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-lista-golpes-detalhados {
+    height: auto;
+    grid-auto-rows: minmax(56px, auto);
+    gap: 7px;
 }
 .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-golpe-detalhado {
-    padding: 4px 7px;
-    min-height: 0;
-    gap: 2px;
+    padding: 7px 9px;
+    min-height: 56px;
+    gap: 5px;
 }
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-atributos-totais strong {
+    color: var(--texto);
+    font-size: 1.28rem;
+    font-weight: 850;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-atributos-totais span {
+    font-size: .68rem;
+    line-height: 1.2;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-atributos-totais small {
+    font-size: .64rem;
+    line-height: 1.2;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .nome-pokemon-dashboard h3 {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+}
+
 @media (max-width: 650px) {
     .pokemon-dashboard-golpes-detalhados .pokemon-dashboard-lista-golpes-detalhados { grid-template-columns: 1fr; }
 }

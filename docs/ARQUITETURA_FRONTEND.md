@@ -82,6 +82,12 @@ A partir da etapa 10F.6, `tests/visual/` roda Playwright contra Flask efêmero +
 
 **Limites:** não existe cobertura de todas as combinações de campanha, NPCs cadastrados, uploads, ações destrutivas, Firefox/WebKit ou zoom. Resultado verde não dispensa inspeção manual dos artefatos. Erros de fixtures devem ser distinguidos de bugs do site. Não remover controles ou rotas para fazer um teste passar.
 
+## Dashboard — legibilidade de combate (10F.8)
+
+A visão normal mantém seis posições de equipe, seis atributos base e quatro slots de golpe, com nome em cima e dano/tipo embaixo. Os valores base usam fonte responsiva de 1,1 a 1,45rem e números tabulares. Até 640px, atributos e golpes empilham para evitar compressão excessiva. Na visão expandida, os golpes continuam em 2x2 (uma coluna até 650px), com linhas de conteúdo a partir de 56px; a grade detalhada não distribui mais a altura excedente para a seção de golpes. A coluna detalhada rola internamente quando necessário em desktop alto, preservando o fallback de página rolável em janelas baixas (10F.4). Totais de combate ganham hierarquia; nomes laterais podem quebrar. As ações de retrato, ficha, altura dos atributos do treinador e quatro slots vazios permanecem. O mesmo CSS e a mesma estrutura de resumo são aplicados ao NPC, sem alterar o backend.
+
+Testar em Chromium com equipe completa, golpes e slots vazios, temas e resoluções 1720×864, 1366×768 e 390×844; evidências em `test-results/dashboard-10f8`. Testes prévios de foco e navegação continuam obrigatórios.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.

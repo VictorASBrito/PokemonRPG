@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block titulo %}Painel de {{ npc.nome }} | Pokémon RPG{% endblock %}
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f5-sprite-atributos') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f8-combate-legibilidade') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-6') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/npc-painel.css', v='10d4-6') }}">
 {% endblock %}
@@ -95,7 +95,13 @@
               {% for i in range(4) %}
               {% if i < pokemon.golpes|length %}
               {% set golpe = pokemon.golpes[i] %}
-              <div class="golpe-dashboard-preenchido"><span>{{ golpe.nome }}</span><small>{{ golpe.dano }} · {{ golpe.tipo }}</small></div>
+              <div class="golpe-dashboard-preenchido">
+                <span class="golpe-dashboard-nome" title="{{ golpe.nome }}">{{ golpe.nome }}</span>
+                <div class="golpe-dashboard-meta">
+                  <small class="golpe-dashboard-dano" title="Dano: {{ golpe.dano }}">{{ golpe.dano }}</small>
+                  <small class="golpe-dashboard-tipo" title="{{ golpe.tipo }}">{{ golpe.tipo }}</small>
+                </div>
+              </div>
               {% else %}<div class="golpe-dashboard-vazio"><span>Sem golpe definido</span></div>{% endif %}
               {% endfor %}
             </div>
