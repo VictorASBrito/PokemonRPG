@@ -23,12 +23,12 @@ Copie este modelo ao concluir uma mudança:
 
 ### 2026-11-21 — Etapa 10F.3: transbordamento decorativo e abas completas
 - **Objetivo:** tratar a persistência da Bag cortada no Android após o merge do PR #33.
-- **Status:** IMPLEMENTADO NA BRANCH; CI E REVISÃO NO DISPOSITIVO PENDENTES.
+- **Status:** IMPLEMENTADO NA BRANCH; CI APROVADA; REVISÃO NO DISPOSITIVO PENDENTE.
 - **Branch:** `fix/inventario-mobile-largura-abas-20261121` sobre `main`, com PR #33 já mesclado.
 - **Diagnóstico:** `.inventario-nds-bag::after` fica 120px além da borda direita, enquanto o painel usa `overflow: visible` no mobile para preservar autocomplete; a aparência do print é compatível com esse transbordamento. Além disso, abas de categorias usam carrossel e ficam cortadas no celular.
 - **Mudanças:** limitar o desenho decorativo ao painel até 1199px; usar grade de duas colunas e textos quebráveis nas categorias até 540px; atualizar versão do CSS no template; novo teste `tests/test_inventario_largura_10f3.py` no workflow visual; registrar arquitetura e continuidade.
 - **Esquema/migrations:** nenhuma. Nenhum dado/rota/controle do RPG alterado.
-- **Testes e resultados:** regressões estáticas adicionadas; CI ainda não executada no momento deste registro. Navegador móvel real ainda não validado.
+- **Testes e resultados:** [GitHub Actions — contrato visual](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44869536228) na PR #34: **49 passed in 1.96s**; `node --check static/js/inventario.js` aprovado. Chromium headless em fixture isolado com mesmas regras CSS: scrollWidth anterior 430/500/540px versus 320/390/430px após correção, em viewports de 320/390/430px. Site completo e dispositivo real ainda não validados.
 - **Próxima ação:** executar CI na PR e confirmar no mesmo celular a largura completa da Bag, todas as cinco categorias, deslize dos Pokémon e autocomplete do mestre antes de merge.
 
 
