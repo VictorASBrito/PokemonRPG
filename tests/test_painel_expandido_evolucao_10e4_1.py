@@ -106,7 +106,7 @@ def test_varias_alternativas_abrem_menu_com_sprites_e_nomes(app_db, client_db):
         db.session.commit()
     _login(client_db)
     html = client_db.get("/jogador/dashboard").get_data(as_text=True)
-    assert "Mudar de forma</summary>" in html
+    assert 'data-pokemon-painel="formas"' in html
     assert "Rotom-Microondas" in html and "Rotom-Geladeira" in html
     assert html.count('name="tipo" value="alternativa"') == 2
     assert 'data-pokemon-abrir="formas"' in html
@@ -145,7 +145,7 @@ def test_evolucao_vermelha_so_quando_pode_evoluir_e_retorna_ao_painel(app_db, cl
     assert 'data-pokemon-abrir="evolucoes"' not in client_db.get("/jogador/dashboard").get_data(as_text=True)
 
 
-def test_em_campo_oculta_evolucao_vermelha_ate_pokemon_sair(app_db, client_db):
+def test_campo_nao_oculta_evolucao_vermelha(app_db, client_db):
     with app_db.app_context():
         formas = _familia("linha-pokemon", [("evoluido", "normal")])
         origem = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
@@ -161,7 +161,7 @@ def test_em_campo_oculta_evolucao_vermelha_ate_pokemon_sair(app_db, client_db):
         ))
         db.session.commit()
     _login(client_db)
-    assert 'data-pokemon-abrir="evolucoes"' not in client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'data-pokemon-abrir="evolucoes"' in client_db.get("/jogador/dashboard").get_data(as_text=True)
 
 
 def test_mega_trainer_menu_tres_pontos_sem_pedra_e_fluxo_expandido(app_db, client_db):
@@ -243,7 +243,7 @@ def test_keystone_local_e_css_protege_icone_do_retrato():
     assert ".pokemon-dashboard-indicador img" in css
 
 
-def test_mega_exibe_motivo_quando_treinador_liberado_mas_pokemon_fora_campo(app_db, client_db):
+def test_mega_liberada_pode_ser_acionada_sem_campo(app_db, client_db):
     with app_db.app_context():
         formas = _familia("charizard", [
             ("charizard", "normal"), ("charizard-mega-x", "mega"),
@@ -254,9 +254,8 @@ def test_mega_exibe_motivo_quando_treinador_liberado_mas_pokemon_fora_campo(app_
         db.session.commit()
     _login(client_db)
     html = client_db.get("/jogador/dashboard").get_data(as_text=True)
-    aviso = "Coloque este Pokémon no Campo para Mega Evoluir."
-    assert aviso in html
-    assert f'disabled title="{aviso}"' in html
+    assert "Coloque este Pokémon no Campo" not in html
+    assert 'data-pokemon-abrir="formas"' in html
     assert "img/inventory/itens/keystone.png" in html
 
 
@@ -271,3 +270,39 @@ def test_mega_exibe_motivo_quando_mestre_nao_liberou(app_db, client_db):
     html = client_db.get("/jogador/dashboard").get_data(as_text=True)
     assert "Mega Evolução não liberada. Peça ao mestre" in html
     assert "img/inventory/itens/keystone.png" in html
+
+
+def test_retrato_e_unico_lugar_das_acoes_no_dashboard(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("morpeko", [
+            ("morpeko-satisfeito", "normal"), ("morpeko-faminto", "alternativa"),
+        ])
+        _pokemon(app_db, formas["morpeko-satisfeito"])
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'class="pokemon-dashboard-indicadores"' in html
+    assert 'class="pokemon-dashboard-acao-direta"' in html
+    assert 'class="pokemon-dashboard-transformacoes"' not in html
+    assert 'data-pokemon-abrir="formas"' in html
+
+
+def test_evolucao_disponivel_sem_dependencia_de_campo_ou_menu_inferior(app_db, client_db):
+    with app_db.app_context():
+        origem = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
+        destino = _familia("familia-esquerda", [("charmeleon", "normal")])["charmeleon"]
+        db.session.add(EvolucaoPokemon(
+            forma_origem_id=origem.id, forma_destino_id=destino.id,
+            tipo_requisito="nivel", requisitos={"tipo_relacao": "evolucao", "nivel": 16},
+            ativo=True,
+        ))
+        pokemon = _pokemon(app_db, origem)
+        db.session.add(PokemonEmCampo(
+            campanha_id=_ids(app_db)["campanha"], pokemon_id=pokemon.id, time_numero=1,
+        ))
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'class="pokemon-dashboard-acao-posicao indicador-esquerda"' in html
+    assert 'class="pokemon-dashboard-indicador indicador-evolucao"' in html
+    assert 'class="pokemon-dashboard-transformacoes"' not in html

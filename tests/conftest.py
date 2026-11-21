@@ -38,6 +38,8 @@ def app_db(monkeypatch, tmp_path):
     app = create_app()
     app.config.update(
         TESTING=True,
+        CAMPO_ATIVO=True,  # Mantém testes históricos do Campo; produção fica pausada.
+        CAMPO_OPERACOES_ATIVAS=True,  # Endpoints antigos apenas nos testes legados.
         SECRET_KEY="teste",
         UPLOAD_IMAGENS_DIR=tmp_path / "uploads",
         UPLOAD_IMAGEM_MAX_BYTES=1024 * 1024,

@@ -136,7 +136,7 @@ def test_morpeko_original_faminto_tambem_pode_virar_satisfeito(app_db):
         assert p.forma_temporaria_id == formas["morpeko-satisfeito"].id
 
 
-def test_mega_exige_permissao_por_treinador_e_campo_sem_pedras(app_db):
+def test_mega_exige_permissao_por_treinador_sem_pedras_nem_campo(app_db):
     with app_db.app_context():
         formas = _familia("charizard", [
             ("charizard", "normal", 0),
@@ -192,7 +192,7 @@ def test_so_uma_mega_ativa_por_treinador_e_revogacao_reverte(app_db):
         assert not p1.personagem.mega_habilitada
 
 
-def test_mega_nao_pode_ativar_fora_do_campo_ou_por_usuario_alheio(app_db):
+def test_mega_pode_ser_ativada_fora_do_campo_mas_nao_por_usuario_alheio(app_db):
     with app_db.app_context():
         formas = _familia("charizard", [
             ("charizard", "normal", 0), ("charizard-mega-x", "mega", 18),
@@ -200,19 +200,16 @@ def test_mega_nao_pode_ativar_fora_do_campo_ou_por_usuario_alheio(app_db):
         p = _pokemon(app_db, formas["charizard"])
         _permissao(app_db, True)
         db.session.commit()
-        with pytest.raises(ValueError, match="só pode ser ativada no Campo"):
-            _mudar(app_db, p, tipo="mega", destino_id=formas["charizard-mega-x"].id)
-        db.session.rollback()
-        _campo(app_db, p)
-        db.session.commit()
-        with pytest.raises(PermissionError, match="dono"):
+        with pytest.raises(PermissionError, match="Somente"):
             _mudar(app_db, p, tipo="mega", destino_id=formas["charizard-mega-x"].id,
                    usuario="mestre")
         db.session.rollback()
-        assert p.forma_temporaria_id is None
+        _mudar(app_db, p, tipo="mega", destino_id=formas["charizard-mega-x"].id)
+        db.session.commit()
+        assert p.forma_temporaria_id == formas["charizard-mega-x"].id
 
 
-def test_rotas_campo_mestre_e_jogador_e_retirada_reverte_mega(app_db, client_db):
+def test_rotas_campo_legadas_e_retirada_nao_revertem_mega(app_db, client_db):
     with app_db.app_context():
         formas = _familia("charizard", [
             ("charizard", "normal", 0), ("charizard-mega-x", "mega", 18),
@@ -254,11 +251,11 @@ def test_rotas_campo_mestre_e_jogador_e_retirada_reverte_mega(app_db, client_db)
     }).status_code == 302
     with app_db.app_context():
         p = db.session.get(Pokemon, pid)
-        assert p.forma_temporaria_id is None and p.tipo_transformacao is None
+        assert p.forma_temporaria_id == destino_id and p.tipo_transformacao == "mega"
         assert db.session.scalar(select(func.count(PokemonEmCampo.id))) == 0
 
 
-def test_limpar_campo_tambem_desativa_mega(app_db):
+def test_limpar_campo_nao_altera_a_mega(app_db):
     with app_db.app_context():
         formas = _familia("charizard", [
             ("charizard", "normal", 0), ("charizard-mega-y", "mega", 18),
@@ -270,7 +267,7 @@ def test_limpar_campo_tambem_desativa_mega(app_db):
         _mudar(app_db, p, tipo="mega", destino_id=formas["charizard-mega-y"].id)
         db.session.commit()
         limpar_campo(campanha_codigo="ankar", usuario_id=str(_ids(app_db)["mestre"]))
-        assert p.forma_temporaria_id is None
+        assert p.forma_temporaria_id == formas["charizard-mega-y"].id
         assert db.session.scalar(select(func.count(PokemonEmCampo.id))) == 0
 
 

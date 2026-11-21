@@ -693,3 +693,10 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 ## Atualização 10E.4.1 — Keystone e aviso de Mega (20/11/2026)
 
 A Mega Evolução segue sendo uma permissão concedida ao treinador pelo mestre, sem pedras/inventário, com ativação apenas no Campo e uma Mega por treinador. A interface expandida agora reaproveita o PNG local `static/img/inventory/itens/keystone.png` para todas as ações Mega (jogador e mestre); o SVG ilustrativo antigo deixou de ser referenciado. Seletores CSS do retrato do Pokémon usam `> img`, evitando que as imagens de botões sejam ampliadas e cortadas. As razões de indisponibilidade da Mega são apresentadas explicitamente no painel e incluem outra Mega ativa. Nenhuma migration ou atualização do PostgreSQL foi aplicada pelo assistente.
+
+
+## Continuidade 10E.4.2 — Ícones acionáveis e Campo pausado
+
+Regra atual: Campo é **visualização de combate**, não pré-requisito para evolução ou Mega. A Mega depende apenas de permissão do mestre, dono, Pokémon consciente, destino válido e uma Mega ativa por treinador. Os comandos de evolução (esquerda) e formas/Mega/reversão (direita) são ícones de verdade sobre o retrato expandido. Uma ação funciona diretamente com confirmação; várias abrem menu de destino com sprites. Os botões sob os golpes foram removidos.
+
+Campo tem `CAMPO_ATIVO=False` por padrão e `CAMPO_OPERACOES_ATIVAS=False`. Nenhuma rota POST antiga pode operar quando pausado, e a visualização opt-in é somente demonstrativa. Catálogo NPC e Capturáveis são áreas oficiais para preparação fora de batalha; hordas antigas podem ser encaminhadas à captura sem Campo. Manter dados, serviços, modelos e migrations do Campo para etapa futura. Consultar `docs/ETAPA_10E4_2_RETRATO_E_CAMPO_PAUSADO.md`.

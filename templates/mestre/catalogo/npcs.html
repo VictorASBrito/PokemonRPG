@@ -122,6 +122,7 @@
       {% endif %}
       <footer class="npc-card-rodape">
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Ficha NPC</a>
+        {% if config.get('CAMPO_OPERACOES_ATIVAS', false) %}
         <form action="{{ url_for('npcs.usar_modelo', modelo_id=npc.id) }}" method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <label class="npc-time">Time
@@ -129,6 +130,9 @@
           </label>
           <button class="botao botao-primario" type="submit" {% if not npc.equipe %}disabled title="Adicione Pokémon à equipe primeiro"{% endif %}>Colocar no Campo</button>
         </form>
+        {% else %}
+        <small class="texto-suave">Envio ao Campo em pausa. Ficha e equipe permanecem editáveis.</small>
+        {% endif %}
       </footer>
     </article>
     {% endfor %}

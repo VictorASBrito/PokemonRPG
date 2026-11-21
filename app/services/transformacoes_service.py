@@ -1,7 +1,7 @@
 """10E.4 — Transformações reversíveis de Pokémon.
 
 A forma permanente nunca muda. Mega: autorização do MESTRE ao TREINADOR,
-sem qualquer pedra/item; só em Campo, uma ativa por treinador. Alternativas:
+sem qualquer pedra/item; uma ativa por treinador, independente do Campo. Alternativas:
 o dono pode escolher entre as formas existentes da espécie, como Morpeko.
 As condições naturais de habilidades/turnos não são automatizadas.
 """
@@ -18,7 +18,7 @@ from sqlalchemy.orm import selectinload
 from app.extensions import db
 from app.models.db import (
     CampanhaMembro, FormaPokemon, HistoricoAlteracao, Personagem,
-    Pokemon, PokemonEmCampo, Usuario,
+    Pokemon, Usuario,
 )
 from app.services.permissoes_service import PERFIS_JOGADOR, PERFIS_MESTRE
 
@@ -99,6 +99,7 @@ def listar_formas_temporarias(pokemon: Pokemon) -> dict:
         and (f.codigo in alt_codes or f.categoria == "alternativa")
         and (f.categoria != "regional" or f.codigo in alt_codes)
         and f.id != pokemon.forma_pokemon_id
+        and f.id != pokemon.forma_temporaria_id  # A forma atual não é nova opção.
     ]
     megas = [
         f for f in alternativas if f.categoria == "mega" and f.codigo in mega_codes
@@ -204,11 +205,6 @@ def transformar_pokemon(
     if tipo == "mega":
         if not dono.mega_habilitada:
             raise PermissionError("O mestre ainda não habilitou Mega Evolução para este treinador.")
-        if not db.session.scalar(select(PokemonEmCampo.id).where(
-            PokemonEmCampo.pokemon_id == pokemon.id,
-            PokemonEmCampo.campanha_id == cid,
-        )):
-            raise ValueError("Mega Evolução só pode ser ativada no Campo.")
         if pokemon.tipo_transformacao == "alternativa":
             raise ValueError("Reverta a forma alternativa antes de ativar uma Mega.")
         outra = db.session.scalar(select(Pokemon.id).where(

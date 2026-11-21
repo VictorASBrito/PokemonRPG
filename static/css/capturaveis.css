@@ -130,3 +130,19 @@
   .captura-dica { display:none; }
 }
 @media (prefers-reduced-motion:reduce) { .captura-pagina * { scroll-behavior:auto !important; transition:none !important; } }
+
+/* 10E.4.2 — encaminhamento de hordas no gerenciador de Capturáveis. */
+.captura-hordas-pendentes { padding: 18px; margin: 18px 0; }
+.captura-hordas-grade { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); margin-top: 12px; }
+.captura-horda-item {
+    display: grid; grid-template-columns: 68px minmax(0, 1fr);
+    gap: 12px; align-items: center;
+    border: 1px solid var(--borda); border-radius: 12px;
+    padding: 11px; background: var(--superficie-suave);
+}
+.captura-horda-item > img { width: 64px; height: 64px; object-fit: contain; }
+.captura-horda-nomes { display: grid; min-width: 0; gap: 4px; }
+.captura-horda-nomes small { color: var(--texto-suave); }
+.captura-horda-item form { grid-column: 1 / -1; display: grid; gap: 8px; }
+.captura-horda-item form label { display: grid; gap: 4px; }
+.captura-horda-item form select { width: 100%; }

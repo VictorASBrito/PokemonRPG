@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
+from app.services.hordas_captura_service import listar_hordas_pendentes, encaminhar_horda
 from app.services.capturaveis_service import (
     atribuir_capturavel_box,
     carregar_painel_capturaveis_mestre,
@@ -48,15 +49,43 @@ def campo_mestre():
 
     try:
         painel = carregar_painel_capturaveis_mestre(campanha_codigo=_campanha_codigo())
+        hordas_pendentes = listar_hordas_pendentes(campanha_codigo=_campanha_codigo())
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao carregar capturáveis em campo.")
         flash("Não foi possível carregar os capturáveis em campo.", "erro")
         painel = carregar_painel_capturaveis_mestre(campanha_codigo="")
+        hordas_pendentes = []
     return render_template(
-        "capturas/mestre.html", painel=painel,
+        "capturas/mestre.html", painel=painel, hordas_pendentes=hordas_pendentes,
         csrf_token=session.setdefault("capturaveis_atribuir_csrf", secrets.token_urlsafe(32)),
     )
+
+
+@capturas_bp.post("/mestre/capturaveis/hordas/<pokemon_id>/encaminhar")
+@perfil_obrigatorio("mestre")
+def encaminhar_horda_mestre(pokemon_id: str):
+    """Leva a captura da horda para Capturáveis, mesmo com Campo em pausa."""
+    token_esperado = str(session.get("capturaveis_atribuir_csrf") or "")
+    token_enviado = str(request.form.get("csrf_token") or "")
+    if not token_esperado or not hmac.compare_digest(token_esperado, token_enviado):
+        return ("Confirmação inválida. Atualize a página de Capturáveis.", 403)
+    try:
+        mensagem = encaminhar_horda(
+            campanha_codigo=_campanha_codigo(), pokemon_id=pokemon_id,
+            encontrador_id=request.form.get("encontrador_id"),
+            usuario_id=session.get("usuario_id"),
+        )
+    except ValueError as erro:
+        db.session.rollback()
+        flash(str(erro), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao encaminhar horda aos Capturáveis.")
+        flash("Não foi possível disponibilizar o Pokémon da horda.", "erro")
+    else:
+        flash(mensagem, "sucesso")
+    return redirect(url_for("capturas.campo_mestre"))
 
 
 @capturas_bp.post("/mestre/capturaveis/<capturavel_id>/remover")

@@ -49,6 +49,11 @@ class Config:
             # O formulário de uma forma Pokémon pode enviar duas imagens de uma vez.
             MAX_CONTENT_LENGTH=max(20 * 1024 * 1024, upload_imagem_max_bytes * 2 + 1024 * 1024),
             CAMPANHA_PADRAO=os.getenv("POKEMON_RPG_CAMPANHA", "ankar"),
+            # Campo de batalha em pausa até revisão própria; dados e serviços preservados.
+            CAMPO_ATIVO=os.getenv("POKEMON_RPG_CAMPO_ATIVO", "").strip().lower()
+                in {"1", "true", "sim", "yes"},
+            # Só habilitado explicitamente na suíte legada; a interface pública é demonstrativa.
+            CAMPO_OPERACOES_ATIVAS=False,
             SESSION_COOKIE_HTTPONLY=True,
             SESSION_COOKIE_SAMESITE="Lax",
             SESSION_COOKIE_SECURE=teste_remoto,

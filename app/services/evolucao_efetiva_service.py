@@ -16,7 +16,7 @@ from app.extensions import db
 from app.models.db import (
     AutorizacaoEvolucaoPokemon, EvolucaoPokemon, FormaPokemon,
     HistoricoAlteracao, Item, Personagem, PersonagemItem, Pokemon,
-    PokemonEmCampo, Usuario,
+    Usuario,
 )
 from app.services.autorizacao_evolucao_service import invalidar_autorizacoes_por_troca_forma
 from app.services.consulta_evolucao_service import _tem_condicoes_especiais
@@ -167,10 +167,6 @@ def evoluir_pokemon(
         raise ValueError("Pokémon não encontrado na ficha deste treinador.")
     if pokemon.forma_temporaria_id is not None:
         raise ValueError("Reverta a transformação temporária antes da evolução permanente.")
-    if db.session.scalar(select(PokemonEmCampo.id).where(
-        PokemonEmCampo.pokemon_id == pokemon.id
-    )) is not None:
-        raise ValueError("Retire o Pokémon do Campo antes de evoluir.")
 
     relacao = db.session.get(EvolucaoPokemon, rid)
     if relacao is None or not relacao.ativo or relacao.forma_origem_id != pokemon.forma_pokemon_id:

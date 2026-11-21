@@ -1,7 +1,7 @@
 {% from "componentes/tipos.html" import selo_tipo %}
 {% extends "base.html" %}
 
-{% block titulo %}Capturáveis em campo | Pokémon RPG{% endblock %}
+{% block titulo %}Capturáveis | Pokémon RPG{% endblock %}
 
 {% block estilos %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/capturaveis.css', v='etapa-08') }}">
@@ -19,17 +19,57 @@
     </header>
 
     <section class="captura-metricas" aria-label="Resumo dos capturáveis">
-        <div class="captura-metrica"><span>Em campo</span><strong>{{ painel.total_ativos }} <small>/ {{ painel.limite }}</small></strong></div>
+        <div class="captura-metrica"><span>Disponíveis</span><strong>{{ painel.total_ativos }} <small>/ {{ painel.limite }}</small></strong></div>
         <div class="captura-metrica"><span>Vagas restantes</span><strong>{{ painel.limite - painel.total_ativos }}</strong></div>
         <div class="captura-metrica"><span>Shinies</span><strong>{{ painel.total_shiny }}</strong></div>
         <div class="captura-metrica"><span>Treinadores envolvidos</span><strong>{{ painel.total_encontradores }}</strong></div>
     </section>
 
+    {% if hordas_pendentes %}
+    <section class="captura-hordas-pendentes ui-card" aria-labelledby="hordas-pendentes-titulo">
+        <div class="captura-listagem-titulo">
+            <div>
+                <p class="rotulo">Origem: hordas já geradas</p>
+                <h2 id="hordas-pendentes-titulo">Disponibilizar integrantes de hordas</h2>
+                <p class="texto-suave">Sem abrir o Campo. Natureza, gênero e Shiny sorteados na horda são preservados.</p>
+            </div>
+        </div>
+        <div class="captura-hordas-grade">
+            {% for horda in hordas_pendentes %}
+            <article class="captura-horda-item">
+                {% if horda.imagem %}<img src="{{ horda.imagem }}" alt="" loading="lazy">{% endif %}
+                <div class="captura-horda-nomes">
+                    <strong>{{ horda.nome }}{% if horda.shiny %} · Shiny{% endif %}</strong>
+                    <small>{{ horda.grupo }}</small>
+                </div>
+                <form method="post" action="{{ url_for('capturas.encaminhar_horda_mestre', pokemon_id=horda.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <label>Encontrado por
+                        <select name="encontrador_id" required>
+                            <option value="">Selecione o treinador</option>
+                            {% for treinador in painel.encontrados_por %}
+                            <option value="{{ treinador.id }}"
+                              {% if horda.encontrador_id and horda.encontrador_id != treinador.id %}disabled{% endif %}
+                              {% if horda.encontrador_id == treinador.id %}selected{% endif %}>{{ treinador.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <button type="submit" class="botao botao-secundario"
+                            {% if painel.total_ativos >= painel.limite %}disabled{% endif %}>
+                        Disponibilizar captura
+                    </button>
+                </form>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
     <div class="captura-gestao">
         <aside class="captura-criacao ui-card">
             <div class="captura-secao-titulo">
                 <p class="rotulo">Novo encontro</p>
-                <h2>Adicionar ao campo</h2>
+                <h2>Adicionar capturável</h2>
                 <p>Escolha a espécie e o treinador que encontrou o Pokémon.</p>
             </div>
             <form method="post" class="capturaveis-formulario" data-captura-form>
@@ -123,7 +163,7 @@
                             <button class="botao botao-primario" type="submit">Atribuir à Box</button>
                         </form>
                         <form method="post" action="{{ url_for('capturas.remover_mestre', capturavel_id=item.id) }}" class="capturavel-acoes">
-                            <button class="botao botao-secundario" type="submit" aria-label="Remover {{ item.nome }} do campo">Remover</button>
+                            <button class="botao botao-secundario" type="submit" aria-label="Remover {{ item.nome }} dos capturáveis">Remover</button>
                         </form>
                     </div>
                 </article>
@@ -132,7 +172,7 @@
             <div class="captura-vazio-filtro ui-card" data-filtro-vazio hidden>Nenhum Pokémon corresponde aos filtros selecionados.</div>
             {% else %}
             <div class="captura-estado-vazio ui-card">
-                <h3>O campo está livre</h3>
+                <h3>Nenhum capturável disponível</h3>
                 <p>Adicione um Pokémon ao lado para iniciar um novo encontro.</p>
             </div>
             {% endif %}

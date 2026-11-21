@@ -21,6 +21,24 @@ from app.services.permissoes_service import PERFIS_JOGADOR, PERFIS_MESTRE, perfi
 
 combates_bp = Blueprint("combates", __name__)
 
+@combates_bp.before_request
+def campo_em_pausa():
+    """Campo temporariamente desativado, inclusive para POSTs antigos.
+
+    O serviço e as tabelas continuam disponíveis para a futura etapa de combate,
+    sem modificar os dados existentes no banco.
+    """
+    if current_app.config.get("CAMPO_ATIVO", False):
+        if request.method == "POST" and not current_app.config.get("CAMPO_OPERACOES_ATIVAS", False):
+            abort(403, description="O Campo é somente demonstrativo.")
+        return None
+    if not session.get("usuario_id"):
+        return redirect(url_for("auth.login"))
+    if request.method == "GET" and request.endpoint == "combates.painel":
+        return render_template("campo/pausado.html")
+    abort(503, description="Campo temporariamente desativado para revisão.")
+
+
 
 def _autorizacao() -> bool:
     """Retorna se é mestre; bloqueia perfis ou sessões inconsistentes."""

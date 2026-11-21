@@ -105,14 +105,16 @@ def test_horda_captura_preserva_shiny_natureza_genero_sem_duplicar(app_db, clien
         original = (pokemon.forma_pokemon_id, pokemon.natureza_id, pokemon.genero, pokemon.shiny)
         assert original[3] is True
 
-    campo = client_db.get("/campo").get_data(as_text=True)
-    assert "Adicionar aos Capturáveis" in campo
+    capturaveis = client_db.get("/mestre/capturaveis").get_data(as_text=True)
+    assert "Disponibilizar captura" in capturaveis
 
-    campo_token = None
+    # Token do Campo apenas para o teste legado de limpeza; a captura usa seu próprio token.
+    assert client_db.get("/campo").status_code == 200
     with client_db.session_transaction() as sessao:
         campo_token = sessao["campo_csrf"]
-    transferencia = client_db.post(f"/campo/npcs/pokemons/{pokemon_id}/capturavel", data={
-        "csrf_token": campo_token, "encontrador_id": encontrador,
+        captura_token = sessao["capturaveis_atribuir_csrf"]
+    transferencia = client_db.post(f"/mestre/capturaveis/hordas/{pokemon_id}/encaminhar", data={
+        "csrf_token": captura_token, "encontrador_id": encontrador,
     })
     assert transferencia.status_code == 302
 
@@ -123,8 +125,8 @@ def test_horda_captura_preserva_shiny_natureza_genero_sem_duplicar(app_db, clien
                 capturavel.genero, capturavel.shiny) == original
         assert db.session.get(PokemonNPCEmCampo, uuid.UUID(pokemon_id)).enviado_captura is True
 
-    assert client_db.post(f"/campo/npcs/pokemons/{pokemon_id}/capturavel", data={
-        "csrf_token": campo_token, "encontrador_id": encontrador,
+    assert client_db.post(f"/mestre/capturaveis/hordas/{pokemon_id}/encaminhar", data={
+        "csrf_token": captura_token, "encontrador_id": encontrador,
     }).status_code == 302
     with app_db.app_context():
         assert db.session.scalar(select(func.count()).select_from(PokemonCapturavel)) == 1
