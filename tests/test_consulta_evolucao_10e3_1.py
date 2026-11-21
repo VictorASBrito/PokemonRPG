@@ -305,7 +305,10 @@ def test_ficha_jogador_pode_confirmar_evolucao_e_mestre_so_consulta(app_db, clie
     assert "Evoluções de Charmander" in html
     assert "Requisito atendido" in html
     assert "A evolução é opcional" in html
-    assert "Evoluir para Charmeleon" in html
+    assert "Evoluir para Charmeleon" not in html
+    painel = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert "Evoluir" in painel and "Charmeleon" in painel
+    assert "evolucao-disponivel.svg" in painel
     assert "csrf_acao_evolucao" not in html  # o token é renderizado como valor, não nome
 
     client_db.post("/logout")
