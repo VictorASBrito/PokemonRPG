@@ -54,16 +54,9 @@
     };
 
     cards.forEach((card) => {
-        card.querySelectorAll('[data-pokemon-abrir]').forEach((botao) => {
-            botao.addEventListener('click', (evento) => {
-                evento.stopPropagation();
-                destacar(card);
-                const tipo = botao.dataset.pokemonAbrir;
-                const secao = card.querySelector('.pokemon-dashboard-transformacoes');
-                const detalhes = card.querySelector('[data-pokemon-painel="' + tipo + '"]');
-                if (detalhes) detalhes.open = true;
-                secao?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            });
+        // O próprio símbolo executa a ação ou abre o seletor no retrato.
+        card.querySelectorAll('[data-pokemon-abrir]').forEach((controle) => {
+            controle.addEventListener('click', (evento) => evento.stopPropagation());
         });
         card.querySelectorAll('[data-pokemon-painel]').forEach((painel) => {
             painel.addEventListener('toggle', () => {
@@ -74,13 +67,13 @@
             });
         });
         card.addEventListener('click', (evento) => {
-            if (evento.target.closest('a, button, input, select, textarea, label')) return;
+            if (evento.target.closest('a, button, summary, details, form, input, select, textarea, label')) return;
             if (foco === card) return;
             destacar(card);
         });
 
         card.addEventListener('keydown', (evento) => {
-            if (evento.target.closest('a, button, input, select, textarea')) return;
+            if (evento.target.closest('a, button, summary, details, form, input, select, textarea')) return;
             if (foco === card) return;
             if (evento.key === 'Enter' || evento.key === ' ') {
                 evento.preventDefault();
@@ -100,7 +93,7 @@
 
     // Ações submetidas dentro do expandido são confirmadas antes do POST.
     document.addEventListener('submit', (evento) => {
-        const formulario = evento.target.closest('.pokemon-dashboard-transformacoes form');
+        const formulario = evento.target.closest('.pokemon-dashboard-indicadores form[data-confirmacao]');
         if (!formulario) return;
         const mensagem = formulario.dataset.confirmacao;
         if (mensagem && !window.confirm(mensagem)) {
@@ -115,7 +108,22 @@
     const inicial = cards.find((card) => card.dataset.pokemonId === focoInicial);
     if (inicial) destacar(inicial);
 
+    const fecharMenus = () => {
+        document.querySelectorAll('.pokemon-dashboard-seletor[open]').forEach((menu) => {
+            menu.open = false;
+        });
+    };
+    document.addEventListener('click', (evento) => {
+        if (!evento.target.closest('.pokemon-dashboard-seletor')) fecharMenus();
+    });
     document.addEventListener('keydown', (evento) => {
-        if (evento.key === 'Escape' && foco) voltarGrade({ manterFoco: true });
+        if (evento.key !== 'Escape') return;
+        const menusAbertos = document.querySelectorAll('.pokemon-dashboard-seletor[open]');
+        if (menusAbertos.length) {
+            fecharMenus();
+            evento.stopPropagation();
+        } else if (foco) {
+            voltarGrade({ manterFoco: true });
+        }
     });
 })();
