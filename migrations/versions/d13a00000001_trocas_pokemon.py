@@ -21,6 +21,7 @@ def upgrade():
         sa.Column("destinatario_id", sa.Uuid(), sa.ForeignKey("personagens.id", ondelete="CASCADE"), nullable=False),
         sa.Column("estado", sa.String(20), server_default="pendente", nullable=False),
         sa.Column("revisao", sa.Integer(), server_default="0", nullable=False),
+        sa.Column("versao_lock", sa.Integer(), server_default="1", nullable=False),
         sa.Column("oferta_a", documento, nullable=False),
         sa.Column("oferta_b", documento, nullable=False),
         sa.Column("confirmou_a", sa.Boolean(), server_default=sa.false(), nullable=False),
