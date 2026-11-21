@@ -161,3 +161,95 @@ def test_regiao_ankar_e_exclusiva_do_mestre(
     resposta = page.goto(f"{live_site_url}/regiao/ankar")
     assert resposta is not None
     assert page.url == f"{live_site_url}/login"
+
+
+# Formulários de edição e prévias exigem identificadores que só existem na
+# fixture SQLite. Eles não são enumerados na matriz estática acima.
+@pytest.mark.parametrize(
+    "perfil,nome,rota",
+    [
+        ("jogador", "editar-pokemon", "/jogador/pokemon/{pokemon}"),
+        ("mestre", "preview-jogador", "/mestre/jogadores/{personagem}/preview"),
+        ("mestre", "ficha-jogador", "/mestre/jogadores/{personagem}/ficha"),
+        ("mestre", "equipe-jogador", "/mestre/jogadores/{personagem}/equipe"),
+        ("mestre", "novo-pokemon", "/mestre/jogadores/{personagem}/equipe/novo"),
+        ("mestre", "editar-pokemon-jogador", "/mestre/jogadores/{personagem}/pokemon/{pokemon}"),
+        ("mestre", "boxes-jogador", "/mestre/jogadores/{personagem}/boxes"),
+        ("mestre", "inventario-jogador", "/mestre/jogadores/{personagem}/inventario"),
+        ("mestre", "editar-forma", "/mestre/catalogo/pokemons/{forma}/editar"),
+        ("mestre", "arvore-forma", "/mestre/catalogo/pokemons/{forma}/arvore"),
+        ("mestre", "relacoes-forma", "/mestre/catalogo/pokemons/{forma}/relacoes"),
+        ("mestre", "editar-golpe", "/mestre/catalogo/golpes/{golpe}/editar"),
+        ("mestre", "editar-item", "/mestre/catalogo/itens/{item}/editar"),
+    ],
+)
+@pytest.mark.parametrize("largura,altura", RESOLUCOES)
+def test_formularios_e_previas_sem_transbordamento(
+    page: Page, live_site_url: str, app_visual,
+    perfil: str, nome: str, rota: str, largura: int, altura: int,
+) -> None:
+    from sqlalchemy import select
+    from app.extensions import db
+    from app.models.db import FormaPokemon, Golpe, Item, Pokemon
+
+    with app_visual.app_context():
+        dados = {
+            "personagem": app_visual.config["TEST_IDS"]["personagem"],
+            "pokemon": str(db.session.scalar(select(Pokemon.id))),
+            "forma": app_visual.config["TEST_IDS"]["formas"]["bulbasaur"],
+            "golpe": str(db.session.scalar(select(Golpe.id))),
+            "item": str(db.session.scalar(select(Item.id))),
+        }
+    url = f"{live_site_url}{rota.format(**dados)}"
+    page.set_viewport_size({"width": largura, "height": altura})
+    erros_js: list[str] = []
+    page.on("pageerror", lambda erro: erros_js.append(str(erro)))
+    entrar(page, live_site_url, perfil)
+    resposta = page.goto(url, wait_until="domcontentloaded", timeout=30000)
+    page.wait_for_timeout(100)
+    EVIDENCIAS.mkdir(parents=True, exist_ok=True)
+    page.screenshot(
+        path=str(EVIDENCIAS / f"{perfil}-{nome}-{largura}.png"),
+        full_page=False, animations="disabled",
+    )
+    assert resposta is not None
+    largura_real = page.evaluate("document.documentElement.scrollWidth")
+    print(
+        f"AUDITORIA DETALHE {perfil}/{nome}: HTTP {resposta.status} "
+        f"largura={largura_real}/{largura} url={page.url} JS={erros_js[:2]}"
+    )
+    assert resposta.status == 200, f"{nome}: HTTP {resposta.status}"
+    assert page.url.rstrip("/") == url.rstrip("/"), f"{nome}: redirect {page.url}"
+    assert largura_real <= largura + 1, f"{nome}: overflow {largura_real}>{largura}"
+    assert not erros_js, f"{nome}: JS {erros_js}"
+
+
+@pytest.mark.parametrize(
+    "perfil,nome,rota,largura,altura",
+    [
+        ("jogador", "dashboard", "/jogador/dashboard", 320, 700),
+        ("jogador", "equipe", "/jogador/equipe", 320, 700),
+        ("jogador", "ficha", "/jogador/ficha", 320, 700),
+        ("jogador", "inventario", "/jogador/inventario", 768, 1024),
+        ("jogador", "dashboard", "/jogador/dashboard", 768, 1024),
+        ("mestre", "dashboard", "/mestre/dashboard", 320, 700),
+        ("mestre", "catalogo-pokemons", "/mestre/catalogo/pokemons", 768, 1024),
+        ("mestre", "catalogo-itens", "/mestre/catalogo/itens", 768, 1024),
+        ("mestre", "capturaveis", "/mestre/capturaveis", 768, 1024),
+    ],
+)
+def test_breakpoints_intermediarios_e_pequenos(
+    page: Page, live_site_url: str,
+    perfil: str, nome: str, rota: str, largura: int, altura: int,
+) -> None:
+    page.set_viewport_size({"width": largura, "height": altura})
+    entrar(page, live_site_url, perfil)
+    resposta = page.goto(f"{live_site_url}{rota}", wait_until="domcontentloaded")
+    EVIDENCIAS.mkdir(parents=True, exist_ok=True)
+    page.screenshot(
+        path=str(EVIDENCIAS / f"extra-{perfil}-{nome}-{largura}.png"),
+        animations="disabled",
+    )
+    assert resposta is not None and resposta.status == 200
+    real = page.evaluate("document.documentElement.scrollWidth")
+    assert real <= largura + 1, f"{perfil}/{nome} {largura}px: overflow {real}px"
