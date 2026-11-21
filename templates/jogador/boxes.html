@@ -4,8 +4,8 @@
 {% block titulo %}Box de {{ jogador.get('treinador', {}).get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/boxes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css', v='ui2-20261121') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/boxes.css', v='ui2-20261121') }}">
 {% endblock %}
 
 {% macro editar_url(pokemon_id) -%}
