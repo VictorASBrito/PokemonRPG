@@ -93,7 +93,7 @@ def test_preferencias_por_url_preservam_mestre_e_outro_personagem(configurados):
     def config(client, rota):
         res = client.get(rota)
         assert res.status_code == 200
-        match = re.search(r\'<script type="application/json" id="aparencia-config">(.*?)</script>\', res.get_data(as_text=True), re.S)
+        match = re.search(r'<script type="application/json" id="aparencia-config">(.*?)</script>', res.get_data(as_text=True), re.S)
         assert match
         return json.loads(match.group(1))
     from app.models.db import Item, PersonagemItem
