@@ -5,10 +5,6 @@ Não concede a permissão Mega: ela continua exclusiva do mestre.
 """
 from __future__ import annotations
 
-from sqlalchemy import select
-
-from app.extensions import db
-from app.models.db import PokemonEmCampo
 from app.services.consulta_evolucao_service import consultar_evolucoes_pokemon
 from app.services.transformacoes_service import listar_formas_temporarias
 
@@ -28,20 +24,11 @@ def carregar_acoes_equipe_dashboard(contexto, equipe: list[dict]) -> list[dict]:
     """Inclui apenas ações permitidas ao Pokémon daquela instância.
 
     Nunca usa autorização editorial do catálogo como permissão
-    narrativa, nem anuncia evolução como pronta dentro do Campo.
+    narrativa; o Campo não determina o direito a evoluir ou transformar.
     """
     if not equipe:
         return equipe
     personagem = contexto.personagem
-    em_campo = set(db.session.scalars(
-        select(PokemonEmCampo.pokemon_id).where(
-            PokemonEmCampo.campanha_id == personagem.campanha_id,
-            PokemonEmCampo.pokemon_id.in_([
-                item.id for item in personagem.pokemons
-                if item.ativo and item.localizacao == "equipe"
-            ]),
-        )
-    ).all())
     por_id = {
         str(pokemon.id): pokemon for pokemon in personagem.pokemons
         if pokemon.ativo and pokemon.localizacao == "equipe"
@@ -57,8 +44,7 @@ def carregar_acoes_equipe_dashboard(contexto, equipe: list[dict]) -> list[dict]:
             continue
         consulta = consultar_evolucoes_pokemon(pokemon, personagem)
         formas = listar_formas_temporarias(pokemon)
-        em_batalha = pokemon.id in em_campo
-        livre = not em_batalha and pokemon.forma_temporaria_id is None
+        livre = pokemon.forma_temporaria_id is None
         registro["acoes"] = {
             "evolucoes": [
                 {
@@ -81,7 +67,6 @@ def carregar_acoes_equipe_dashboard(contexto, equipe: list[dict]) -> list[dict]:
             ] if pokemon.tipo_transformacao is None else [],
             "mega_habilitada": bool(personagem.mega_habilitada),
             "outra_mega_ativa": any(ativa != pokemon.id for ativa in megas_ativas),
-            "em_campo": em_batalha,
             "tipo_transformacao": pokemon.tipo_transformacao,
             "forma_ativa": formas["atual"].nome if formas["atual"] else "",
             "pode_reverter": bool(pokemon.forma_temporaria_id),
