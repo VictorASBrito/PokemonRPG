@@ -70,6 +70,18 @@ O modo de foco de `static/css/dashboard.css` é compartilhado pelo dashboard do 
 
 **Regressão:** `tests/test_dashboard_sprite_ficha_atributos_10f5.py` valida o mapeamento por login, o link da ficha, a fallback de foto e a preservação do quadro, no workflow visual. `tests/test_fichas_por_url_10b3_flask.py` verifica que duas URLs de personagem exibem sprites distintos, com base na configuração isolada do próprio teste. Testar no navegador abertura/recolhimento do Pokémon, zoom de 200%, troca de perfil, prévia do mestre e acesso por URL de ficha. Não remover as rotas GET/POST da ficha.
 
+## Auditoria de telas em Chromium — contrato 10F.7
+
+A partir da etapa 10F.6, `tests/visual/` roda Playwright contra Flask efêmero + SQLite isolado; não acessa o túnel Cloudflare, sessão TinyFish nem PostgreSQL real. A etapa 10F.7 adicionou `test_auditoria_telas_10f7.py`: telas GET de jogador/mestre em **390×844 e 1366×768**, formulários com IDs da fixture fictícia, navegação no menu mobile, Bag em **320×700** e breakpoints intermediários (768px). O navegador mede `document.documentElement.scrollWidth`, coleta exceções de JavaScript e gera capturas em `test-results/auditoria-telas/`. O teste exige a rota/permissão esperada e não submete formulários de gameplay. A matriz foi ampliada para cobrir 13 formulários/visões com identificadores do SQLite e 9 cenários intermediários; outras 12 combinações avaliam as telas-chave em tema escuro. O servidor de testes substitui a URL fictícia da imagem do Bulbasaur pelo sprite local versionado em `static/img/pokemon-hd/`, sem mudar os dados reais nem o template.
+
+**Achado 10F.7 comprovado em Chromium:** inventário do jogador a 1366px tinha `scrollWidth=1458px` (**+92px**). No arquivo `static/css/inventario.css`, o desenho `.inventario-nds-bag::after` usa `right:-120px`. Já `visual-inventario-10c5.css` deixa a Bag com `overflow:visible !important` no desktop (para preservar controles). A correção move a contenção da decoração (`right:0; width:min(380px,100%)`) para a **regra global** da camada visual, não só `@media(max-width:1199px)`. Preserva overflow visível para autocomplete e evita cortar menus. Versão da folha CSS no template do inventário atualizada. Contrato em `tests/test_inventario_largura_10f3.py` examina a regra global; Playwright verifica a dimensão calculada do documento.
+
+**Permissões observadas:** `/regiao/ankar` é protegida por `@perfil_obrigatorio("mestre")`; o redirect do jogador para login é intencional. A matriz de telas considera Região somente para mestre e registra explicitamente a negação ao jogador.
+
+**Evidência de execução:** [Playwright final #44879957277](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879957277): **102 testes aprovados em 153,41s**, com 96 screenshots publicados no artefato e inspeção visual das capturas de Bag desktop e mobile/dark. [Contrato visual #44879957142](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879957142): **59 testes aprovados**. A imagem Bulbasaur local aparece corretamente na fixture e a Bag desktop não apresenta mais overflow do documento.
+
+**Limites:** não existe cobertura de todas as combinações de campanha, NPCs cadastrados, uploads, ações destrutivas, Firefox/WebKit ou zoom. Resultado verde não dispensa inspeção manual dos artefatos. Erros de fixtures devem ser distinguidos de bugs do site. Não remover controles ou rotas para fazer um teste passar.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.

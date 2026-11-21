@@ -12,7 +12,7 @@ import pytest
 from werkzeug.serving import make_server
 
 from app.extensions import db
-from app.models.db import Pokemon
+from app.models.db import FormaPokemon, Pokemon
 
 
 @pytest.fixture()
@@ -38,6 +38,16 @@ def app_visual(app_db, tmp_path):
 
     # O painel expandido precisa de ao menos um Pokémon da equipe.
     with app_db.app_context():
+        forma = db.session.get(
+            FormaPokemon, uuid.UUID(app_db.config["TEST_IDS"]["formas"]["bulbasaur"])
+        )
+        assert forma is not None
+        # A fixture geral aponta para https://img/..., URL fictícia usada
+        # em testes de serviço. Para verificar imagem em navegador real,
+        # utilizar os sprites locais versionados do repositório.
+        forma.imagem_url = "/static/img/pokemon-hd/bulbasaur.png"
+        forma.imagem_shiny_url = "/static/img/pokemon-hd/bulbasaur-shiny.png"
+
         pokemon = Pokemon(
             personagem_id=uuid.UUID(app_db.config["TEST_IDS"]["personagem"]),
             forma_pokemon_id=uuid.UUID(
