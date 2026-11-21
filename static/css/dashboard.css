@@ -1881,3 +1881,122 @@
 @media (max-width: 650px) {
     .pokemon-dashboard-golpes-detalhados .pokemon-dashboard-lista-golpes-detalhados { grid-template-columns: 1fr; }
 }
+
+/* 10E.4.1 — controles vivos no expandido: vermelho evolui,
+   azul muda forma ou ativa Mega. Não alteram os cartões recolhidos. */
+.retrato-pokemon-dashboard { position: relative; }
+.pokemon-dashboard-indicadores {
+  display: none;
+  position: absolute;
+  inset-inline: 12px;
+  bottom: 11px;
+  gap: 9px;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 5;
+}
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-indicadores { display: flex; }
+.pokemon-dashboard-indicador {
+  border: 2px solid currentColor;
+  border-radius: 10px;
+  background: rgba(16,22,36,.78);
+  display: grid; place-items: center;
+  width: 60px; height: 45px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.pokemon-dashboard-indicador img { width: 28px; height: 28px; object-fit: contain; }
+.pokemon-dashboard-indicador.indicador-evolucao { color: #f25b65; }
+.pokemon-dashboard-indicador.indicador-formas { color: #62a8ff; }
+.pokemon-dashboard-indicador:hover, .pokemon-dashboard-indicador:focus-visible {
+  background: rgba(45,55,80,.95);
+  box-shadow: 0 0 0 2px currentColor;
+}
+.pokemon-dashboard-transformacoes {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 9px;
+  min-width: 0;
+  padding: 13px 0 8px;
+  border-top: 1px solid var(--borda);
+}
+.pokemon-dashboard-acao-menu,
+.pokemon-dashboard-acao-direta {
+  margin: 0;
+  min-width: 0;
+  flex: 0 1 auto;
+  position: relative;
+}
+.pokemon-dashboard-acao-menu > summary,
+.pokemon-dashboard-acao-direta > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  min-height: 43px;
+  max-width: 100%;
+  padding: 8px 11px;
+  background: var(--superficie-suave);
+  color: var(--texto);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+.pokemon-dashboard-acao-menu > summary::-webkit-details-marker { display: none; }
+.pokemon-dashboard-transformacoes img { width: 25px; height: 25px; flex: 0 0 25px; object-fit: contain; }
+.pokemon-dashboard-acao-menu.dashboard-acao-vermelha > summary { border-color: #b93b49; color: #ff7079; }
+.pokemon-dashboard-acao-menu.dashboard-acao-azul > summary,
+.pokemon-dashboard-acao-direta > .dashboard-acao-azul { border-color: #447dc2; }
+.pokemon-dashboard-acao-direta > .dashboard-acao-azul:hover,
+.pokemon-dashboard-acao-menu > summary:hover,
+.pokemon-dashboard-acao-menu[open] > summary { background: var(--primaria-suave); }
+.dashboard-acao-contagem {
+  border-radius: 999px; padding: 1px 6px;
+  font-size: .66rem; background: #9d303c; color: #fff;
+}
+.pokemon-dashboard-acao-direta button:disabled,
+.dashboard-acao-opcao:disabled { cursor: not-allowed; opacity: .48; }
+.pokemon-dashboard-lista-opcoes {
+  display: grid;
+  gap: 3px;
+  position: absolute;
+  z-index: 25;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(290px, calc(100vw - 44px));
+  min-width: 220px;
+  padding: 7px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra);
+  border-radius: 11px;
+}
+.pokemon-dashboard-lista-opcoes form { margin: 0; }
+.dashboard-acao-opcao {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  padding: 8px;
+  color: var(--texto);
+  font: inherit;
+  cursor: pointer;
+}
+.dashboard-acao-opcao:hover, .dashboard-acao-opcao:focus-visible { background: var(--superficie-suave); }
+.dashboard-acao-opcao span { display: grid; min-width: 0; gap: 2px; }
+.dashboard-acao-opcao strong { font-size: .8rem; }
+.dashboard-acao-opcao small, .dashboard-acao-aviso { color: var(--texto-suave); font-size: .68rem; }
+.dashboard-acao-aviso { display: block; padding: 5px 8px; }
+@media (max-width: 640px) {
+  .pokemon-dashboard-transformacoes { flex-direction: column; align-items: stretch; }
+  .pokemon-dashboard-acao-menu, .pokemon-dashboard-acao-direta { width: 100%; }
+  .pokemon-dashboard-acao-menu > summary, .pokemon-dashboard-acao-direta > button { width: 100%; }
+  .pokemon-dashboard-lista-opcoes { position: static; width: 100%; margin-top: 5px; min-width: 0; }
+}
