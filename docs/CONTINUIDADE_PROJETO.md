@@ -12,6 +12,10 @@ Primeiro incremento após merge do PR #43. Cinco paletas gerais (Clássico, Anka
 
 **Atualização obrigatória:** backup; `pip install -r requirements.txt` (Pillow); `flask --app app.py db upgrade` antes de servir a nova aplicação. Migration `d12a00000001` adiciona dois campos anuláveis em personagens e usuarios. Não altera gameplay ou inventários. CI pendente. Sem acesso ao PostgreSQL real.
 
+### 12A.1 — Preferências nas fichas por URL
+
+Após merge #44, a prévia funcionava, mas o POST de aparência era bloqueado com 404 pelo allowlist de `fichas_url_service.py` no acesso `/p/<login>/`. A ordenação da Bag (11C) apresentava a mesma omissão. Incluídos apenas os endpoints `aparencia.salvar` e `inventario.ordem_jogador`; preservadas autorização, sessão por ficha, CSRF de aparência, validação de propriedade de itens e bloqueio das rotas administrativas. Testes de integração com dois jogadores e mestre no mesmo cliente, e Playwright pelo seletor em 320/1366px e ordenação por URL. Sem migration adicional; CI pendente.
+
 ## Etapa 11C-UI — Acabamento fosco e organização da Bag (21/11/2026)
 
 **Escopo:** após merge do PR #42, revisão das 32 folhas de estilo da interface; separar destaque funcional de brilho, preservando tema, sprites, cores de tipos/status, barra de PV, identificação shiny e foco de teclado.

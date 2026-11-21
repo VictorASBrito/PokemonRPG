@@ -319,9 +319,16 @@ def test_ordenacao_arraste_persiste_apos_recarregar(page: Page, live_site_url,
         assert [str(r.item_id) for r in sorted(registros, key=lambda r: r.ordem_bolsa)] == esperado
 
 
-def test_ordem_teclado_rejeicao_e_busca(page: Page, live_site_url, inventario_visual):
+@pytest.mark.parametrize("via_url", [False, True], ids=["login", "ficha-url"])
+def test_ordem_teclado_rejeicao_e_busca(page: Page, live_site_url, inventario_visual, via_url):
     ids = inventario_visual
-    abrir(page, live_site_url, ids, "jogador", 320, 700)
+    if via_url:
+        page.set_viewport_size({"width": 320, "height": 700})
+        page.goto(live_site_url + "/p/bartz-db/jogador/inventario")
+        page.locator('[data-aba-botao="avulsos"]').click()
+        expect(page.locator("[data-contador-itens]")).to_have_text("4")
+    else:
+        abrir(page, live_site_url, ids, "jogador", 320, 700)
     original = ordem_visivel(page)
     page.locator("[data-busca-inventario]").fill("Corda")
     expect(page.locator("[data-contador-itens]")).to_have_text("1")

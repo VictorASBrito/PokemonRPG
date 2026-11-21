@@ -85,3 +85,58 @@ def test_selecao_redireciona_para_url_estavel_sem_trocar_login(configurados):
     assert resposta.status_code == 303
     assert resposta.headers["Location"].endswith("/p/bartz-db/")
     assert c.get("/mestre/dashboard").status_code == 200
+
+
+def test_preferencias_por_url_preservam_mestre_e_outro_personagem(configurados):
+    import re
+
+    def config(client, rota):
+        res = client.get(rota)
+        assert res.status_code == 200
+        match = re.search(r'<script type="application/json" id="aparencia-config">(.*?)</script>', res.get_data(as_text=True), re.S)
+        assert match
+        return json.loads(match.group(1))
+    from app.models.db import Item, PersonagemItem
+
+    c = configurados.test_client()
+    assert c.post("/login", data={"login": "mestre-db", "senha": "senha-db"}).status_code in (302, 303)
+    mestre = config(c, "/mestre/dashboard")
+    a = config(c, "/p/bartz-db/jogador/dashboard")
+    outro = config(c, "/p/jogador2/jogador/dashboard")
+    assert len({mestre["csrf"], a["csrf"], outro["csrf"]}) == 3
+    url = "/p/bartz-db/preferencias/aparencia"
+    escolha = {"paleta": "personagem", "modo": "dark"}
+    assert "personagem" in a["opcoes"]
+    assert c.post(url, json=escolha).status_code == 403
+    assert c.post(url, json=escolha, headers={"X-Aparencia-CSRF": mestre["csrf"]}).status_code == 403
+    assert c.post(url, json=escolha, headers={"X-Aparencia-CSRF": outro["csrf"]}).status_code == 403
+    assert c.post(url, json=escolha, headers={"X-Aparencia-CSRF": a["csrf"]}).get_json() == {"ok": True}
+    assert config(c, "/p/bartz-db/jogador/dashboard")["paleta"] == "personagem"
+    assert config(c, "/p/jogador2/jogador/dashboard")["paleta"] == "classico"
+    assert config(c, "/mestre/dashboard")["paleta"] == "classico"
+    assert config(configurados.test_client(), "/p/bartz-db/jogador/dashboard")["modo"] == "dark"
+
+    with configurados.app_context():
+        dono = db.session.scalar(select(Personagem).join(Usuario).where(Usuario.login == "bartz-db"))
+        segundo = db.session.scalar(select(Personagem).join(Usuario).where(Usuario.login == "jogador2"))
+        itens = [Item(codigo=f"preferencia-url-{i}", nome=f"Item URL {i}", ativo=True) for i in range(3)]
+        db.session.add_all(itens)
+        db.session.flush()
+        db.session.add_all([PersonagemItem(personagem_id=dono.id, item_id=i.id, quantidade=3) for i in itens[:2]])
+        db.session.add(PersonagemItem(personagem_id=segundo.id, item_id=itens[2].id, quantidade=2))
+        db.session.commit()
+        ids = [str(i.id) for i in itens]
+        dono_id, segundo_id = dono.id, segundo.id
+
+    rota = "/p/bartz-db/jogador/inventario/ordem"
+    assert c.post(rota, json={"bolsa": "avulsos", "itens": [ids[0], ids[2]]}).status_code == 400
+    assert c.post(rota, json={"bolsa": "avulsos", "itens": [ids[1], ids[0]]}).get_json() == {"ok": True}
+    with configurados.app_context():
+        registros = db.session.scalars(select(PersonagemItem).where(
+            PersonagemItem.personagem_id == dono_id).order_by(PersonagemItem.ordem_bolsa)).all()
+        assert [str(reg.item_id) for reg in registros] == [ids[1], ids[0]]
+        assert all(reg.quantidade == 3 for reg in registros)
+        reg = db.session.scalar(select(PersonagemItem).where(PersonagemItem.personagem_id == segundo_id))
+        assert reg.ordem_bolsa is None and reg.quantidade == 2
+    assert c.post("/p/desconhecido/preferencias/aparencia", json=escolha).status_code == 404
+    assert c.get("/p/bartz-db/mestre/dashboard").status_code == 404

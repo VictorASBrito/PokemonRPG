@@ -12,9 +12,16 @@ def entrar(page, base, perfil="jogador"):
 
 
 @pytest.mark.parametrize("largura,altura", [(1366, 768), (320, 700)])
-def test_aparencia_previa_cancelamento_e_persistencia(page: Page, live_site_url, largura, altura):
+@pytest.mark.parametrize("via_url", [False, True], ids=["login", "seletor"])
+def test_aparencia_previa_cancelamento_e_persistencia(page: Page, live_site_url, largura, altura, via_url):
     page.set_viewport_size({"width": largura, "height": altura})
-    entrar(page, live_site_url)
+    if via_url:
+        page.goto(live_site_url + "/selecionar")
+        page.locator('[data-slot="1"] button').click()
+        expect(page).to_have_url(live_site_url + "/p/bartz-db/jogador/dashboard")
+        page.goto(live_site_url + "/p/bartz-db/jogador/inventario")
+    else:
+        entrar(page, live_site_url)
     raiz = page.locator("html")
     expect(raiz).to_have_attribute("data-palette", "classico")
     page.locator("#tema-toggle").click()
@@ -35,7 +42,9 @@ def test_aparencia_previa_cancelamento_e_persistencia(page: Page, live_site_url,
     assert dialog.evaluate("(el) => el.getBoundingClientRect().width <= innerWidth")
     with page.expect_response(lambda r: r.url.endswith("/preferencias/aparencia")) as resposta:
         dialog.get_by_role("button", name="Salvar aparência").click()
-    assert resposta.value.ok
+    assert resposta.value.ok, resposta.value.status
+    prefixo = "/p/bartz-db" if via_url else ""
+    assert resposta.value.url == live_site_url + prefixo + "/preferencias/aparencia"
     expect(dialog).not_to_be_visible()
     page.reload()
     expect(raiz).to_have_attribute("data-theme", "dark")

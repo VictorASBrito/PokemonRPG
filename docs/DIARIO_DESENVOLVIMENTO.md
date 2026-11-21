@@ -21,6 +21,11 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 12A.1 — Preferências nas fichas por URL
+
+Após merge #44, a prévia funcionava, mas o POST de aparência era bloqueado com 404 pelo allowlist de `fichas_url_service.py` no acesso `/p/<login>/`. A ordenação da Bag (11C) apresentava a mesma omissão. Incluídos apenas os endpoints `aparencia.salvar` e `inventario.ordem_jogador`; preservadas autorização, sessão por ficha, CSRF de aparência, validação de propriedade de itens e bloqueio das rotas administrativas. Testes de integração com dois jogadores e mestre no mesmo cliente, e Playwright pelo seletor em 320/1366px e ordenação por URL. Sem migration adicional; CI pendente.
+
+
 ## Etapa 12A — Aparência individual (21/11/2026)
 
 Primeiro incremento após merge do PR #43. Cinco paletas gerais (Clássico, Ankar, Eclipse, Expedição, Horizonte), cada uma clara/escura, e modo automático via preferências do sistema. Botão Tema abre diálogo com amostras e prévia de toda a tela; Cancelar/Escape restauram a aparência salva. Salvar persiste por personagem e por conta do mestre, com autorização por sessão e CSRF, sem aceitar identificadores arbitrários. Preferências anteriores no localStorage são fallback para modo ainda não configurado. O modo automático responde à mudança do sistema. A paleta Meu personagem deriva o matiz dominante de sprite local da configuração de nove slots (Pillow, ignora transparência/neutros e reduz tons de pele); se o sprite não estiver disponível ou não tiver cor suficiente, não oferece a opção. Não usa HTTP externo. Luminâncias separadas para legibilidade. As cores dos tipos, PV, condições e shiny não são personalizadas. CSS compartilhado e adaptação inicial da Bag. Testes de contraste, isolamento, cancelamento e persistência e tema derivado. Revisão por personagem e auditoria completa de todas as paletas, personalização manual e prévia do mestre como jogador permanecem próximas etapas.
