@@ -4,7 +4,7 @@
 {% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f8-combate-legibilidade') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f9-tipos-atributos') }}">
 {% endblock %}
 
 {% block conteudo %}
@@ -182,14 +182,14 @@
 
                     <div class="conteudo-pokemon-dashboard">
                         <section class="bloco-pokemon-dashboard">
-                            <h4>Atributos base</h4>
+                            <h4>Atributos</h4>
                             <div class="atributos-base-pokemon">
-                                <div><span>PV</span><strong>{{ bases.get('pv', 0) }}</strong></div>
-                                <div><span>ATQ</span><strong>{{ bases.get('ataque', 0) }}</strong></div>
-                                <div><span>DEF</span><strong>{{ bases.get('defesa', 0) }}</strong></div>
-                                <div><span>ATQ.E</span><strong>{{ bases.get('ataque_especial', 0) }}</strong></div>
-                                <div><span>DEF.E</span><strong>{{ bases.get('defesa_especial', 0) }}</strong></div>
-                                <div><span>VEL</span><strong>{{ bases.get('velocidade', 0) }}</strong></div>
+                                <div><span>PV</span><strong>{{ totais.get('pv', 0) }}</strong><small>Base {{ bases.get('pv', 0) }}</small></div>
+                                <div><span>ATQ</span><strong>{{ totais.get('ataque', 0) }}</strong><small>Base {{ bases.get('ataque', 0) }}</small></div>
+                                <div><span>DEF</span><strong>{{ totais.get('defesa', 0) }}</strong><small>Base {{ bases.get('defesa', 0) }}</small></div>
+                                <div><span>ATQ.E</span><strong>{{ totais.get('ataque_especial', 0) }}</strong><small>Base {{ bases.get('ataque_especial', 0) }}</small></div>
+                                <div><span>DEF.E</span><strong>{{ totais.get('defesa_especial', 0) }}</strong><small>Base {{ bases.get('defesa_especial', 0) }}</small></div>
+                                <div><span>VEL</span><strong>{{ totais.get('velocidade', 0) }}</strong><small>Base {{ bases.get('velocidade', 0) }}</small></div>
                             </div>
                         </section>
 
