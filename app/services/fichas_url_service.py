@@ -30,6 +30,7 @@ ENDPOINTS_JOGADOR = frozenset({
     "pokemons.evoluir_jogador",
     "pokemons.transformar_jogador",
     "boxes.boxes_jogador", "boxes.mover_jogador", "boxes.renomear_jogador",
+    "trocas.central", "trocas.nova", "trocas.detalhe", "trocas.agir",
     "inventario.inventario_jogador", "inventario.usar_jogador",
     "inventario.equipar_jogador", "inventario.desequipar_jogador",
     "inventario.transferir_jogador",
