@@ -324,8 +324,8 @@ def usar_item_consumivel(
         raise ValueError("Este item não está marcado como consumível.")
     # Materiais evolutivos são consumidos pela transação de evolução, nunca
     # pelo uso genérico da Bag, que não executa a transformação.
-    from app.services.materiais_evolucao_service import material_por_identificador
-    if material_por_identificador(item.codigo) or material_por_identificador(item.nome):
+    from app.services.materiais_evolucao_service import item_e_material_evolutivo
+    if item_e_material_evolutivo(item):
         raise ValueError("Use o painel de evolução autorizada para consumir este material.")
     # ANKAR_10C3_CURA — confirma o alvo e aplica cura/status antes do consumo.
     from app.services.efeitos_itens_10c3 import exige_alvo_pokemon, aplicar_efeitos_terapeuticos
