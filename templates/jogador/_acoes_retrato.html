@@ -31,6 +31,7 @@
                 <button type="submit" data-pokemon-abrir="evolucoes" class="pokemon-dashboard-indicador indicador-evolucao"
                         title="Evoluir para {{ evo.nome }}" aria-label="Evoluir {{ nome_exibicao }} para {{ evo.nome }}">
                     <img src="{{ url_for('static', filename='img/evolucao-disponivel.svg') }}" alt="">
+                    <span class="pokemon-dashboard-acao-rotulo">Evoluir</span>
                 </button>
             </form>
         {% else %}
@@ -38,6 +39,7 @@
                 <summary data-pokemon-abrir="evolucoes" class="pokemon-dashboard-indicador indicador-evolucao"
                          title="Escolher evolução" aria-label="Escolher evolução de {{ nome_exibicao }}">
                     <img src="{{ url_for('static', filename='img/evolucao-disponivel.svg') }}" alt="">
+                    <span class="pokemon-dashboard-acao-rotulo">Evoluir</span>
                 </summary>
                 <div class="pokemon-dashboard-lista-opcoes" role="group" aria-label="Evoluções disponíveis">
                     {% for evo in evolucoes_retrato %}
@@ -64,16 +66,19 @@
                 {% set acao_tipo = 'reverter' %}
                 {% set acao_destino = none %}
                 {% set acao_nome = 'Reverter forma' %}
+                {% set acao_icone = url_for('static', filename='img/mudanca-forma.svg') %}
                 {% set acao_confirmacao = 'Reverter para a forma original?' %}
             {% elif alternativas_retrato %}
                 {% set acao_tipo = 'alternativa' %}
                 {% set acao_destino = alternativas_retrato[0] %}
-                {% set acao_nome = 'Mudar para ' ~ acao_destino.nome %}
+                {% set acao_nome = acao_destino.nome %}
+                {% set acao_icone = acao_destino.imagem or url_for('static', filename='img/mudanca-forma.svg') %}
                 {% set acao_confirmacao = 'Mudar para ' ~ acao_destino.nome ~ '?' %}
             {% else %}
                 {% set acao_tipo = 'mega' %}
                 {% set acao_destino = megas_retrato[0] %}
-                {% set acao_nome = 'Mega Evoluir para ' ~ acao_destino.nome %}
+                {% set acao_nome = 'Mega Evoluir' %}
+                {% set acao_icone = url_for('static', filename='img/inventory/itens/keystone.png') %}
                 {% set acao_confirmacao = 'Mega Evoluir para ' ~ acao_destino.nome ~ '?' %}
             {% endif %}
             <form class="pokemon-dashboard-acao-direta" method="post"
@@ -83,17 +88,21 @@
                 <input type="hidden" name="origem" value="painel">
                 <input type="hidden" name="tipo" value="{{ acao_tipo }}">
                 {% if acao_destino %}<input type="hidden" name="destino_id" value="{{ acao_destino.id }}">{% endif %}
-                <button type="submit" data-pokemon-abrir="formas" class="pokemon-dashboard-indicador indicador-formas"
+                <button type="submit" data-pokemon-abrir="formas" data-pokemon-acao="{{ acao_tipo }}"
+                        class="pokemon-dashboard-indicador indicador-formas"
                         title="{{ acao_nome }}" aria-label="{{ acao_nome }} de {{ nome_exibicao }}">
-                    <img src="{{ url_for('static', filename='img/inventory/itens/keystone.png' if direita_eh_mega else 'img/mudanca-forma.svg') }}" alt="">
+                    <img src="{{ acao_icone }}" alt="">
+                    <span class="pokemon-dashboard-acao-rotulo">{{ acao_nome }}</span>
                 </button>
             </form>
         {% else %}
             <details class="pokemon-dashboard-seletor" data-pokemon-painel="formas">
-                <summary data-pokemon-abrir="formas" class="pokemon-dashboard-indicador indicador-formas"
-                         title="{{ 'Mega Evolução' if direita_eh_mega else 'Mudar de forma' }}"
-                         aria-label="{{ 'Mega Evoluir' if direita_eh_mega else 'Escolher forma' }} de {{ nome_exibicao }}">
+                <summary data-pokemon-abrir="formas" data-pokemon-acao="menu-formas"
+                         class="pokemon-dashboard-indicador indicador-formas"
+                         title="{{ 'Mega Evoluir' if direita_eh_mega else 'Trocar de forma' }}"
+                         aria-label="{{ 'Escolher Mega Evolução' if direita_eh_mega else 'Escolher forma' }} de {{ nome_exibicao }}">
                     <img src="{{ url_for('static', filename='img/inventory/itens/keystone.png' if direita_eh_mega else 'img/mudanca-forma.svg') }}" alt="">
+                    <span class="pokemon-dashboard-acao-rotulo">{{ 'Mega Evoluir' if direita_eh_mega else 'Trocar de forma' }}</span>
                 </summary>
                 <div class="pokemon-dashboard-lista-opcoes" role="group" aria-label="Formas disponíveis">
                     {% if alternativas_retrato %}
