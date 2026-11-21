@@ -6,6 +6,18 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.1 — Navegação mobile e conflito entre CSS globais (21/11/2026)
+
+**Status:** IMPLEMENTADO NA BRANCH; CI DO CONTRATO VISUAL APROVADA (40 testes, 21/11/2026); VALIDAÇÃO VISUAL REAL PENDENTE. Branch: `fix/mobile-nav-global-css-20261121`, baseada em `main`. PR proposto contra `main`, sem merge automático.
+
+**Diagnóstico:** `sistema-ui.css` possuía regras de cabeçalho e um `@media (max-width: 900px)` com seletores mais específicos (`body.app-shell .navegacao-principal`, `body.app-shell .topo`, `body.app-shell .marca` e `body.app-shell .usuario-topo`). Elas competiam com `visual-global-10c5.css`, impedindo o estado `display: none` do menu móvel e misturando `grid-template-areas` com as linhas/colunas móveis.
+
+**Alteração:** retirar de `sistema-ui.css` as regras concorrentes de navegação; deixar layout/estado responsivo exclusivamente em `visual-global-10c5.css`, preservando o nome do usuário oculto abaixo de 900px. Atualizar versões CSS em `templates/base.html`; ajustar `tests/test_sistema_ui.py`, adicionar `tests/test_navegacao_mobile_10f1.py` e incluí-lo no workflow `.github/workflows/test-contrato-ui-repositorio.yml`. Atualizar `docs/ARQUITETURA_FRONTEND.md` e o diário de desenvolvimento.
+
+**Escopo seguro:** sem mudanças em rotas, JavaScript da navegação, autenticação, permissões, modelos, dados, sprites, migrações ou regras de Ankar. Os testes estáticos verificam contratos CSS/template, **não** a renderização no navegador ou acessos reais.
+
+**Validação automatizada efetiva:** workflow [Contrato visual e organização do repositório](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44865434964) executou `python -m pytest -q` com **40 passed in 2.97s** na PR #32, incluindo `tests/test_navegacao_mobile_10f1.py`. **Validação manual pendente:** conferir também a navegação de mestre/jogador/prévia em 320, 390, 768, 900, 901, 1100, 1101 e 1440px, com modo claro/escuro, zoom 200%, clique fora, Escape e troca de breakpoint. Próxima etapa recomendada depois disso: revisão localizada do dashboard do jogador e do painel de NPCs, sem redesenho massivo.
+
 ## Atualização de arquitetura visual e limpeza de repositório — 21/11/2026
 
 A revisão de novembro mantém **o mesmo Flask/PostgreSQL e as regras ativas de Ankar**. Foi criada a branch `refactor/visual-system-repo-cleanup-2026` para:

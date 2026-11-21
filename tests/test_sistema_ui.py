@@ -21,8 +21,11 @@ def test_folha_transversal_valida_e_carregada_por_ultimo():
 
 def test_nav_movel_visivel_e_cartoes_sem_overflow():
     css = CSS.read_text(encoding="utf-8")
-    assert "body.app-shell .navegacao-principal {" in css
-    assert "display: flex; max-width: 100%" in css
+    visual = (ROOT / "static/css/visual-global-10c5.css").read_text(encoding="utf-8")
+    # A visibilidade da navegação pertence à camada responsiva, sem concorrência de especificidade.
+    assert "body.app-shell .navegacao-principal" not in css
+    assert "grid-template-areas" not in css
+    assert '.topo[data-ui-nav-open="true"] .navegacao-principal { display: flex; }' in visual
     assert "overflow-x: hidden" in css
     assert "grid-template-columns: clamp(54px, 4.4vw, 74px) minmax(0, 1fr)" in css
     assert "-webkit-line-clamp: 2" in css

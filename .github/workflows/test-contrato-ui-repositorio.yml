@@ -28,6 +28,7 @@ jobs:
           python -m pytest -q \
             tests/test_contrato_visual_repositorio.py \
             tests/test_sistema_ui.py \
+            tests/test_navegacao_mobile_10f1.py \
             tests/test_refinamento_frontend.py \
             tests/test_visual_10c5.py \
             tests/test_padrao_visual_10d1.py \
