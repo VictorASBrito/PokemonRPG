@@ -99,6 +99,7 @@ def listar_formas_temporarias(pokemon: Pokemon) -> dict:
         and (f.codigo in alt_codes or f.categoria == "alternativa")
         and (f.categoria != "regional" or f.codigo in alt_codes)
         and f.id != pokemon.forma_pokemon_id
+        and f.id != pokemon.forma_temporaria_id  # A forma atual não é nova opção.
     ]
     megas = [
         f for f in alternativas if f.categoria == "mega" and f.codigo in mega_codes
