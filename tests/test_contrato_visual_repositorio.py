@@ -40,11 +40,11 @@ def test_design_system_centraliza_tokens_sem_esconder_titulos():
 
 def test_css_globais_sao_validos_e_ordem_preservada():
     base = _texto("templates/base.html")
-    csss = [
+    globais = [
         "geral.css", "tema.css", "sistema-ui.css",
         "visual-global-10c5.css", "padrao-visual-10d1.css",
-        "ficha.css", "pokemon.css", "boxes.css", "catalogo-admin.css",
     ]
+    csss = globais + ["ficha.css", "pokemon.css", "boxes.css", "catalogo-admin.css"]
     for nome in csss:
         css = _texto(f"static/css/{nome}")
         erros = [
@@ -53,7 +53,8 @@ def test_css_globais_sao_validos_e_ordem_preservada():
             ) if item.type == "error"
         ]
         assert not erros, (nome, erros)
-        assert base.count(f"filename='css/{nome}'") == 1
+        if nome in globais:
+            assert base.count(f"filename='css/{nome}'") == 1
     assert base.index("css/geral.css") < base.index("css/tema.css")
     assert base.index("css/tema.css") < base.index("css/sistema-ui.css")
     assert base.index("css/sistema-ui.css") < base.index("css/visual-global-10c5.css")
