@@ -21,6 +21,16 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 11B-UI: Bag uniforme e confirmações
+- **Pedido:** remover brilho da seleção, mover ações ao painel lateral, padronizar tags e confirmar operações.
+- **Branch/PR:** `fix/inventario-acoes-confirmacao-11b-ui`, PR #42.
+- **Arquivos:** template inventário compartilhado, JS de uso, CSS específico `inventario-acoes-11b.css`, versão do serviço de apresentação, contratos estáticos e workflow, testes Playwright novos.
+- **Decisões:** seleção sem brilho/transformação; linhas iguais; faixa de etiquetas separada; modal nativo com item/quantidade/destino, cura com alvo elegível no modal, equipamento exige seleção e confirmação. Adição/ajuste/devolução também confirmados. Mapa somente leitura; evolução conserva proteção. Descrições textuais nulas tratadas apenas na interface.
+- **Migrations:** nenhuma; permissões, regras, banco PostgreSQL e inventários reais preservados.
+- **Testes:** diagnóstico CI 44939818990; suíte ampliada verifica geometrias/temas e POSTs reais somente em SQLite fictício, cancelamentos sem POST e efeitos/quantidades após confirmação. CI pendente.
+- **Próxima ação:** verificar relatórios e capturas, corrigir problemas reais se aparecerem e revisar antes de merge.
+
+
 ### 2026-11-21 — Etapa 11A: acervo visual e primeiro lote de itens
 - **Objetivo:** expandir catálogo de itens com fontes do manual 2.5 e ícones locais/PokéAPI; preparar implantação incremental no PostgreSQL.
 - **Branch:** `feat/catalogo-itens-acervo-11a`, após merge PR #40.
