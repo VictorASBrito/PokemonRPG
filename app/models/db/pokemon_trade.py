@@ -20,6 +20,8 @@ class TrocaPokemon(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
     destinatario_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("personagens.id", ondelete="CASCADE"), index=True)
     estado: Mapped[str] = mapped_column(String(20), default="pendente", server_default="pendente")
     revisao: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    versao_lock: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
+    __mapper_args__ = {"version_id_col": versao_lock}
     oferta_a: Mapped[list[str]] = mapped_column(JSON_DOCUMENT, default=list)
     oferta_b: Mapped[list[str]] = mapped_column(JSON_DOCUMENT, default=list)
     confirmou_a: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
