@@ -140,9 +140,9 @@
                                 </span>
                                 <span class="inventario-nds-linha-quantidade">× {{ linha.registro.quantidade }}</span>
                             </button>
-                            {% if item.consumivel or item.codigo == 'mapa-da-regiao-de-ankar' or (item.equipavel and contexto.pokemons) %}
+                            {% if (item.consumivel and not item_e_material_evolutivo(item)) or item.codigo == 'mapa-da-regiao-de-ankar' or (item.equipavel and contexto.pokemons) %}
                             <span class="inventario-uso-acoes">
-                                {% if item.consumivel or item.codigo == 'mapa-da-regiao-de-ankar' %}
+                                {% if (item.consumivel and not item_e_material_evolutivo(item)) or item.codigo == 'mapa-da-regiao-de-ankar' %}
                                 <button type="button" class="inventario-uso-acao" data-ativar-uso="{{ item.id }}"
                                         data-tipo-uso="{{ 'mapa' if item.codigo == 'mapa-da-regiao-de-ankar' else ('terapia' if item_exige_pokemon(item) else 'registro') }}"
                                         aria-label="Usar {{ item.nome }}">Usar</button>
@@ -174,7 +174,7 @@
                                 <h2>{{ item.nome }}</h2>
                                 <small>{{ linha.bolsa_nome }}</small>
                                 <div class="inventario-nds-etiquetas">
-                                    {% if item.consumivel %}<span>Consumível</span>{% endif %}
+                                    {% if item_e_material_evolutivo(item) %}<span>Evolução</span>{% elif item.consumivel %}<span>Consumível</span>{% endif %}
                                     {% if item.equipavel %}<span>Equipável</span>{% endif %}
                                     {% if item.uso_em_batalha %}<span>Batalha</span>{% endif %}
                                 </div>

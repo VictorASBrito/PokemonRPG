@@ -1,0 +1,293 @@
+{
+  "versao": 1,
+  "fonte": "PKMRPG Playtest 2.5, cap. 16, pp. 57–60 (numeração impressa); regras de evolução Ankar 10E.3/10E.4",
+  "obs": "Primeiro lote verificável: cura e materiais evolutivos. Não sobrescreve registros existentes; aliases e preços divergentes serão indicados. Repertório externo não define regras da campanha.",
+  "itens": [
+    {
+      "codigo": "super-pocao",
+      "nome": "Super Poção",
+      "categoria": "cura",
+      "preco": 25,
+      "icone": "superpocao.png",
+      "origem_icone": "local",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 60 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 60
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "hiper-pocao",
+      "nome": "Hiper Poção",
+      "categoria": "cura",
+      "preco": 45,
+      "icone": "hiperpocao.png",
+      "origem_icone": "local",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 120 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 120
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "max-pocao",
+      "nome": "Max Poção",
+      "categoria": "cura",
+      "preco": 80,
+      "icone": "maxpocao.png",
+      "origem_icone": "local",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera o PV máximo do Pokémon.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "percentual",
+          "valor": 100
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "agua-especial",
+      "nome": "Água Especial",
+      "categoria": "cura",
+      "preco": 15,
+      "icone": "fresh-water.png",
+      "origem_icone": "pokeapi",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 30 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 30
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "refri",
+      "nome": "Refri",
+      "categoria": "cura",
+      "preco": 20,
+      "icone": "soda-pop.png",
+      "origem_icone": "pokeapi",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 50 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 50
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "limonada",
+      "nome": "Limonada",
+      "categoria": "cura",
+      "preco": 30,
+      "icone": "lemonade.png",
+      "origem_icone": "pokeapi",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 80 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 80
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "leite-moomoo",
+      "nome": "Leite Moomoo",
+      "categoria": "cura",
+      "preco": 35,
+      "icone": "moomoo-milk.png",
+      "origem_icone": "pokeapi",
+      "aliases": [],
+      "funcionalidade": "cura",
+      "descricao": "Recupera 100 PV de um Pokémon, limitado ao máximo.",
+      "efeitos": [
+        {
+          "tipo": "recuperar_pv",
+          "alvo": "pokemon",
+          "operacao": "fixo",
+          "valor": 100
+        }
+      ],
+      "pagina": 57
+    },
+    {
+      "codigo": "cura-total",
+      "nome": "Cura Total",
+      "categoria": "cura",
+      "preco": 6,
+      "icone": "full-heal.png",
+      "origem_icone": "pokeapi",
+      "aliases": [
+        "full-heal"
+      ],
+      "funcionalidade": "cura",
+      "descricao": "Remove Queimando, Congelado, Paralisado, Envenenado, Muito Envenenado, Dormindo e Confuso.",
+      "status": [
+        "queimando",
+        "congelado",
+        "paralisado",
+        "envenenado",
+        "muito-envenenado",
+        "dormindo",
+        "confuso"
+      ],
+      "pagina": 58
+    },
+    {
+      "codigo": "water-stone",
+      "nome": "Pedra da Água",
+      "icone": "pedra_de_água.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-de-agua",
+        "pedra-agua"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra da Água. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "thunder-stone",
+      "nome": "Pedra do Trovão",
+      "icone": "pedra_eletrica.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-eletrica",
+        "pedra-do-trovao",
+        "pedra-trovao"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra do Trovão. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "leaf-stone",
+      "nome": "Pedra da Folha",
+      "icone": "pedra_da_folha.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-de-folha",
+        "pedra-folha"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra da Folha. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "moon-stone",
+      "nome": "Pedra da Lua",
+      "icone": "pedra_da_lua.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-de-lua",
+        "pedra-lua"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra da Lua. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "shiny-stone",
+      "nome": "Pedra Brilhante",
+      "icone": "pedra_da_luz.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-brilhante",
+        "pedra-da-luz"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra Brilhante. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "dusk-stone",
+      "nome": "Pedra do Crepúsculo",
+      "icone": "pedra_da_escuridão.png",
+      "preco": 150,
+      "aliases": [
+        "pedra-crepusculo",
+        "pedra-do-crepusculo",
+        "pedra-da-escuridao"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra do Crepúsculo. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "dawn-stone",
+      "nome": "Pedra da Alvorada",
+      "icone": "pedra_aurora.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-alvorada",
+        "pedra-da-alvorada",
+        "pedra-aurora"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra da Alvorada. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    },
+    {
+      "codigo": "ice-stone",
+      "nome": "Pedra do Gelo",
+      "icone": "pedra_de_gelo.png",
+      "preco": 200,
+      "aliases": [
+        "pedra-gelo",
+        "pedra-de-gelo"
+      ],
+      "categoria": "item-chave",
+      "origem_icone": "local",
+      "funcionalidade": "evolucao",
+      "descricao": "Material de evolução: Pedra do Gelo. Utilizado exclusivamente pela evolução autorizada do Pokémon, conforme as relações e regras vigentes em Ankar.",
+      "pagina": 60
+    }
+  ]
+}

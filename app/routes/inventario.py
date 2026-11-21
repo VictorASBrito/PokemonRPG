@@ -7,6 +7,7 @@ from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
 from app.services.inventario_apresentacao import BOLSAS, VERSAO_INTERFACE, preparar_equipe, preparar_itens
 from app.services.efeitos_itens_10c3 import exige_alvo_pokemon  # ANKAR_10C3_CURA
+from app.services.materiais_evolucao_service import item_e_material_evolutivo
 from app.services.inventario_service import (
     adicionar_item,
     ajustar_quantidade_item,
@@ -48,6 +49,7 @@ def _renderizar(personagem_id: str, *, modo_mestre: bool):
         versao_inventario=VERSAO_INTERFACE,
         bolsas=BOLSAS,
         item_exige_pokemon=exige_alvo_pokemon,
+        item_e_material_evolutivo=item_e_material_evolutivo,
         itens_visuais=preparar_itens(contexto.inventario),
         equipe_visual=preparar_equipe(contexto.pokemons, contexto.personagem),
         contexto=contexto,
