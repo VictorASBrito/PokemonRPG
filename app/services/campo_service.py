@@ -14,7 +14,7 @@ from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.services.campo_npc_service import listar_grupos_npc, limpar_npcs_campo
-from app.services.transformacoes_service import listar_formas_temporarias, reverter_mega_campo
+from app.services.transformacoes_service import listar_formas_temporarias
 from app.models.db import (
     Campanha, FormaPokemon, FormaPokemonTipo, HistoricoAlteracao,
     Personagem, Pokemon, PokemonEmCampo, Usuario,
@@ -146,7 +146,6 @@ def retirar_pokemon(
     if pokemon is None or not _pode_alterar(pokemon, mestre=mestre, personagem_id=personagem_id):
         raise PermissionError("Você só pode retirar Pokémon da sua própria equipe.")
     time = registro.time_numero
-    reverter_mega_campo(pokemon, usuario_id, "recolhido")
     db.session.delete(registro)
     _registrar_historico(
         usuario_id=usuario_id, pokemon_id=identificador,
@@ -164,9 +163,6 @@ def limpar_campo(*, campanha_codigo: str, usuario_id: str | None) -> int:
         select(PokemonEmCampo).where(PokemonEmCampo.campanha_id == campanha.id)
     ).scalars())
     for item in registros:
-        pokemon = db.session.scalar(select(Pokemon).where(Pokemon.id == item.pokemon_id).with_for_update())
-        if pokemon is not None:
-            reverter_mega_campo(pokemon, usuario_id, "campo_encerrado")
         db.session.delete(item)
         _registrar_historico(
             usuario_id=usuario_id, pokemon_id=item.pokemon_id,
