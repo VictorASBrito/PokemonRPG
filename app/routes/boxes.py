@@ -10,7 +10,9 @@ from flask import (
     session,
     url_for,
 )
+from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
+from app.models.db import TrocaPokemon
 
 from app.extensions import db
 from app.routes.auth import perfil_obrigatorio
@@ -81,6 +83,11 @@ def _render_boxes(contexto, *, modo_mestre: bool):
         editar_endpoint=editar_endpoint,
         novo_pokemon_endpoint=novo_endpoint,
         renomear_endpoint=renomear_endpoint,
+        pode_trocar=not modo_mestre and contexto.personagem.usuario.perfil == "jogador",
+        convites_troca=(db.session.scalar(select(func.count(TrocaPokemon.id)).where(
+            TrocaPokemon.destinatario_id == contexto.personagem.id,
+            TrocaPokemon.campanha_id == contexto.personagem.campanha_id,
+            TrocaPokemon.estado == "pendente")) or 0) if not modo_mestre else 0,
         fonte_dados="PostgreSQL",
     )
 
