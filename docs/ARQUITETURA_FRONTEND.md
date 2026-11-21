@@ -94,6 +94,10 @@ As etiquetas comuns em `tipos.css` usam altura automática, mínimo de 24px gera
 
 **Revisão após falha do Playwright:** [execução inicial 44930362339](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44930362339), 104 aprovados e 3 falhas. Nos cenários 1720×864 e 1024×600, o seletor legado de spans dos golpes detalhados sobrescrevia a fonte da etiqueta com .58rem (9,28px). Em 1366×768, as etiquetas de dois tipos escapavam do cartão lateral de altura fixa. Corrigir os seletores legados excluindo `.etiqueta-tipo` e ampliar o fallback de rolagem do painel em foco para desktop com altura até 820px ou largura até 1450px (a partir de 901px). Altura dos cartões laterais passa a acompanhar o conteúdo nessas condições; desktop amplo/alto mantém a primeira dobra. Atualizado cache do dashboard para `10f9-tipos-atributos-r2`. Playwright mantém os limites de legibilidade, valida os cinco companheiros e acrescenta cenário 1440×900. A nova CI é necessária para confirmar a correção.
 
+## Inventário — ações e confirmação (11B-UI)
+
+A folha `inventario-acoes-11b.css` é carregada após as camadas históricas da Bag. Linhas não contêm mais botões de consumo/equipamento: usam a mesma grade em cada viewport e selecionam com `aria-pressed`, borda e barra interna sem brilho. A faixa de características é separada do cabeçalho e sempre presente, com quebra responsiva. O JS `inventario-uso-10c4.js` preserva a elegibilidade terapêutica e concentra a escolha do alvo em dialog nativo. Formulários de mutação com `data-confirmacao` só submetem com autorização após confirmação; o modal de equipamento é a própria confirmação. O servidor continua sendo a autoridade sobre propriedade, quantidade, efeitos e permissões. Não reexecutar instaladores legados para sobrescrever esse fluxo. Playwright usa itens heterogêneos e operações no SQLite fictício, nunca banco real.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
