@@ -146,7 +146,8 @@ body.app-shell .pokemon-dashboard-topo > *, body.app-shell .pokemon-dashboard-go
 body.app-shell .golpes-pokemon-dashboard > div,
 body.app-shell .atributos-base-pokemon > div { min-width: 0; }
 body.app-shell .golpes-pokemon-dashboard :is(span, strong, small) { overflow: hidden; text-overflow: ellipsis; }
-body.app-shell .retrato-pokemon-dashboard img { width: 100%; height: 100%; max-height: 100%; object-fit: contain; }
+/* Somente a arte principal deve preencher o retrato; ícones das ações preservam suas dimensões. */
+body.app-shell .retrato-pokemon-dashboard > img { width: 100%; height: 100%; max-height: 100%; object-fit: contain; }
 
 /* Inventory: eliminate long names / HP bars spilling beyond Pokémon cards. */
 body.app-shell .inventario-nds { min-width: 0; }
