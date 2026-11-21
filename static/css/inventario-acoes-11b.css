@@ -146,10 +146,25 @@
   }
   .inventario-nds .inventario-nds-linha-foto { width: 42px; height: 42px; }
   .inventario-nds .inventario-nds-linha-quantidade { padding: 5px 6px; font-size: .78rem; }
-  .inventario-nds .inventario-nds-item-cabecalho { min-height: 60px; }
+  /* Reserva duas linhas de título + categoria sem alternar a altura entre itens. */
+  .inventario-nds .inventario-nds-item-cabecalho { min-height: 76px; }
   .inventario-nds .inventario-uso-acoes > button { flex: 1 1 auto; }
   .inventario-confirmacao-dialogo, #inventario-equipar-10c4 { padding: 16px; }
   .inventario-confirmacao-acoes > button { flex: 1 1 auto; }
+}
+/* Em 320px, deixar mais espaço para o nome sem forçar altura fixa,
+   truncar texto ou afetar o layout do desktop. */
+@media (max-width: 360px) {
+  .inventario-nds .inventario-nds-item-cabecalho {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+  .inventario-nds .inventario-nds-item-imagem { width: 48px; height: 48px; }
+  .inventario-nds .inventario-nds-item-quantidade {
+    padding-inline: 6px;
+    min-height: 34px;
+    white-space: nowrap;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .inventario-nds .inventario-nds-linha-botao { transition: none; }
