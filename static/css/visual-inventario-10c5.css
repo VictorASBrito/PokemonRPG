@@ -10,6 +10,13 @@ body:has(.inventario-nds) .conteudo { padding-bottom: 28px; }
 .inventario-nds > * { min-width: 0; }
 .inventario-nds-bag, .inventario-nds-equipe,
 .inventario-nds-area-mestre { min-width: 0; }
+/* 10F.7 — A arte circular nao pode sair da Bag em NENHUMA largura.
+   O desktop >=1200px usa overflow:visible para preservar lista/autocomplete.
+   Antes, right:-120px criava 92px de scroll extra no viewport de 1366px. */
+.inventario-nds-bag::after {
+  right: 0;
+  width: min(380px, 100%);
+}
 
 /* Tipografia e hierarquia: legibilidade em ambos os temas. */
 .inventario-nds-item-titulo h2 { line-height: 1.16; letter-spacing: -.02em; overflow-wrap: anywhere; }
@@ -181,8 +188,6 @@ body:has(.inventario-nds) .conteudo { padding-bottom: 28px; }
 
 @media (max-width: 1199px) {
   .inventario-nds-bag { overflow: visible; }
-  /* A arte circular fica dentro da Bag: fora dela aumentava a largura da página. */
-  .inventario-nds-bag::after { right: 0; width: min(380px, 100%); }
   .inventario-nds-abas {
     display: flex;
     flex-wrap: nowrap;
