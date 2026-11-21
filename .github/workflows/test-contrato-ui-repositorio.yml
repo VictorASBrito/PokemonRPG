@@ -25,6 +25,8 @@ jobs:
           python -m pip install -r requirements-dev.txt
       - name: Validar sintaxe JavaScript do inventário
         run: node --check static/js/inventario.js
+      - name: Validar sintaxe JavaScript do dashboard
+        run: node --check static/js/dashboard-pokemon.js
       - name: Validar design system, templates, navegação e organização
         run: |
           python -m pytest -q \
@@ -37,4 +39,5 @@ jobs:
             tests/test_visual_10c5.py \
             tests/test_padrao_visual_10d1.py \
             tests/test_padronizacao_dashboard.py \
-            tests/test_dashboard_foco_baixa_altura_10f4.py
+            tests/test_dashboard_foco_baixa_altura_10f4.py \
+            tests/test_dashboard_sprite_ficha_atributos_10f5.py
