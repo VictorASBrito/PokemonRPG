@@ -360,10 +360,10 @@ def test_rota_somente_jogador_com_csrf_e_confirmacao_da_ficha(app_db, client_db)
     assert client_db.post(url, data={"csrf_token": "abc"}).status_code == 302
     client_db.post("/logout")
     assert _login(client_db, "bartz-db", "abc123").status_code == 302
-    pagina = client_db.get(f"/jogador/pokemon/{pid}")
+    pagina = client_db.get("/jogador/dashboard")
     assert pagina.status_code == 200
     html = pagina.get_data(as_text=True)
-    assert "Evoluir para Charmeleon" in html
+    assert "Evoluir" in html and "Charmeleon" in html
     with client_db.session_transaction() as sess:
         csrf = sess["csrf_acao_evolucao"]
     assert client_db.post(url, data={"csrf_token": "errado"}).status_code == 403
@@ -373,8 +373,8 @@ def test_rota_somente_jogador_com_csrf_e_confirmacao_da_ficha(app_db, client_db)
     assert resposta.status_code == 302
     with app_db.app_context():
         assert db.session.get(Pokemon, pid).forma_pokemon_id == destino_id
-    pagina = client_db.get(f"/jogador/pokemon/{pid}")
-    assert "Evoluir para Charmeleon" not in pagina.get_data(as_text=True)
+    pagina = client_db.get("/jogador/dashboard")
+    assert "evolucao-disponivel.svg" not in pagina.get_data(as_text=True)
 
 
 def test_sessao_outro_jogador_nao_pode_evoluir_pokemon_alheio(app_db):
