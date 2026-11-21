@@ -10,7 +10,7 @@ body.app-shell :is(
   .campo-pokemon-arte img,
   .pokemon-imagem,
   .retrato-pokemon img,
-  .retrato-pokemon-dashboard img,
+  .retrato-pokemon-dashboard > img,
   .box-pokemon-imagem-wrap img,
   .painel-pokemon-imagem img,
   .inventario-nds-equipe img,
