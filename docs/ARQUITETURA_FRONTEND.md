@@ -48,6 +48,17 @@ O print do celular mostrou uma faixa escura extra à direita, mesmo após 10F.2.
 
 **Teste estático:** `tests/test_inventario_largura_10f3.py`, integrado ao workflow de contrato visual. **Verificação manual obrigatória:** confirmar em Android Chrome a largura do cabeçalho e da Bag, ausência de faixa vazia à direita e cinco categorias visíveis em 320px e 390px. Validar também o autocomplete do mestre e a rolagem da equipe; CI estática não substitui inspeção de layout no navegador.
 
+## Dashboard Pokémon em notebooks de pouca altura — contrato 10F.4
+
+O modo de foco de `static/css/dashboard.css` é compartilhado pelo dashboard do jogador e pelo painel do NPC. Em desktop com altura suficiente (`min-width: 901px`), permanece a apresentação compacta sem rolagem da página. A regra de exceção para **largura a partir de 901px e altura até 760px** impede que essa apresentação corte dados e controles.
+
+- Na exceção, `body.dashboard-foco-aberto` retoma `overflow-y: auto`, `.dashboard-jogador` e `.grade-pokemons-dashboard.dashboard-pokemon-modo-foco` passam a ter altura natural.
+- O card em foco, os detalhes, os golpes e as anotações podem crescer sem `overflow: hidden`; os demais Pokémon permanecem na coluna lateral com altura natural. A coluna do treinador deixa de ser sticky somente nessa condição.
+- Não modificar o comportamento do `dashboard-pokemon.js`, seus modais, formulários, ações de retrato nem rotas. A correção é de layout; o estado de foco e o retorno por Esc permanecem iguais.
+- Ao alterar a folha compartilhada, atualizar seu parâmetro de cache em `templates/jogador/dashboard.html` e `templates/mestre/catalogo/npc_painel.html`.
+
+**Regressão estática:** `tests/test_dashboard_foco_baixa_altura_10f4.py`, integrado à suíte de contrato visual, verifica a exceção de altura, o desktop preservado, controles e os dois templates. **Validação visual complementar:** conferir 1024×600, 1366×768, 1440×900, navegador com zoom 200%, jogador e NPC, equipe de 1 a 6 Pokémon, modal de confirmação, botões Recolher/Editar e opções de Mega/forma. Teste de CSS não substitui uso real no navegador.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
@@ -102,6 +113,7 @@ As ações de Mega/forma pertencem aos services/rotas; CSS e JS só apresentam o
 - `tests/test_padrao_visual_10d1.py` — contexto do catálogo.
 - `tests/test_refinamento_frontend.py` — modos claro/escuro, fichas e Painel.
 - `tests/test_padronizacao_dashboard.py` — grade de equipe.
+- `tests/test_dashboard_foco_baixa_altura_10f4.py` — foco rolável em janelas baixas nos painéis do jogador e NPC.
 - `tests/test_painel_npcs_10d4_5.py` — edição e ações do mestre nos NPCs.
 - `tests/test_contrato_visual_repositorio.py` — novos invariantes de organização, sem uso de PostgreSQL.
 

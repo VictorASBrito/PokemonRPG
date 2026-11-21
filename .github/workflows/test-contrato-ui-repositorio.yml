@@ -36,4 +36,5 @@ jobs:
             tests/test_refinamento_frontend.py \
             tests/test_visual_10c5.py \
             tests/test_padrao_visual_10d1.py \
-            tests/test_padronizacao_dashboard.py
+            tests/test_padronizacao_dashboard.py \
+            tests/test_dashboard_foco_baixa_altura_10f4.py
