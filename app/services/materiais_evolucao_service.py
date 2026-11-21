@@ -106,3 +106,9 @@ def item_corresponde_material(codigo: str, nome: str, material: MaterialEvolucao
         _normalizar(codigo) in material.aliases
         or _normalizar(nome) in material.aliases
     )
+
+
+def item_e_material_evolutivo(item: Any) -> bool:
+    """Pode ser descontado apenas pelo fluxo autorizado de evolução."""
+    return bool(material_por_identificador(item.codigo)
+                or material_por_identificador(item.nome))
