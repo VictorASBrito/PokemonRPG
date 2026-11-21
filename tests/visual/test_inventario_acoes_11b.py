@@ -74,6 +74,7 @@ def capturar(page, nome):
     ("jogador", 1366, 768, "light"),
     ("jogador", 390, 844, "dark"),
     ("mestre", 320, 700, "light"),
+    ("jogador", 320, 700, "dark"),
 ])
 def test_lista_e_etiquetas_estaveis(page: Page, live_site_url, inventario_visual,
                                    perfil, largura, altura, tema):
@@ -102,6 +103,14 @@ def test_lista_e_etiquetas_estaveis(page: Page, live_site_url, inventario_visual
         assert detalhe.locator(".inventario-nds-etiquetas span").count() >= 1
         header = detalhe.locator(".inventario-nds-item-cabecalho").bounding_box()
         alturas.append(header["height"])
+        assert detalhe.locator(".inventario-nds-item-cabecalho").evaluate("""el => {
+            const area = el.getBoundingClientRect();
+            return [...el.children].every(child => {
+                const r = child.getBoundingClientRect();
+                return r.left >= area.left - 1 && r.right <= area.right + 1
+                    && r.top >= area.top - 1 && r.bottom <= area.bottom + 1;
+            });
+        }"""), "Cabeçalho não deve cortar imagem, título ou quantidade"
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
         if codigo == "visual-corda":
             expect(detalhe.locator(".inventario-nds-item-descricao")).to_have_text("Sem descrição cadastrada.")
