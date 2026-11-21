@@ -16,7 +16,7 @@ from app.extensions import db
 from app.models.db import (
     AutorizacaoEvolucaoPokemon, EvolucaoPokemon, FormaPokemon,
     HistoricoAlteracao, Item, Personagem, PersonagemItem, Pokemon,
-    PokemonEmCampo, Usuario,
+    Usuario,
 )
 from app.services.autorizacao_evolucao_service import invalidar_autorizacoes_por_troca_forma
 from app.services.consulta_evolucao_service import _tem_condicoes_especiais
