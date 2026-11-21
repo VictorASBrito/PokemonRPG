@@ -6,6 +6,14 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.9 — Etiquetas de tipo e atributos calculados no modo normal (21/11/2026)
+
+**Pedido:** aumentar as tags de tipo e corrigir letras comprimidas; aproximar os cartões de atributos normais dos valores de combate do modo expandido.
+
+**Implementação:** branch `feat/dashboard-tipos-atributos-10f9`, baseada na main após merge do PR #39. `static/css/tipos.css` preserva a paleta por tipo e adota altura automática, mínimos 21–25px no dashboard, fonte de aproximadamente 11–12,5px, line-height 1,2 e ausência de sombra tipográfica. `templates/base.html` atualiza cache da folha comum. Os templates de jogador e NPC apresentam os seis totais calculados já disponíveis no contexto, com `Base X` abaixo de cada número; o título passa a Atributos. CSS do dashboard adota fonte de 1rem para os totais, rótulos/base menores e linhas mínimas de 52px. Cache e contratos de UI atualizados. Não recalcular atributos, alterar as ações, dados da campanha ou permissões; sem migration.
+
+**Validação:** ampliar `tests/visual/test_dashboard_legibilidade_10f8.py` para testar igualdade entre totais e bases dos dois modos, limites das seis células, etiquetas de Pokémon de dois tipos (normal, expandido, lateral e golpes), tamanho de fonte, altura e limites reais do texto em cinco viewports (320/390/1024/1366/1720px, temas claro/escuro). Capturas em `test-results/dashboard-10f9/`. CI pendente de conclusão; NPC cadastrado e produção não verificados. PR para revisão, sem merge automático.
+
 ## Etapa 10F.8 — Legibilidade do combate no dashboard (21/11/2026)
 
 **Plano e escopo:** (1) destacar os seis valores base com tipografia e contraste dos tokens do tema; (2) separar nome, dano e tipo dos golpes na visão normal preservando quatro slots; (3) compactar a grade 2x2 dos golpes detalhados, mantendo precisão e demais dados, e elevar a hierarquia dos atributos atuais; (4) permitir quebra dos nomes dos Pokémon laterais, empilhar a visão resumida no celular e preservar a rolagem dos notebooks baixos; (5) validar por Playwright com equipe fictícia de seis Pokémon, slots preenchidos/vazios e temas claro/escuro.
