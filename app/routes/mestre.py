@@ -43,7 +43,7 @@ from app.services.usuario_service import (
 )
 
 from app.services.cura_mestre_10d2 import curar_pokemons_mestre
-from app.services.entrada_personagens_service import configuracao_login
+from app.services.entrada_personagens_service import configuracao_login, sprite_personagem_por_login
 
 mestre_bp = Blueprint("mestre", __name__, url_prefix="/mestre")  # ANKAR_10D2_CENTRAL_MESTRE
 
@@ -417,6 +417,7 @@ def preview_jogador(jogador_id: str):
         nome_jogador=ficha.personagem.usuario.nome,
         jogador=ficha.jogador,
         treinador=treinador,
+        sprite_personagem_url=sprite_personagem_por_login(ficha.personagem.usuario.login),
         atributos_config=ficha.regras.get("atributos", []),
         equipe=equipe,
         limite_equipe=int(contexto_pokemon.regras["limites"]["tamanho_equipe"]),
