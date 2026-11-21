@@ -11,7 +11,7 @@
       <h1>Gerar NPCs e Hordas</h1>
       <p class="texto-suave">Gere encontros a partir das rotas e cidades oficiais. NPCs fixos são preservados no catálogo.</p>
     </div>
-    <a class="botao botao-secundario botao-link" href="{{ url_for('combates.painel') }}">Abrir Campo</a>
+    <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Catálogo de NPCs</a>
   </header>
   <section class="npcs-formulario ui-card" aria-labelledby="titulo-geracao">
     <h2 id="titulo-geracao">Montar equipe de 1 a 6 Pokémon</h2>
@@ -188,7 +188,11 @@
             {% for numero in range(1,17) %}<option value="{{ numero }}">Time {{ numero }}</option>{% endfor %}
           </select>
         </label>
+        {% if config.get('CAMPO_OPERACOES_ATIVAS', false) %}
         <button class="botao botao-primario" type="submit" name="acao" value="colocar_campo">Colocar grupo no Campo</button>
+        {% else %}
+        <p class="texto-suave">O envio dos grupos ao Campo está temporariamente pausado. A geração pode ser revisada; NPCs fixos continuam salvos no catálogo.</p>
+        {% endif %}
       {% endif %}
     </form>
   </section>
