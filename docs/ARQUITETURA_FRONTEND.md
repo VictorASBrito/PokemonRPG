@@ -100,6 +100,10 @@ A folha `inventario-acoes-11b.css` é carregada após as camadas históricas da 
 
 **Validação e correção mobile:** a auditoria anterior à alteração (run 44939818990) passou com 109 testes; a primeira implementação (run 44940028611) obteve 114 aprovados e uma falha, exclusivamente na estabilidade do cabeçalho do mestre a 320×700, tema claro (60–63,0625px; tolerância 1px). Contrato visual 44940028624: 64 aprovados. Corrigido mínimo de altura mobile para 76px, com ícone de 48px e quantidade compacta abaixo de 361px; nomes continuam livres para quebrar sem corte e sem altura fixa. Cache CSS `11b-2`. Ampliado teste para jogador 320px em tema escuro e verificação de contenção de todos os filhos do cabeçalho. Tolerância de 1px preservada. Nova CI pendente.
 
+## Acabamento fosco e organização da Bag (11C-UI)
+
+`visual-fosco-11c.css` é a última camada comum de `base.html`: sombras decorativas e luminosidade não devem reaparecer; usar bordas/contornos e fundos sólidos, preservar filtros funcionais, foco de teclado, status e diferenciação shiny. A auditoria 10F.7 mede estilos computados, não só sintaxe. Na Bag, `inventario-ordem-11c.js` usa alças em modo explícito, Pointer Events com captura, auto-scroll, teclado e POST JSON da permutação de itens da bolsa inteira. O servidor valida a identidade e o conjunto completo; não modificar quantidades. Erro de API restaura a ordem visual. `ordem_bolsa` nula mantém alfabético para novos registros. Manter scripts legados e confirmação 11B-UI intactos.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
