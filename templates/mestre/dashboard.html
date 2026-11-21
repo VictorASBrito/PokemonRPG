@@ -86,7 +86,21 @@
                             <a href="{{ url_for('inventario.inventario_mestre', personagem_id=jogador.get('id')) }}">Inventário</a>
                             <a href="{{ url_for('boxes.boxes_mestre', jogador_id=jogador.get('id')) }}">Box</a>
                         </nav>
-                        <strong class="painel-menu-titulo">Gerenciar nível e acesso</strong>
+                        <strong class="painel-menu-titulo">Mega Evolução</strong>
+                        <form method="post" class="formulario-mega-mestre" action="{{ url_for('mestre.alterar_mega_no_painel', personagem_id=jogador.get('id')) }}">
+                            <input type="hidden" name="csrf_token" value="{{ nivel_csrf_token|default('') }}">
+                            <input type="hidden" name="habilitar" value="{{ '0' if jogador.get('mega_habilitada') else '1' }}">
+                            <span class="painel-mega-descricao">
+                                <img src="{{ url_for('static', filename='img/mega-pedra-ankar.svg') }}" alt="">
+                                <span><strong>Permitir Mega Evolução</strong><small>{{ 'Habilitada para este treinador' if jogador.get('mega_habilitada') else 'Desabilitada para este treinador' }}</small></span>
+                            </span>
+                            <button type="submit" class="painel-mega-alternar" role="switch"
+                                    aria-checked="{{ 'true' if jogador.get('mega_habilitada') else 'false' }}"
+                                    aria-label="{{ 'Desativar' if jogador.get('mega_habilitada') else 'Ativar' }} Mega Evolução de {{ jogador.get('nome') }}">
+                                <span aria-hidden="true"></span>
+                            </button>
+                        </form>
+                                                <strong class="painel-menu-titulo">Gerenciar nível e acesso</strong>
                         <form method="post" class="formulario-nivel-mestre" action="{{ url_for('mestre.alterar_nivel_jogador', jogador_id=jogador.get('id')) }}">
                             <input type="hidden" name="csrf_token" value="{{ nivel_csrf_token|default('') }}">
                             <label for="nivel-painel-{{ jogador.get('id') }}">Nível</label>
