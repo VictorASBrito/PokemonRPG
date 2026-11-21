@@ -11,7 +11,10 @@
       <h1>{{ ficha.modelo.nome if ficha.modelo else "Novo NPC fixo" }}</h1>
       <p class="texto-suave">Cadastro narrativo do mestre. NPCs não possuem login, permissões, dinheiro, inventário ou Box.</p>
     </div>
-    <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Voltar aos NPCs</a>
+    <div class="npc-editor-acoes">
+      {% if ficha.modelo %}<a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.painel_npc', modelo_id=ficha.modelo.id) }}">Abrir Painel NPC</a>{% endif %}
+      <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Voltar aos NPCs</a>
+    </div>
   </header>
 
   <form method="post" class="cartao ui-card npc-editor-form"
