@@ -306,3 +306,78 @@ def test_evolucao_disponivel_sem_dependencia_de_campo_ou_menu_inferior(app_db, c
     assert 'class="pokemon-dashboard-acao-posicao indicador-esquerda"' in html
     assert 'class="pokemon-dashboard-indicador indicador-evolucao"' in html
     assert 'class="pokemon-dashboard-transformacoes"' not in html
+
+
+def test_10e4_3_morpeko_forma_unica_exibe_nome_e_imagem_no_botao(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("morpeko-retrato", [
+            ("morpeko-satisfeito", "normal"),
+            ("morpeko-faminto", "alternativa"),
+        ])
+        formas["morpeko-faminto"].imagem_url = "https://example.test/morpeko-faminto.png"
+        _pokemon(app_db, formas["morpeko-satisfeito"])
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'data-pokemon-acao="alternativa"' in html
+    assert '<span class="pokemon-dashboard-acao-rotulo">Morpeko-Faminto</span>' in html
+    assert 'src="https://example.test/morpeko-faminto.png"' in html
+    assert 'class="pokemon-dashboard-transformacoes"' not in html
+
+
+def test_10e4_3_castform_varias_formas_exibem_menu_com_miniaturas(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("castform-retrato", [
+            ("castform", "normal"),
+            ("castform-ensolarado", "alternativa"),
+            ("castform-chuvoso", "alternativa"),
+            ("castform-nevado", "alternativa"),
+        ])
+        for codigo in ("castform-ensolarado", "castform-chuvoso", "castform-nevado"):
+            formas[codigo].imagem_url = f"https://example.test/{codigo}.png"
+        _pokemon(app_db, formas["castform"])
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'data-pokemon-acao="menu-formas"' in html
+    assert '<span class="pokemon-dashboard-acao-rotulo">Trocar de forma</span>' in html
+    for codigo, nome in (
+        ("castform-ensolarado", "Castform-Ensolarado"),
+        ("castform-chuvoso", "Castform-Chuvoso"),
+        ("castform-nevado", "Castform-Nevado"),
+    ):
+        assert f'src="https://example.test/{codigo}.png"' in html
+        assert f"<strong>{nome}</strong>" in html
+    assert html.count('name="tipo" value="alternativa"') == 3
+
+
+def test_10e4_3_blaziken_mega_unica_mostra_keystone_e_texto(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("blaziken", [
+            ("blaziken", "normal"),
+            ("blaziken-mega", "mega"),
+        ])
+        _pokemon(app_db, formas["blaziken"])
+        personagem = db.session.get(Personagem, _ids(app_db)["personagem"])
+        personagem.mega_habilitada = True
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'data-pokemon-acao="mega"' in html
+    assert '<span class="pokemon-dashboard-acao-rotulo">Mega Evoluir</span>' in html
+    assert 'src="/static/img/inventory/itens/keystone.png"' in html
+    assert 'class="pokemon-dashboard-acao-posicao indicador-direita"' in html
+
+
+def test_10e4_3_css_icone_nao_herda_tamanho_do_sprite_principal():
+    from pathlib import Path
+
+    raiz = Path(__file__).resolve().parents[1]
+    sistema = (raiz / "static/css/sistema-ui.css").read_text(encoding="utf-8")
+    dashboard = (raiz / "static/css/dashboard.css").read_text(encoding="utf-8")
+    assert "body.app-shell .retrato-pokemon-dashboard img {" not in sistema
+    assert "body.app-shell .retrato-pokemon-dashboard > img {" in sistema
+    assert ".pokemon-dashboard-indicador > img" in dashboard
+    assert ".retrato-pokemon-dashboard .pokemon-dashboard-lista-opcoes .dashboard-acao-opcao > img" in dashboard
+    assert "max-width: 34px;" in dashboard and "max-height: 34px;" in dashboard
+    assert "overflow-x: hidden;" in dashboard
