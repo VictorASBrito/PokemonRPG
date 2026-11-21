@@ -36,6 +36,7 @@ def create_app() -> Flask:
 
     from app.commands import banco_cli, dados_cli, usuarios_cli, ficha_cli, pokemon_cli, catalogo_cli, inventario_cli, midia_cli, planilhas_jogadores_cli, ankar_cli
     from app.routes.auth import auth_bp
+    from app.routes.aparencia import aparencia_bp
     from app.routes.entrada_personagens import entrada_personagens_bp
     from app.routes.fichas_url import fichas_url_bp
     from app.routes.catalogo_admin import catalogo_admin_bp
@@ -50,6 +51,7 @@ def create_app() -> Flask:
     from app.routes.pokemons import pokemons_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(aparencia_bp)
     app.register_blueprint(entrada_personagens_bp)
     app.register_blueprint(fichas_url_bp)
     app.register_blueprint(catalogo_admin_bp)
