@@ -23,61 +23,48 @@
     module.exports = { elegivel };
   }
 
+  // 11B: todas as mutações iniciadas na Bag exigem confirmação explícita.
   const root = typeof document === 'undefined' ? null : document.querySelector('[data-inventario]');
   if (!root) return;
   const form = root.querySelector('[data-formulario-uso]');
-  const msgWrap = root.querySelector('[data-uso-aviso]');
+  const modal = document.getElementById('inventario-confirmacao-11b');
+  const confirmar = modal?.querySelector('[data-confirmar-operacao]');
+  const alvoWrap = modal?.querySelector('[data-confirmacao-alvo]');
+  const alvo = modal?.querySelector('[data-confirmacao-pokemon]');
   const cards = [...root.querySelectorAll('[data-pokemon-alvo]')];
-  const botoes = [...root.querySelectorAll('[data-ativar-uso]')];
-  const usarItem = form?.querySelector('[name="item_id"]');
-  const usarPokemon = form?.querySelector('[name="pokemon_id"]');
   const mapa = document.getElementById('inventario-mapa-estatico');
   const equipar = document.getElementById('inventario-equipar-10c4');
-  let aguardando = null;
+  const equipForm = equipar?.querySelector('form');
+  let pendente = null;
+  let autorizado = null;
   let enviando = false;
 
-  function limpar() {
-    aguardando = null;
-    if (msgWrap) msgWrap.hidden = true;
-    window.PokemonRPGToast?.fecharDinamico();
-    for (const card of cards) {
-      card.classList.remove('inventario-uso-elegivel');
-      const botao = card.querySelector('[data-selecionar-pokemon]');
-      if (botao) {
-        botao.hidden = true;
-        botao.disabled = true;
-      }
-    }
-    for (const botao of botoes) {
-      botao.setAttribute('aria-pressed', 'false');
-    }
-    if (usarPokemon) usarPokemon.value = '';
-  }
-
-  // ANKAR_10C4_2_SELECAO_TOAST: usa a mesma notificação global de 1,5s.
   function informar(texto, tipo = 'info') {
     window.PokemonRPGToast?.mostrar(texto, tipo);
   }
 
-  function enviar(itemId, pokemonId) {
-    if (!form || !usarItem || !usarPokemon || enviando) return;
-    usarItem.value = itemId;
-    usarPokemon.value = pokemonId || '';
-    enviando = true;
-    // action aponta à rota POST existente, com validação de propriedade e quantidade.
-    form.requestSubmit();
+  function campo(f, nome) {
+    return f?.elements.namedItem(nome);
   }
 
-  function efeitos(itemId) {
-    const alvo = [...root.querySelectorAll('[data-uso-efeitos]')]
-      .find(el => el.dataset.usoEfeitos === itemId);
-    if (!alvo) return [];
+  function textoSelecionado(f, nome) {
+    const el = campo(f, nome);
+    return el?.selectedOptions?.[0]?.textContent.trim() || '';
+  }
+
+  function nomeItem(id) {
+    const detalhe = [...root.querySelectorAll('[data-detalhe-item]')]
+      .find(el => el.dataset.detalheItem === id);
+    return detalhe?.querySelector('h2')?.textContent.trim() || 'item';
+  }
+
+  function efeitos(id) {
+    const el = [...root.querySelectorAll('[data-uso-efeitos]')]
+      .find(el => el.dataset.usoEfeitos === id);
     try {
-      const documento = JSON.parse(alvo.textContent || 'null');
+      const documento = JSON.parse(el?.textContent || 'null');
       return Array.isArray(documento?.efeitos) ? documento.efeitos : [];
-    } catch (_) {
-      return [];
-    }
+    } catch (_) { return []; }
   }
 
   function atributos(card) {
@@ -88,73 +75,120 @@
     };
   }
 
-  for (const botao of botoes) {
-    botao.setAttribute('aria-pressed', 'false');
+  function abrir(titulo, resumo, acao, candidatos = []) {
+    if (!modal || modal.open || enviando || equipar?.open || mapa?.open) return;
+    pendente = acao;
+    modal.querySelector('[data-confirmacao-titulo]').textContent = titulo;
+    modal.querySelector('[data-confirmacao-resumo]').textContent = resumo;
+    alvoWrap.hidden = candidatos.length === 0;
+    alvo.replaceChildren(new Option('Selecionar Pokémon', ''));
+    for (const card of candidatos) {
+      alvo.add(new Option(card.dataset.pokemonNome, card.dataset.pokemonAlvo));
+    }
+    confirmar.disabled = candidatos.length > 0;
+    confirmar.textContent = 'Confirmar';
+    modal.showModal();
+  }
+
+  alvo?.addEventListener('change', () => {
+    confirmar.disabled = !alvo.value;
+  });
+  confirmar?.addEventListener('click', () => {
+    if (!pendente || enviando || confirmar.disabled) return;
+    const acao = pendente;
+    const pokemonId = alvoWrap.hidden ? '' : alvo.value;
+    pendente = null;
+    modal.close();
+    acao(pokemonId);
+  });
+  modal?.querySelector('[data-uso-cancelar]')?.addEventListener('click', () => modal.close());
+  modal?.addEventListener('close', () => { pendente = null; });
+
+  // Apenas o clique de confirmação autoriza o requestSubmit seguinte.
+  function enviarConfirmado(f) {
+    if (!f || enviando) return;
+    autorizado = f;
+    f.requestSubmit();
+    autorizado = null;
+  }
+
+  function resumoFormulario(f) {
+    const item = f.dataset.itemNome || textoSelecionado(f, 'item_id')
+      || f.querySelector('input[type="search"]')?.value || 'item';
+    const qtd = campo(f, 'quantidade')?.value;
+    switch (f.dataset.confirmacao) {
+      case 'transferir':
+        return ['Confirmar transferência', `Enviar ${qtd} × ${item} para ${textoSelecionado(f, 'personagem_destino_id')}?`];
+      case 'devolver':
+        return ['Confirmar devolução', `Devolver ${item} de ${f.dataset.pokemonNome} à mochila?`];
+      case 'adicionar':
+        return ['Confirmar adição', `Adicionar ${qtd} × ${item} ao inventário?`];
+      case 'ajustar':
+        return ['Confirmar quantidade', `Definir a quantidade de ${item} como ${qtd}?${qtd === '0' ? ' O item será removido da mochila.' : ''}`];
+      default: return null;
+    }
+  }
+
+  for (const f of [form, ...root.querySelectorAll('form[data-confirmacao]')].filter(Boolean)) {
+    f.addEventListener('submit', (ev) => {
+      if (enviando) { ev.preventDefault(); return; }
+      if (autorizado === f) { enviando = true; return; }
+      ev.preventDefault();
+      if (f === form) return;
+      if (f.dataset.confirmacao === 'adicionar' && !campo(f, 'item_id')?.value) {
+        informar('Escolha um item do catálogo antes de adicionar.', 'aviso');
+        return;
+      }
+      const dados = resumoFormulario(f);
+      if (dados) abrir(dados[0], dados[1], () => enviarConfirmado(f));
+    });
+  }
+
+  for (const botao of root.querySelectorAll('[data-ativar-uso]')) {
     botao.addEventListener('click', () => {
       if (enviando) return;
-      limpar();
       const tipo = botao.dataset.tipoUso;
       const id = botao.dataset.ativarUso;
-      if (tipo === 'mapa') {
-        mapa?.showModal(); // nunca consome o mapa
-        return;
-      }
+      const nome = nomeItem(id);
+      if (tipo === 'mapa') { mapa?.showModal(); return; } // somente leitura
+      const usar = (pokemonId) => {
+        campo(form, 'item_id').value = id;
+        campo(form, 'pokemon_id').value = pokemonId;
+        enviarConfirmado(form);
+      };
       if (tipo === 'registro') {
-        // Itens sem efeito automático conservam a operação narrativa anterior.
-        if (window.confirm('Este item não possui efeito automático. Registrar o consumo de 1 unidade?')) {
-          enviar(id, '');
+        abrir('Confirmar uso', `Consumir 1 × ${nome}? Este item não possui efeito automático; o uso será registrado.`, usar);
+      } else if (tipo === 'terapia') {
+        const candidatos = cards.filter(card => elegivel(efeitos(id), atributos(card)));
+        if (!candidatos.length) {
+          abrir('Uso indisponível', `Nenhum Pokémon da equipe pode receber o efeito de ${nome} agora.`, null);
+          confirmar.disabled = true;
+          return;
         }
-        return;
-      }
-      if (tipo !== 'terapia') return;
-      const ativos = efeitos(id);
-      let disponiveis = 0;
-      for (const card of cards) {
-        const botaoAlvo = card.querySelector('[data-selecionar-pokemon]');
-        const pode = elegivel(ativos, atributos(card));
-        card.classList.toggle('inventario-uso-elegivel', pode);
-        if (botaoAlvo) {
-          botaoAlvo.hidden = !pode;
-          botaoAlvo.disabled = !pode;
-        }
-        if (pode) disponiveis++;
-      }
-      aguardando = disponiveis ? id : null;
-      if (aguardando) {
-        botao.setAttribute('aria-pressed', 'true');
-        if (msgWrap) msgWrap.hidden = false; // apenas Cancelar, sem banner de aviso
-        informar('Selecione um Pokémon destacado para usar o item.', 'info');
-      } else {
-        informar('Nenhum Pokémon da equipe pode receber o efeito agora.', 'aviso');
+        abrir('Confirmar uso', `Consumir 1 × ${nome} no Pokémon escolhido?`, usar, candidatos);
       }
     });
   }
 
-  for (const card of cards) {
-    card.querySelector('[data-selecionar-pokemon]')?.addEventListener('click', () => {
-      if (!aguardando || !card.classList.contains('inventario-uso-elegivel') || enviando) return;
-      enviar(aguardando, card.dataset.pokemonAlvo);
-    });
-  }
-
-  root.querySelector('[data-uso-cancelar]')?.addEventListener('click', limpar);
-  root.querySelectorAll('[data-aba-botao], [data-escolher-item]').forEach(botao => {
-    botao.addEventListener('click', limpar);
-  });
-  document.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Escape' && aguardando) limpar();
-  });
-
-  root.querySelectorAll('[data-equipar-item]').forEach(botao => {
+  // O próprio modal de equipamento é a confirmação; a escolha continua
+  // obrigatória, incluindo indicação de troca quando há item equipado.
+  for (const botao of root.querySelectorAll('[data-equipar-item]')) {
     botao.addEventListener('click', () => {
-      limpar();
-      if (!equipar) return;
-      const campo = equipar.querySelector('[name="item_id"]');
-      if (campo) campo.value = botao.dataset.equiparItem;
-      const alvo = equipar.querySelector('[name="pokemon_id"]');
-      if (alvo) alvo.value = '';
+      if (enviando || !equipar || equipar.open) return;
+      campo(equipForm, 'item_id').value = botao.dataset.equiparItem;
+      campo(equipForm, 'pokemon_id').value = '';
+      equipar.querySelector('[data-equipar-resumo]').textContent =
+        `Equipar 1 × ${nomeItem(botao.dataset.equiparItem)} no Pokémon escolhido? Se já houver um item equipado, ele voltará à mochila.`;
       equipar.showModal();
     });
+  }
+  equipForm?.addEventListener('submit', (ev) => {
+    if (enviando || !equipar.open) { ev.preventDefault(); return; }
+    enviando = true;
   });
   equipar?.querySelector('[data-equipar-cancelar]')?.addEventListener('click', () => equipar.close());
+  // Navegação de volta pelo cache do navegador não deve bloquear novas ações.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) { enviando = false; autorizado = null; }
+  });
 })();

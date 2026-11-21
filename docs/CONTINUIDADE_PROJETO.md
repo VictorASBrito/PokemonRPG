@@ -6,6 +6,18 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 11B-UI — Refinamento da Bag e confirmação das operações (21/11/2026)
+
+**Pedido:** corrigir seleção luminosa recortada e diferenças de espaçamento entre itens, mudar ações para o detalhe, estabilizar etiquetas e exigir confirmação antes de operações. Capturas do mestre em 1720×864 motivaram a revisão.
+
+**Implementação:** branch `fix/inventario-acoes-confirmacao-11b-ui`, PR #42. A lista tem uma grade única, sem ações junto às linhas, brilho ou deslocamento no hover. Seleção por borda, preenchimento sutil e indicador lateral; foco de teclado interno. Cabeçalho de detalhes independente das etiquetas; faixa de características sempre presente, com chips neutros, compactos e sem sombra, incluindo fallback para itens comuns. Descrições legadas "None"/"null"/"nan" exibem ausência de descrição (somente apresentação). Usar/Equipar ficam no detalhe. Mapa é consulta não consumível. Materiais evolutivos permanecem protegidos, sem botão genérico de uso.
+
+**Operações:** modal nativo acessível apresenta o item, quantidade e destino antes de uso, transferência, devolução, adição e ajuste do mestre; uso terapêutico lista os Pokémon elegíveis no modal e exige alvo. Equipamento mantém modal com nome do item, escolha de Pokémon e confirmação explícita, indicando possível troca. Cancelar/Escape não submetem POST; guardas contra submissão dupla; servidor, autorização, validação e efeitos existentes não foram alterados. Sem migration e sem dados reais modificados.
+
+**Testes:** diagnóstico inicial do Chromium em commit exclusivo antes da mudança (run 44939818990); regressões em `tests/visual/test_inventario_acoes_11b.py` verificam geometria, sombra, cabeçalho, tags, detalhes, cancelamento, consumo narrativo e terapêutico, transferência, equipamento/devolução e ajuste 0, nos perfis jogador/mestre, com viewports 320/390/1366/1720 e temas claro/escuro. Operações reais apenas sobre SQLite fictício. Resultado do CI a confirmar.
+
+**Validação e correção mobile:** a auditoria anterior à alteração (run 44939818990) passou com 109 testes; a primeira implementação (run 44940028611) obteve 114 aprovados e uma falha, exclusivamente na estabilidade do cabeçalho do mestre a 320×700, tema claro (60–63,0625px; tolerância 1px). Contrato visual 44940028624: 64 aprovados. Corrigido mínimo de altura mobile para 76px, com ícone de 48px e quantidade compacta abaixo de 361px; nomes continuam livres para quebrar sem corte e sem altura fixa. Cache CSS `11b-2`. Ampliado teste para jogador 320px em tema escuro e verificação de contenção de todos os filhos do cabeçalho. Tolerância de 1px preservada. Nova CI pendente.
+
 ## Etapa 11A — Catálogo de itens e acervo (21/11/2026)
 
 **Pedido:** organizar e ampliar catálogo, repertório de ícones e funcionalidades no banco. PR #40 já mesclado com Playwright aprovado. Nova branch `feat/catalogo-itens-acervo-11a` preserva o estado vigente.

@@ -24,7 +24,7 @@ def _instalador():
     return mod
 
 
-def test_template_e_fluxo_sem_formulario_de_uso_no_painel_direito():
+def test_template_e_fluxo_com_acoes_no_painel_direito():
     html = (RAIZ / 'templates/jogador/inventario.html').read_text(encoding='utf-8')
     assert 'ANKAR_10C4_USO_LINHA' in html, 'Execute antes o instalador 10C.4.'
     Environment().parse(html)
@@ -32,7 +32,9 @@ def test_template_e_fluxo_sem_formulario_de_uso_no_painel_direito():
     assert 'data-uso-efeitos=' in html
     assert 'data-pokemon-alvo=' in html
     assert 'data-formulario-uso' in html
-    assert 'data-uso-aviso' in html
+    assert 'inventario-confirmacao-11b' in html
+    assert 'data-confirmar-operacao' in html
+    assert 'data-ativar-uso=' not in html.split('class="inventario-nds-coluna-detalhes"')[0]
     assert 'data-uso-cancelar' in html
     assert 'data-equipar-item=' in html
     assert 'data-equipar-cancelar' in html
