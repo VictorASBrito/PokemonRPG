@@ -99,7 +99,7 @@
 
     {# Navegacao contextual da administracao; as rotas e permissoes sao as existentes. #}
     {% set ui10d_endpoint = request.endpoint or '' %}
-    {% if ui10d_endpoint.startswith('catalogo_admin.') %}
+    {% if ui10d_endpoint.startswith('catalogo_admin.') and ui10d_endpoint != 'catalogo_admin.painel_npc' %}
     <nav class="ui10d-menu-contexto" aria-label="Seções do catálogo">
         <span class="ui10d-menu-contexto-titulo">Catálogo</span>
         <div class="ui10d-menu-contexto-links">
