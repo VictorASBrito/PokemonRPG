@@ -10,7 +10,7 @@ import unicodedata
 from collections.abc import Iterable
 from typing import Any
 
-VERSAO_INTERFACE = "11b-acoes-confirmacao-20261121"
+VERSAO_INTERFACE = "11c-ordem-bag-20261121"
 
 BOLSAS = (
     {"codigo": "cura", "nome": "Cura", "icone": "icon-cura-hq.png", "arte": "bag-cura.png", "descricao": "Poções, remédios e itens de recuperação."},
