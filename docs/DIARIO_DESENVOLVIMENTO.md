@@ -33,6 +33,8 @@ Copie este modelo ao concluir uma mudança:
 - **Próxima ação:** revisar PR antes de merge.
 
 
+**Revisão após falha do Playwright:** [execução inicial 44930362339](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44930362339), 104 aprovados e 3 falhas. Nos cenários 1720×864 e 1024×600, o seletor legado de spans dos golpes detalhados sobrescrevia a fonte da etiqueta com .58rem (9,28px). Em 1366×768, as etiquetas de dois tipos escapavam do cartão lateral de altura fixa. Corrigir os seletores legados excluindo `.etiqueta-tipo` e ampliar o fallback de rolagem do painel em foco para desktop com altura até 820px ou largura até 1450px (a partir de 901px). Altura dos cartões laterais passa a acompanhar o conteúdo nessas condições; desktop amplo/alto mantém a primeira dobra. Atualizado cache do dashboard para `10f9-tipos-atributos-r2`. Playwright mantém os limites de legibilidade, valida os cinco companheiros e acrescenta cenário 1440×900. A nova CI é necessária para confirmar a correção.
+
 ### 2026-11-21 — Etapa 10F.8: legibilidade do painel e golpes compactos
 - **Objetivo:** melhorar leitura dos atributos e ataques a partir das capturas de painel normal/expandido enviadas pelo usuário.
 - **Status:** implementado na branch; CI pendente de verificação.
