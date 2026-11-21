@@ -102,6 +102,7 @@
    As áreas de arte dos Pokémon permanecem claras para preservar sprites/PNG.
    -------------------------------------------------------------------------- */
 :root[data-theme="dark"] {
+    color-scheme: dark;
     --fundo: #0d1218;
     --superficie: #18202a;
     --superficie-suave: #222c38;
