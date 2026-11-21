@@ -1,5 +1,6 @@
 """Trocas pela aplicação Flask: dois participantes, revisão e atomicidade."""
 import re
+import json
 from uuid import UUID
 
 import pytest
@@ -60,7 +61,7 @@ def iniciar(c, destino):
 
 def agir(c, rota, acao, revisao, ids=()):
     r = c.post(rota + "/acao", data={"acao": acao, "revisao": str(revisao),
-               "pokemon_id": list(ids), "csrf_token": token(c, rota)})
+               "pokemon_id": list(ids), "csrf_token": token(c)})
     assert r.status_code == 303
     return c.get(rota)
 
@@ -150,3 +151,39 @@ def test_box_cheia_e_oferta_indisponivel_nao_transferem(cenario):
     with app.app_context():
         assert str(db.session.get(Pokemon, UUID(oa[0])).personagem_id) == pa
         assert str(db.session.get(Pokemon, UUID(ob[0])).personagem_id) == pb
+
+
+def test_convite_e_csrf_isolados_por_url(cenario, tmp_path):
+    app, _, (pa, pb, _), (oa, _) = cenario
+    arquivo = tmp_path / "entrada_trocas.json"
+    arquivo.write_text(json.dumps({"habilitado": True, "slots": [
+        {"login": login, "sprite": ""} for login in
+        ["bartz-db", "troca2", "troca3"] + [f"slot{i}" for i in range(4, 10)]
+    ]}), encoding="utf-8")
+    app.config["LOGIN_PERSONAGENS_ARQUIVO"] = str(arquivo)
+    c = app.test_client()
+    prefixo_a = "/p/bartz-db"
+    prefixo_b = "/p/troca2"
+    central = "/jogador/boxes/trocas/"
+    ta, tb = token(c, prefixo_a + central), token(c, prefixo_b + central)
+    assert ta != tb
+    r = c.post(prefixo_a + central + "nova", data={"destinatario": pb, "csrf_token": tb})
+    assert r.status_code == 403
+    r = c.post(prefixo_a + central + "nova", data={"destinatario": pb, "csrf_token": ta})
+    assert r.status_code == 303
+    rota_a = r.headers["Location"]
+    assert rota_a.startswith(prefixo_a + central)
+    rota_b = rota_a.replace(prefixo_a, prefixo_b, 1)
+    assert "1 convite" in c.get(prefixo_b + "/jogador/boxes").get_data(as_text=True)
+    assert c.post(rota_b + "/acao", data={"acao": "aceitar", "revisao": 0,
+                  "csrf_token": ta}).status_code == 403
+    assert c.post(rota_b + "/acao", data={"acao": "aceitar", "revisao": 0,
+                  "csrf_token": tb}).status_code == 303
+    assert estado(app, rota_a)[0] == "negociacao"
+    assert c.post(rota_a + "/acao", data={"acao": "ofertar", "revisao": 1,
+                  "pokemon_id": oa[:1], "csrf_token": ta}).status_code == 303
+    assert c.post(rota_a + "/acao", data={"acao": "confirmar", "revisao": 2,
+                  "csrf_token": ta}).status_code == 303
+    assert c.post(rota_b + "/acao", data={"acao": "confirmar", "revisao": 2,
+                  "csrf_token": tb}).status_code == 303
+    assert estado(app, rota_a)[0] == "concluida"
