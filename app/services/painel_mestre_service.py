@@ -252,6 +252,7 @@ def carregar_painel_mestre(*, campanha_codigo: str) -> PainelMestre:
                 "login": personagem.usuario.login,
                 "perfil": personagem.usuario.perfil,  # ANKAR_10D2_CENTRAL_MESTRE
                 "acesso_ativo": personagem.usuario.ativo,
+                "mega_habilitada": bool(personagem.mega_habilitada),
                 "foto_url": personagem.foto_url or "",
                 "nivel": personagem.nivel,
                 "classe": personagem.classe or "",
