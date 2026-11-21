@@ -22,7 +22,6 @@ PAGINAS_JOGADOR = [
     ("inventario", "/jogador/inventario"),
     ("capturaveis", "/jogador/capturaveis"),
     ("ficha", "/jogador/ficha"),
-    ("regiao", "/regiao/ankar"),
     ("campo", "/campo"),
 ]
 
@@ -152,3 +151,13 @@ def test_mobile_pequeno_navegacao_e_bag(
         rect = aba.bounding_box()
         assert rect and rect["x"] >= -1 and rect["x"] + rect["width"] <= 321
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+
+
+def test_regiao_ankar_e_exclusiva_do_mestre(
+    page: Page, live_site_url: str,
+) -> None:
+    """A tela nao integra o menu jogador: seu redirecionamento e intencional."""
+    entrar(page, live_site_url, "jogador")
+    resposta = page.goto(f"{live_site_url}/regiao/ankar")
+    assert resposta is not None
+    assert page.url == f"{live_site_url}/login"
