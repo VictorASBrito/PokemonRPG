@@ -53,7 +53,9 @@
         let timer;
         let controlador;
         let requisicao = 0;
-        let nomeSelecionado = '';
+        // Formulários de edição podem iniciar com um catálogo já selecionado.
+        // Mantemos validação rigorosa quando o usuário altera o texto manualmente.
+        let nomeSelecionado = alvo?.value ? (campo.dataset.seletorInicial || '') : '';
 
         const fechar = () => {
             painel.hidden = true;
