@@ -43,6 +43,7 @@ def create_app() -> Flask:
     from app.routes.capturas import capturas_bp
     from app.routes.combates import combates_bp
     from app.routes.boxes import boxes_bp
+    from app.routes.trocas import trocas_bp
     from app.routes.regiao import regiao_bp
     from app.routes.jogadores import jogadores_bp
     from app.routes.inventario import inventario_bp
@@ -63,6 +64,7 @@ def create_app() -> Flask:
     app.register_blueprint(npcs_bp)
     app.register_blueprint(pokemons_bp)
     app.register_blueprint(boxes_bp)
+    app.register_blueprint(trocas_bp)
     app.register_blueprint(regiao_bp)
     app.register_blueprint(banco_cli, cli_group=None)
     app.register_blueprint(dados_cli, cli_group=None)
