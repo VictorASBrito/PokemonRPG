@@ -1786,11 +1786,16 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     font-weight: 750;
     font-variant-numeric: tabular-nums;
 }
-.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-meta .golpe-dashboard-tipo {
-    color: var(--texto-suave);
-    flex: 1 1 auto;
-    text-align: right;
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .golpe-dashboard-meta .etiqueta-tipo {
+    flex: 0 1 auto;
+    min-width: 0;
+    min-height: 16px;
+    padding: 0 6px;
     font-size: .65rem;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-vazio {
     display: grid;
@@ -1928,7 +1933,7 @@ body.dashboard-foco-aberto .dashboard-jogador:not(.npc-painel) .lista-atributos-
     flex: 1 1 auto;
     display: grid;
     min-height: 0;
-    grid-template-rows: repeat(4, minmax(32px, 1fr));
+    grid-template-rows: repeat(4, minmax(40px, 1fr));
     gap: 4px;
 }
 
