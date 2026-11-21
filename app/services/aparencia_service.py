@@ -102,8 +102,8 @@ def paleta_personagem(usuario):
         # Matiz do sprite, luminâncias controladas para contraste em ambos os modos.
         return {"nome": "Meu personagem",
                 "light": [_hex(h,.20,.96),"#ffffff",_hex(h,.24,.90),_hex(h,.20,.17),
-                          _hex(h,.20,.34),_hex(h,.22,.68),_hex(h,.64,.31),
-                          _hex(h,.65,.24),_hex(h,.38,.91),"#ffffff"],
+                          _hex(h,.20,.34),_hex(h,.22,.68),_hex(h,.64,.26),
+                          _hex(h,.65,.20),_hex(h,.38,.91),"#ffffff"],
                 "dark": [_hex(h,.20,.09),_hex(h,.20,.14),_hex(h,.22,.21),_hex(h,.22,.94),
                          _hex(h,.20,.76),_hex(h,.22,.40),_hex(h,.65,.75),
                          _hex(h,.65,.82),_hex(h,.30,.26),"#111111"]}
