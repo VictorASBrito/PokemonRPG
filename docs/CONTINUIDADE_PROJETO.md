@@ -18,7 +18,9 @@
 
 **Falhas não referentes a layout:** duas tentativas de abrir `/regiao/ankar` como jogador terminavam em `/login`. Inspeção da rota comprovou `@perfil_obrigatorio("mestre")`. Corrigimos o **teste**, não a autorização, e adicionamos uma verificação negativa explícita.
 
-**Status:** correções e ampliação para telas dinâmicas implementadas. Aguardar a nova CI antes de alegar resultado final. As páginas de NPC cadastrado não são garantidas pela fixture mínima e serão auditadas em etapa específica quando houver dados artificiais representativos. Nenhum dado real, migration, rota ou regra da campanha alterado.
+**Segunda execução de CI (antes da correção do link de criação):** [GitHub Actions #44879376337](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879376337), **88 passed, 2 failed em 158,65s**. Ambas as falhas eram de teste: a rota `/mestre/jogadores/<id>/equipe/novo` intencionalmente redireciona para a Box se não receber `?destino=box:box-unica`, conforme `app/routes/pokemons.py::_novo`. O cenário Playwright agora inclui esse parâmetro; a permissão/validação do backend não mudou. Capturas da segunda execução foram inspecionadas, confirmando telas de formulários e prévia em 390/1366px. A fixture `tests/visual/conftest.py` foi corrigida para usar o sprite local do Bulbasaur no lugar de `https://img/` (URL falsa do dataset de serviço), e o teste da Bag agora exige que a imagem fictícia carregue. Foram acrescentados 12 cenários de tema escuro para painéis, Equipe, Bag e catálogo.
+
+**Status:** correções e ampliação da auditoria implementadas; aguardar nova CI da versão final antes de alegar aprovação.  As páginas de NPC cadastrado não são garantidas pela fixture mínima e serão auditadas em etapa específica quando houver dados artificiais representativos. Nenhum dado real, migration, rota ou regra da campanha alterado.
 
 ## Etapa 10F.6 — Playwright com navegador real e SQLite isolado (21/11/2026)
 
