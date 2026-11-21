@@ -16,6 +16,8 @@
 
 **Testes:** diagnóstico inicial do Chromium em commit exclusivo antes da mudança (run 44939818990); regressões em `tests/visual/test_inventario_acoes_11b.py` verificam geometria, sombra, cabeçalho, tags, detalhes, cancelamento, consumo narrativo e terapêutico, transferência, equipamento/devolução e ajuste 0, nos perfis jogador/mestre, com viewports 320/390/1366/1720 e temas claro/escuro. Operações reais apenas sobre SQLite fictício. Resultado do CI a confirmar.
 
+**Validação e correção mobile:** a auditoria anterior à alteração (run 44939818990) passou com 109 testes; a primeira implementação (run 44940028611) obteve 114 aprovados e uma falha, exclusivamente na estabilidade do cabeçalho do mestre a 320×700, tema claro (60–63,0625px; tolerância 1px). Contrato visual 44940028624: 64 aprovados. Corrigido mínimo de altura mobile para 76px, com ícone de 48px e quantidade compacta abaixo de 361px; nomes continuam livres para quebrar sem corte e sem altura fixa. Cache CSS `11b-2`. Ampliado teste para jogador 320px em tema escuro e verificação de contenção de todos os filhos do cabeçalho. Tolerância de 1px preservada. Nova CI pendente.
+
 ## Etapa 11A — Catálogo de itens e acervo (21/11/2026)
 
 **Pedido:** organizar e ampliar catálogo, repertório de ícones e funcionalidades no banco. PR #40 já mesclado com Playwright aprovado. Nova branch `feat/catalogo-itens-acervo-11a` preserva o estado vigente.
