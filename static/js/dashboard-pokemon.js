@@ -54,6 +54,25 @@
     };
 
     cards.forEach((card) => {
+        card.querySelectorAll('[data-pokemon-abrir]').forEach((botao) => {
+            botao.addEventListener('click', (evento) => {
+                evento.stopPropagation();
+                destacar(card);
+                const tipo = botao.dataset.pokemonAbrir;
+                const secao = card.querySelector('.pokemon-dashboard-transformacoes');
+                const detalhes = card.querySelector('[data-pokemon-painel="' + tipo + '"]');
+                if (detalhes) detalhes.open = true;
+                secao?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        });
+        card.querySelectorAll('[data-pokemon-painel]').forEach((painel) => {
+            painel.addEventListener('toggle', () => {
+                if (!painel.open) return;
+                card.querySelectorAll('[data-pokemon-painel]').forEach((outro) => {
+                    if (outro !== painel) outro.open = false;
+                });
+            });
+        });
         card.addEventListener('click', (evento) => {
             if (evento.target.closest('a, button, input, select, textarea, label')) return;
             if (foco === card) return;
@@ -78,6 +97,23 @@
             });
         }
     });
+
+    // Ações submetidas dentro do expandido são confirmadas antes do POST.
+    document.addEventListener('submit', (evento) => {
+        const formulario = evento.target.closest('.pokemon-dashboard-transformacoes form');
+        if (!formulario) return;
+        const mensagem = formulario.dataset.confirmacao;
+        if (mensagem && !window.confirm(mensagem)) {
+            evento.preventDefault();
+            return;
+        }
+        formulario.querySelectorAll('button[type="submit"]').forEach((b) => { b.disabled = true; });
+    });
+
+    // Após evolução/forma, manter o mesmo Pokémon expandido.
+    const focoInicial = new URLSearchParams(window.location.search).get('foco');
+    const inicial = cards.find((card) => card.dataset.pokemonId === focoInicial);
+    if (inicial) destacar(inicial);
 
     document.addEventListener('keydown', (evento) => {
         if (evento.key === 'Escape' && foco) voltarGrade({ manterFoco: true });
