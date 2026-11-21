@@ -53,7 +53,7 @@ O workflow `.github/workflows/test-playwright-ui-10f6.yml` instala Chromium no G
 python -m pytest -q tests/visual/test_auditoria_telas_10f7.py --browser chromium --screenshot only-on-failure --tracing retain-on-failure --output test-results
 ```
 
-A região de Ankar em `/regiao/ankar` é **exclusiva do mestre**. A auditoria não reinterpreta um redirecionamento de jogador como erro visual. Os testes cobrem cenários de fixture, não garantem ausência de problemas em todas as combinações de dados reais ou estados de formulários.
+A matriz também verifica telas-chave nos temas claro e escuro, com capturas individuais, e utiliza sprites locais na fixture de navegador para evitar imagens de URL fictícia. A região de Ankar em `/regiao/ankar` é **exclusiva do mestre**. A auditoria não reinterpreta um redirecionamento de jogador como erro visual. Os testes cobrem cenários de fixture, não garantem ausência de problemas em todas as combinações de dados reais ou estados de formulários.
 
 
 ## Mapa do repositório
