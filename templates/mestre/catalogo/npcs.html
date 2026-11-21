@@ -14,7 +14,7 @@
     <div>
       <p class="rotulo">Catálogo do RPG · Fichas do Mestre</p>
       <h1>Catálogo de NPCs fixos</h1>
-      <p class="texto-suave">Vida, Status e equipe, como nos cards de jogadores. Anotações privadas nas fichas.</p>
+      <p class="texto-suave">Abra o Painel de cada NPC para consultar atributos, golpes, PV e organizar a equipe. Anotações permanecem privadas.</p>
     </div>
     <div class="npc-acoes-topo">
       <a href="{{ url_for('catalogo_admin.dashboard') }}" class="botao botao-secundario botao-link">Voltar ao catálogo</a>
@@ -40,6 +40,7 @@
           <div class="painel-jogador-gestao-conteudo">
             <strong class="painel-menu-titulo">Gerenciar NPC</strong>
             <nav class="painel-jogador-menu-links">
+              <a href="{{ url_for('catalogo_admin.painel_npc', modelo_id=npc.id) }}">Abrir Painel NPC</a>
               <a href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Abrir ficha</a>
               <a href="{{ url_for('npcs.catalogo') }}">Gerar equipe</a>
             </nav>
@@ -121,6 +122,7 @@
       </p>
       {% endif %}
       <footer class="npc-card-rodape">
+        <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.painel_npc', modelo_id=npc.id) }}">Painel NPC</a>
         <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Ficha NPC</a>
         {% if config.get('CAMPO_OPERACOES_ATIVAS', false) %}
         <form action="{{ url_for('npcs.usar_modelo', modelo_id=npc.id) }}" method="post">
