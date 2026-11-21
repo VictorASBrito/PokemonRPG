@@ -160,3 +160,84 @@ def test_painel_rejeita_edicao_invalida_e_indice_fora_da_equipe(app_db, client_d
         modelo = db.session.get(NPCModelo, uuid.UUID(modelo_id))
         assert len(modelo.equipe) == 1
         assert modelo.equipe[0]["forma_id"] == forma
+
+
+def test_catalogo_de_golpes_e_natureza_atualiza_painel_npc(app_db, client_db):
+    from app.models.db import Golpe, Natureza
+    from app.services.npc_ficha_service import ficha_card_npc
+
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    forma = app_db.config["TEST_IDS"]["formas"]["bulbasaur"]
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+        "csrf_token": csrf, "forma_id": forma,
+    })
+    with app_db.app_context():
+        natureza = db.session.scalar(select(Natureza).where(Natureza.codigo == "valente"))
+        arranhao = db.session.scalar(select(Golpe).where(Golpe.codigo == "arranhao"))
+        chamas = db.session.scalar(select(Golpe).where(Golpe.codigo == "ataque-de-chamas"))
+        inicial = ficha_card_npc(campanha_codigo="ankar", modelo_id=modelo_id)["equipe"][0]
+        atk_inicial = inicial["totais"]["ataque"]
+    edicao = client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/editar", data={
+        "csrf_token": csrf, "origem": "painel", "foco": "0",
+        "nome": "Tropa Verde", "forma_id": forma, "natureza_id": str(natureza.id),
+        "genero": "Ø", "golpe_nome": ["Arranhão", "Ataque de Chamas", "", ""],
+    })
+    assert edicao.status_code == 302
+    with app_db.app_context():
+        modelo = db.session.get(NPCModelo, uuid.UUID(modelo_id))
+        assert modelo.equipe[0]["golpes"] == [str(arranhao.id), str(chamas.id)]
+        card = ficha_card_npc(campanha_codigo="ankar", modelo_id=modelo_id)["equipe"][0]
+        assert card["totais"]["ataque"] > atk_inicial
+        assert [g["nome"] for g in card["golpes"]] == ["Arranhão", "Ataque de Chamas"]
+        assert card["natureza"] == "Valente"
+    html = client_db.get(f"/mestre/catalogo/npcs/{modelo_id}/painel?foco=0").get_data(as_text=True)
+    assert "Tropa Verde" in html
+    assert "Arranhão" in html and "Ataque de Chamas" in html
+    assert "Valente" in html
+    assert 'data-seletor-inicial="Bulbasaur"' in html
+
+
+def test_mudar_especie_preserva_dano_e_rejeita_golpes_repetidos(app_db, client_db):
+    from app.models.db import Golpe
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    bulbasaur = app_db.config["TEST_IDS"]["formas"]["bulbasaur"]
+    charmander = app_db.config["TEST_IDS"]["formas"]["charmander"]
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+        "csrf_token": csrf, "forma_id": bulbasaur,
+    })
+    with app_db.app_context():
+        modelo = db.session.get(NPCModelo, uuid.UUID(modelo_id))
+        inicial = modelo.equipe[0]["pv_atual"]
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/pv", data={
+        "csrf_token": csrf, "quantidade": "3", "operacao": "menos",
+    })
+    response = client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/editar", data={
+        "csrf_token": csrf, "origem": "painel", "nome": "Meu Charmander",
+        "forma_id": charmander, "natureza_id": "", "genero": "Ø",
+        "golpe_nome": ["", "", "", ""],
+    })
+    assert response.status_code == 302
+    with app_db.app_context():
+        from app.services.campo_npc_service import _pv_maximo
+        from app.services.pokemon_db_service import carregar_regras_pokemon_db
+        from app.services.npc_ficha_service import _nivel
+        from app.models.db import FormaPokemon
+        modelo = db.session.get(NPCModelo, uuid.UUID(modelo_id))
+        item = modelo.equipe[0]
+        forma = db.session.get(FormaPokemon, uuid.UUID(charmander))
+        regras = carregar_regras_pokemon_db(modelo.campanha_id)
+        assert item["pv_atual"] == _pv_maximo(forma, _nivel(modelo), regras) - 3
+        assert item["forma_id"] == charmander
+        golpe = db.session.scalar(select(Golpe).where(Golpe.codigo == "arranhao"))
+        nome_golpe = golpe.nome
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/editar", data={
+        "csrf_token": csrf, "origem": "painel", "nome": "Tentativa",
+        "forma_id": charmander, "genero": "Ø",
+        "golpe_nome": [nome_golpe, nome_golpe, "", ""],
+    })
+    with app_db.app_context():
+        item = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
+        assert item["nome"] == "Meu Charmander"
+        assert item.get("golpes") == []
