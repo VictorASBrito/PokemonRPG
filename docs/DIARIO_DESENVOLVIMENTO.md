@@ -21,6 +21,17 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.3: transbordamento decorativo e abas completas
+- **Objetivo:** tratar a persistência da Bag cortada no Android após o merge do PR #33.
+- **Status:** IMPLEMENTADO NA BRANCH; CI E REVISÃO NO DISPOSITIVO PENDENTES.
+- **Branch:** `fix/inventario-mobile-largura-abas-20261121` sobre `main`, com PR #33 já mesclado.
+- **Diagnóstico:** `.inventario-nds-bag::after` fica 120px além da borda direita, enquanto o painel usa `overflow: visible` no mobile para preservar autocomplete; a aparência do print é compatível com esse transbordamento. Além disso, abas de categorias usam carrossel e ficam cortadas no celular.
+- **Mudanças:** limitar o desenho decorativo ao painel até 1199px; usar grade de duas colunas e textos quebráveis nas categorias até 540px; atualizar versão do CSS no template; novo teste `tests/test_inventario_largura_10f3.py` no workflow visual; registrar arquitetura e continuidade.
+- **Esquema/migrations:** nenhuma. Nenhum dado/rota/controle do RPG alterado.
+- **Testes e resultados:** regressões estáticas adicionadas; CI ainda não executada no momento deste registro. Navegador móvel real ainda não validado.
+- **Próxima ação:** executar CI na PR e confirmar no mesmo celular a largura completa da Bag, todas as cinco categorias, deslize dos Pokémon e autocomplete do mestre antes de merge.
+
+
 ### 2026-11-21 — Etapa 10F.2: Bag mobile, carrossel e abas
 - **Objetivo:** corrigir a equipe Pokémon truncada e a aba Item-chave parcialmente oculta no Android/Chrome.
 - **Status:** IMPLEMENTADO NA BRANCH; CI APROVADA; VERIFICAÇÃO EM APARELHO PENDENTE.
