@@ -292,6 +292,8 @@ def test_ficha_jogador_pode_confirmar_evolucao_e_mestre_so_consulta(app_db, clie
             "tipo_relacao": "evolucao", "nivel": 16,
         })
         pokemon = _pokemon(personagem, charmander)
+        pokemon.localizacao = "equipe"  # disponibilizar no painel expandido
+        pokemon.posicao = 1
         db.session.commit()
         id_pokemon = pokemon.id
         id_personagem = personagem.id
