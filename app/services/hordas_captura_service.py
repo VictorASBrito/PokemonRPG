@@ -15,6 +15,35 @@ from app.services.campo_npc_service import _campanha, _historico, _uuid
 from app.services.capturaveis_service import LIMITE_CAPTURAVEIS, _consulta_capturaveis
 
 
+
+def listar_hordas_pendentes(*, campanha_codigo: str) -> list[dict]:
+    """Integra as hordas já criadas à tela de Capturáveis, sem tocar no Campo."""
+    campanha = _campanha(campanha_codigo, bloquear=False)
+    membros = db.session.scalars(
+        select(PokemonNPCEmCampo).join(GrupoNPCEmCampo)
+        .where(
+            GrupoNPCEmCampo.campanha_id == campanha.id,
+            GrupoNPCEmCampo.tipo == "horda",
+            PokemonNPCEmCampo.enviado_captura.is_(False),
+        )
+        .order_by(GrupoNPCEmCampo.nome, PokemonNPCEmCampo.criado_em)
+    ).all()
+    return [
+        {
+            "id": str(p.id),
+            "nome": p.forma_pokemon.nome,
+            "imagem": (
+                (p.forma_pokemon.imagem_shiny_url if p.shiny else p.forma_pokemon.imagem_url)
+                or p.forma_pokemon.imagem_url or p.forma_pokemon.imagem_shiny_url or ""
+            ),
+            "grupo": p.grupo.nome,
+            "shiny": bool(p.shiny),
+            "encontrador_id": str(p.grupo.encontrado_por_personagem_id)
+                if p.grupo.encontrado_por_personagem_id else "",
+        }
+        for p in membros
+    ]
+
 def encaminhar_horda(*, campanha_codigo, pokemon_id, encontrador_id, usuario_id):
     campanha = _campanha(campanha_codigo)
     uid = _uuid(pokemon_id)
