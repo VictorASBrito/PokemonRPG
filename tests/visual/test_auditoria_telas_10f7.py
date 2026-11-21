@@ -64,6 +64,27 @@ def entrar(page: Page, base: str, perfil: str) -> None:
     expect(page).not_to_have_url(re.compile(r"/login(?:/coringa)?$"))
 
 
+def verificar_acabamento_fosco(page: Page) -> None:
+    expect(page.locator('link[href*="visual-fosco-11c.css"]')).to_have_count(1)
+    efeitos = page.evaluate("""() => {
+        const problemas = [];
+        for (const el of [document.body, ...document.body.querySelectorAll('*')]) {
+            if (!el.getClientRects().length) continue;
+            for (const pseudo of [null, '::before', '::after']) {
+                const css = getComputedStyle(el, pseudo);
+                if (pseudo && ['none', 'normal'].includes(css.content)) continue;
+                if (css.boxShadow !== 'none' || css.textShadow !== 'none'
+                        || css.filter.includes('drop-shadow(') || css.backgroundImage.includes('radial-gradient(')) {
+                    problemas.push([el.tagName, el.getAttribute('class'), pseudo,
+                        css.boxShadow, css.textShadow, css.filter, css.backgroundImage]);
+                }
+            }
+        }
+        return problemas.slice(0, 15);
+    }""")
+    assert not efeitos, f"Efeitos luminosos restantes: {efeitos}"
+
+
 @pytest.mark.parametrize("perfil,nome,rota,largura,altura", MATRIZ)
 def test_tela_sem_corte_ou_erro_javascript(
     page: Page,
@@ -116,6 +137,7 @@ def test_tela_sem_corte_ou_erro_javascript(
         f"{perfil}/{nome}: overflow horizontal {medidas}"
     )
     assert not erros_js, f"{perfil}/{nome}: exceções JS: {erros_js}"
+    verificar_acabamento_fosco(page)
 
 
 @pytest.mark.parametrize("perfil", ["jogador", "mestre"])
@@ -222,6 +244,7 @@ def test_formularios_e_previas_sem_transbordamento(
     assert page.url.rstrip("/") == url.rstrip("/"), f"{nome}: redirect {page.url}"
     assert largura_real <= largura + 1, f"{nome}: overflow {largura_real}>{largura}"
     assert not erros_js, f"{nome}: JS {erros_js}"
+    verificar_acabamento_fosco(page)
 
 
 @pytest.mark.parametrize(
@@ -253,6 +276,7 @@ def test_breakpoints_intermediarios_e_pequenos(
     assert resposta is not None and resposta.status == 200
     real = page.evaluate("document.documentElement.scrollWidth")
     assert real <= largura + 1, f"{perfil}/{nome} {largura}px: overflow {real}px"
+    verificar_acabamento_fosco(page)
 
 
 @pytest.mark.parametrize(
@@ -289,3 +313,4 @@ def test_tema_escuro_navegavel_sem_transbordar(
     assert real <= largura + 1, (
         f"Tema escuro {perfil}/{nome}, {largura}px: largura {real}px"
     )
+    verificar_acabamento_fosco(page)
