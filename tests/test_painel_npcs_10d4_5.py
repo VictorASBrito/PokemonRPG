@@ -241,3 +241,55 @@ def test_mudar_especie_preserva_dano_e_rejeita_golpes_repetidos(app_db, client_d
         item = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
         assert item["nome"] == "Meu Charmander"
         assert item.get("golpes") == []
+
+
+def test_painel_npc_mantem_mesmo_layout_de_combate_sem_formularios_dentro_da_grade(app_db, client_db):
+    """Blocos expandidos espelham os do jogador; gerenciamento fica fora da grade."""
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    forma = app_db.config["TEST_IDS"]["formas"]["bulbasaur"]
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+        "csrf_token": csrf, "forma_id": forma,
+    })
+    html = client_db.get(f"/mestre/catalogo/npcs/{modelo_id}/painel?foco=0").get_data(as_text=True)
+    assert 'data-dashboard-pokemon-grid' in html
+    assert 'class="dashboard-jogador npc-painel"' in html
+    assert 'class="npc-painel-cabecalho"' not in html
+    grade = html.split('data-dashboard-pokemon-grid', 1)[1].split('</section>', 1)[0]
+    # Ações e campos nunca devem disputar a altura da área de golpes.
+    cartao = html.split('data-dashboard-pokemon-card', 1)[1].split('</article>', 1)[0]
+    assert '<form' not in cartao
+    assert 'pokemon-dashboard-atributos-totais' in cartao
+    assert 'pokemon-dashboard-lista-golpes-detalhados' in cartao
+    assert 'pokemon-dashboard-golpes-detalhados' in cartao
+    assert 'pokemon-dashboard-acoes-expandidas' in cartao
+    assert 'data-npc-dialog-open="npc-editar-0"' in cartao
+    assert 'data-npc-dialog-open="npc-acoes-0"' in cartao
+    for legenda in ('Natureza', 'Gênero', 'Status', 'Item', 'Variação', 'Nível'):
+        assert f'<span>{legenda}</span>' in cartao
+    assert 'id="npc-editar-0"' in html
+    assert 'id="npc-acoes-0"' in html
+    assert 'id="npc-pv-treinador"' in html
+    assert 'id="npc-adicionar-pokemon"' in html
+    assert 'data-npc-dialog-open="npc-adicionar-pokemon"' in html
+    assert 'data-npc-confirm-dialog' in html
+    assert 'name="golpe_nome"' in html
+
+
+def test_modais_npc_respeitam_grade_compartilhada_e_escape():
+    from pathlib import Path
+    raiz = Path(__file__).resolve().parents[1]
+    js = (raiz / "static/js/npc-painel.js").read_text(encoding="utf-8")
+    css = (raiz / "static/css/npc-painel.css").read_text(encoding="utf-8")
+    template = (raiz / "templates/mestre/catalogo/npc_painel.html").read_text(encoding="utf-8")
+    assert 'dialogo.showModal()' in js
+    assert 'evento.stopPropagation()' in js
+    assert "document.querySelector('dialog[open]')" in js
+    assert 'form.requestSubmit()' in js
+    assert 'window.confirm(' not in js
+    assert 'npc-painel-dialog-editar' in css
+    assert 'max-height: min(85dvh, 760px)' in css
+    assert 'npc-painel-cabecalho' not in template
+    assert '<section class="pokemon-dashboard-painel-detalhe npc-painel-edicao">' not in template
+    assert '<section class="pokemon-dashboard-painel-detalhe npc-painel-controles">' not in template
+    assert 'data-npc-dialog-close' in template
