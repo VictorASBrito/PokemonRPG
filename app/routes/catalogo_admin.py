@@ -1193,7 +1193,7 @@ def npc_adicionar_pokemon(modelo_id):
             campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
             forma_id=request.form.get("forma_id"),
             usuario_id=session.get("usuario_id"),
-        ), modelo_id, origem="ficha",
+        ), modelo_id, origem=(request.form.get("origem") or "ficha"),
     )
 
 
@@ -1205,7 +1205,7 @@ def npc_retirar_pokemon(modelo_id, indice):
         lambda: remover_pokemon_ficha(
             campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
             indice=indice, usuario_id=session.get("usuario_id"),
-        ), modelo_id, origem="ficha",
+        ), modelo_id, origem=(request.form.get("origem") or "ficha"),
     )
 
 
