@@ -92,6 +92,8 @@ class PersonagemItem(UUIDPrimaryKeyMixin, TimestampMixin, db.Model):
         server_default="0",
     )
 
+    ordem_bolsa: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
     personagem: Mapped[Personagem] = relationship(back_populates="inventario")
     item: Mapped[Item] = relationship(back_populates="inventarios")
 
