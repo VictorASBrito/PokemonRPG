@@ -53,8 +53,7 @@ def _auditar(
     ))
 
 
-def _opcoes_por_codigo(pokemon: Pokemon) -> tuple[set[str], set[str]]:
-    base = pokemon.forma_pokemon
+def _opcoes_por_codigo(base: FormaPokemon) -> tuple[set[str], set[str]]:
     if base is None:
         return set(), set()
     code = base.codigo
@@ -76,16 +75,15 @@ def _opcoes_por_codigo(pokemon: Pokemon) -> tuple[set[str], set[str]]:
     return mega_codes, component
 
 
-def listar_formas_temporarias(pokemon: Pokemon) -> dict:
-    """Somente opções reais e ativas, da espécie exata (nunca Alola/Galar)."""
-    mega_codes, alt_codes = _opcoes_por_codigo(pokemon)
-    atual = pokemon.forma_temporaria
-    if atual is not None and pokemon.tipo_transformacao == "alternativa":
+def listar_formas_por_base(base: FormaPokemon, *, atual: FormaPokemon | None = None, tipo: str | None = None) -> dict:
+    """Opções compartilhadas por jogadores e NPCs: relações Mega, fallback e formas alternativas."""
+    mega_codes, alt_codes = _opcoes_por_codigo(base)
+    if atual is not None and tipo == "alternativa":
         alt_codes.add(atual.codigo)
     alternativas = list(db.session.scalars(
         select(FormaPokemon)
         .where(
-            FormaPokemon.especie_id == pokemon.forma_pokemon.especie_id,
+            FormaPokemon.especie_id == base.especie_id,
             FormaPokemon.ativo.is_(True),
         )
         .options(selectinload(FormaPokemon.especie))
@@ -98,15 +96,15 @@ def listar_formas_temporarias(pokemon: Pokemon) -> dict:
         if f.categoria != "mega"
         and (f.codigo in alt_codes or f.categoria == "alternativa")
         and (f.categoria != "regional" or f.codigo in alt_codes)
-        and f.id != pokemon.forma_pokemon_id
-        and f.id != pokemon.forma_temporaria_id  # A forma atual não é nova opção.
+        and f.id != base.id
+        and (atual is None or f.id != atual.id)  # A forma atual não é nova opção.
     ]
     # Relações Mega configuradas pelo mestre têm prioridade sobre a
     # referência legada em JSON. Inativar uma relação desativa seu destino
     # na ficha, inclusive quando ele também está no JSON original.
     relacoes = list(db.session.scalars(
         select(EvolucaoPokemon).where(
-            EvolucaoPokemon.forma_origem_id == pokemon.forma_pokemon_id,
+            EvolucaoPokemon.forma_origem_id == base.id,
         )
     ))
     mega_configurada = [
@@ -124,14 +122,22 @@ def listar_formas_temporarias(pokemon: Pokemon) -> dict:
             f.id in ids_mega if ids_mega is not None
             else f.codigo in mega_codes
         )
-        and f.especie_id == pokemon.forma_pokemon.especie_id
+        and f.especie_id == base.especie_id
     ]
     return {
         "mega": megas, "alternativas": alt,
-        "atual": atual, "tipo": pokemon.tipo_transformacao,
-        "forma_original": pokemon.forma_pokemon,
+        "atual": atual, "tipo": tipo,
+        "forma_original": base,
     }
 
+
+
+def listar_formas_temporarias(pokemon: Pokemon) -> dict:
+    """Mesmas regras de relação para o Pokémon pertencente ao jogador."""
+    return listar_formas_por_base(
+        pokemon.forma_pokemon, atual=pokemon.forma_temporaria,
+        tipo=pokemon.tipo_transformacao,
+    )
 
 def _ajustar_forma(pokemon: Pokemon, destino: FormaPokemon | None, tipo: str | None, usuario_id: uuid.UUID, *, acao: str):
     """Muda só overlay e preserva dano; não faz COMMIT."""

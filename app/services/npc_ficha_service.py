@@ -14,6 +14,7 @@ from app.services.campo_npc_service import _campanha, _forma, _historico, _numer
 from app.services.personagem_service import carregar_regras_personagem
 from app.services.pokemon_db_service import carregar_regras_pokemon_db
 from app.services.calculo_atributos import calcular_progressao, aplicar_aumento, aplicar_diminuicao
+from app.services.transformacoes_service import listar_formas_por_base
 
 
 def regras_npc(campanha_id):
@@ -182,7 +183,7 @@ def _formas_do_catalogo(ids):
     }
 
 
-def _cartoes_modelos(campanha, modelos):
+def _cartoes_modelos(campanha, modelos, *, incluir_acoes=False):
     regras = regras_npc(campanha.id)
     regras_pokemon = carregar_regras_pokemon_db(campanha.id)
     equipe_ids, natureza_ids, golpe_ids = set(), set(), set()
@@ -193,6 +194,9 @@ def _cartoes_modelos(campanha, modelos):
             uid = _uuid(membro.get("forma_id"))
             if uid:
                 equipe_ids.add(uid)
+            overlay = _uuid(membro.get("forma_temporaria_id"))
+            if overlay and membro.get("tipo_transformacao") in ("mega", "alternativa"):
+                equipe_ids.add(overlay)
             natureza = _uuid(membro.get("natureza_id"))
             if natureza:
                 natureza_ids.add(natureza)
@@ -215,6 +219,12 @@ def _cartoes_modelos(campanha, modelos):
     } if golpe_ids else {}
     cartoes = []
     for modelo in modelos:
+        # Uma única Mega ativa por treinador NPC, independente da tela Campo.
+        mega_ativa = any(
+            isinstance(membro, dict) and membro.get("tipo_transformacao") == "mega"
+            and membro.get("forma_temporaria_id")
+            for membro in (modelo.equipe or [])
+        )
         valores = atributos_efetivos(modelo, regras)
         pv_max = _pv_maximo_npc(valores, regras)
         equipe = []
@@ -222,13 +232,23 @@ def _cartoes_modelos(campanha, modelos):
             forma = formas.get(str(item.get("forma_id"))) if isinstance(item, dict) else None
             if forma is None:
                 continue
+            # A forma base nunca é sobrescrita; a transformação é um overlay JSON.
+            overlay = formas.get(str(item.get("forma_temporaria_id")))
+            tipo_atual = item.get("tipo_transformacao")
+            if not (
+                overlay and overlay.ativo and overlay.especie_id == forma.especie_id
+                and ((tipo_atual == "mega" and overlay.categoria == "mega")
+                     or (tipo_atual == "alternativa" and overlay.categoria != "mega"))
+            ):
+                overlay, tipo_atual = None, None
+            visivel = overlay or forma
             nivel_pokemon = _nivel(modelo)
-            maximo = _pv_maximo(forma, nivel_pokemon, regras_pokemon)
+            maximo = _pv_maximo(visivel, nivel_pokemon, regras_pokemon)
             atual = item.get("pv_atual")
             atual = maximo if atual is None else max(-9999, min(int(atual), maximo))
             bases = {
                 atributo.atributo.codigo.replace("-", "_"): int(atributo.valor_base)
-                for atributo in forma.atributos_base if atributo.atributo and atributo.atributo.ativo
+                for atributo in visivel.atributos_base if atributo.atributo and atributo.atributo.ativo
             }
             totais = {
                 codigo: calcular_progressao(
@@ -274,17 +294,35 @@ def _cartoes_modelos(campanha, modelos):
                         "dano": golpe.expressao_dano or "Estado",
                         "precisao": str(golpe.precisao) if golpe.precisao is not None else "—",
                     })
+            acoes = {"alternativas": [], "megas": [], "pode_reverter": bool(overlay),
+                     "tipo": tipo_atual, "pode_transformar": atual > 0,
+                     "outra_mega_ativa": mega_ativa and tipo_atual != "mega"}
+            if incluir_acoes:
+                permissoes = listar_formas_por_base(forma, atual=overlay, tipo=tipo_atual)
+                def _opcao(destino):
+                    return {
+                        "id": str(destino.id), "nome": destino.nome,
+                        "imagem": (
+                            (destino.imagem_shiny_url if item.get("shiny") else destino.imagem_url)
+                            or destino.imagem_url or ""
+                        ),
+                    }
+                acoes["alternativas"] = [_opcao(destino) for destino in permissoes["alternativas"]]
+                acoes["megas"] = [_opcao(destino) for destino in permissoes["mega"]]
             equipe.append({
                 "id": str(forma.id), "forma_id": str(forma.id),
-                "nome": item.get("nome") or forma.nome,
-                "especie": forma.nome, "imagem": (
-                    (forma.imagem_shiny_url if item.get("shiny") else forma.imagem_url)
-                    or forma.imagem_url or ""
+                "nome": (visivel.nome if item.get("nome") == forma.nome else item.get("nome")) or visivel.nome,
+                "especie": visivel.nome, "imagem": (
+                    (visivel.imagem_shiny_url if item.get("shiny") else visivel.imagem_url)
+                    or visivel.imagem_url or ""
                 ),
+                "forma_original": forma.nome, "tipo_transformacao": tipo_atual,
+                "forma_temporaria_id": str(overlay.id) if overlay else None,
+                "acoes": acoes,
                 "shiny": bool(item.get("shiny")),
                 "nivel": nivel_pokemon, "pv_atual": atual, "pv_maximo": maximo,
                 "tipos": [
-                    rel.tipo.nome for rel in sorted(forma.tipos, key=lambda t: t.posicao)
+                    rel.tipo.nome for rel in sorted(visivel.tipos, key=lambda t: t.posicao)
                     if rel.tipo and rel.tipo.ativo
                 ],
                 "indice": indice_real, "natureza": natureza.nome if natureza else item.get("natureza") or "Não definida",
@@ -322,7 +360,7 @@ def cards_catalogo_npc(*, campanha_codigo):
 
 def ficha_card_npc(*, campanha_codigo, modelo_id):
     campanha = _campanha(campanha_codigo, bloquear=False)
-    return _cartoes_modelos(campanha, [_modelo(campanha.id, modelo_id)])[0]
+    return _cartoes_modelos(campanha, [_modelo(campanha.id, modelo_id)], incluir_acoes=True)[0]
 
 
 def adicionar_pokemon_ficha(*, campanha_codigo, modelo_id, forma_id, usuario_id):
@@ -380,11 +418,20 @@ def ajustar_pv_npc(*, campanha_codigo, modelo_id, delta, usuario_id,
         if not equipe or idx >= len(equipe):
             raise ValueError("Pokémon não pertence à equipe deste NPC.")
         item = dict(equipe[idx])
-        forma = _forma(item.get("forma_id"))
+        forma = _forma(item.get("forma_temporaria_id") or item.get("forma_id"))
         maximo = _pv_maximo(forma, _nivel(modelo), carregar_regras_pokemon_db(campanha.id))
         atual = int(item.get("pv_atual")) if item.get("pv_atual") is not None else maximo
         novo = max(-9999, min(maximo, atual + delta))
         item["pv_atual"] = novo
+        if novo <= 0 and item.get("tipo_transformacao") == "mega":
+            base = _forma(item.get("forma_id"))
+            item["forma_temporaria_id"] = None
+            item["tipo_transformacao"] = None
+            item["imagem"] = (
+                (base.imagem_shiny_url if item.get("shiny") else base.imagem_url)
+                or base.imagem_url or ""
+            )
+            maximo = _pv_maximo(base, _nivel(modelo), carregar_regras_pokemon_db(campanha.id))
         equipe[idx] = item
         modelo.equipe = equipe
     _historico(usuario_id, modelo.id, "ajustar_pv_npc",
@@ -439,8 +486,13 @@ def editar_pokemon_ficha(*, campanha_codigo, modelo_id, indice, dados, usuario_i
     shiny = str(dados.get("shiny") or "") == "1"
     regras = carregar_regras_pokemon_db(campanha.id)
     nivel = _nivel(modelo)
-    pv_antigo = _pv_maximo(forma_antiga, nivel, regras)
-    pv_novo = _pv_maximo(forma, nivel, regras)
+    base_mudou = forma.id != forma_antiga.id
+    antiga_visivel = (
+        _forma(item["forma_temporaria_id"])
+        if item.get("forma_temporaria_id") else forma_antiga
+    )
+    pv_antigo = _pv_maximo(antiga_visivel, nivel, regras)
+    pv_novo = _pv_maximo(forma if base_mudou else antiga_visivel, nivel, regras)
     atual = int(item.get("pv_atual")) if item.get("pv_atual") is not None else pv_antigo
     dano = max(0, pv_antigo - min(pv_antigo, atual))
 
@@ -464,9 +516,13 @@ def editar_pokemon_ficha(*, campanha_codigo, modelo_id, indice, dados, usuario_i
         usados.add(golpe.id)
         selecionados.append(str(golpe.id))
 
+    if base_mudou:
+        item["forma_temporaria_id"] = None
+        item["tipo_transformacao"] = None
+    visivel = (forma if base_mudou else antiga_visivel)
     item.update(
         forma_id=str(forma.id), nome=nome or forma.nome,
-        imagem=(forma.imagem_shiny_url if shiny else forma.imagem_url) or forma.imagem_url or "",
+        imagem=(visivel.imagem_shiny_url if shiny else visivel.imagem_url) or visivel.imagem_url or "",
         shiny=shiny, natureza_id=str(natureza.id) if natureza else None,
         natureza=natureza.nome if natureza else "—", genero=genero, golpes=selecionados,
         nivel=nivel,
@@ -495,3 +551,77 @@ def mover_pokemon_ficha(*, campanha_codigo, modelo_id, indice, direcao, usuario_
                antes={"de": idx}, depois={"para": proximo})
     db.session.commit()
     return "Ordem da equipe atualizada."
+
+
+def transformar_pokemon_npc(*, campanha_codigo, modelo_id, indice, tipo, destino_id, usuario_id):
+    """Transformação do NPC com a mesma origem de relações dos jogadores.
+
+    NPCs usam overlay JSON no modelo permanente; não criam Pokémon de jogador.
+    O mestre pode ativar a Mega, limitada a uma por treinador NPC.
+    """
+    campanha = _campanha(campanha_codigo)
+    modelo = _modelo(campanha.id, modelo_id)
+    equipe = list(modelo.equipe or [])
+    idx = _numero(indice, minimo=0, maximo=5, nome="Posição")
+    if idx >= len(equipe):
+        raise ValueError("Pokémon não encontrado nesta equipe.")
+    item = dict(equipe[idx])
+    base = _forma(item.get("forma_id"))
+    anterior = dict(item)
+    atual = _forma(item["forma_temporaria_id"]) if item.get("forma_temporaria_id") else None
+    tipo_atual = item.get("tipo_transformacao") if atual else None
+    tipo = str(tipo or "").strip().lower()
+    if tipo not in ("mega", "alternativa", "reverter"):
+        raise ValueError("Escolha uma transformação válida.")
+    if tipo == "reverter":
+        if atual is None:
+            raise ValueError("Este Pokémon já está na forma original.")
+        destino, novo_tipo = base, None
+    else:
+        opcoes = listar_formas_por_base(base, atual=atual, tipo=tipo_atual)
+        destinos = opcoes["mega" if tipo == "mega" else "alternativas"]
+        uid = _uuid(destino_id)
+        destino = next((x for x in destinos if x.id == uid), None)
+        if destino is None:
+            raise ValueError("Forma não autorizada pelas relações do catálogo.")
+        if item.get("pv_atual") is not None and int(item["pv_atual"]) <= 0:
+            raise ValueError("Pokémon desmaiado não pode se transformar.")
+        if tipo == "mega":
+            if atual is not None:
+                raise ValueError("Reverta a forma atual antes de Mega Evoluir.")
+            if any(
+                i != idx and isinstance(m, dict)
+                and m.get("tipo_transformacao") == "mega"
+                and m.get("forma_temporaria_id")
+                for i, m in enumerate(equipe)
+            ):
+                raise ValueError("O treinador NPC já possui uma Mega Evolução ativa.")
+        elif tipo_atual == "mega":
+            raise ValueError("Reverta a Mega Evolução antes de mudar de forma.")
+        novo_tipo = tipo
+    visivel_anterior = atual or base
+    regras = carregar_regras_pokemon_db(campanha.id)
+    nivel = _nivel(modelo)
+    pv_max_antigo = _pv_maximo(visivel_anterior, nivel, regras)
+    pv_max_novo = _pv_maximo(destino, nivel, regras)
+    pv_atual = int(item["pv_atual"]) if item.get("pv_atual") is not None else pv_max_antigo
+    dano = max(0, pv_max_antigo - min(pv_atual, pv_max_antigo))
+    item["pv_atual"] = max(0, min(pv_max_novo, pv_max_novo - dano)) if pv_atual > 0 else 0
+    item["forma_temporaria_id"] = str(destino.id) if novo_tipo else None
+    item["tipo_transformacao"] = novo_tipo
+    item["imagem"] = (
+        (destino.imagem_shiny_url if item.get("shiny") else destino.imagem_url)
+        or destino.imagem_url or ""
+    )
+    equipe[idx] = item
+    modelo.equipe = equipe
+    _historico(
+        usuario_id, modelo.id, "transformar_pokemon_npc",
+        antes={"indice": idx, "pokemon": anterior},
+        depois={"indice": idx, "pokemon": item},
+    )
+    db.session.commit()
+    return (
+        "Forma original restaurada." if tipo == "reverter"
+        else f"{destino.nome} ativada para o Pokémon do NPC."
+    )
