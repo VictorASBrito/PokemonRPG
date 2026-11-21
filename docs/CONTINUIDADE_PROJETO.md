@@ -14,7 +14,7 @@
 
 **Preservações:** tela de ficha, edições GET/POST, foto cadastrada, permissões, login e vínculo de personagem não foram removidos nem alterados; nenhuma migration, atualização de banco ou regra do RPG. A configuração de sprite continua usada só para visualização, não para autorização. Testes visuais e de integração `tests/test_dashboard_sprite_ficha_atributos_10f5.py` e `tests/test_fichas_por_url_10b3_flask.py` no workflow.
 
-**Status:** código e regressões preparados; CI e uso real em browser a confirmar, PR separado sem merge. Inspecionar com diferentes sprites, conta sem sprite configurado, URLs /p/<login>, prévia mestre e comparação da altura do quadro de atributos antes/depois de abrir/recolher um Pokémon. Na janela com altura baixa preservar a rolagem implementada na etapa 10F.4.
+**Status:** PR #36 aberto sem merge; CI inicial **Contrato visual e organização do repositório** aprovada com **59 testes** (21/11/2026) e verificações de sintaxe JavaScript aprovadas ([run](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44876143408)); integração **Correção de evolução tester e fichas por URL** aprovada com **48 testes** ([run](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44876143468)); inspeção visual real e confirmação em ambiente publicado ainda pendentes. Inspecionar com diferentes sprites, conta sem sprite configurado, URLs /p/<login>, prévia mestre e comparação da altura do quadro de atributos antes/depois de abrir/recolher um Pokémon. Na janela com altura baixa preservar a rolagem implementada na etapa 10F.4.
 
 ## Etapa 10F.4 — Foco acessível em notebooks baixos (21/11/2026)
 
