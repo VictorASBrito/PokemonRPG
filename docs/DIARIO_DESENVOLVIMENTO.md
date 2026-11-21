@@ -21,6 +21,15 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 11A: acervo visual e primeiro lote de itens
+- **Objetivo:** expandir catálogo de itens com fontes do manual 2.5 e ícones locais/PokéAPI; preparar implantação incremental no PostgreSQL.
+- **Branch:** `feat/catalogo-itens-acervo-11a`, após merge PR #40.
+- **Entrega:** índice de 2258 PNGs externos, 16 candidatos (8 cura, 8 evolução), scripts acervo/importação, proteção de materiais evolutivos no inventário e testes SQLite; documentação `docs/ETAPA_11A_ACERVO_CATALOGO_ITENS.md`.
+- **Decisões:** preservar UUIDs/quantidades, sem alterar registros existentes; bloquear criação se ícone/referência de status estiver ausente; não gastar material sem a evolução; não inventar preço/efeitos; respeitar regra Ankar de Mega sem pedras.
+- **Status:** implementação inicial; CI e implantação local pendentes. Nenhuma migration, nenhum dado de produção alterado. Cinco sprites externos precisam ser baixados explicitamente.
+- **Próxima ação:** simular no banco local, revisar conflitos e avançar por grupos de mecânicas; não confundir o índice de sprites com itens jogáveis.
+
+
 ### 2026-11-21 — Etapa 10F.9: tipos legíveis e atributos calculados/base
 - **Objetivo:** corrigir tags pequenas e texto comprimido, aproximar os atributos normais dos detalhados.
 - **Status:** implementado na branch; validação CI em andamento.
