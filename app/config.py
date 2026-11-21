@@ -52,6 +52,8 @@ class Config:
             # Campo de batalha em pausa até revisão própria; dados e serviços preservados.
             CAMPO_ATIVO=os.getenv("POKEMON_RPG_CAMPO_ATIVO", "").strip().lower()
                 in {"1", "true", "sim", "yes"},
+            # Só habilitado explicitamente na suíte legada; a interface pública é demonstrativa.
+            CAMPO_OPERACOES_ATIVAS=False,
             SESSION_COOKIE_HTTPONLY=True,
             SESSION_COOKIE_SAMESITE="Lax",
             SESSION_COOKIE_SECURE=teste_remoto,
