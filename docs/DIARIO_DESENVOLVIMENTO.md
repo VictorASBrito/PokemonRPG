@@ -21,6 +21,17 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.5: sprite abre ficha e atributos não encolhem
+- **Objetivo:** atender aos três ajustes pontuais solicitados com capturas do painel do jogador: sprite individual, ficha acessível pelo retrato e altura do quadro de atributos estável no foco.
+- **Status:** IMPLEMENTADO NA BRANCH; CI E VALIDAÇÃO REAL PENDENTES.
+- **Branch:** `feat/dashboard-sprite-ficha-atributos-10f5`, baseada em `main` após a mesclagem do PR #35.
+- **Arquivos:** `app/services/entrada_personagens_service.py`, `app/routes/jogadores.py`, `app/routes/mestre.py`, `templates/base.html`, `templates/jogador/dashboard.html`, `templates/mestre/catalogo/npc_painel.html` (cache), `static/css/dashboard.css`, `static/js/dashboard-pokemon.js`, `tests/test_dashboard_sprite_ficha_atributos_10f5.py`, `tests/test_fichas_por_url_10b3_flask.py`, `tests/test_dashboard_foco_baixa_altura_10f4.py`, workflow visual, arquitetura, continuidade e diário.
+- **Decisões:** reaproveitar allowlist de sprites da entrada visual associada ao login autenticado, com fallback para foto/inicial; remover só link `Minha ficha` dos menus de jogador/prévia; manter GET/POST existentes da ficha; medir a altura normal do quadro no JS antes do foco e remover a variável CSS ao recolher, isolando o CSS do painel NPC.
+- **Banco/migrations:** nenhum acesso de escrita ou migração. Dados e regras de Ankar inalterados.
+- **Testes e resultados:** regressão estática e teste de helper de sprite preparados e inseridos no CI; teste Flask de URLs distintas estendido. Não declarar resultados antes de executar. Navegador real ainda pendente.
+- **Próxima ação:** validar workflow visual e de URLs por CI; revisar PR sem merge, depois testar clique, teclado e medida do quadro no aparelho do usuário.
+
+
 ### 2026-11-21 — Etapa 10F.4: foco do Pokémon em notebooks de pouca altura
 - **Objetivo:** evitar que detalhes, golpes e botões do card expandido fiquem inacessíveis quando a janela desktop tem pouca altura, preservando a disposição original quando há espaço.
 - **Status:** IMPLEMENTADO NA BRANCH; CI VISUAL APROVADA; VALIDAÇÃO VISUAL REAL PENDENTE.
