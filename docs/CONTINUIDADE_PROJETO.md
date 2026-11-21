@@ -6,6 +6,14 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.8 — Legibilidade do combate no dashboard (21/11/2026)
+
+**Plano e escopo:** (1) destacar os seis valores base com tipografia e contraste dos tokens do tema; (2) separar nome, dano e tipo dos golpes na visão normal preservando quatro slots; (3) compactar a grade 2x2 dos golpes detalhados, mantendo precisão e demais dados, e elevar a hierarquia dos atributos atuais; (4) permitir quebra dos nomes dos Pokémon laterais, empilhar a visão resumida no celular e preservar a rolagem dos notebooks baixos; (5) validar por Playwright com equipe fictícia de seis Pokémon, slots preenchidos/vazios e temas claro/escuro.
+
+**Implementação:** branch `feat/dashboard-combate-legibilidade-10f8`. Alterados `static/css/dashboard.css`, templates de jogador e NPC (estrutura dos golpes e cache da folha compartilhada), contratos estáticos e novo teste `tests/visual/test_dashboard_legibilidade_10f8.py`. O painel expandido deixa de esticar a área de golpes por toda a altura restante e usa linhas dimensionadas por conteúdo; a coluna de detalhes pode rolar quando necessário. Não altera cálculos, ações, permissões ou dados da campanha; nenhuma migration. Prévia mestre usa o mesmo template do jogador.
+
+**Validação:** Playwright em 1720×864 escuro, 1366×768 claro e 390×844 escuro; equipe fictícia completa, atributos maiores, dados dos golpes e altura dos quatro slots compactos, abertura/recolhimento por teclado/botão, largura do documento e capturas. Contratos anteriores preservados; alterações compartilhadas com o NPC, mas teste específico de NPC cadastrado permanece pendente. CI ainda a confirmar; PR sem merge automático.
+
 ## Etapa 10F.7 — Auditoria Playwright de telas e correção desktop da Bag (21/11/2026)
 
 **Pedido:** revisar o projeto por completo procurando erros visuais, corrigindo e documentando. O alcance prático foi definido como auditoria **ampla, reproduzível e não destrutiva** das principais páginas de jogador e mestre, com dados falsos no SQLite e Chromium real; não afirmar revisão exaustiva do banco de produção ou de todos os estados de NPC.
