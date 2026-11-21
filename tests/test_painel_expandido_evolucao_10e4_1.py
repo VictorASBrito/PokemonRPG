@@ -447,6 +447,7 @@ def test_10e4_4_catalogo_reconhece_mega_na_pesquisa_e_exige_mesma_especie(app_db
         ])
         base, destino = formas["scolipede"], formas["scolipede-mega"]
         base_id, destino_id = base.id, destino.id
+        db.session.commit()  # Relações inválidas são rejeitadas sem descartar as formas de teste.
         outra = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
         _, erros = salvar_relacao(base, {
             "destino_id": str(outra.id),
