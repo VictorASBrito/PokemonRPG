@@ -108,6 +108,8 @@ def test_horda_captura_preserva_shiny_natureza_genero_sem_duplicar(app_db, clien
     capturaveis = client_db.get("/mestre/capturaveis").get_data(as_text=True)
     assert "Disponibilizar captura" in capturaveis
 
+    # Token do Campo apenas para o teste legado de limpeza; a captura usa seu próprio token.
+    assert client_db.get("/campo").status_code == 200
     with client_db.session_transaction() as sessao:
         campo_token = sessao["campo_csrf"]
         captura_token = sessao["capturaveis_atribuir_csrf"]
