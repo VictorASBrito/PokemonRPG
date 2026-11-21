@@ -4,7 +4,7 @@
 {% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10e4-3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10e4-4-modal') }}">
 {% endblock %}
 
 {% block conteudo %}
@@ -284,8 +284,23 @@
         </section>
     </main>
 </div>
+
+{% if not modo_preview_mestre|default(false) %}
+<dialog class="pokemon-confirmacao-modal" data-pokemon-confirmacao-modal
+        aria-labelledby="pokemon-confirmacao-titulo" aria-describedby="pokemon-confirmacao-descricao">
+    <div class="pokemon-confirmacao-conteudo">
+        <span class="pokemon-confirmacao-categoria">Confirmação de Pokémon</span>
+        <h2 id="pokemon-confirmacao-titulo" data-pokemon-confirmacao-titulo>Confirmar ação</h2>
+        <p id="pokemon-confirmacao-descricao" data-pokemon-confirmacao-descricao></p>
+        <div class="pokemon-confirmacao-acoes">
+            <button class="botao botao-secundario" type="button" data-pokemon-confirmacao-cancelar>Cancelar</button>
+            <button class="botao botao-primario" type="button" data-pokemon-confirmacao-aceitar>Confirmar</button>
+        </div>
+    </div>
+</dialog>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/dashboard-pokemon.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10e4-4-modal') }}"></script>
 {% endblock %}

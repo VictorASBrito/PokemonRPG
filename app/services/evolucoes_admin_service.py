@@ -209,7 +209,11 @@ def salvar_relacao(
     condicao = str(formulario.get("condicao", "")).strip()[:500]
     if gatilho in {"item", "mega_pedra"} and not item:
         erros.append("Informe o item ou a Mega Pedra exigidos.")
-    if gatilho in {"especial", "condicao", "linhagem", "amizade", "troca"} and not condicao:
+    # A permissão Mega é uma regra do TREINADOR já validada no serviço
+    # de transformação. Relações Mega com gatilho "especial" não exigem
+    # texto adicional, Pedra Chave, Mega Pedra ou item no inventário.
+    mega_por_permissao = tipo == "mega" and gatilho == "especial"
+    if gatilho in {"especial", "condicao", "linhagem", "amizade", "troca"} and not condicao and not mega_por_permissao:
         erros.append("Descreva a condição ou autorização narrativa necessária.")
 
     fonte = str(formulario.get("fonte", "mestre")).strip()

@@ -91,16 +91,73 @@
         }
     });
 
-    // Ações submetidas dentro do expandido são confirmadas antes do POST.
+    // Confirmações centralizadas no próprio site, sem window.confirm nativo.
+    const modal = document.querySelector('[data-pokemon-confirmacao-modal]');
+    const tituloModal = modal?.querySelector('[data-pokemon-confirmacao-titulo]');
+    const descricaoModal = modal?.querySelector('[data-pokemon-confirmacao-descricao]');
+    const cancelarModal = modal?.querySelector('[data-pokemon-confirmacao-cancelar]');
+    const aceitarModal = modal?.querySelector('[data-pokemon-confirmacao-aceitar]');
+    const formulariosConfirmados = new WeakSet();
+    let pendente = null;
+
     document.addEventListener('submit', (evento) => {
         const formulario = evento.target.closest('.pokemon-dashboard-indicadores form[data-confirmacao]');
         if (!formulario) return;
+
+        if (formulariosConfirmados.has(formulario)) {
+            formulariosConfirmados.delete(formulario);
+            formulario.querySelectorAll('button[type="submit"]').forEach((botao) => {
+                botao.disabled = true;
+            });
+            return;
+        }
+
         const mensagem = formulario.dataset.confirmacao;
-        if (mensagem && !window.confirm(mensagem)) {
+        if (!mensagem || !modal || typeof modal.showModal !== 'function') {
+            // Ausência de suporte ao dialog não pode produzir um POST silencioso.
             evento.preventDefault();
             return;
         }
-        formulario.querySelectorAll('button[type="submit"]').forEach((b) => { b.disabled = true; });
+
+        evento.preventDefault();
+        if (modal.open) return;
+
+        const tipo = formulario.querySelector('input[name="tipo"]')?.value;
+        const evolucao = formulario.action.includes('/evoluir');
+        const titulo = evolucao ? 'Confirmar evolução permanente'
+            : tipo === 'mega' ? 'Confirmar Mega Evolução'
+            : tipo === 'reverter' ? 'Reverter forma'
+            : 'Confirmar mudança de forma';
+        pendente = { formulario, submitter: evento.submitter || null };
+        tituloModal.textContent = titulo;
+        descricaoModal.textContent = mensagem;
+        aceitarModal.disabled = false;
+        modal.showModal();
+        cancelarModal.focus();
+    });
+
+    cancelarModal?.addEventListener('click', () => modal.close());
+    modal?.addEventListener('click', (evento) => {
+        if (evento.target === modal) modal.close();
+    });
+    modal?.addEventListener('close', () => {
+        const origem = pendente?.submitter;
+        pendente = null;
+        if (origem?.isConnected) origem.focus({ preventScroll: true });
+    });
+
+    aceitarModal?.addEventListener('click', () => {
+        if (!pendente) return;
+        const { formulario, submitter } = pendente;
+        pendente = null;
+        aceitarModal.disabled = true;
+        modal.close();
+        formulariosConfirmados.add(formulario);
+        if (submitter?.isConnected && !submitter.disabled) {
+            formulario.requestSubmit(submitter);
+        } else {
+            formulario.requestSubmit();
+        }
     });
 
     // Após evolução/forma, manter o mesmo Pokémon expandido.
@@ -118,6 +175,8 @@
     });
     document.addEventListener('keydown', (evento) => {
         if (evento.key !== 'Escape') return;
+        // O Esc fecha somente o modal; não deve recolher o Pokémon ao mesmo tempo.
+        if (modal?.open) return;
         const menusAbertos = document.querySelectorAll('.pokemon-dashboard-seletor[open]');
         if (menusAbertos.length) {
             fecharMenus();

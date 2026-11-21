@@ -381,3 +381,110 @@ def test_10e4_3_css_icone_nao_herda_tamanho_do_sprite_principal():
     assert ".retrato-pokemon-dashboard .pokemon-dashboard-lista-opcoes .dashboard-acao-opcao > img" in dashboard
     assert "max-width: 34px;" in dashboard and "max-height: 34px;" in dashboard
     assert "overflow-x: hidden;" in dashboard
+
+
+def test_10e4_4_relacao_mega_personalizada_alimenta_painel_e_transformacao(app_db, client_db):
+    """Scolipede Mega cadastrada no catálogo, não no JSON fixo."""
+    from app.services.evolucoes_admin_service import salvar_relacao, desativar_relacao
+    from app.services.transformacoes_service import listar_formas_temporarias, transformar_pokemon
+
+    with app_db.app_context():
+        formas = _familia("scolipede", [
+            ("scolipede", "normal"), ("scolipede-mega", "mega"),
+        ])
+        base, destino = formas["scolipede"], formas["scolipede-mega"]
+        p = _pokemon(app_db, base)
+        personagem = db.session.get(Personagem, _ids(app_db)["personagem"])
+        personagem.mega_habilitada = True
+        db.session.commit()
+        assert not listar_formas_temporarias(p)["mega"]
+
+        relacao, erros = salvar_relacao(base, {
+            "destino_id": str(destino.id),
+            "tipo_relacao": "mega",
+            "tipo_requisito": "especial",
+            "fonte": "mestre",
+            "condicao": "",
+            "item_nome": "",
+        }, usuario_id=None)
+        assert not erros and relacao is not None
+        relacao_id = str(relacao.id)
+        assert [f.id for f in listar_formas_temporarias(p)["mega"]] == [destino.id]
+        pid = p.id
+        destino_id = destino.id
+        original_id = base.id
+
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert 'data-pokemon-acao="mega"' in html
+    assert "Mega Evoluir" in html
+    assert "img/inventory/itens/keystone.png" in html
+
+    with app_db.app_context():
+        ids = _ids(app_db)
+        msg = transformar_pokemon(
+            pokemon_id=pid, destino_id=destino_id, tipo="mega",
+            usuario_id=ids["jogador"], personagem_id=ids["personagem"],
+            campanha_id=ids["campanha"],
+        )
+        db.session.commit()
+        p = db.session.get(Pokemon, pid)
+        assert "Mega" in msg
+        assert p.forma_pokemon_id == original_id
+        assert p.forma_temporaria_id == destino_id
+        assert p.tipo_transformacao == "mega"
+
+        # Desativar a ligação bloqueia futuras escolhas sem apagar Pokémon.
+        assert desativar_relacao(base, relacao_id, usuario_id=None)
+        assert listar_formas_temporarias(p)["mega"] == []
+
+
+def test_10e4_4_catalogo_reconhece_mega_na_pesquisa_e_exige_mesma_especie(app_db, client_db):
+    from app.services.evolucoes_admin_service import salvar_relacao
+    with app_db.app_context():
+        formas = _familia("scolipede", [
+            ("scolipede", "normal"), ("scolipede-mega", "mega"),
+        ])
+        base, destino = formas["scolipede"], formas["scolipede-mega"]
+        base_id, destino_id = base.id, destino.id
+        db.session.commit()  # Relações inválidas são rejeitadas sem descartar as formas de teste.
+        outra = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
+        _, erros = salvar_relacao(base, {
+            "destino_id": str(outra.id),
+            "tipo_relacao": "mega",
+            "tipo_requisito": "especial",
+            "fonte": "mestre",
+        }, usuario_id=None)
+        assert any("mesma espécie" in erro for erro in erros)
+        db.session.rollback()
+        db.session.commit()
+    _login(client_db, mestre=True)
+    html = client_db.get(
+        f"/mestre/catalogo/pokemons/{base_id}/relacoes?q=Scoli"
+    ).get_data(as_text=True)
+    assert f'data-categoria="mega"' in html
+    assert str(destino_id) in html
+    assert 'data-relacao-nova' in html
+    assert "relacoes-pokemon.js" in html
+    assert "Não é necessário cadastrar pedra ou item" in html
+
+
+def test_10e4_4_confirmacao_e_modal_local_sem_window_confirm(app_db, client_db):
+    from pathlib import Path
+    with app_db.app_context():
+        formas = _familia("morpeko-modal", [
+            ("morpeko-satisfeito", "normal"),
+            ("morpeko-faminto", "alternativa"),
+        ])
+        _pokemon(app_db, formas["morpeko-satisfeito"])
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert "<dialog" in html
+    assert "data-pokemon-confirmacao-modal" in html
+    assert 'data-pokemon-confirmacao-aceitar' in html
+    assert 'data-confirmacao="Mudar para Morpeko-Faminto?"' in html
+    js = (Path(__file__).resolve().parents[1] / "static/js/dashboard-pokemon.js").read_text(encoding="utf-8")
+    assert "window.confirm(" not in js
+    assert "modal.showModal()" in js
+    assert "formulario.requestSubmit" in js

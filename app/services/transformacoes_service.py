@@ -17,7 +17,7 @@ from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.models.db import (
-    CampanhaMembro, FormaPokemon, HistoricoAlteracao, Personagem,
+    CampanhaMembro, EvolucaoPokemon, FormaPokemon, HistoricoAlteracao, Personagem,
     Pokemon, Usuario,
 )
 from app.services.permissoes_service import PERFIS_JOGADOR, PERFIS_MESTRE
@@ -101,8 +101,30 @@ def listar_formas_temporarias(pokemon: Pokemon) -> dict:
         and f.id != pokemon.forma_pokemon_id
         and f.id != pokemon.forma_temporaria_id  # A forma atual não é nova opção.
     ]
+    # Relações Mega configuradas pelo mestre têm prioridade sobre a
+    # referência legada em JSON. Inativar uma relação desativa seu destino
+    # na ficha, inclusive quando ele também está no JSON original.
+    relacoes = list(db.session.scalars(
+        select(EvolucaoPokemon).where(
+            EvolucaoPokemon.forma_origem_id == pokemon.forma_pokemon_id,
+        )
+    ))
+    mega_configurada = [
+        relacao for relacao in relacoes
+        if (relacao.requisitos or {}).get("tipo_relacao") == "mega"
+    ]
+    ids_mega = (
+        {relacao.forma_destino_id for relacao in mega_configurada if relacao.ativo}
+        if mega_configurada else None
+    )
     megas = [
-        f for f in alternativas if f.categoria == "mega" and f.codigo in mega_codes
+        f for f in alternativas
+        if f.categoria == "mega"
+        and (
+            f.id in ids_mega if ids_mega is not None
+            else f.codigo in mega_codes
+        )
+        and f.especie_id == pokemon.forma_pokemon.especie_id
     ]
     return {
         "mega": megas, "alternativas": alt,

@@ -2042,3 +2042,60 @@
         min-width: min(210px, calc(100vw - 28px));
     }
 }
+
+/* 10E.4.4 — confirmação acessível no centro da tela, sem diálogo nativo. */
+.pokemon-confirmacao-modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    box-sizing: border-box;
+    width: min(480px, calc(100vw - 28px));
+    max-width: calc(100vw - 28px);
+    max-height: min(80dvh, 560px);
+    overflow-y: auto;
+    padding: 0;
+    background: var(--superficie);
+    color: var(--texto);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .38);
+    z-index: 9999;
+}
+.pokemon-confirmacao-modal:not([open]) { display: none; }
+.pokemon-confirmacao-modal::backdrop {
+    background: rgba(6, 12, 22, .74);
+    backdrop-filter: blur(3px);
+}
+.pokemon-confirmacao-conteudo {
+    display: grid;
+    gap: 14px;
+    padding: clamp(20px, 4vw, 28px);
+}
+.pokemon-confirmacao-categoria {
+    color: var(--primaria);
+    font-size: .73rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+.pokemon-confirmacao-conteudo h2 {
+    font-size: clamp(1.18rem, 3vw, 1.5rem);
+    line-height: 1.25;
+    margin: 0;
+}
+.pokemon-confirmacao-conteudo p {
+    margin: 0;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+.pokemon-confirmacao-acoes {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 5px;
+}
+.pokemon-confirmacao-acoes .botao { min-width: 110px; }
+@media (max-width: 440px) {
+    .pokemon-confirmacao-acoes .botao { flex: 1 1 100px; }
+}
