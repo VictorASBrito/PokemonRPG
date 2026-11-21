@@ -160,6 +160,11 @@ dialog img { max-width: 100%; height: auto; object-fit: contain; }
   .painel-mestre-acoes-topo { justify-content: flex-end; }
 }
 
+/* A partir de 900px de largura o nome deixa espaço para ações do usuário. */
+@media (max-width: 900px) {
+  .topo .usuario-topo > span { display: none; }
+}
+
 @media (max-width: 700px) {
   :root { --ui-v10-gutter: 12px; }
   .conteudo { padding-top: 16px; padding-bottom: max(28px, env(safe-area-inset-bottom)); }
