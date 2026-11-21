@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block titulo %}{{ 'Nova forma' if modo == 'novo' else 'Editar ' ~ forma.nome }} | Pokémon RPG{% endblock %}
-{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css') }}">{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo-admin.css', v='ui2-20261121') }}">{% endblock %}
 {% block conteudo %}
 <section class="cabecalho-pagina cabecalho-com-acoes">
     <div><p class="rotulo">Catálogo Pokémon</p><h1>{{ 'Nova espécie ou forma' if modo == 'novo' else forma.nome }}</h1><p class="texto-suave">A ficha dos jogadores usará estas informações imediatamente.</p></div>

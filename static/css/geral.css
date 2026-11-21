@@ -392,21 +392,7 @@ code {
 }
 
 
-/* Layout operacional: usa toda a tela e evita cabeçalhos hero repetitivos. */
-.cabecalho-pagina.cabecalho-com-acoes,
-.cabecalho-dashboard {
-    min-height: 0;
-    margin-bottom: 12px;
-    justify-content: flex-end;
-}
-.cabecalho-pagina.cabecalho-com-acoes > div:first-child,
-.cabecalho-dashboard > div:first-child {
-    display: none;
-}
-.cabecalho-pagina.cabecalho-com-acoes .acoes-cabecalho,
-.cabecalho-dashboard .acoes-dashboard {
-    margin-left: auto;
-}
+/* Hierarquia e densidade dos cabeçalhos: padrao-visual-10d1.css. */
 .cartao-indicador-pokebola {
     padding: 0;
     background: transparent;

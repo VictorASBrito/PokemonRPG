@@ -15,22 +15,21 @@
             document.documentElement.dataset.theme = tema;
         })();
     </script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/geral.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/geral.css', v='ui2-20261121') }}">
     {% block estilos %}{% endblock %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/refinamento.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tema.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tema.css', v='ui2-20261121') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tipos.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/seletor-visual.css') }}">
     {% block estilos_finais %}{% endblock %}
-    {# Design system carregado por último para estabilizar todas as telas. #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui1-20261120-10e4-3') }}">
+    {# Tokens, densidade e controles compartilhados; camadas seguintes cuidam de navegação e responsividade. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sistema-ui.css', v='ui2-20261121-refactor') }}">
     {# Suavização das imagens Pokémon: deve vir após os estilos da tela. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon-hd.css', v='etapa-09') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/avisos-toast-10c4-1.css', v='10c4-1') }}">
     {# ANKAR_VISUAL_RESPONSIVO_10C5: último acabamento global, após os estilos existentes. #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-global-10c5.css', v='10c5-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-global-10c5.css', v='ui2-20261121') }}">
     {# ANKAR_PADRAO_VISUAL_10D1: menu contextual e hierarquia consistente. #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/padrao-visual-10d1.css', v='10d1-1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/padrao-visual-10d1.css', v='ui2-20261121') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>

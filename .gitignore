@@ -17,3 +17,24 @@ cloudflared.exe
 
 # Relatórios privados de inventário (10C.1)
 relatorios/revisao_itens_ankar*/
+
+# Arquivos locais e artefatos produzidos durante desenvolvimento/testes
+.pytest_cache/
+.coverage
+htmlcov/
+node_modules/
+*.log
+*.tmp
+*.orig
+*.rej
+*.swp
+*.swo
+
+# Backups pré-refatoração devem ficar fora da árvore versionada;
+# quando precisar reverter, use o histórico Git.
+*.bak
+*.bak-*
+*.antes_*.bak
+relatorios/backups_ui_*/
+backups/
+backup_*/

@@ -3,11 +3,7 @@
    funcionalidades, URLs, componentes de toast e regras das telas existentes.
    Carregada DEPOIS do CSS específico e do design system original. */
 
-:root {
-  --ui-v10-gutter: clamp(12px, 2vw, 28px);
-  --ui-v10-radius: 18px;
-  --ui-v10-focus: #e9bc56;
-}
+/* Tokens de espaçamento e foco centralizados em sistema-ui.css. */
 
 html { scroll-padding-top: 94px; }
 body { -webkit-font-smoothing: antialiased; }

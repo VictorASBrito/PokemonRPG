@@ -1,12 +1,7 @@
 /* ANKAR_PADRAO_VISUAL_10D1 — primeira camada do padrao de menus.
    Carregar depois de visual-global-10c5.css.
    Regras preservam temas, permissões, rotas, sprites e lógica de formulários. */
-:root {
-  --ui10d-raio: 16px;
-  --ui10d-gap: clamp(10px, 1.4vw, 18px);
-  --ui10d-menu-fundo: var(--superficie);
-  --ui10d-menu-borda: var(--borda);
-}
+/* Menu e densidade usam os tokens centrais de sistema-ui.css. */
 
 /* A regra legada em geral.css escondia títulos completos de várias páginas.
    Reintroduz hierarquia sem trazer de volta o cabeçalho hero oversized. */

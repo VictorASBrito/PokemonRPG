@@ -528,3 +528,17 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Funções realocadas:** autorização Mega no Painel Mestre, transformações no painel expandido, NPCs no catálogo/gerador, integrantes de hordas listados e encaminhados na tela Capturáveis. Novas rotas com CSRF/permissões, preservando Shiny/natureza/sexo/identidade de horda.
 - **Proteções:** código histórico de Campo preservado; sem limpeza de registros, migrations ou edição de dados reais. Próximo: validar CI e testar visualmente em ambiente PostgreSQL antes da sessão.
 - **Documento:** `docs/ETAPA_10E4_2_RETRATO_E_CAMPO_PAUSADO.md`.
+
+
+## 21/11/2026 — Refatoração visual transversal e reorganização segura do repositório
+
+**Objetivo:** reduzir contradições de CSS e organizar a raiz, sem redesenhar arbitrariamente páginas nem tocar no PostgreSQL.
+
+**Frontend:** centralizar aliases/tokens de cores auxiliares, espaçamento, controles e densidade em `static/css/sistema-ui.css`; retirar a folha `refinamento.css` após migração; eliminar regras antigas que escondiam títulos e eram revertidas por outro CSS. Preservar os componentes do Dashboard jogador/NPC e a navegação responsiva. Atualizar versões de assets no `base.html`.
+
+**Organização:** remover 37 arquivos de backup versionados (restauráveis via Git), consolidar 16 guias `.txt` antigos e arquivar 3 instaladores manuais PowerShell sob `docs/historico/`. Criar `README.md`, guia de arquitetura visual, política de limpeza, `.gitignore` de backups e teste transversal.
+
+**Verificação:** `tests/test_contrato_visual_repositorio.py`, `tests/test_sistema_ui.py`, `tests/test_refinamento_frontend.py` e suítes automatizadas existentes. **Os resultados devem ser registrados somente após rodarem no CI.**
+
+**Sem migration; sem modificações em dados reais da campanha, imagens, uploads ou permissões.** Próxima oportunidade: consolidar visual por módulo com comparação real de screenshots antes de reduzir folhas específicas adicionais.
+

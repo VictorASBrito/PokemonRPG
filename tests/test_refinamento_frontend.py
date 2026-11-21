@@ -4,20 +4,24 @@ from pathlib import Path
 def test_base_carrega_tema_e_icone_de_pokebola() -> None:
     raiz = Path(__file__).resolve().parents[1]
     base = (raiz / "templates" / "base.html").read_text(encoding="utf-8")
-    assert "css/refinamento.css" in base
+    assert "css/refinamento.css" not in base
+    assert "css/sistema-ui.css" in base
     assert "css/tema.css" in base
     assert "js/tema.js" in base
     assert "img/pokebola.png" in base
     assert "tema-toggle" in base
 
 
-def test_layout_principal_e_fluido_e_cabecalho_hero_e_compacto() -> None:
+def test_layout_principal_e_fluido_e_cabecalho_visivel() -> None:
     raiz = Path(__file__).resolve().parents[1]
-    css = (raiz / "static" / "css" / "refinamento.css").read_text(encoding="utf-8")
-    assert "width: 100%" in css
-    assert "max-width: none" in css
-    assert ".cabecalho-dashboard > div:first-child" in css
-    assert "display: none" in css
+    sistema = (raiz / "static" / "css" / "sistema-ui.css").read_text(encoding="utf-8")
+    hierarquia = (raiz / "static" / "css" / "padrao-visual-10d1.css").read_text(encoding="utf-8")
+    assert "width: 100%" in sistema
+    assert "max-width: none" in sistema
+    assert "--ui-page-gutter" in sistema
+    assert ".cabecalho-dashboard > div:first-child" in hierarquia
+    assert "display: block" in hierarquia
+    assert "display: none" not in sistema.split("Densidade operacional única")[1].split("Componentes transversais")[0]
 
 
 def test_ficha_aceita_upload_de_foto_do_personagem() -> None:
@@ -48,7 +52,8 @@ def test_dashboard_pokemon_tem_grade_3x2_e_modo_foco_interativo() -> None:
     assert "destacar(card)" in js
     assert "if (foco === card) return" in js
     assert "data-dashboard-pokemon-collapse" in js
-    assert "evento.key === 'Escape'" in js
+    assert "evento.key !== 'Escape'" in js
+    assert "if (modal?.open) return;" in js  # Esc do modal não recolhe o card
 
 
 def test_modo_escuro_corrige_contraste_dos_slots_e_cartoes() -> None:
