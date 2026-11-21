@@ -97,7 +97,7 @@ def listar_formas_por_base(base: FormaPokemon, *, atual: FormaPokemon | None = N
         and (f.codigo in alt_codes or f.categoria == "alternativa")
         and (f.categoria != "regional" or f.codigo in alt_codes)
         and f.id != base.id
-        and f.id != atual.id if atual is not None else None  # A forma atual não é nova opção.
+        and (atual is None or f.id != atual.id)  # A forma atual não é nova opção.
     ]
     # Relações Mega configuradas pelo mestre têm prioridade sobre a
     # referência legada em JSON. Inativar uma relação desativa seu destino
