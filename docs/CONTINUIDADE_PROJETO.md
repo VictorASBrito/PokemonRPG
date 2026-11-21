@@ -6,6 +6,16 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.6 — Playwright com navegador real e SQLite isolado (21/11/2026)
+
+**Motivo:** usuário instalou e validou localmente Playwright, colocou `tests/visual/test_smoke.py` no GitHub e pediu adicionar dependências e **executar os testes agora**. A `main` ainda não continha `pytest-playwright` em `requirements-dev.txt` nem workflow de navegador.
+
+**Implementação na branch `test/playwright-ui-browser-10f6`:** adicionar `pytest-playwright>=0.7,<1.0` às dependências de desenvolvimento; manter e integrar o smoke existente, com URL pública opcional e Flask isolado por padrão. A fixture em `tests/visual/conftest.py` sobe Flask real em porta aleatória com SQLite temporário, login fictício, sprite de teste válido e um Pokémon na equipe. `tests/visual/test_fluxos_jogador.py` navega com Chromium e verifica o sprite/atalho da ficha, a altura real do quadro de atributos ao abrir/recolher e a largura/abas da Bag em 390px. O workflow `.github/workflows/test-playwright-ui-10f6.yml` instala Chromium via `python -m playwright install --with-deps chromium`, executa testes e publica screenshots/traces como artefatos. `.gitignore` exclui `test-results/` e `playwright-report/`; README explica instalação e execução.
+
+**Escopo:** testes e infraestrutura de desenvolvimento; nenhum modelo, regra do RPG, dado real, upload, sessão de usuário, segredo, migration ou rota modificados. O teste de smoke pode inspecionar outra URL explicitamente fornecida via variável de ambiente, mas os fluxos autenticados usam exclusivamente o app de testes. PR para revisão, não mesclar automaticamente.
+
+**Status:** [GitHub Actions — Playwright real, Chromium e SQLite isolado](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44878523109) **aprovado: 5 testes passaram em 9,94s**, incluindo smoke 390/1366px, sprite/ficha, altura de atributos no foco e Bag mobile. Screenshots e traces foram tratados pelo workflow; a validação externa do túnel e do PostgreSQL real não faz parte deste teste. Se novos cenários revelarem erros visuais, registrar diagnóstico e corrigir separadamente.
+
 ## Etapa 10F.5 — Sprite do personagem, ficha pelo retrato e altura dos atributos (21/11/2026)
 
 **Pedido:** após confirmar a correção mobile, o usuário enviou prints do painel normal e do Pokémon expandido pedindo três mudanças: usar o sprite de cada personagem no lugar da foto/inicial do painel; retirar o botão `Minha ficha` da barra e abrir a ficha ao clicar no sprite; preservar o tamanho do quadro `Atributos` do personagem na transição de foco.

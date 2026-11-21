@@ -38,3 +38,7 @@ node_modules/
 relatorios/backups_ui_*/
 backups/
 backup_*/
+
+# Evidências geradas pelo Playwright local (CI publica como artifact)
+test-results/
+playwright-report/
