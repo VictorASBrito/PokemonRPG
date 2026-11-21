@@ -1,0 +1,156 @@
+/* 11B — Lista uniforme e ações exclusivamente no painel de detalhes. */
+.inventario-nds .inventario-nds-linha { min-width: 0; }
+.inventario-nds .inventario-nds-linha-botao {
+  display: grid;
+  grid-template-columns: 6px 58px minmax(0, 1fr) auto;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 78px;
+  padding: 9px 12px;
+  box-shadow: none;
+  transition: background .15s ease, border-color .15s ease;
+}
+.inventario-nds .inventario-nds-linha-botao:hover,
+.inventario-nds .inventario-nds-linha-botao:focus-visible {
+  transform: none;
+  box-shadow: none;
+}
+.inventario-nds .inventario-nds-linha-botao[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--inv-accent) 9%, #1b2637);
+  border-color: var(--bag-line);
+  box-shadow: none;
+}
+.inventario-nds .inventario-nds-linha-botao:focus-visible {
+  outline: 2px solid var(--inv-accent-2);
+  outline-offset: -3px;
+}
+.inventario-nds .inventario-nds-indicador {
+  height: 34px;
+  width: 4px;
+  border-radius: 4px;
+}
+.inventario-nds .inventario-nds-linha-botao[aria-pressed="true"] .inventario-nds-indicador {
+  background: var(--inv-accent);
+}
+.inventario-nds .inventario-nds-linha-quantidade {
+  grid-column: auto;
+  justify-self: end;
+  padding: 6px 8px;
+  font-variant-numeric: tabular-nums;
+}
+.inventario-nds .inventario-nds-item-cabecalho { min-height: 78px; }
+/* Cabeçalho não aumenta quando um item tem mais características. As
+   etiquetas têm faixa própria, sempre presente, e podem quebrar no celular. */
+.inventario-nds .inventario-nds-etiquetas {
+  min-height: 26px;
+  margin: 0;
+  gap: 5px;
+  align-items: center;
+  align-content: start;
+}
+.inventario-nds .inventario-nds-etiquetas span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 3px 8px;
+  border: 1px solid rgba(157,178,208,.32);
+  border-radius: 7px;
+  background: rgba(157,178,208,.09);
+  color: var(--inv-text);
+  font-size: .75rem;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-shadow: none;
+}
+.inventario-nds .inventario-uso-acoes {
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0;
+}
+.inventario-nds .inventario-uso-acao {
+  min-height: 44px;
+  padding: 9px 16px;
+  font-size: .9rem;
+}
+.inventario-nds .inventario-uso-acao:focus-visible {
+  outline-offset: 2px;
+}
+.inventario-confirmacao-dialogo,
+#inventario-equipar-10c4 {
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 28px));
+  max-width: calc(100vw - 28px);
+  max-height: calc(100dvh - 28px);
+  overflow: auto;
+  margin: auto;
+  padding: 22px;
+  border: 1px solid var(--borda, #506076);
+  border-radius: 16px;
+  background: var(--superficie, #172339);
+  color: var(--texto, #edf4ff);
+  box-shadow: 0 16px 48px #0006;
+}
+.inventario-confirmacao-dialogo:not([open]) { display: none; }
+.inventario-confirmacao-dialogo::backdrop { background: #0009; }
+.inventario-confirmacao-dialogo h2,
+#inventario-equipar-10c4 h2 { font-size: 1.2rem; margin: 0 0 10px; }
+.inventario-confirmacao-dialogo p,
+#inventario-equipar-10c4 p { margin: 0 0 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.inventario-confirmacao-dialogo label { display: grid; gap: 6px; margin-bottom: 14px; }
+.inventario-confirmacao-dialogo label[hidden] { display: none; }
+.inventario-confirmacao-dialogo select,
+#inventario-equipar-10c4 select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px;
+  color: var(--texto, #edf4ff);
+  background: var(--superficie, #172339);
+  border: 1px solid var(--borda, #506076);
+  border-radius: 8px;
+}
+.inventario-confirmacao-acoes,
+#inventario-equipar-10c4 .inventario-equipar-acoes {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.inventario-confirmacao-acoes button,
+#inventario-equipar-10c4 button {
+  min-height: 44px;
+  color: var(--texto, #edf4ff);
+  border: 1px solid var(--borda, #506076);
+  background: var(--superficie, #172339);
+}
+.inventario-confirmacao-acoes [data-confirmar-operacao],
+#inventario-equipar-10c4 button[type="submit"] {
+  background: #245b42;
+  color: #fff;
+  border-color: #397b57;
+}
+.inventario-confirmacao-acoes button:disabled { opacity: .45; cursor: not-allowed; }
+.inventario-confirmacao-acoes button:focus-visible,
+#inventario-equipar-10c4 button:focus-visible {
+  outline: 2px solid var(--texto, #edf4ff);
+  outline-offset: 2px;
+}
+@media (max-width: 540px) {
+  .inventario-nds .inventario-nds-linha-botao {
+    grid-template-columns: 5px 42px minmax(0, 1fr) auto;
+    min-height: 66px;
+    gap: 6px;
+    padding: 8px;
+  }
+  .inventario-nds .inventario-nds-linha-foto { width: 42px; height: 42px; }
+  .inventario-nds .inventario-nds-linha-quantidade { padding: 5px 6px; font-size: .78rem; }
+  .inventario-nds .inventario-nds-item-cabecalho { min-height: 60px; }
+  .inventario-nds .inventario-uso-acoes > button { flex: 1 1 auto; }
+  .inventario-confirmacao-dialogo, #inventario-equipar-10c4 { padding: 16px; }
+  .inventario-confirmacao-acoes > button { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inventario-nds .inventario-nds-linha-botao { transition: none; }
+}
