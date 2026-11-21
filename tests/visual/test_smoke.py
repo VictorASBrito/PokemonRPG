@@ -5,10 +5,8 @@ import pytest
 from playwright.sync_api import Page, expect
 
 
-URL = os.getenv(
-    "POKEMON_RPG_TEST_URL",
-    "http://127.0.0.1:5000",
-)
+# Sem URL externa, levanta o Flask de testes usando somente SQLite.
+# Quem quiser inspecionar seu servidor local pode fornecer a variável abaixo.
 
 
 @pytest.mark.parametrize(
@@ -19,13 +17,15 @@ def test_site_responsivo(
     page: Page,
     largura: int,
     altura: int,
+    live_site_url: str,
 ):
     page.set_viewport_size({
         "width": largura,
         "height": altura,
     })
 
-    page.goto(URL, wait_until="domcontentloaded")
+    url = os.getenv("POKEMON_RPG_TEST_URL", live_site_url)
+    page.goto(url, wait_until="domcontentloaded")
 
     expect(page.locator("body")).to_be_visible()
 
