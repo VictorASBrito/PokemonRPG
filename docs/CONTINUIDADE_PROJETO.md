@@ -18,6 +18,8 @@
 
 **Validação:** amplia a matriz de auditoria Playwright 10F.7 com inspeção computed styles para sombras e halos, mais três novos cenários de mouse, toque real via CDP no Chromium, teclado, persistência e rollback visual, incluindo 320/390/1366px. Testes de integração verificam migration isolada, rejeição de itens alheios/duplicados/ausentes e inclusão posterior de item. CI e revisão visual ainda pendentes. Nenhuma edição no PostgreSQL real.
 
+**Revisão da CI 11C:** execução [44942294216](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44942294216): 114 aprovados, 5 falhas. Quatro falhas em tema escuro (painel mestre e catálogo Pokémon em 390/1366px) por halos radiais das classes `.painel-pokemon-imagem` e `.forma-admin-imagem`. Corrigidos na camada fosca, incluindo `.box-pokemon-imagem-wrap` preventivamente. Uma falha de arraste touch a 390px (nenhuma resposta do POST): a regra global `body.app-shell :is(button, .botao, [role=button])` tinha especificidade superior à alça e aplicava `touch-action: manipulation`. Corrigida a especificidade da alça para `none`, preservando rolagem normal fora dela. O teste habilita toque antes da navegação, verifica estilo computado, hit-test, coordenadas e indicador de destino antes de soltar, mantendo resposta POST e persistência obrigatórias. Cache CSS `11c-2`. Contratos 66 aprovados e catálogo 29 aprovados na primeira execução; nova CI pendente.
+
 ## Etapa 11B-UI — Refinamento da Bag e confirmação das operações (21/11/2026)
 
 **Pedido:** corrigir seleção luminosa recortada e diferenças de espaçamento entre itens, mudar ações para o detalhe, estabilizar etiquetas e exigir confirmação antes de operações. Capturas do mestre em 1720×864 motivaram a revisão.
