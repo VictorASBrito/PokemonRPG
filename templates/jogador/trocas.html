@@ -86,7 +86,7 @@
     <p class="texto-suave">Uma oferta pode ficar vazia. Alterações nas ofertas anulam as confirmações anteriores. Atualize a negociação para ver as alterações do outro jogador.</p>
     <form class="troca-acoes" method="post" action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
         {% if confirmei %}<button class="botao botao-secundario" name="acao" value="desconfirmar">Retirar confirmação</button>{% else %}
-        <button class="botao botao-primario" name="acao" value="confirmar" {% if not minha_oferta and not oferta_outro %}disabled{% endif %}>Confirmar troca</button>{% endif %}
+        <button class="botao botao-primario" name="acao" value="confirmar" data-troca-confirmar {% if not minha_oferta and not oferta_outro %}disabled{% endif %}>Confirmar troca</button>{% endif %}
         <button class="botao botao-secundario" name="acao" value="cancelar">Cancelar troca</button>
     </form>
     {% endif %}
@@ -96,7 +96,8 @@
 <section class="cartao troca-secao">
     <h2>Editar sua oferta</h2>
     <p class="texto-suave">Selecione até três Pokémon da sua Box. Retire itens equipados e desfaça transformações antes de negociar. Pokémon da equipe devem ser guardados primeiro.</p>
-    <form method="post" action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
+    <form method="post" data-troca-oferta action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
+        <p role="status" data-troca-contagem></p>
         <div class="troca-escolhas">
         {% for p in disponiveis %}
         <label class="troca-escolha">
@@ -110,4 +111,8 @@
 </section>
 {% endif %}
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/trocas.js', v='13a-1') }}" defer></script>
 {% endblock %}
