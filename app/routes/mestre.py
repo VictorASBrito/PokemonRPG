@@ -29,6 +29,8 @@ from app.services.personagem_service import (
     carregar_contexto_ficha,
     definir_nivel_personagem_pelo_mestre,
 )
+from app.services.painel_acoes_pokemon_service import carregar_acoes_equipe_dashboard
+from app.services.transformacoes_service import permitir_mega_treinador
 from app.services.pokemon_db_service import (
     carregar_contexto_pokemon,
     equipe_detalhada_db,
@@ -89,6 +91,44 @@ def dashboard():
         nivel_csrf_token=session.setdefault("perfil_csrf", secrets.token_urlsafe(32)),
     )
 
+
+
+@mestre_bp.post("/painel/jogadores/<personagem_id>/mega")
+@perfil_obrigatorio("mestre")
+def alterar_mega_no_painel(personagem_id: str):
+    """Permissão Mega no menu ⋮ do treinador, nunca para outro usuário."""
+    esperado = session.get("perfil_csrf", "")
+    enviado = request.form.get("csrf_token", "")
+    if not esperado or not hmac.compare_digest(esperado, enviado):
+        return ("Formulário de permissão Mega inválido. Atualize a página.", 403)
+    try:
+        mensagem = permitir_mega_treinador(
+            personagem_id=personagem_id,
+            campanha_id=_id_campanha_ativa(),
+            usuario_id=session.get("usuario_id"),
+            habilitar=request.form.get("habilitar") == "1",
+        )
+        db.session.commit()
+        flash(mensagem, "sucesso")
+    except PermissionError:
+        db.session.rollback()
+        return ("Somente o mestre autorizado pode mudar a permissão Mega.", 403)
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc), "erro")
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Erro ao alterar permissão Mega pelo painel.")
+        flash("Não foi possível alterar a permissão Mega.", "erro")
+    return redirect(url_for("mestre.dashboard"))
+
+
+def _id_campanha_ativa():
+    from sqlalchemy import select
+    from app.models.db import Campanha
+    return db.session.scalar(select(Campanha.id).where(
+        Campanha.codigo == _campanha_codigo(), Campanha.ativo.is_(True)
+    ))
 
 
 @mestre_bp.post("/painel/ordem")
@@ -362,7 +402,9 @@ def preview_jogador(jogador_id: str):
         if ficha is None or contexto_pokemon is None:
             flash("A ficha desse jogador não foi encontrada no PostgreSQL.", "erro")
             return redirect(url_for("mestre.dashboard"))
-        equipe = equipe_detalhada_db(contexto_pokemon)
+        equipe = carregar_acoes_equipe_dashboard(
+            contexto_pokemon, equipe_detalhada_db(contexto_pokemon)
+        )
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao carregar a prévia do jogador.")
@@ -382,6 +424,7 @@ def preview_jogador(jogador_id: str):
         modo_preview_mestre=True,
         preview_personagem_id=str(ficha.personagem.id),
         voltar_painel_url=url_for("mestre.dashboard"),
+        csrf_acao_evolucao=None,
     )
 
 
