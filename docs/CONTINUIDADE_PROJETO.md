@@ -6,6 +6,14 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 11A — Catálogo de itens e acervo (21/11/2026)
+
+**Pedido:** organizar e ampliar catálogo, repertório de ícones e funcionalidades no banco. PR #40 já mesclado com Playwright aprovado. Nova branch `feat/catalogo-itens-acervo-11a` preserva o estado vigente.
+
+**Entrega inicial:** índice PokéAPI de 2258 arquivos PNG, versão fixa; script de busca/download seletivo; manifesto de 16 candidatos com valores do manual 2.5 pp. 57–60 (oito itens de cura e oito pedras), 11 ícones locais e cinco externos a baixar. Importador incremental que simula por padrão, preserva todos os registros existentes, identifica aliases, bloqueia divergências ambíguas e valida arquivo/status antes de criar itens em transação única. Materiais evolutivos não podem ser usados genericamente na Bag; permanecem consumíveis no serviço de evolução autorizada. Sem migration, sem dados de produção importados.
+
+**Próximo passo:** revisar simulação a partir do PostgreSQL local, concluir download dos ícones permitidos, aplicar lote mediante backup/confirmação, revisar os demais grupos conforme `docs/ETAPA_11A_ACERVO_CATALOGO_ITENS.md`. Não reexecutar reconstrução 10C.3. Mega permanece por autorização de treinador sem pedra. CI pendente de confirmação.
+
 ## Etapa 10F.9 — Etiquetas de tipo e atributos calculados no modo normal (21/11/2026)
 
 **Pedido:** aumentar as tags de tipo e corrigir letras comprimidas; aproximar os cartões de atributos normais dos valores de combate do modo expandido.
