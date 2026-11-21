@@ -225,3 +225,44 @@
 @media (prefers-reduced-motion: reduce) {
   .painel-mestre-10d3 * { scroll-behavior: auto; transition: none !important; }
 }
+
+/* 10E.4.1 — Permissão Mega dentro do menu ⋮ de cada treinador. */
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao form.formulario-mega-mestre {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 45px;
+  align-items: center;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--superficie-suave);
+}
+.painel-mega-descricao { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.painel-mega-descricao img { width: 31px; height: 31px; flex: 0 0 31px; }
+.painel-mega-descricao > span { display: grid; gap: 2px; }
+.painel-mega-descricao strong { font-size: .8rem; line-height: 1.2; }
+.painel-mega-descricao small { color: var(--texto-suave); font-size: .67rem; }
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao form.formulario-mega-mestre > button.painel-mega-alternar {
+  grid-column: 2;
+  align-self: center;
+  justify-self: end;
+  width: 43px;
+  height: 25px;
+  border-radius: 999px;
+  padding: 3px;
+  cursor: pointer;
+  border: 1px solid var(--borda);
+  background: #647184;
+  display: flex;
+  align-items: center;
+}
+.painel-mega-alternar span {
+  display: block; width: 17px; height: 17px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .15s ease;
+}
+.painel-mestre-central.painel-mestre-10d3 .painel-jogador-gestao form.formulario-mega-mestre > button.painel-mega-alternar[aria-checked="true"] {
+  background: #397bdc; border-color: #68b4ff;
+}
+.painel-mega-alternar[aria-checked="true"] span { transform: translateX(18px); }
