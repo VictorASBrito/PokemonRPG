@@ -21,6 +21,18 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.6: testes Playwright contra Flask isolado
+- **Objetivo:** adicionar a dependência Playwright e executar, no GitHub Actions, o smoke já criado pelo usuário e novas verificações do painel/inventário com navegador real.
+- **Status:** IMPLEMENTADO NA BRANCH; CI E NAVEGADOR REAL A CONFIRMAR.
+- **Branch:** `test/playwright-ui-browser-10f6` sobre `main`.
+- **Arquivos:** `requirements-dev.txt`, `tests/visual/conftest.py` (novo), `tests/visual/test_smoke.py` (preservado, integrado ao servidor local), `tests/visual/test_fluxos_jogador.py` (novo), `.github/workflows/test-playwright-ui-10f6.yml` (novo), `.gitignore`, `README.md`, `docs/CONTINUIDADE_PROJETO.md` e diário.
+- **Decisões:** Flask temporário com banco SQLite e contas fictícias; dados/URLs do PostgreSQL real nunca usados pelo teste autenticado. O smoke aceita `POKEMON_RPG_TEST_URL` opcional; a CI usa a URL isolada por padrão. Capturas e traces são artefatos do GitHub, não arquivos versionados.
+- **Migrations:** nenhuma; backend, modelos, rotas e regras da campanha preservados.
+- **Testes e resultados:** suíte adicionada para execução pelo GitHub Actions; não declarar sucesso antes de verificar logs. Login fictício, card em foco, acessibilidade do sprite, Bag em 390px e dimensões da página em 390/1366px.
+- **Riscos:** dependências de navegador no runner e diferenças reais de layout em Chromium; analisar screenshots/traces se falhar. Segredos do site de produção não são necessários.
+- **Próxima ação:** acompanhar PR e workflow Playwright, iterar sobre erros de ambiente/testes e reportar comportamento real.
+
+
 ### 2026-11-21 — Etapa 10F.5: sprite abre ficha e atributos não encolhem
 - **Objetivo:** atender aos três ajustes pontuais solicitados com capturas do painel do jogador: sprite individual, ficha acessível pelo retrato e altura do quadro de atributos estável no foco.
 - **Status:** IMPLEMENTADO NA BRANCH; CI VISUAL E FICHAS/URLs APROVADAS; VALIDAÇÃO REAL PENDENTE.
