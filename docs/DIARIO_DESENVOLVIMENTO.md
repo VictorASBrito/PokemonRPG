@@ -21,6 +21,18 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.9: tipos legíveis e atributos calculados/base
+- **Objetivo:** corrigir tags pequenas e texto comprimido, aproximar os atributos normais dos detalhados.
+- **Status:** implementado na branch; validação CI em andamento.
+- **Branch:** `feat/dashboard-tipos-atributos-10f9`, após merge PR #39.
+- **Arquivos:** `static/css/tipos.css`, `static/css/dashboard.css`, templates base, jogador e NPC, três contratos estáticos, teste Playwright de legibilidade e documentação.
+- **Decisões:** tags com altura automática, mínimos contextuais e texto sem sombra; seis totais calculados com base menor embaixo; sem recalcular dados; preservar slots, ações, cores por tipo e altura do treinador.
+- **Migrations:** nenhuma.
+- **Testes:** cinco viewports, dois tipos por Pokémon fictício, comparação normal/expandido, dimensões dos textos e células, regressões anteriores; resultados ainda não confirmados.
+- **Pendências:** análise de CI, capturas e validação no site publicado/NPC cadastrado.
+- **Próxima ação:** revisar PR antes de merge.
+
+
 ### 2026-11-21 — Etapa 10F.8: legibilidade do painel e golpes compactos
 - **Objetivo:** melhorar leitura dos atributos e ataques a partir das capturas de painel normal/expandido enviadas pelo usuário.
 - **Status:** implementado na branch; CI pendente de verificação.
