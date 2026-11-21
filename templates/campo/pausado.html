@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Campo em pausa | Pokémon RPG{% endblock %}
+{% block conteudo %}
+<section class="cartao ui-card" style="max-width: 760px; margin: 5vh auto;">
+    <p class="rotulo">Campo de batalha</p>
+    <h1>Campo temporariamente indisponível</h1>
+    <p>Estamos revisando a apresentação dos Pokémon em combate. As formações, NPCs e hordas
+       já cadastrados estão preservados, sem exclusão de registros.</p>
+    <p><strong>Evolução e mudança de forma continuam disponíveis no Painel, nos símbolos
+       sobre a imagem de cada Pokémon.</strong> A autorização de Mega Evolução fica no
+       menu de opções do treinador no Painel do Mestre.</p>
+    <p>Enquanto o Campo está em pausa, o mestre pode preparar NPCs pelo catálogo e disponibilizar
+       Pokémon pela página de Capturáveis. As ferramentas específicas de combate
+       voltarão em uma etapa própria.</p>
+    <a class="botao botao-primario botao-link" href="{{ url_for('inicio') }}">Voltar ao painel</a>
+</section>
+{% endblock %}
