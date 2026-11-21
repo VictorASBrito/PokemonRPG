@@ -240,7 +240,7 @@ def test_keystone_local_e_css_protege_icone_do_retrato():
     css = (raiz / "static/css/dashboard.css").read_text(encoding="utf-8")
     assert ".retrato-pokemon-dashboard img" not in css
     assert ".retrato-pokemon-dashboard > img" in css
-    assert ".pokemon-dashboard-indicador img" in css
+    assert ".pokemon-dashboard-indicador > img" in css
 
 
 def test_mega_liberada_pode_ser_acionada_sem_campo(app_db, client_db):
