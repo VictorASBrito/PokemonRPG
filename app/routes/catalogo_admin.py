@@ -1221,6 +1221,20 @@ def npc_editar_pokemon(modelo_id, indice):
     )
 
 
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/transformar")
+@perfil_obrigatorio("mestre")
+def npc_transformar_pokemon(modelo_id, indice):
+    from app.services.npc_ficha_service import transformar_pokemon_npc
+    return _npc_ficha_acao(
+        lambda: transformar_pokemon_npc(
+            campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+            indice=indice, tipo=request.form.get("tipo"),
+            destino_id=request.form.get("destino_id"),
+            usuario_id=session.get("usuario_id"),
+        ), modelo_id, origem="painel",
+    )
+
+
 @catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/mover")
 @perfil_obrigatorio("mestre")
 def npc_mover_pokemon(modelo_id, indice):
