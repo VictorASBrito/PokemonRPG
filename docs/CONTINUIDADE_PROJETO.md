@@ -14,7 +14,7 @@
 
 **Implementação:** adicionar `@media (min-width: 901px) and (max-height: 760px)` em `static/css/dashboard.css`: restaurar scroll vertical do documento, alturas naturais na ficha, grade e card em foco, detalhes/golpes/anotações sem clipping, companheiros laterais com tamanho natural e treinador não sticky; manter layout desktop alto e mobile intactos. Atualizar cache de CSS nos dois templates do dashboard. Criar `tests/test_dashboard_foco_baixa_altura_10f4.py` no workflow visual. Nenhuma alteração de JS, rotas, dados ou regras de Ankar.
 
-**Status:** implementação e testes adicionados; CI e validação visual final a conferir. **Verificação complementar:** jogador, mestre em prévia e NPC em notebooks 1024×600 e 1366×768, zoom 200%, 1–6 Pokémon, campos de informações longos, uso de Recolher, editar e ações de retrato. Não afirmar correção visual definitiva sem navegador real.
+**Status:** implementação e testes adicionados; CI inicial do contrato visual aprovada (**54 passed in 1.46s**, em 21/11/2026) no [GitHub Actions](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44873226725); validação visual real ainda pendente. **Verificação complementar:** jogador, mestre em prévia e NPC em notebooks 1024×600 e 1366×768, zoom 200%, 1–6 Pokémon, campos de informações longos, uso de Recolher, editar e ações de retrato. Não afirmar correção visual definitiva sem navegador real.
 
 ## Etapa 10F.3 — Largura do inventário e abas completas no celular (21/11/2026)
 
