@@ -237,10 +237,6 @@ body.app-shell :is(input, select, textarea):disabled { opacity: .66; }
 }
 @media (max-width: 650px) {
   body.app-shell .conteudo { padding-left: 12px; padding-right: 12px; }
-  body.app-shell .marca-pokebola { width: 27px; height: 27px; flex-basis: 27px; }
-  body.app-shell .usuario-topo { gap: 5px; }
-  body.app-shell .usuario-topo .botao { padding: 8px 9px; font-size: .79rem; }
-  body.app-shell .tema-toggle { padding: 0 9px; min-width: 36px; }
   body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons { grid-template-columns: repeat(2,minmax(0,1fr)); }
   body.app-shell .filtros-catalogo, body.app-shell .filtros-boxes { grid-template-columns: 1fr; }
   body.app-shell .campo-filtro-nome, body.app-shell .filtro-pesquisa { grid-column: auto; }
@@ -254,8 +250,6 @@ body.app-shell :is(input, select, textarea):disabled { opacity: .66; }
   body.app-shell .inventario-nds-treinador-foto { width: 66px; height: 66px; }
 }
 @media (max-width: 430px) {
-  body.app-shell .marca { font-size: .87rem; gap: 6px; }
-  body.app-shell .topo { padding-inline: 9px; }
   body.app-shell .grade-equipe, body.app-shell .grade-box-pokemons { grid-template-columns: 1fr; }
   body.app-shell .painel-ordem-controle { flex-wrap: wrap; }
 }
