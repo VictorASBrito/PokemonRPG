@@ -7,6 +7,24 @@
 
     let foco = null;
 
+    // A altura do quadro de atributos, esticada na grade normal, não deve
+    // diminuir ao trocar a equipe pelo modo de foco. A medida é local ao painel
+    // do jogador: o painel de NPCs não possui esse quadro.
+    const painelAtributos = document.querySelector(
+        '.dashboard-jogador:not(.npc-painel) .painel-atributos-treinador',
+    );
+    const guardarAlturaAtributos = () => {
+        if (foco || !painelAtributos) return;
+        const altura = Math.ceil(painelAtributos.getBoundingClientRect().height);
+        if (altura > 0) {
+            painelAtributos.style.setProperty('--dashboard-altura-atributos-original', `${altura}px`);
+        }
+    };
+    const restaurarAlturaAtributos = () => {
+        painelAtributos?.style.removeProperty('--dashboard-altura-atributos-original');
+    };
+
+
     const definirAcessibilidade = (card, expandido) => {
         card.setAttribute('aria-expanded', expandido ? 'true' : 'false');
         card.classList.toggle('pokemon-dashboard-detalhes-abertos', expandido);
@@ -24,6 +42,7 @@
     const voltarGrade = ({ manterFoco = true } = {}) => {
         const anterior = foco;
         grade.classList.remove('dashboard-pokemon-modo-foco');
+        restaurarAlturaAtributos();
         document.body.classList.remove('dashboard-foco-aberto');
         cards.forEach((card) => {
             card.classList.remove('pokemon-dashboard-em-foco', 'pokemon-dashboard-lateral');
@@ -38,6 +57,7 @@
         // Isso permite selecionar/copiar texto e analisar os dados sem recolher por acidente.
         if (foco === card) return;
 
+        guardarAlturaAtributos();
         foco = card;
         grade.classList.add('dashboard-pokemon-modo-foco');
         document.body.classList.add('dashboard-foco-aberto');
