@@ -22,6 +22,7 @@ body.app-shell .etiqueta-tipo {
   background: var(--tipo-cor, #66768b);
 }
 body.app-shell :is(.retrato-pokemon-dashboard, .preview-imagem, .pokemon-imagem-wrap,
+  .forma-admin-imagem, .painel-pokemon-imagem, .box-pokemon-imagem-wrap,
   .capturavel-visual, .capturavel-card-shiny .capturavel-visual,
   .captura-slide-arte, .captura-slide-shiny .captura-slide-arte) {
   background: var(--superficie-suave);
