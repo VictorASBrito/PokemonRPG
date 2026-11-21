@@ -1903,6 +1903,7 @@
 }
 .pokemon-dashboard-acao-posicao {
     min-width: 0;
+    max-width: 50%;
     position: relative;
     pointer-events: auto;
 }
@@ -1911,27 +1912,46 @@
 .pokemon-dashboard-seletor { position: relative; }
 .pokemon-dashboard-seletor > summary { list-style: none; }
 .pokemon-dashboard-seletor > summary::-webkit-details-marker { display: none; }
+/* Ação legível como o botão original: ícone + nome, nos cantos do retrato. */
 .pokemon-dashboard-indicador {
-    border: 2px solid currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: auto;
+    max-width: 100%;
+    min-height: 43px;
+    height: auto;
+    padding: 6px 10px;
+    border: 1px solid currentColor;
     border-radius: 10px;
-    background: rgba(16,22,36,.84);
-    display: grid;
-    place-items: center;
-    width: 54px;
-    height: 45px;
-    padding: 5px;
+    background: rgba(22, 30, 43, .96);
+    color: var(--texto);
+    font: inherit;
+    font-size: .76rem;
+    font-weight: 800;
+    line-height: 1.15;
     cursor: pointer;
     pointer-events: auto;
     box-sizing: border-box;
+    text-align: left;
 }
-.pokemon-dashboard-indicador img {
+.pokemon-dashboard-indicador > img {
     display: block;
-    width: 29px;
-    height: 29px;
-    max-width: 29px;
-    max-height: 29px;
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
+    max-width: 27px;
+    max-height: 27px;
     object-fit: contain;
     filter: none;
+}
+.pokemon-dashboard-acao-rotulo {
+    display: block;
+    min-width: 0;
+    max-width: 150px;
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 .pokemon-dashboard-indicador.indicador-evolucao { color: #f25b65; }
 .pokemon-dashboard-indicador.indicador-formas { color: #62a8ff; }
@@ -1941,17 +1961,20 @@
     background: rgba(45,55,80,.96);
     box-shadow: 0 0 0 2px currentColor;
 }
+/* O menu fica acima do ícone e tem rolagem apenas quando as opções excedem a altura. */
 .pokemon-dashboard-seletor .pokemon-dashboard-lista-opcoes {
     position: absolute;
-    z-index: 25;
+    z-index: 70;
     bottom: calc(100% + 8px);
     left: 0;
     display: grid;
     gap: 4px;
-    width: min(300px, calc(100vw - 40px));
-    min-width: 210px;
-    max-height: 300px;
+    width: min(300px, calc(100vw - 32px));
+    min-width: min(220px, calc(100vw - 32px));
+    max-height: min(340px, 55vh);
+    overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 9px;
     background: var(--superficie);
     border: 1px solid var(--borda);
@@ -1987,11 +2010,23 @@
 .dashboard-acao-opcao:hover,
 .dashboard-acao-opcao:focus-visible { background: var(--superficie-suave); }
 .dashboard-acao-opcao:disabled { cursor: not-allowed; opacity: .5; }
-.pokemon-dashboard-lista-opcoes .dashboard-acao-opcao img {
+.retrato-pokemon-dashboard .pokemon-dashboard-lista-opcoes .dashboard-acao-opcao > img {
+    display: block;
     flex: 0 0 34px;
     width: 34px;
     height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    max-width: 34px;
+    max-height: 34px;
     object-fit: contain;
+    overflow: hidden;
+}
+.pokemon-dashboard-lista-opcoes,
+.pokemon-dashboard-lista-opcoes * { box-sizing: border-box; }
+.pokemon-dashboard-lista-opcoes .dashboard-acao-opcao strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 .dashboard-acao-opcao span { display: grid; min-width: 0; gap: 2px; }
 .dashboard-acao-opcao strong { font-size: .8rem; }
@@ -1999,7 +2034,9 @@
 .dashboard-acao-aviso { display: block; padding: 4px 8px; line-height: 1.4; }
 @media (max-width: 640px) {
     .pokemon-dashboard-indicadores { inset-inline: 8px; bottom: 8px; }
-    .pokemon-dashboard-indicador { width: 48px; height: 42px; }
+    .pokemon-dashboard-indicador { max-width: 100%; min-height: 40px; padding: 5px 7px; font-size: .69rem; }
+    .pokemon-dashboard-indicador > img { width: 23px; height: 23px; flex-basis: 23px; max-width: 23px; max-height: 23px; }
+    .pokemon-dashboard-acao-rotulo { max-width: 116px; }
     .pokemon-dashboard-seletor .pokemon-dashboard-lista-opcoes {
         width: min(250px, calc(100vw - 28px));
         min-width: min(210px, calc(100vw - 28px));
