@@ -6,6 +6,16 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.4 — Foco acessível em notebooks baixos (21/11/2026)
+
+**Escopo:** continuação incremental da revisão de frontend após a confirmação do usuário de que a Bag mobile ficou correta. A inspeção do código compartilhado por jogador e NPC encontrou um risco de corte no modo expandido: a partir de 901px, `dashboard.css` bloqueia o overflow do documento e fixa grade, card principal e detalhes à altura da viewport; os golpes e ações também têm contenção. Em alturas baixas isso pode ocultar informações sem alternativa de rolagem.
+
+**Branch:** `fix/dashboard-foco-rolagem-10f4`, baseada na `main` após o PR #34 já mesclado. Propor PR independente, **sem merge automático**.
+
+**Implementação:** adicionar `@media (min-width: 901px) and (max-height: 760px)` em `static/css/dashboard.css`: restaurar scroll vertical do documento, alturas naturais na ficha, grade e card em foco, detalhes/golpes/anotações sem clipping, companheiros laterais com tamanho natural e treinador não sticky; manter layout desktop alto e mobile intactos. Atualizar cache de CSS nos dois templates do dashboard. Criar `tests/test_dashboard_foco_baixa_altura_10f4.py` no workflow visual. Nenhuma alteração de JS, rotas, dados ou regras de Ankar.
+
+**Status:** implementação e testes adicionados; CI e validação visual final a conferir. **Verificação complementar:** jogador, mestre em prévia e NPC em notebooks 1024×600 e 1366×768, zoom 200%, 1–6 Pokémon, campos de informações longos, uso de Recolher, editar e ações de retrato. Não afirmar correção visual definitiva sem navegador real.
+
 ## Etapa 10F.3 — Largura do inventário e abas completas no celular (21/11/2026)
 
 **Origem:** usuário relatou que a Bag continuava visualmente cortada depois da etapa 10F.2 (PR #33 já mesclado). Inspeção do CSS revelou outro transbordamento potencial: `inventario.css` coloca `.inventario-nds-bag::after` 120px para fora do painel, e `visual-inventario-10c5.css` permite `overflow: visible` até 1199px. A faixa circular que aparece no espaço escuro à direita do print é compatível com esse elemento decorativo. O teste no celular ainda deve confirmar a correção.
