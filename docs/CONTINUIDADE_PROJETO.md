@@ -6,6 +6,18 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 11C-UI — Acabamento fosco e organização da Bag (21/11/2026)
+
+**Escopo:** após merge do PR #42, revisão das 32 folhas de estilo da interface; separar destaque funcional de brilho, preservando tema, sprites, cores de tipos/status, barra de PV, identificação shiny e foco de teclado.
+
+**Acabamento:** `static/css/visual-fosco-11c.css`, carregado por último em `base.html`. Neutraliza sombras decorativas de caixas e textos inclusive pseudo-elementos; remove halos radiais de retratos, capturáveis, login e Bag, e filtros de sombra em imagens conhecidas sem remover filtros funcionais de ícones. Etiquetas adotam cor sólida; foco, navegação ativa e demais estados mantêm contornos sólidos. Não altera imagens originais ou dados da campanha.
+
+**Ordem:** botão Organizar itens exclusivo do jogador na Bag; habilita alças para arrastar mouse/toque, setas do teclado, rolagem assistida e feedback de salvamento. Desativa busca durante organização e restaura a busca ao concluir ou trocar bolsa. Permanece na mesma categoria, não movimenta quantidades/equipamentos, cancela no Escape e restaura DOM se servidor rejeitar. Ordem persistida por personagem/bolsa; mestre visualiza sem editar. Itens não ordenados ficam depois dos ordenados, alfabeticamente; consumir até zero e readquirir cria registro novo (sem posição). Endpoint POST JSON valida sessão, usuário, campanha, categoria, UUIDs, duplicatas e conjunto exato de registros existentes; transação curta, locks PostgreSQL. Não muda operações de uso/transferência e seus modais.
+
+**Migration obrigatória:** `d11c00000001` após `c42e10040001`, coluna opcional `personagem_itens.ordem_bolsa`; registros existentes ficam NULL e mantêm ordem alfabética. Backup antes de executar `flask --app app.py db upgrade` no servidor/local de Ankar. Não aplicar a banco real pelo ambiente de teste; código novo requer schema atualizado antes de servir a aplicação. Downgrade remove apenas preferência.
+
+**Validação:** amplia a matriz de auditoria Playwright 10F.7 com inspeção computed styles para sombras e halos, mais três novos cenários de mouse, toque real via CDP no Chromium, teclado, persistência e rollback visual, incluindo 320/390/1366px. Testes de integração verificam migration isolada, rejeição de itens alheios/duplicados/ausentes e inclusão posterior de item. CI e revisão visual ainda pendentes. Nenhuma edição no PostgreSQL real.
+
 ## Etapa 11B-UI — Refinamento da Bag e confirmação das operações (21/11/2026)
 
 **Pedido:** corrigir seleção luminosa recortada e diferenças de espaçamento entre itens, mudar ações para o detalhe, estabilizar etiquetas e exigir confirmação antes de operações. Capturas do mestre em 1720×864 motivaram a revisão.
