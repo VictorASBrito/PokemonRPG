@@ -4,7 +4,7 @@
 {% block titulo %}Painel de {{ treinador.get('nome', 'Treinador') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f4-foco-altura') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f5-sprite-atributos') }}">
 {% endblock %}
 
 {% block conteudo %}
@@ -31,18 +31,25 @@
 <div class="dashboard-jogador">
     <aside class="coluna-treinador">
         <section class="cartao painel-identidade ui-card">
+            {# O sprite da entrada visual é a identidade no painel; a ficha continua editável. #}
+            {% set sprite_painel = sprite_personagem_url|default('') %}
+            {% set imagem_painel = sprite_painel or treinador.get('foto_url') %}
             <div class="foto-treinador-wrap">
-                {% if treinador.get('foto_url') %}
-                    <img
-                        class="foto-treinador"
-                        src="{{ treinador.get('foto_url') }}"
-                        alt="Foto de {{ treinador.get('nome') or 'personagem' }}"
-                    >
-                {% else %}
-                    <div class="foto-treinador foto-treinador-placeholder" aria-label="Foto não definida">
-                        {{ (treinador.get('nome') or nome_jogador or 'T')[0]|upper }}
-                    </div>
-                {% endif %}
+                <a class="foto-treinador-link" href="{{ dashboard_ficha_url }}"
+                   aria-label="Abrir ficha de {{ treinador.get('nome') or 'personagem' }}"
+                   title="Abrir ficha do personagem">
+                    {% if imagem_painel %}
+                        <img
+                            class="foto-treinador{% if sprite_painel %} foto-treinador-sprite{% endif %}"
+                            src="{{ imagem_painel }}"
+                            alt=""
+                        >
+                    {% else %}
+                        <span class="foto-treinador foto-treinador-placeholder" aria-hidden="true">
+                            {{ (treinador.get('nome') or nome_jogador|default('') or 'T')[0]|upper }}
+                        </span>
+                    {% endif %}
+                </a>
             </div>
 
             <div class="nomes-treinador">
@@ -302,5 +309,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10e4-4-modal') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10f5-atributos-altura') }}"></script>
 {% endblock %}
