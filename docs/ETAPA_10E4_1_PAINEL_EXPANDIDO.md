@@ -31,12 +31,12 @@ O menu e os botões usam HTML `<details>`, `<summary>`,
 `<button>` e `<form>`, com foco/teclado acessíveis.
 Confirmação JS antes das ações irreversíveis.
 
-Os ícones são três SVGs locais originais:
-`static/img/evolucao-disponivel.svg`,
-`static/img/mudanca-forma.svg` e
-`static/img/mega-pedra-ankar.svg`. Os sprites das formas
-são lidos do catálogo `FormaPokemon` (com variante shiny
-quando correspondente).
+Evolução permanente e mudança de forma usam os SVGs locais
+`static/img/evolucao-disponivel.svg` e
+`static/img/mudanca-forma.svg`. Os controles de Mega usam a imagem
+já disponível no inventário, `static/img/inventory/itens/keystone.png`,
+em vez do SVG ilustrativo gerado anteriormente. Os sprites das formas
+são lidos do catálogo `FormaPokemon` (incluindo Shiny).
 
 ## Menu ⋮ do mestre
 
@@ -116,3 +116,12 @@ Fluxos para homologar após integrar:
 
 A integração não deve editar diretamente dados de produção,
 não deve reimportar a Pokédex e não modifica o esquema.
+
+
+## Correção de ícone e diagnóstico da Mega no painel (10E.4.1)
+
+- Os estilos de arte grande foram limitados a `.retrato-pokemon-dashboard > img`; antes aplicavam dimensões de até 430px também ao ícone aninhado, que acabava cortado e parecia uma borda azul vazia.
+- Blaziken e qualquer outro Pokémon com apenas Mega disponível mostram o `keystone.png` no indicador; reversão/alternativas ainda usam o ícone azul de troca.
+- O botão Mega indisponível mostra o motivo diretamente abaixo: mestre não habilitou, Pokémon fora do Campo, sem PV, transformação já ativa ou outra Mega do treinador em andamento.
+- O serviço continua verificando as condições na requisição POST; nenhuma regra é enfraquecida. A arte principal continua usando a URL do catálogo e sua sincronização HD quando disponível.
+- Não há migration ou alteração no PostgreSQL nesta correção.

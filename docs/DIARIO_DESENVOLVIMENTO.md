@@ -509,3 +509,12 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Sem migration nova;** mantém `c42e10040001` da 10E.4. Nenhum Pokémon, item ou trainer real é modificado pelo assistente. Testes `tests/test_painel_expandido_evolucao_10e4_1.py` e workflow dedicado; atualizar status quando CI concluir.
 
 - **CI validada:** workflow `Ações no painel expandido e Mega no menu mestre - 10E.4.1`, execução `44844326749`, job `136660201903`, commit `cb2600d1`: **75 passed in 39.42s**. Testes específicos + regressões de Morpeko, Rotom, Charizard X/Y, devolução ao expandido, switch Mega do mestre, evolução por nível e segurança da ficha /p/login. Na primeira execução, seis falhas de teste foram corrigidas (fixtures de Box em cenários que agora usam painel de Equipe; token legado do Campo; instância SQLAlchemy desconectada), sem ampliar permissões do backend. Última execução principal aprovada; 14 outros workflows concluídos com sucesso e dois ainda rodando na consulta. SQLite/Linux; homologação PostgreSQL pelo mestre após merge. PR #23 aberto e mesclável; sem migration.
+
+
+### 2026-11-20 — Ajuste visual e diagnóstico de Mega da 10E.4.1
+- **Relato:** indicador azul aparecia como retângulo vazio no retrato de Blaziken, e `Mega Evoluir` ficava desabilitado sem explicação clara.
+- **Causa visual:** seletor genérico `.retrato-pokemon-dashboard img` redimensionava também as imagens dos controles aninhados; corrigido para `> img` nos CSSs do dashboard e imagens HD.
+- **Arte:** reutilizado o `static/img/inventory/itens/keystone.png` existente em todos os controles de Mega, inclusive menu do mestre, no lugar do SVG ilustrativo; imagens dos Pokémon permanecem originadas do catálogo.
+- **Elegibilidade:** mantidas permissão do mestre, Pokémon no Campo, PV positivos, forma original e exclusividade de uma Mega ativa por treinador. Agora o bloqueio é descrito explicitamente no painel, inclusive quando existe outra Mega ativa.
+- **Arquivos:** template jogador/mestre, CSS, serviço de ações somente leitura, testes e docs 10E.4.1.
+- **Banco:** sem migration; sem mudanças de dados reais. Validar testes em CI e homologar no PostgreSQL após merge.

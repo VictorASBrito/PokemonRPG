@@ -146,9 +146,11 @@
                                 </button>
                                 {% endif %}
                                 {% if acoes.get('alternativas') or acoes.get('megas') or acoes.get('pode_reverter') %}
+                                {% set indicador_mega = acoes.get('megas') and not acoes.get('alternativas') and not acoes.get('pode_reverter') %}
                                 <button type="button" class="pokemon-dashboard-indicador indicador-formas"
-                                        data-pokemon-abrir="formas" title="Mudança de forma e Mega" aria-label="Ver formas de {{ nome_exibicao }}">
-                                    <img src="{{ url_for('static', filename='img/mudanca-forma.svg') }}" alt="">
+                                        data-pokemon-abrir="formas" title="{{ 'Mega Evolução' if indicador_mega else 'Mudança de forma' }}"
+                                        aria-label="{{ 'Ver Mega Evolução' if indicador_mega else 'Ver formas' }} de {{ nome_exibicao }}">
+                                    <img src="{{ url_for('static', filename='img/inventory/itens/keystone.png' if indicador_mega else 'img/mudanca-forma.svg') }}" alt="">
                                 </button>
                                 {% endif %}
                             </div>
@@ -338,7 +340,20 @@
                             {% endif %}
 
                             {% if acoes.get('megas') %}
-                                {% set mega_disponivel = acoes.mega_habilitada and acoes.em_campo and acoes.pode_transformar and not acoes.tipo_transformacao %}
+                                {% set mega_disponivel = acoes.mega_habilitada and acoes.em_campo and acoes.pode_transformar and not acoes.tipo_transformacao and not acoes.outra_mega_ativa %}
+                                {% if not acoes.mega_habilitada %}
+                                    {% set mega_bloqueio = 'Mega Evolução não liberada. Peça ao mestre para habilitar seu treinador.' %}
+                                {% elif not acoes.em_campo %}
+                                    {% set mega_bloqueio = 'Coloque este Pokémon no Campo para Mega Evoluir.' %}
+                                {% elif not acoes.pode_transformar %}
+                                    {% set mega_bloqueio = 'Este Pokémon está desmaiado e não pode Mega Evoluir.' %}
+                                {% elif acoes.tipo_transformacao %}
+                                    {% set mega_bloqueio = 'Reverta a forma temporária antes de Mega Evoluir.' %}
+                                {% elif acoes.outra_mega_ativa %}
+                                    {% set mega_bloqueio = 'Já existe outra Mega Evolução ativa deste treinador. Reverta-a primeiro.' %}
+                                {% else %}
+                                    {% set mega_bloqueio = '' %}
+                                {% endif %}
                                 {% if acoes.megas|length == 1 %}
                                 {% set mega = acoes.megas[0] %}
                                 <form method="post" action="{{ url_for('pokemons.transformar_jogador', pokemon_id=pokemon.get('id')) }}" data-confirmacao="Mega Evoluir para {{ mega.nome }}?" class="pokemon-dashboard-acao-direta">
@@ -346,16 +361,17 @@
                                     <input type="hidden" name="origem" value="painel">
                                     <input type="hidden" name="tipo" value="mega">
                                     <input type="hidden" name="destino_id" value="{{ mega.id }}">
-                                    <button type="submit" class="dashboard-acao-azul" {% if not mega_disponivel %}disabled title="{{ 'Mega não liberada pelo mestre' if not acoes.mega_habilitada else 'Coloque o Pokémon no Campo e verifique seus PV' }}"{% endif %}>
-                                        <img src="{{ url_for('static', filename='img/mega-pedra-ankar.svg') }}" alt=""> Mega Evoluir
+                                    <button type="submit" class="dashboard-acao-azul" {% if not mega_disponivel %}disabled title="{{ mega_bloqueio }}"{% endif %}>
+                                        <img src="{{ url_for('static', filename='img/inventory/itens/keystone.png') }}" alt=""> Mega Evoluir
                                     </button>
+                                    {% if mega_bloqueio %}<small class="dashboard-acao-aviso" role="status">{{ mega_bloqueio }}</small>{% endif %}
                                 </form>
                                 {% else %}
                                 <details class="pokemon-dashboard-acao-menu dashboard-acao-azul" data-pokemon-painel="formas">
-                                    <summary><img src="{{ url_for('static', filename='img/mega-pedra-ankar.svg') }}" alt="">Mega Evoluir</summary>
+                                    <summary><img src="{{ url_for('static', filename='img/inventory/itens/keystone.png') }}" alt="">Mega Evoluir</summary>
                                     <div class="pokemon-dashboard-lista-opcoes">
                                         {% if not mega_disponivel %}
-                                        <small class="dashboard-acao-aviso">{{ 'Permissão Mega não liberada pelo mestre.' if not acoes.mega_habilitada else 'A Mega exige o Pokémon no Campo, consciente e sem outra forma ativa.' }}</small>
+                                        <small class="dashboard-acao-aviso" role="status">{{ mega_bloqueio }}</small>
                                         {% endif %}
                                         {% for mega in acoes.megas %}
                                         <form method="post" action="{{ url_for('pokemons.transformar_jogador', pokemon_id=pokemon.get('id')) }}" data-confirmacao="Mega Evoluir para {{ mega.nome }}?">
@@ -364,7 +380,7 @@
                                             <input type="hidden" name="tipo" value="mega">
                                             <input type="hidden" name="destino_id" value="{{ mega.id }}">
                                             <button type="submit" class="dashboard-acao-opcao" {% if not mega_disponivel %}disabled{% endif %}>
-                                                {% if mega.imagem %}<img src="{{ mega.imagem }}" alt="">{% else %}<img src="{{ url_for('static', filename='img/mega-pedra-ankar.svg') }}" alt="">{% endif %}
+                                                {% if mega.imagem %}<img src="{{ mega.imagem }}" alt="">{% else %}<img src="{{ url_for('static', filename='img/inventory/itens/keystone.png') }}" alt="">{% endif %}
                                                 <span><strong>{{ mega.nome }}</strong></span>
                                             </button>
                                         </form>

@@ -46,6 +46,10 @@ def carregar_acoes_equipe_dashboard(contexto, equipe: list[dict]) -> list[dict]:
         str(pokemon.id): pokemon for pokemon in personagem.pokemons
         if pokemon.ativo and pokemon.localizacao == "equipe"
     }
+    megas_ativas = {
+        item.id for item in personagem.pokemons
+        if item.ativo and item.tipo_transformacao == "mega"
+    }
     for registro in equipe:
         pokemon = por_id.get(registro.get("pokemon", {}).get("id"))
         if pokemon is None:
@@ -76,6 +80,7 @@ def carregar_acoes_equipe_dashboard(contexto, equipe: list[dict]) -> list[dict]:
                 for forma in formas["mega"]
             ] if pokemon.tipo_transformacao is None else [],
             "mega_habilitada": bool(personagem.mega_habilitada),
+            "outra_mega_ativa": any(ativa != pokemon.id for ativa in megas_ativas),
             "em_campo": em_batalha,
             "tipo_transformacao": pokemon.tipo_transformacao,
             "forma_ativa": formas["atual"].nome if formas["atual"] else "",

@@ -181,7 +181,7 @@ def test_mega_trainer_menu_tres_pontos_sem_pedra_e_fluxo_expandido(app_db, clien
     mestre_html = client_db.get("/mestre/dashboard").get_data(as_text=True)
     assert 'data-menu-opcoes' in mestre_html
     assert "Permitir Mega Evolução" in mestre_html
-    assert "mega-pedra-ankar.svg" in mestre_html
+    assert "img/inventory/itens/keystone.png" in mestre_html
     assert 'role="switch"' in mestre_html
     assert "mega_habilitada" not in mestre_html  # campo interno não vaza no HTML
     token = _csrf(client_db, "perfil_csrf")
@@ -198,7 +198,7 @@ def test_mega_trainer_menu_tres_pontos_sem_pedra_e_fluxo_expandido(app_db, clien
     client_db.post("/logout")
     _login(client_db)
     html = client_db.get("/jogador/dashboard").get_data(as_text=True)
-    assert "Mega Evoluir" in html and "mega-pedra-ankar.svg" in html
+    assert "Mega Evoluir" in html and "img/inventory/itens/keystone.png" in html
     assert "Charizard-Mega-X" in html and "Charizard-Mega-Y" in html
     csrf = _csrf(client_db, "csrf_acao_evolucao")
     r = client_db.post(f"/jogador/pokemon/{pid}/transformar", data={
@@ -230,3 +230,44 @@ def test_preview_mestre_nao_recebe_botoes_de_evolucao_do_jogador(app_db, client_
     assert "Visualização como jogador" in html
     assert 'data-pokemon-abrir="evolucoes"' not in html
     assert "Evoluir" not in html
+
+
+def test_keystone_local_e_css_protege_icone_do_retrato():
+    from pathlib import Path
+
+    raiz = Path(__file__).resolve().parents[1]
+    assert (raiz / "static/img/inventory/itens/keystone.png").is_file()
+    css = (raiz / "static/css/dashboard.css").read_text(encoding="utf-8")
+    assert ".retrato-pokemon-dashboard img" not in css
+    assert ".retrato-pokemon-dashboard > img" in css
+    assert ".pokemon-dashboard-indicador img" in css
+
+
+def test_mega_exibe_motivo_quando_treinador_liberado_mas_pokemon_fora_campo(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("charizard", [
+            ("charizard", "normal"), ("charizard-mega-x", "mega"),
+        ])
+        _pokemon(app_db, formas["charizard"])
+        treinador = db.session.get(Personagem, _ids(app_db)["personagem"])
+        treinador.mega_habilitada = True
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    aviso = "Coloque este Pokémon no Campo para Mega Evoluir."
+    assert aviso in html
+    assert f'disabled title="{aviso}"' in html
+    assert "img/inventory/itens/keystone.png" in html
+
+
+def test_mega_exibe_motivo_quando_mestre_nao_liberou(app_db, client_db):
+    with app_db.app_context():
+        formas = _familia("charizard", [
+            ("charizard", "normal"), ("charizard-mega-x", "mega"),
+        ])
+        _pokemon(app_db, formas["charizard"])
+        db.session.commit()
+    _login(client_db)
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert "Mega Evolução não liberada. Peça ao mestre" in html
+    assert "img/inventory/itens/keystone.png" in html

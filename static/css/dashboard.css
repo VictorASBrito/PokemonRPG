@@ -219,7 +219,7 @@
     border-radius: 14px;
 }
 
-.retrato-pokemon-dashboard img {
+.retrato-pokemon-dashboard > img {
     width: 108px;
     height: 108px;
     object-fit: contain;
@@ -407,7 +407,7 @@
     .coluna-treinador { grid-template-columns: 1fr; }
     .pokemon-dashboard-topo { grid-template-columns: 92px minmax(0, 1fr); }
     .retrato-pokemon-dashboard { min-height: 92px; }
-    .retrato-pokemon-dashboard img { width: 84px; height: 84px; }
+    .retrato-pokemon-dashboard > img { width: 84px; height: 84px; }
     .conteudo-pokemon-dashboard { grid-template-columns: 1fr; }
 }
 
@@ -464,7 +464,7 @@
     overflow: hidden;
 }
 
-.pokemon-dashboard-card .retrato-pokemon-dashboard img {
+.pokemon-dashboard-card .retrato-pokemon-dashboard > img {
     width: min(132px, 88%);
     height: 132px;
     max-width: 100%;
@@ -518,7 +518,7 @@
     border-radius: 18px;
 }
 
-.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+.dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard > img {
     width: min(330px, 92%);
     height: 330px;
 }
@@ -788,7 +788,7 @@
     border-radius: 11px;
 }
 
-.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard img {
+.dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard > img {
     width: 70px;
     height: 70px;
 }
@@ -855,7 +855,7 @@
     .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard {
         min-height: 280px;
     }
-    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard > img {
         height: 260px;
     }
     .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .pokemon-dashboard-detalhes-expandidos {
@@ -993,7 +993,7 @@
     min-height: 126px;
 }
 
-.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard img {
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard > img {
     width: min(112px, 86%);
     height: 112px;
 }
@@ -1156,7 +1156,7 @@
         overflow: hidden;
     }
 
-    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard > img {
         width: min(94%, 430px);
         height: min(64vh, 500px);
         max-width: 94%;
@@ -1364,7 +1364,7 @@
         height: 58px;
     }
 
-    .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard img {
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-lateral .retrato-pokemon-dashboard > img {
         width: 54px;
         height: 54px;
     }
@@ -1401,7 +1401,7 @@
         row-gap: 7px;
     }
 
-    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard img {
+    .dashboard-pokemon-modo-foco .pokemon-dashboard-em-foco .retrato-pokemon-dashboard > img {
         width: min(90%, 330px);
         height: min(58vh, 360px);
     }
@@ -1518,7 +1518,7 @@
     aspect-ratio: 1;
     overflow: hidden;
 }
-.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard img {
+.grade-pokemons-dashboard:not(.dashboard-pokemon-modo-foco) .pokemon-dashboard-card .retrato-pokemon-dashboard > img {
     display: block;
     width: 100%;
     height: 100%;
@@ -1905,7 +1905,8 @@
   cursor: pointer;
   pointer-events: auto;
 }
-.pokemon-dashboard-indicador img { width: 28px; height: 28px; object-fit: contain; }
+/* Ícones têm dimensões próprias; a arte grande é apenas o filho direto do retrato. */
+.pokemon-dashboard-indicador img { display: block; width: 28px; height: 28px; object-fit: contain; }
 .pokemon-dashboard-indicador.indicador-evolucao { color: #f25b65; }
 .pokemon-dashboard-indicador.indicador-formas { color: #62a8ff; }
 .pokemon-dashboard-indicador:hover, .pokemon-dashboard-indicador:focus-visible {
