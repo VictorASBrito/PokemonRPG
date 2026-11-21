@@ -9,10 +9,11 @@
 {# ANKAR_VISUAL_MOCHILA_10C5: layout fluido, autocomplete e mobile/tablet. #}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-inventario-10c5.css', v='10c5-ring-10f7') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/inventario-acoes-11b.css', v='11b-2') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/inventario-ordem-11c.css', v='11c-1') }}">
 {% endblock %}
 {% block conteudo %}
 <!-- Inventario NDS: {{ versao_inventario }}. Se este marcador não aparecer no código-fonte, o servidor está usando arquivos antigos. -->
-<div id="inventario-nds" class="inventario-nds" data-inventario-versao="{{ versao_inventario }}" data-inventario>
+<div id="inventario-nds" class="inventario-nds" data-inventario-versao="{{ versao_inventario }}" data-inventario{% if not modo_mestre %} data-ordem-url="{{ url_for('inventario.ordem_jogador') }}"{% endif %}>
     {# 10C4/11B: POST único, acionado após confirmação explícita no modal. #}
     <form id="inventario-uso-10c4" data-formulario-uso method="post"
           action="{{ url_for('inventario.usar_mestre', personagem_id=personagem.id) if modo_mestre else url_for('inventario.usar_jogador') }}" hidden>
@@ -118,6 +119,13 @@
                 <div class="inventario-nds-card inventario-nds-card-lista">
                     <label class="inventario-nds-busca-label" for="inventario-busca">Pesquisar nesta bolsa</label>
                     <input id="inventario-busca" class="inventario-nds-busca" type="search" placeholder="Nome, categoria ou descrição" autocomplete="off" data-busca-inventario>
+                    {% if not modo_mestre %}
+                    <div class="inventario-ordem-toolbar">
+                        <button class="inventario-ordem-toggle" type="button" data-ordem-toggle aria-pressed="false">Organizar itens</button>
+                        <small data-ordem-ajuda hidden>Arraste pela alça ou use as setas do teclado.</small>
+                        <span data-ordem-status role="status" aria-live="polite"></span>
+                    </div>
+                    {% endif %}
                     <div class="inventario-nds-lista" data-lista-inventario role="list">
                         {% for linha in itens_visuais %}
                         {% set item = linha.item %}
@@ -133,6 +141,7 @@
                                 </span>
                                 <span class="inventario-nds-linha-quantidade">× {{ linha.registro.quantidade }}</span>
                             </button>
+                            {% if not modo_mestre %}<button type="button" class="inventario-ordem-alca" data-ordem-alca aria-label="Mover {{ item.nome }}; use as setas para cima e para baixo" title="Arrastar para ordenar" hidden>⠿</button>{% endif %}
                             <script type="application/json" data-uso-efeitos="{{ item.id }}">{{ item.efeitos|tojson }}</script>
                         </div>
                         {% endfor %}
@@ -276,4 +285,5 @@
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/inventario.js', v=versao_inventario ~ '-mobile-10f2') }}" defer></script>
 <script src="{{ url_for('static', filename='js/inventario-uso-10c4.js', v='11b-confirmacao') }}" defer></script>
+{% if not modo_mestre %}<script src="{{ url_for('static', filename='js/inventario-ordem-11c.js', v='11c-1') }}" defer></script>{% endif %}
 {% endblock %}
