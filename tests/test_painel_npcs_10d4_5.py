@@ -293,3 +293,184 @@ def test_modais_npc_respeitam_grade_compartilhada_e_escape():
     assert '<section class="pokemon-dashboard-painel-detalhe npc-painel-edicao">' not in template
     assert '<section class="pokemon-dashboard-painel-detalhe npc-painel-controles">' not in template
     assert 'data-npc-dialog-close' in template
+
+
+# 10D.4.7 — relações personalizadas e modos do NPC (sem criar Pokemon/Personagem).
+def _familia_de_teste(codigo, definicoes):
+    from decimal import Decimal
+    from app.models.db import EspeciePokemon, FormaPokemon, FormaPokemonAtributo
+    especie = EspeciePokemon(codigo=codigo, nome=codigo.title(), ativo=True)
+    db.session.add(especie)
+    db.session.flush()
+    referencia = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
+    formas = {}
+    for nome, categoria in definicoes:
+        f = FormaPokemon(
+            especie=especie, codigo=nome, nome=nome.title(), categoria=categoria,
+            ativo=True, imagem_url=f"https://example.test/{nome}.png",
+        )
+        db.session.add(f)
+        db.session.flush()
+        for atributo in referencia.atributos_base:
+            db.session.add(FormaPokemonAtributo(
+                forma_pokemon=f, atributo=atributo.atributo,
+                valor_base=Decimal(atributo.valor_base) + (30 if categoria == "mega" else 5),
+            ))
+        formas[nome] = f
+    db.session.flush()
+    return formas
+
+
+def test_npc_mega_por_relacao_e_reversao_sem_perder_original(app_db, client_db):
+    from app.models.db import EvolucaoPokemon
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    with app_db.app_context():
+        formas = _familia_de_teste("scolipede-npc", [
+            ("scolipede-npc", "normal"), ("scolipede-npc-mega", "mega"),
+        ])
+        original, mega = formas["scolipede-npc"], formas["scolipede-npc-mega"]
+        db.session.add(EvolucaoPokemon(
+            forma_origem_id=original.id, forma_destino_id=mega.id,
+            tipo_requisito="especial", requisitos={"tipo_relacao": "mega"}, ativo=True,
+        ))
+        db.session.commit()
+        base_id, mega_id = str(original.id), str(mega.id)
+    url_painel = f"/mestre/catalogo/npcs/{modelo_id}/painel"
+    url_acao = f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/transformar"
+    assert client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+        "csrf_token": csrf, "forma_id": base_id,
+    }).status_code == 302
+    html = client_db.get(url_painel).get_data(as_text=True)
+    assert 'class="pokemon-dashboard-indicadores"' in html
+    assert "Mega Evoluir" in html
+    assert "img/inventory/itens/keystone.png" in html
+    assert f'name="destino_id" value="{mega_id}"' in html
+    assert 'aria-label="Seções do catálogo"' not in html
+
+    resposta = client_db.post(url_acao, data={
+        "csrf_token": csrf, "tipo": "mega", "destino_id": mega_id, "foco": "0",
+    })
+    assert resposta.status_code == 302 and "/painel?foco=0" in resposta.headers["Location"]
+    with app_db.app_context():
+        modelo = db.session.get(NPCModelo, uuid.UUID(modelo_id))
+        item = modelo.equipe[0]
+        assert item["forma_id"] == base_id
+        assert item["forma_temporaria_id"] == mega_id
+        assert item["tipo_transformacao"] == "mega"
+        pv_mega = item["pv_atual"]
+    html = client_db.get(url_painel).get_data(as_text=True)
+    assert "Scolipede-Npc-Mega" in html
+    assert "Reverter forma" in html
+    assert str(pv_mega) in html
+    resposta = client_db.post(url_acao, data={"csrf_token": csrf, "tipo": "reverter", "foco": "0"})
+    assert resposta.status_code == 302
+    with app_db.app_context():
+        membro = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
+        assert membro["forma_id"] == base_id
+        assert membro["forma_temporaria_id"] is None
+        assert membro["tipo_transformacao"] is None
+
+
+def test_npc_castform_multiplas_formas_troca_sem_alterar_permanente(app_db, client_db):
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    with app_db.app_context():
+        formas = _familia_de_teste("castform-npc", [
+            ("castform-npc", "normal"),
+            ("castform-npc-sol", "alternativa"), ("castform-npc-chuva", "alternativa"),
+            ("castform-npc-neve", "alternativa"),
+        ])
+        db.session.commit()
+        base = str(formas["castform-npc"].id)
+        chuva = str(formas["castform-npc-chuva"].id)
+        sol = str(formas["castform-npc-sol"].id)
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+        "csrf_token": csrf, "forma_id": base,
+    })
+    html = client_db.get(f"/mestre/catalogo/npcs/{modelo_id}/painel").get_data(as_text=True)
+    assert "Trocar de forma" in html
+    for nome in ("Castform-Npc-Sol", "Castform-Npc-Chuva", "Castform-Npc-Neve"):
+        assert nome in html
+    for codigo in ("castform-npc-sol", "castform-npc-chuva", "castform-npc-neve"):
+        assert f"https://example.test/{codigo}.png" in html
+    url = f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/transformar"
+    for destino in (chuva, sol):
+        assert client_db.post(url, data={
+            "csrf_token": csrf, "tipo": "alternativa", "destino_id": destino, "foco": "0",
+        }).status_code == 302
+    with app_db.app_context():
+        membro = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
+        assert membro["forma_id"] == base
+        assert membro["forma_temporaria_id"] == sol
+        assert membro["tipo_transformacao"] == "alternativa"
+    assert 'aria-label="Seções do catálogo"' not in html
+    catalogo = client_db.get("/mestre/catalogo/npcs").get_data(as_text=True)
+    assert 'aria-label="Seções do catálogo"' in catalogo
+
+
+def test_npc_mega_exclusiva_por_treinador_e_rejeita_destino_invalido(app_db, client_db):
+    from app.models.db import EvolucaoPokemon
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    with app_db.app_context():
+        formas = _familia_de_teste("mega-dupla-npc", [
+            ("mega-dupla-npc", "normal"), ("mega-dupla-npc-x", "mega"),
+        ])
+        base_id, mega_id = str(formas["mega-dupla-npc"].id), str(formas["mega-dupla-npc-x"].id)
+        db.session.add(EvolucaoPokemon(
+            forma_origem_id=formas["mega-dupla-npc"].id,
+            forma_destino_id=formas["mega-dupla-npc-x"].id,
+            tipo_requisito="especial", requisitos={"tipo_relacao": "mega"}, ativo=True,
+        ))
+        db.session.commit()
+    for _ in range(2):
+        assert client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={
+            "csrf_token": csrf, "forma_id": base_id,
+        }).status_code == 302
+    url0 = f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/transformar"
+    url1 = f"/mestre/catalogo/npcs/{modelo_id}/equipe/1/transformar"
+    assert client_db.post(url0, data={"csrf_token": csrf, "tipo": "mega", "destino_id": mega_id}).status_code == 302
+    assert client_db.post(url1, data={"csrf_token": csrf, "tipo": "mega", "destino_id": mega_id}).status_code == 302
+    assert client_db.post(url1, data={"csrf_token": csrf, "tipo": "mega", "destino_id": base_id}).status_code == 302
+    with app_db.app_context():
+        membros = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe
+        assert membros[0]["tipo_transformacao"] == "mega"
+        assert not membros[1].get("forma_temporaria_id")
+        assert membros[1]["forma_id"] == base_id
+    # CSRF obrigatório; jogadores não podem acionar rotas do mestre.
+    assert client_db.post(url0, data={"csrf_token": "invalido", "tipo": "reverter"}).status_code == 400
+    client_db.post("/logout")
+    login(client_db, "bartz-db", "abc123")
+    assert client_db.post(url0, data={"csrf_token": csrf, "tipo": "reverter"}).status_code in (302, 403)
+    with app_db.app_context():
+        membro = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
+        assert membro["tipo_transformacao"] == "mega"
+
+
+def test_npc_mega_reverte_ao_desmaiar_e_editando_forma_base(app_db, client_db):
+    from app.models.db import EvolucaoPokemon
+    login(client_db)
+    modelo_id, csrf = criar_npc(app_db, client_db)
+    with app_db.app_context():
+        formas = _familia_de_teste("mega-ko-npc", [
+            ("mega-ko-npc", "normal"), ("mega-ko-npc-x", "mega"),
+        ])
+        base, mega = str(formas["mega-ko-npc"].id), str(formas["mega-ko-npc-x"].id)
+        db.session.add(EvolucaoPokemon(
+            forma_origem_id=formas["mega-ko-npc"].id,
+            forma_destino_id=formas["mega-ko-npc-x"].id,
+            tipo_requisito="especial", requisitos={"tipo_relacao": "mega"}, ativo=True,
+        ))
+        db.session.commit()
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/adicionar", data={"csrf_token": csrf, "forma_id": base})
+    transform_url = f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/transformar"
+    client_db.post(transform_url, data={"csrf_token": csrf, "tipo": "mega", "destino_id": mega})
+    client_db.post(f"/mestre/catalogo/npcs/{modelo_id}/equipe/0/pv", data={
+        "csrf_token": csrf, "operacao": "menos", "quantidade": "9999",
+    })
+    with app_db.app_context():
+        membro = db.session.get(NPCModelo, uuid.UUID(modelo_id)).equipe[0]
+        assert membro["pv_atual"] <= 0
+        assert membro["forma_temporaria_id"] is None
+        assert membro["tipo_transformacao"] is None
