@@ -6,6 +6,18 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.2 — Correção da Bag/Inventário em celular (21/11/2026)
+
+**Motivo:** captura de tela de Android/Chrome enviada pelo usuário mostrou cards da equipe cortados lateralmente e a aba Item-chave ativa sem aparecer por completo. A inspeção do código confirmou o conflito: `sistema-ui.css` forçava `overflow-x: hidden` com seletor mais específico que o `overflow-x: auto` planejado por `visual-inventario-10c5.css`. O JS selecionava a primeira bolsa não vazia, mas não a posicionava na faixa horizontal.
+
+**Branch:** `fix/inventario-mobile-rolagem-20261121`, iniciada em `main` depois que o PR #32 da etapa 10F.1 foi mesclado. **Status:** alterações e regressões adicionadas, CI e teste no aparelho do usuário a confirmar. Nova PR para revisão, sem merge.
+
+**Mudanças:** remover apenas os overrides globais de `overflow-x` e tamanhos de cards/fotos no tablet/celular, preservando valores de desktop em `@media (min-width: 1200px)`; fazer `static/js/inventario.js` rolar **a faixa de abas**, sem rolar a página; atualizar cache em `templates/base.html` e `templates/jogador/inventario.html`; atualizar `tests/test_sistema_ui.py` e adicionar `tests/test_inventario_mobile_10f2.py` ao workflow de contrato visual.
+
+**Escopo:** somente frontend, nenhuma alteração de PostgreSQL, migration, rotas, autorizações, troca de personagem, transferência de itens ou lógica de uso/equipamento. A captura mostra também espaço à direita da área do site: o código corrigido não comprova sozinho a causa dessa aparência externa; solicitar revisão visual no dispositivo após deploy antes de considerar toda a questão encerrada.
+
+**Validação necessária:** conferir rolagem por toque da equipe (mais de um Pokémon), abertura direta em Item-chave, troca e navegação por teclado entre abas, zoom, largura total no Chrome do celular, painel mestre e jogador. Próxima etapa: revisão visual localizada da interface conforme novos achados, após aprovação deste patch.
+
 ## Etapa 10F.1 — Navegação mobile e conflito entre CSS globais (21/11/2026)
 
 **Status:** IMPLEMENTADO NA BRANCH; CI DO CONTRATO VISUAL APROVADA (40 testes, 21/11/2026); VALIDAÇÃO VISUAL REAL PENDENTE. Branch: `fix/mobile-nav-global-css-20261121`, baseada em `main`. PR proposto contra `main`, sem merge automático.
