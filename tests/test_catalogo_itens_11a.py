@@ -7,7 +7,7 @@ import pytest
 from sqlalchemy import func, select
 
 from app.extensions import db
-from app.models.db import Item, Personagem, PersonagemItem, Pokemon, StatusCondicao
+from app.models.db import Item, Personagem, PersonagemItem, Pokemon, PokemonStatus, StatusCondicao
 from app.services.inventario_service import usar_item_consumivel
 from app.services.materiais_evolucao_service import material_por_identificador
 from scripts.ampliar_catalogo_itens_11a import aplicar, carregar_lote, preparar
@@ -79,3 +79,70 @@ def test_pocao_importada_tem_efeito_e_pedra_nao_e_gasta_pela_bag(app_db):
                                  usuario_id=None, campanha_id=personagem.campanha_id)
         assert db.session.scalar(select(PersonagemItem.quantidade)
                                  .where(PersonagemItem.item_id == pedra.id)) == 2
+
+
+def test_lote_completo_e_cura_total_resolvem_status(app_db, tmp_path):
+    from shutil import copyfile
+    with app_db.app_context():
+        lote = carregar_lote()
+        # O teste não depende da rede. Os 5 ícones externos são substituídos
+        # por um PNG de fixture, usado apenas na pasta temporária.
+        for m in lote:
+            pasta = "itens" if m["origem_icone"] == "local" else "acervo-pokeapi"
+            arquivo = tmp_path / "static/img/inventory" / pasta / m["icone"]
+            arquivo.parent.mkdir(parents=True, exist_ok=True)
+            origem = ROOT / "static/img/inventory/itens" / (
+                m["icone"] if pasta == "itens" else "pocao.png")
+            copyfile(origem, arquivo)
+        totais = next(m for m in lote if m["codigo"] == "cura-total")
+        atuais = set(db.session.scalars(select(StatusCondicao.codigo)))
+        for codigo in totais["status"]:
+            if codigo not in atuais:
+                db.session.add(StatusCondicao(codigo=codigo, nome=codigo, ativo=True))
+        db.session.commit()
+        assert sum(p["acao"] == "criar" for p in aplicar(lote, raiz=tmp_path)) == 16
+        item = db.session.scalar(select(Item).where(Item.codigo == "cura-total"))
+        assert len(item.efeitos["efeitos"]) == 7
+        pessoa = db.session.get(Personagem, UUID(app_db.config["TEST_IDS"]["personagem"]))
+        pokemon = Pokemon(personagem_id=pessoa.id,
+                          forma_pokemon_id=UUID(app_db.config["TEST_IDS"]["formas"]["bulbasaur"]),
+                          pv_atual=5, localizacao="equipe", posicao=1, ativo=True)
+        db.session.add(pokemon)
+        db.session.flush()
+        paralisado = db.session.scalar(select(StatusCondicao).where(
+            StatusCondicao.codigo == "paralisado"))
+        db.session.add(PokemonStatus(pokemon_id=pokemon.id, status_id=paralisado.id))
+        db.session.add(PersonagemItem(personagem_id=pessoa.id,
+                                     item_id=item.id, quantidade=2))
+        pocao = db.session.scalar(select(Item).where(Item.codigo == "super-pocao"))
+        db.session.add(PersonagemItem(personagem_id=pessoa.id,
+                                     item_id=pocao.id, quantidade=2))
+        db.session.commit()
+        usar_item_consumivel(personagem_id=pessoa.id, item_id=item.id,
+                             pokemon_id=pokemon.id, usuario_id=None,
+                             campanha_id=pessoa.campanha_id)
+        assert db.session.scalar(select(func.count(PokemonStatus.id)).where(
+            PokemonStatus.pokemon_id == pokemon.id)) == 0
+        assert db.session.scalar(select(PersonagemItem.quantidade).where(
+            PersonagemItem.item_id == item.id)) == 1
+        usar_item_consumivel(personagem_id=pessoa.id, item_id=pocao.id,
+                             pokemon_id=pokemon.id, usuario_id=None,
+                             campanha_id=pessoa.campanha_id)
+        assert pokemon.pv_atual > 5
+        assert db.session.scalar(select(PersonagemItem.quantidade).where(
+            PersonagemItem.item_id == pocao.id)) == 1
+
+
+def test_alias_preserva_item_existente(app_db):
+    with app_db.app_context():
+        item = Item(codigo="pedra-de-agua", nome="Pedra da Água", preco=17,
+                    consumivel=False, ativo=True)
+        db.session.add(item)
+        db.session.commit()
+        id_original = item.id
+        lote = [m for m in carregar_lote() if m["codigo"] == "water-stone"]
+        p = aplicar(lote)[0]
+        assert p["acao"] == "preservar"
+        assert p["existente"] == "pedra-de-agua"
+        assert db.session.get(Item, id_original).preco == 17
+        assert db.session.scalar(select(Item).where(Item.codigo == "water-stone")) is None
