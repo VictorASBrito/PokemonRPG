@@ -352,6 +352,8 @@ def test_rota_somente_jogador_com_csrf_e_confirmacao_da_ficha(app_db, client_db)
         destino = _form("charmeleon", 10)
         rel = _relacao(origem, destino)
         p = _pokemon(app_db, origem)
+        p.localizacao = "equipe"  # o dashboard expandido só exibe equipe
+        p.posicao = 1
         db.session.commit()
         pid, relid, origem_id, destino_id = p.id, rel.id, origem.id, destino.id
     url = f"/jogador/pokemon/{pid}/evolucoes/{relid}/evoluir"
