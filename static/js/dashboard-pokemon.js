@@ -175,6 +175,8 @@
     });
     document.addEventListener('keydown', (evento) => {
         if (evento.key !== 'Escape') return;
+        // O Esc fecha somente o modal; não deve recolher o Pokémon ao mesmo tempo.
+        if (modal?.open) return;
         const menusAbertos = document.querySelectorAll('.pokemon-dashboard-seletor[open]');
         if (menusAbertos.length) {
             fecharMenus();
