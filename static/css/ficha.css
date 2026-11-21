@@ -29,7 +29,7 @@
 .atributo-cartao {
     padding: 16px;
     text-align: center;
-    background: #f8fafc;
+    background: var(--superficie-suave);
     border: 1px solid var(--borda);
     border-radius: 14px;
 }
@@ -80,7 +80,7 @@
 .campo-calculado {
     min-height: 98px;
     padding: 14px 16px;
-    background: #f8fafc;
+    background: var(--superficie-suave);
     border: 1px solid var(--borda);
     border-radius: 12px;
 }
@@ -103,8 +103,8 @@
 .linha-tabela:last-child { border-bottom: 0; }
 .cabecalho-tabela {
     min-height: 42px;
-    color: #475467;
-    background: #f8fafc;
+    color: var(--texto-suave);
+    background: var(--superficie-suave);
     font-size: 0.82rem;
     font-weight: 800;
 }
