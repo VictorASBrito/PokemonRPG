@@ -42,6 +42,7 @@ def equipe_completa(app_visual):
 @pytest.mark.parametrize("largura,altura,tema", [
     (1720, 864, "dark"),
     (1366, 768, "light"),
+    (1440, 900, "dark"),
     (390, 844, "dark"),
     (320, 700, "light"),
     (1024, 600, "dark"),
@@ -101,11 +102,15 @@ def test_painel_legivel_e_golpes_compactos(
     card.focus()
     card.press("Enter")
     expect(card).to_have_attribute("aria-expanded", "true")
+    # Registrar o estado mesmo quando uma verificação geométrica falhar.
+    page.screenshot(path=str(EVIDENCIAS / f"expandido-{largura}-{tema}.png"), full_page=True)
     assert card.locator(".pokemon-dashboard-atributos-totais strong").all_text_contents() == totais_normal
     assert card.locator(".pokemon-dashboard-atributos-totais small").all_text_contents() == bases_normal
     _verificar_tipos(card.locator(".tipos-pokemon-dashboard .etiqueta-tipo"), 2, 12, 25)
-    lateral = page.locator(".pokemon-dashboard-lateral").first
-    _verificar_tipos(lateral.locator(".tipos-pokemon-dashboard .etiqueta-tipo"), 2, 11, 21)
+    laterais = page.locator(".pokemon-dashboard-lateral")
+    expect(laterais).to_have_count(5)
+    for lateral in laterais.all():
+        _verificar_tipos(lateral.locator(".tipos-pokemon-dashboard .etiqueta-tipo"), 2, 11, 21)
     _verificar_tipos(card.locator(".pokemon-dashboard-golpe-resumo .etiqueta-tipo"), 2, 11, 22)
     slots = card.locator(".pokemon-dashboard-golpe-detalhado")
     expect(slots).to_have_count(4)
@@ -139,7 +144,10 @@ def _verificar_tipos(tags, quantidade, fonte_minima, altura_minima):
             sombra: css.textShadow,
             dentro: text.left >= box.left && text.right <= box.right &&
               text.top >= box.top && text.bottom <= box.bottom,
-            dentroCard: box.bottom <= card.bottom + 1 && box.right <= card.right + 1
+            dentroCard: box.bottom <= card.bottom + 1 && box.right <= card.right + 1 &&
+              box.top >= card.top - 1 && box.left >= card.left - 1,
+            caixa: {x: box.x, y: box.y, w: box.width, h: box.height},
+            cartao: {x: card.x, y: card.y, w: card.width, h: card.height}
           };
         }""")
         assert medidas["fonte"] >= fonte_minima, medidas
