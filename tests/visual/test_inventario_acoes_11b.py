@@ -3,6 +3,7 @@ from pathlib import Path
 from uuid import UUID
 
 import pytest
+import re
 from playwright.sync_api import Page, expect
 from sqlalchemy import select
 
@@ -256,6 +257,10 @@ def test_ordenacao_arraste_persiste_apos_recarregar(page: Page, live_site_url,
                                                        inventario_visual, app_visual,
                                                        largura, altura, toque):
     ids = inventario_visual
+    # Emular toque antes de navegar e obter coordenadas reais do viewport.
+    cdp = page.context.new_cdp_session(page) if toque else None
+    if cdp:
+        cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": True})
     abrir(page, live_site_url, ids, "jogador", largura, altura)
     antes = ordem_visivel(page)
     assert antes == [ids["visual-amuleto"], ids["visual-corda"],
@@ -267,22 +272,28 @@ def test_ordenacao_arraste_persiste_apos_recarregar(page: Page, live_site_url,
     expect(page.locator("[data-busca-inventario]")).to_be_disabled()
     origem = page.locator(f'[data-item-id="{antes[1]}"] [data-ordem-alca]')
     destino = page.locator(f'[data-item-id="{antes[0]}"]')
+    expect(origem).to_have_css("touch-action", "none")
+    expect(page.locator(f'[data-escolher-item="{antes[1]}"]')).to_have_css(
+        "touch-action", "manipulation")
     origem.scroll_into_view_if_needed()
     destino.scroll_into_view_if_needed()
     a, b = origem.bounding_box(), destino.bounding_box()
     assert a and b
     x, y = a["x"] + a["width"] / 2, a["y"] + a["height"] / 2
     tx, ty = b["x"] + b["width"] / 2, b["y"] + b["height"] / 4
+    assert 0 <= x < largura and 0 <= y < altura, (a, b)
+    assert 0 <= tx < largura and 0 <= ty < altura, (a, b)
+    assert origem.evaluate("""(el, p) =>
+        el.contains(document.elementFromPoint(p.x, p.y))""", {"x": x, "y": y})
     with page.expect_response(lambda res: res.url.endswith("/inventario/ordem")
                              and res.request.method == "POST") as res:
         if toque:
-            cdp = page.context.new_cdp_session(page)
-            cdp.send("Emulation.setTouchEmulationEnabled", {"enabled": True})
             cdp.send("Input.dispatchTouchEvent", {"type": "touchStart",
                      "touchPoints": [{"x": x, "y": y}]})
             for i in range(1, 9):
                 cdp.send("Input.dispatchTouchEvent", {"type": "touchMove",
                          "touchPoints": [{"x": x + (tx-x)*i/8, "y": y + (ty-y)*i/8}]})
+            expect(destino).to_have_class(re.compile(r"\binventario-ordem-antes\b"))
             cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
         else:
             page.mouse.move(x, y)
