@@ -23,13 +23,13 @@ Copie este modelo ao concluir uma mudança:
 
 ### 2026-11-21 — Etapa 10F.4: foco do Pokémon em notebooks de pouca altura
 - **Objetivo:** evitar que detalhes, golpes e botões do card expandido fiquem inacessíveis quando a janela desktop tem pouca altura, preservando a disposição original quando há espaço.
-- **Status:** IMPLEMENTADO NA BRANCH; CI E VALIDAÇÃO VISUAL PENDENTES.
+- **Status:** IMPLEMENTADO NA BRANCH; CI VISUAL APROVADA; VALIDAÇÃO VISUAL REAL PENDENTE.
 - **Branch:** `fix/dashboard-foco-rolagem-10f4` sobre `main`, após mesclagem do PR #34.
 - **Arquivos:** `static/css/dashboard.css`, templates `jogador/dashboard.html` e `mestre/catalogo/npc_painel.html` (versão de cache), `tests/test_dashboard_foco_baixa_altura_10f4.py` (novo), workflow de contrato visual, arquitetura, continuidade e diário.
 - **Diagnóstico:** em `min-width: 901px`, o modo foco impõe `overflow: hidden` ao body/grade/card/detalhes e altura `calc(100dvh - 92px)`; janelas baixas não têm caminho para rolar até todo o conteúdo.
 - **Correção:** até 760px de altura desktop, permitir scroll e dimensões naturais no foco, preservando a renderização dos demais breakpoints. Nenhum controle ou rota alterado.
 - **Banco de dados:** nenhuma migration nem escrita; modelos, regras de campanha, permissões e Pokémon reais inalterados.
-- **Testes executados:** inspeção estática no código; novos testes de contrato adicionados ao CI, aguardando execução. Teste no navegador real ainda pendente.
+- **Testes executados:** revisão estática do diff; [GitHub Actions — contrato visual](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44873226725) aprovou **54 testes em 1,46s** (`python -m pytest -q`), incluindo a regressão 10F.4; `node --check static/js/inventario.js` aprovado. Teste real em navegador e perfis autenticados ainda pendente.
 - **Riscos/pendências:** revisar 1024×600, 1366×768, 1440×900, zoom 200%, jogador/NPC, menus de forma, Mega e botões de recolher/editar; conferir CI.
 - **Próxima ação:** revisar PR e inspeção visual antes de merge; depois considerar refinamentos específicos de navegação por teclado e hierarquia do conteúdo.
 
