@@ -303,7 +303,7 @@ def test_desmaio_permanece_desmaiado_sem_cura_automatica(app_db):
         assert out.pv_novo == 0 and p.pv_atual == 0
 
 
-def test_pokemon_no_campo_nao_evolui(app_db):
+def test_pokemon_no_campo_pode_evoluir_sem_tocar_formacao(app_db):
     with app_db.app_context():
         origem = db.session.scalar(select(FormaPokemon).where(FormaPokemon.codigo == "charmander"))
         destino = _form("charmeleon", 10)
@@ -313,10 +313,10 @@ def test_pokemon_no_campo_nao_evolui(app_db):
             campanha_id=_ids(app_db)["campanha"], pokemon_id=p.id, time_numero=1,
         ))
         db.session.commit()
-        with pytest.raises(ValueError, match="Campo"):
-            _evoluir(app_db, p, rel)
-        db.session.rollback()
-        assert p.forma_pokemon_id == origem.id
+        _evoluir(app_db, p, rel)
+        db.session.commit()
+        assert p.forma_pokemon_id == destino.id
+        assert db.session.scalar(select(PokemonEmCampo.pokemon_id)) == p.id
 
 
 def test_rollback_por_falha_de_recalculo_restaura_estoque_e_forma(app_db, monkeypatch):
