@@ -234,6 +234,8 @@ def test_rotas_campo_mestre_e_jogador_e_retirada_reverte_mega(app_db, client_db)
     pagina = client_db.get("/jogador/dashboard")
     assert pagina.status_code == 200
     assert "Mega Evoluir" in pagina.get_data(as_text=True)
+    # O POST antigo do Campo segue aceito; seu token é criado ao visitar o Campo.
+    assert client_db.get("/campo").status_code == 200
     with client_db.session_transaction() as sess:
         csrf = sess["campo_csrf"]
     action = f"/campo/pokemons/{pid}/transformar"
