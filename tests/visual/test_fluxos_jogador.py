@@ -82,6 +82,16 @@ def test_bag_mobile_sem_corte_nas_categorias(
 
     bag = page.locator(".inventario-nds-bag")
     expect(bag).to_be_visible()
+    # Capturas de teste devem mostrar um Pokémon renderizado, não link roto.
+    imagem = page.locator(".inventario-nds-treinador-foto img").first
+    expect(imagem).to_be_visible()
+    page.wait_for_function(
+        """() => {
+          const img = document.querySelector('.inventario-nds-treinador-foto img');
+          return Boolean(img && img.complete && img.naturalWidth > 0);
+        }""",
+        timeout=10000,
+    )
     botoes = page.locator(".inventario-nds-aba")
     assert botoes.count() == 5
 
