@@ -116,8 +116,8 @@
             <div class="pokemon-dashboard-meta">
               <div><span>Natureza</span><strong>{{ pokemon.natureza }}</strong></div>
               <div><span>Gênero</span><strong>{{ pokemon.genero }}</strong></div>
-              <div><span>Status</span><strong>{{ pokemon.status or 'Nenhum' }}</strong></div>
-              <div><span>Item</span><strong>{{ pokemon.item or 'Nenhum' }}</strong></div>
+              <div><span>Status</span><strong>Nenhum</strong></div>
+              <div><span>Item</span><strong>Nenhum</strong></div>
               <div><span>Variação</span><strong>{{ 'Shiny' if pokemon.shiny else 'Normal' }}</strong></div>
               <div><span>Nível</span><strong>{{ pokemon.nivel }}</strong></div>
             </div>
@@ -172,9 +172,6 @@
         <h2 id="npc-editar-titulo-{{ pokemon.indice }}">Editar {{ pokemon.nome }}</h2></div>
       <button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar edição">×</button>
     </div>
-            <div class="npc-painel-secao-titulo"><div><span class="rotulo">Gerenciar integrante</span>
-              <h4>Editar {{ pokemon.nome }}</h4></div>
-              <span class="texto-suave">Somente o mestre</span></div>
             <form class="npc-painel-form" method="post"
                   action="{{ url_for('catalogo_admin.npc_editar_pokemon', modelo_id=npc.id, indice=pokemon.indice) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -283,7 +280,8 @@
   </div>
 </dialog>
     {% if npc.quantidade < 6 %}
-    <dialog class="npc-painel-dialog npc-painel-dialog-adicionar" id="npc-adicionar-pokemon" aria-labelledby="npc-adicionar-titulo">\n  <div class="npc-painel-dialog-conteudo">
+    <dialog class="npc-painel-dialog npc-painel-dialog-adicionar" id="npc-adicionar-pokemon" aria-labelledby="npc-adicionar-titulo">
+  <div class="npc-painel-dialog-conteudo">
       <div class="npc-painel-modal-topo"><h2 id="npc-adicionar-titulo">Adicionar Pokémon à equipe</h2><button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar">×</button></div>
       <p class="texto-suave">O nível é compartilhado com o treinador NPC.</p>
       <form method="post" class="npc-adicionar-form"
@@ -298,7 +296,9 @@
         </label>
         <button class="botao botao-primario" type="submit">Adicionar</button>
       </form>
-    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Cancelar</button>\n  </div>\n</dialog>
+    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Cancelar</button>
+  </div>
+</dialog>
     {% endif %}
 <dialog class="npc-painel-dialog" data-npc-confirm-dialog aria-labelledby="npc-confirm-title" aria-describedby="npc-confirm-text">
   <div class="npc-painel-dialog-conteudo">
