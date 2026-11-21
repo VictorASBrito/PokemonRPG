@@ -29,6 +29,8 @@ def campo_em_pausa():
     sem modificar os dados existentes no banco.
     """
     if current_app.config.get("CAMPO_ATIVO", False):
+        if request.method == "POST" and not current_app.config.get("CAMPO_OPERACOES_ATIVAS", False):
+            abort(403, description="O Campo é somente demonstrativo.")
         return None
     if not session.get("usuario_id"):
         return redirect(url_for("auth.login"))
