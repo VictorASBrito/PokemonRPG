@@ -518,3 +518,13 @@ O mestre informou oito pendências após a rotina 09.1: `eevee-parceiro` (Shiny)
 - **Elegibilidade:** mantidas permissão do mestre, Pokémon no Campo, PV positivos, forma original e exclusividade de uma Mega ativa por treinador. Agora o bloqueio é descrito explicitamente no painel, inclusive quando existe outra Mega ativa.
 - **Arquivos:** template jogador/mestre, CSS, serviço de ações somente leitura, testes e docs 10E.4.1.
 - **Banco:** sem migration; sem mudanças de dados reais. Validar testes em CI e homologar no PostgreSQL após merge.
+
+
+### 2026-11-20 — Etapa 10E.4.2: ações na foto; Campo em pausa
+- **Pedido:** mestre quer evoluir e trocar formas ao clicar nos próprios ícones da imagem (evolução esquerda, formas/Mega direita), sem barra de ações sob os golpes. Mega e evolução não dependem mais do Campo.
+- **Interface:** parcial `templates/jogador/_acoes_retrato.html` integrado ao dashboard; opção única aplica via formulário+confirmação, múltiplas abrem seletor ancorado na foto; mantém Keystone local, Shiny e acesso da prévia mestre somente leitura.
+- **Regras:** removidos os bloqueios por `PokemonEmCampo` dos serviços de evolução/Mega; mantidos vínculo do dono, permissão do treinador, requisitos de evolução, PV, destino da mesma espécie, uma Mega por treinador e reversão por KO/revogação/manual. Retirar/limpar o Campo não reverte a forma.
+- **Campo:** `CAMPO_ATIVO=False` por padrão, escondido do menu e com página de pausa; POST/estado bloqueados enquanto pausado. Ao reativar, Campo é apenas demonstrativo e não permite POST sem `CAMPO_OPERACOES_ATIVAS` explicitamente habilitado (apenas testes legados).
+- **Funções realocadas:** autorização Mega no Painel Mestre, transformações no painel expandido, NPCs no catálogo/gerador, integrantes de hordas listados e encaminhados na tela Capturáveis. Novas rotas com CSRF/permissões, preservando Shiny/natureza/sexo/identidade de horda.
+- **Proteções:** código histórico de Campo preservado; sem limpeza de registros, migrations ou edição de dados reais. Próximo: validar CI e testar visualmente em ambiente PostgreSQL antes da sessão.
+- **Documento:** `docs/ETAPA_10E4_2_RETRATO_E_CAMPO_PAUSADO.md`.
