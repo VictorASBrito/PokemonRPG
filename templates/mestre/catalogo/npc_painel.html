@@ -66,6 +66,7 @@
             {% if pokemon.imagem %}<img src="{{ pokemon.imagem }}" alt="{{ pokemon.especie }}" loading="lazy">
             {% else %}<span class="npc-painel-sem-arte" aria-hidden="true">◈</span>{% endif %}
             {% if pokemon.shiny %}<span class="selo-shiny-dashboard">Shiny</span>{% endif %}
+            {% include "mestre/catalogo/_acoes_retrato_npc.html" %}
           </div>
           <div class="dados-pokemon-dashboard">
             <div class="nome-pokemon-dashboard">
@@ -118,7 +119,7 @@
               <div><span>Gênero</span><strong>{{ pokemon.genero }}</strong></div>
               <div><span>Status</span><strong>Nenhum</strong></div>
               <div><span>Item</span><strong>Nenhum</strong></div>
-              <div><span>Variação</span><strong>{{ 'Shiny' if pokemon.shiny else 'Normal' }}</strong></div>
+              <div><span>Variação</span><strong>{{ 'Mega Evolução' if pokemon.tipo_transformacao == 'mega' else 'Forma alternativa' if pokemon.tipo_transformacao == 'alternativa' else 'Normal' }}</strong></div>
               <div><span>Nível</span><strong>{{ pokemon.nivel }}</strong></div>
             </div>
           </section>
@@ -300,6 +301,18 @@
   </div>
 </dialog>
     {% endif %}
+<dialog class="pokemon-confirmacao-modal" data-pokemon-confirmacao-modal
+        aria-labelledby="pokemon-confirmacao-titulo" aria-describedby="pokemon-confirmacao-descricao">
+  <div class="pokemon-confirmacao-conteudo">
+    <span class="pokemon-confirmacao-categoria">Confirmação do mestre</span>
+    <h2 id="pokemon-confirmacao-titulo" data-pokemon-confirmacao-titulo>Confirmar transformação</h2>
+    <p id="pokemon-confirmacao-descricao" data-pokemon-confirmacao-descricao></p>
+    <div class="pokemon-confirmacao-acoes">
+      <button class="botao botao-secundario" type="button" data-pokemon-confirmacao-cancelar>Cancelar</button>
+      <button class="botao botao-primario" type="button" data-pokemon-confirmacao-aceitar>Confirmar</button>
+    </div>
+  </div>
+</dialog>
 <dialog class="npc-painel-dialog" data-npc-confirm-dialog aria-labelledby="npc-confirm-title" aria-describedby="npc-confirm-text">
   <div class="npc-painel-dialog-conteudo">
     <h2 id="npc-confirm-title">Confirmar alteração</h2>
@@ -313,6 +326,6 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4-6') }}" defer></script>
-<script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10e4-4-modal') }}" defer></script>
+<script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10d4-7') }}" defer></script>
 <script src="{{ url_for('static', filename='js/npc-painel.js', v='10d4-6') }}" defer></script>
 {% endblock %}
