@@ -96,8 +96,8 @@ def test_retrato_e_codigo_de_foco_preservam_npc_e_cache():
     assert ".dashboard-jogador:not(.npc-painel) .foto-treinador-sprite" in css
     assert ".dashboard-jogador:not(.npc-painel) .foto-treinador-link:focus-visible" in css
     assert "image-rendering: pixelated" in css
-    assert "filename='css/dashboard.css', v='10f9-tipos-atributos'" in jogador
-    assert "filename='css/dashboard.css', v='10f9-tipos-atributos'" in npc
+    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r2'" in jogador
+    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r2'" in npc
     assert "filename='js/dashboard-pokemon.js', v='10f5-atributos-altura'" in jogador
     assert "filename='js/dashboard-pokemon.js', v='10f5-atributos-altura'" in npc
     assert not [
