@@ -52,7 +52,8 @@ def test_dashboard_pokemon_tem_grade_3x2_e_modo_foco_interativo() -> None:
     assert "destacar(card)" in js
     assert "if (foco === card) return" in js
     assert "data-dashboard-pokemon-collapse" in js
-    assert "evento.key === 'Escape'" in js
+    assert "evento.key !== 'Escape'" in js
+    assert "if (modal?.open) return;" in js  # Esc do modal não recolhe o card
 
 
 def test_modo_escuro_corrige_contraste_dos_slots_e_cartoes() -> None:
