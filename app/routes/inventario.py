@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, flash, jsonify, make_response, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
@@ -250,3 +250,29 @@ def transferir_jogador():
 @perfil_obrigatorio("mestre")
 def transferir_mestre(personagem_id: str):
     return _transferir(personagem_id, modo_mestre=True)
+
+
+@inventario_bp.post("/jogador/inventario/ordem")
+@perfil_obrigatorio("jogador")
+def ordem_jogador():
+    from app.services.inventario_ordem_service import salvar_ordem
+
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict) or not isinstance(dados.get("bolsa"), str):
+        return jsonify(erro="Ordem inválida."), 400
+    try:
+        salvar_ordem(personagem_id=_personagem_jogador(),
+                     usuario_id=session.get("usuario_id"),
+                     campanha_id=session.get("campanha_id"),
+                     bolsa=dados["bolsa"], itens=dados.get("itens"))
+    except PermissionError:
+        db.session.rollback()
+        return jsonify(erro="Inventário não autorizado."), 403
+    except ValueError as erro:
+        db.session.rollback()
+        return jsonify(erro=str(erro)), 400
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao salvar a ordem da Bag.")
+        return jsonify(erro="Não foi possível salvar a ordem."), 500
+    return jsonify(ok=True)

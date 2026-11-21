@@ -1,0 +1,40 @@
+/* 11C — Acabamento fosco transversal, carregado por último em base.html.
+   Não alterar contraste funcional, sprites, cores de tipo ou barras de PV.
+   Sombras decorativas antigas têm precedência neutralizada em todas as telas. */
+body.app-shell, body.app-shell *, body.app-shell *::before, body.app-shell *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+body.app-shell :focus-visible {
+  outline: 2px solid var(--primaria, #c83f45) !important;
+  outline-offset: -2px;
+}
+body.app-shell .topo .navegacao-principal a[aria-current="page"],
+body.app-shell .pokemon-dashboard-seletor[open] > summary,
+body.app-shell .captura-miniatura[aria-current="true"] {
+  outline: 2px solid var(--primaria);
+  outline-offset: -2px;
+}
+body.app-shell .dashboard-jogador:not(.npc-painel) .foto-treinador-link:focus-visible .foto-treinador {
+  border-color: var(--primaria);
+}
+body.app-shell .etiqueta-tipo {
+  background: var(--tipo-cor, #66768b);
+}
+body.app-shell :is(.retrato-pokemon-dashboard, .preview-imagem, .pokemon-imagem-wrap,
+  .forma-admin-imagem, .painel-pokemon-imagem, .box-pokemon-imagem-wrap,
+  .capturavel-visual, .capturavel-card-shiny .capturavel-visual,
+  .captura-slide-arte, .captura-slide-shiny .captura-slide-arte) {
+  background: var(--superficie-suave);
+}
+body.app-shell .entrada-orbita { background: transparent; }
+body.app-shell .inventario-nds-bag::before { background: none; }
+body.app-shell .inventario-nds-resumo-bag-artes { background: none; }
+body.app-shell .inventario-nds-treinador-foto { background: #1c283b; }
+body.app-shell .inventario-nds-aba[aria-pressed="true"] { background: rgba(255,255,255,.09); border-color: var(--bag-line); }
+body.app-shell :is(.marca-pokebola, .retrato-pokemon-dashboard > img,
+  .box-pokemon-imagem-wrap img, .pokemon-imagem, .retrato-pokemon img,
+  .captura-slide-arte img, .entrada-centro img, .entrada-coringa-icone img,
+  .inventario-nds-logo-bag, .inventario-nds-resumo-bag-artes img,
+  .painel-mestre-central .botao-curar:hover) { filter: none; }
+/* Shiny continua identificável pela etiqueta e borda próprias. */

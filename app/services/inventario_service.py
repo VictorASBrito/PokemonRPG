@@ -136,7 +136,7 @@ def carregar_contexto_inventario(
             )
             .options(selectinload(PersonagemItem.item).selectinload(Item.categoria))
             .join(Item, Item.id == PersonagemItem.item_id)
-            .order_by(func.lower(Item.nome))
+            .order_by(PersonagemItem.ordem_bolsa.asc().nulls_last(), func.lower(Item.nome), Item.id)
         ).scalars()
     )
     pokemons = list(

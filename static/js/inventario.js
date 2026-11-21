@@ -50,7 +50,7 @@
   function refresh() {
     const term = normalize(filter?.value);
     const visible = [];
-    for (const row of rows) {
+    for (const row of root.querySelectorAll('[data-item-id]')) {
       const matchesBag = row.dataset.bolsa === activeBag;
       const matchesSearch = normalize(row.dataset.busca).includes(term);
       row.hidden = !(matchesBag && matchesSearch);

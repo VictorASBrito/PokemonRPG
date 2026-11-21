@@ -1,0 +1,75 @@
+/* 11C — Ordenação da Bag. As alças só aparecem no modo Organizar. */
+.inventario-ordem-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+.inventario-ordem-toolbar small,
+.inventario-ordem-toolbar [data-ordem-status] {
+  color: var(--inv-muted);
+  font-size: .78rem;
+  line-height: 1.35;
+}
+.inventario-ordem-toolbar [data-ordem-status]:empty { display: none; }
+.inventario-ordem-toggle,
+.inventario-ordem-alca {
+  color: var(--inv-text);
+  background: rgba(157,178,208,.09);
+  border: 1px solid rgba(157,178,208,.35);
+  border-radius: 9px;
+  font: inherit;
+  font-size: .81rem;
+  font-weight: 700;
+  min-height: 40px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.inventario-ordem-toggle[aria-pressed="true"] {
+  background: rgba(103,211,143,.13);
+  border-color: var(--inv-accent);
+}
+.inventario-ordem-toggle:disabled,
+.inventario-ordem-alca:disabled { opacity: .5; cursor: not-allowed; }
+.inventario-nds[data-organizando="true"] .inventario-nds-linha {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 40px;
+  align-items: stretch;
+  gap: 6px;
+}
+.inventario-nds[data-organizando="true"] .inventario-nds-linha[hidden] { display: none !important; }
+.inventario-nds .inventario-ordem-alca {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 0;
+  font-size: 1.25rem;
+  cursor: grab;
+  user-select: none;
+}
+/* O sistema-ui.css usa body.app-shell :is(button, .botao, [role=button]).
+   A alça precisa vencer essa regra, sem bloquear a rolagem no resto da Bag. */
+body.app-shell .inventario-nds .inventario-ordem-alca {
+  touch-action: none;
+}
+.inventario-nds .inventario-ordem-alca[hidden] { display: none !important; }
+.inventario-nds .inventario-ordem-arrastando { opacity: .65; }
+.inventario-nds .inventario-ordem-arrastando .inventario-ordem-alca { cursor: grabbing; }
+.inventario-nds .inventario-ordem-antes { outline: 2px solid var(--inv-accent); outline-offset: -2px; }
+.inventario-nds .inventario-ordem-depois { outline: 2px dashed var(--inv-accent); outline-offset: -2px; }
+@media(max-width: 540px) {
+  .inventario-nds[data-organizando="true"] .inventario-nds-linha {
+    grid-template-columns: minmax(0,1fr) 36px;
+    gap: 4px;
+  }
+  .inventario-nds[data-organizando="true"] .inventario-nds-linha-botao {
+    grid-template-columns: 4px 32px minmax(0,1fr) auto;
+    padding-inline: 5px;
+    gap: 4px;
+  }
+  .inventario-nds[data-organizando="true"] .inventario-nds-linha-foto {
+    width: 32px; height: 32px;
+  }
+  .inventario-ordem-toggle { min-height: 44px; }
+}
