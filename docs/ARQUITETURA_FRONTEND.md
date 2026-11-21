@@ -78,6 +78,8 @@ A partir da etapa 10F.6, `tests/visual/` roda Playwright contra Flask efêmero +
 
 **Permissões observadas:** `/regiao/ankar` é protegida por `@perfil_obrigatorio("mestre")`; o redirect do jogador para login é intencional. A matriz de telas considera Região somente para mestre e registra explicitamente a negação ao jogador.
 
+**Evidência de execução:** [Playwright final #44879957277](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879957277): **102 testes aprovados em 153,41s**, com 96 screenshots publicados no artefato e inspeção visual das capturas de Bag desktop e mobile/dark. [Contrato visual #44879957142](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879957142): **59 testes aprovados**. A imagem Bulbasaur local aparece corretamente na fixture e a Bag desktop não apresenta mais overflow do documento.
+
 **Limites:** não existe cobertura de todas as combinações de campanha, NPCs cadastrados, uploads, ações destrutivas, Firefox/WebKit ou zoom. Resultado verde não dispensa inspeção manual dos artefatos. Erros de fixtures devem ser distinguidos de bugs do site. Não remover controles ou rotas para fazer um teste passar.
 
 ## Tokens compartilhados
