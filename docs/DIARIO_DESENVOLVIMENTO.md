@@ -21,6 +21,13 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+## Etapa 12A — Aparência individual (21/11/2026)
+
+Primeiro incremento após merge do PR #43. Cinco paletas gerais (Clássico, Ankar, Eclipse, Expedição, Horizonte), cada uma clara/escura, e modo automático via preferências do sistema. Botão Tema abre diálogo com amostras e prévia de toda a tela; Cancelar/Escape restauram a aparência salva. Salvar persiste por personagem e por conta do mestre, com autorização por sessão e CSRF, sem aceitar identificadores arbitrários. Preferências anteriores no localStorage são fallback para modo ainda não configurado. O modo automático responde à mudança do sistema. A paleta Meu personagem deriva o matiz dominante de sprite local da configuração de nove slots (Pillow, ignora transparência/neutros e reduz tons de pele); se o sprite não estiver disponível ou não tiver cor suficiente, não oferece a opção. Não usa HTTP externo. Luminâncias separadas para legibilidade. As cores dos tipos, PV, condições e shiny não são personalizadas. CSS compartilhado e adaptação inicial da Bag. Testes de contraste, isolamento, cancelamento e persistência e tema derivado. Revisão por personagem e auditoria completa de todas as paletas, personalização manual e prévia do mestre como jogador permanecem próximas etapas.
+
+**Atualização obrigatória:** backup; `pip install -r requirements.txt` (Pillow); `flask --app app.py db upgrade` antes de servir a nova aplicação. Migration `d12a00000001` adiciona dois campos anuláveis em personagens e usuarios. Não altera gameplay ou inventários. CI pendente. Sem acesso ao PostgreSQL real.
+
+
 ### 2026-11-21 — Etapa 11C-UI: frontend fosco e ordem personalizada
 - **Branch:** `feat/visual-fosco-ordem-bag-11c-ui`, base main após merge #42.
 - **Escopo:** revisão global de CSS, remoção de sombras/halos, destaque sólido e adaptação dos componentes. Ordenação persistente com alça mouse/toque/teclado, isolamento de personagem/bolsa, restauração em falha.
