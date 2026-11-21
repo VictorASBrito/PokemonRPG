@@ -26,6 +26,8 @@ class Usuario(UUIDPrimaryKeyMixin, TimestampMixin, ActiveMixin, db.Model):
 
     login: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     nome: Mapped[str] = mapped_column(String(160), nullable=False)
+    aparencia_modo: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    aparencia_paleta: Mapped[str | None] = mapped_column(String(24), nullable=True)
     senha_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     perfil: Mapped[str] = mapped_column(
         String(20),
