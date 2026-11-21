@@ -1,0 +1,26 @@
+name: Catálogo de itens - acervo e importação 11A
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  catalogo-itens:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar dependências de teste
+        run: python -m pip install -r requirements-dev.txt
+      - name: Validar acervo, importação incremental, inventário e cura
+        run: |
+          python -m pytest -q tests/test_catalogo_itens_11a.py tests/test_itens_10c3_flask.py tests/test_itens_10c3_puro.py tests/test_auditoria_itens.py tests/test_itens_inventario.py
