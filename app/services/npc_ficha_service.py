@@ -14,6 +14,7 @@ from app.services.campo_npc_service import _campanha, _forma, _historico, _numer
 from app.services.personagem_service import carregar_regras_personagem
 from app.services.pokemon_db_service import carregar_regras_pokemon_db
 from app.services.calculo_atributos import calcular_progressao, aplicar_aumento, aplicar_diminuicao
+from app.services.transformacoes_service import listar_formas_por_base
 
 
 def regras_npc(campanha_id):
@@ -182,7 +183,7 @@ def _formas_do_catalogo(ids):
     }
 
 
-def _cartoes_modelos(campanha, modelos):
+def _cartoes_modelos(campanha, modelos, *, incluir_acoes=False):
     regras = regras_npc(campanha.id)
     regras_pokemon = carregar_regras_pokemon_db(campanha.id)
     equipe_ids, natureza_ids, golpe_ids = set(), set(), set()
@@ -193,6 +194,9 @@ def _cartoes_modelos(campanha, modelos):
             uid = _uuid(membro.get("forma_id"))
             if uid:
                 equipe_ids.add(uid)
+            overlay = _uuid(membro.get("forma_temporaria_id"))
+            if overlay and membro.get("tipo_transformacao") in ("mega", "alternativa"):
+                equipe_ids.add(overlay)
             natureza = _uuid(membro.get("natureza_id"))
             if natureza:
                 natureza_ids.add(natureza)
@@ -215,6 +219,12 @@ def _cartoes_modelos(campanha, modelos):
     } if golpe_ids else {}
     cartoes = []
     for modelo in modelos:
+        # Uma única Mega ativa por treinador NPC, independente da tela Campo.
+        mega_ativa = any(
+            isinstance(membro, dict) and membro.get("tipo_transformacao") == "mega"
+            and membro.get("forma_temporaria_id")
+            for membro in (modelo.equipe or [])
+        )
         valores = atributos_efetivos(modelo, regras)
         pv_max = _pv_maximo_npc(valores, regras)
         equipe = []
@@ -222,13 +232,23 @@ def _cartoes_modelos(campanha, modelos):
             forma = formas.get(str(item.get("forma_id"))) if isinstance(item, dict) else None
             if forma is None:
                 continue
+            # A forma base nunca é sobrescrita; a transformação é um overlay JSON.
+            overlay = formas.get(str(item.get("forma_temporaria_id")))
+            tipo_atual = item.get("tipo_transformacao")
+            if not (
+                overlay and overlay.ativo and overlay.especie_id == forma.especie_id
+                and ((tipo_atual == "mega" and overlay.categoria == "mega")
+                     or (tipo_atual == "alternativa" and overlay.categoria != "mega"))
+            ):
+                overlay, tipo_atual = None, None
+            visivel = overlay or forma
             nivel_pokemon = _nivel(modelo)
-            maximo = _pv_maximo(forma, nivel_pokemon, regras_pokemon)
+            maximo = _pv_maximo(visivel, nivel_pokemon, regras_pokemon)
             atual = item.get("pv_atual")
             atual = maximo if atual is None else max(-9999, min(int(atual), maximo))
             bases = {
                 atributo.atributo.codigo.replace("-", "_"): int(atributo.valor_base)
-                for atributo in forma.atributos_base if atributo.atributo and atributo.atributo.ativo
+                for atributo in visivel.atributos_base if atributo.atributo and atributo.atributo.ativo
             }
             totais = {
                 codigo: calcular_progressao(
@@ -274,17 +294,35 @@ def _cartoes_modelos(campanha, modelos):
                         "dano": golpe.expressao_dano or "Estado",
                         "precisao": str(golpe.precisao) if golpe.precisao is not None else "—",
                     })
+            acoes = {"alternativas": [], "megas": [], "pode_reverter": bool(overlay),
+                     "tipo": tipo_atual, "pode_transformar": atual > 0,
+                     "outra_mega_ativa": mega_ativa and tipo_atual != "mega"}
+            if incluir_acoes:
+                permissoes = listar_formas_por_base(forma, atual=overlay, tipo=tipo_atual)
+                def _opcao(destino):
+                    return {
+                        "id": str(destino.id), "nome": destino.nome,
+                        "imagem": (
+                            (destino.imagem_shiny_url if item.get("shiny") else destino.imagem_url)
+                            or destino.imagem_url or ""
+                        ),
+                    }
+                acoes["alternativas"] = [_opcao(destino) for destino in permissoes["alternativas"]]
+                acoes["megas"] = [_opcao(destino) for destino in permissoes["mega"]]
             equipe.append({
                 "id": str(forma.id), "forma_id": str(forma.id),
-                "nome": item.get("nome") or forma.nome,
-                "especie": forma.nome, "imagem": (
-                    (forma.imagem_shiny_url if item.get("shiny") else forma.imagem_url)
-                    or forma.imagem_url or ""
+                "nome": (visivel.nome if item.get("nome") == forma.nome else item.get("nome")) or visivel.nome,
+                "especie": visivel.nome, "imagem": (
+                    (visivel.imagem_shiny_url if item.get("shiny") else visivel.imagem_url)
+                    or visivel.imagem_url or ""
                 ),
+                "forma_original": forma.nome, "tipo_transformacao": tipo_atual,
+                "forma_temporaria_id": str(overlay.id) if overlay else None,
+                "acoes": acoes,
                 "shiny": bool(item.get("shiny")),
                 "nivel": nivel_pokemon, "pv_atual": atual, "pv_maximo": maximo,
                 "tipos": [
-                    rel.tipo.nome for rel in sorted(forma.tipos, key=lambda t: t.posicao)
+                    rel.tipo.nome for rel in sorted(visivel.tipos, key=lambda t: t.posicao)
                     if rel.tipo and rel.tipo.ativo
                 ],
                 "indice": indice_real, "natureza": natureza.nome if natureza else item.get("natureza") or "Não definida",
@@ -322,7 +360,7 @@ def cards_catalogo_npc(*, campanha_codigo):
 
 def ficha_card_npc(*, campanha_codigo, modelo_id):
     campanha = _campanha(campanha_codigo, bloquear=False)
-    return _cartoes_modelos(campanha, [_modelo(campanha.id, modelo_id)])[0]
+    return _cartoes_modelos(campanha, [_modelo(campanha.id, modelo_id)], incluir_acoes=True)[0]
 
 
 def adicionar_pokemon_ficha(*, campanha_codigo, modelo_id, forma_id, usuario_id):
