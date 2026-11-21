@@ -9,10 +9,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
-from app.models.db import FormaPokemon, FormaPokemonTipo, NPCModelo
+from app.models.db import FormaPokemon, FormaPokemonTipo, Golpe, Natureza, NPCModelo
 from app.services.campo_npc_service import _campanha, _forma, _historico, _numero, _pv_maximo, _uuid
 from app.services.personagem_service import carregar_regras_personagem
 from app.services.pokemon_db_service import carregar_regras_pokemon_db
+from app.services.calculo_atributos import calcular_progressao
 
 
 def regras_npc(campanha_id):
@@ -184,19 +185,39 @@ def _formas_do_catalogo(ids):
 def _cartoes_modelos(campanha, modelos):
     regras = regras_npc(campanha.id)
     regras_pokemon = carregar_regras_pokemon_db(campanha.id)
-    equipe_ids = set()
+    equipe_ids, natureza_ids, golpe_ids = set(), set(), set()
     for modelo in modelos:
         for membro in (modelo.equipe or []):
-            uid = _uuid(membro.get("forma_id")) if isinstance(membro, dict) else None
+            if not isinstance(membro, dict):
+                continue
+            uid = _uuid(membro.get("forma_id"))
             if uid:
                 equipe_ids.add(uid)
+            natureza = _uuid(membro.get("natureza_id"))
+            if natureza:
+                natureza_ids.add(natureza)
+            for golpe_id in membro.get("golpes", []) if isinstance(membro.get("golpes"), list) else []:
+                golpe = _uuid(golpe_id)
+                if golpe:
+                    golpe_ids.add(golpe)
     formas = _formas_do_catalogo(equipe_ids) if equipe_ids else {}
+    naturezas = {
+        str(item.id): item for item in db.session.scalars(
+            select(Natureza).where(Natureza.id.in_(natureza_ids))
+        )
+    } if natureza_ids else {}
+    golpes_catalogo = {
+        str(item.id): item for item in db.session.scalars(
+            select(Golpe).where(Golpe.id.in_(golpe_ids))
+            .options(selectinload(Golpe.tipo), selectinload(Golpe.categoria))
+        )
+    } if golpe_ids else {}
     cartoes = []
     for modelo in modelos:
         valores = atributos_efetivos(modelo, regras)
         pv_max = _pv_maximo_npc(valores, regras)
         equipe = []
-        for item in (modelo.equipe or []):
+        for indice_real, item in enumerate(modelo.equipe or []):
             forma = formas.get(str(item.get("forma_id"))) if isinstance(item, dict) else None
             if forma is None:
                 continue
@@ -204,8 +225,42 @@ def _cartoes_modelos(campanha, modelos):
             maximo = _pv_maximo(forma, nivel_pokemon, regras_pokemon)
             atual = item.get("pv_atual")
             atual = maximo if atual is None else max(-9999, min(int(atual), maximo))
+            bases = {
+                atributo.atributo.codigo.replace("-", "_"): int(atributo.valor_base)
+                for atributo in forma.atributos_base if atributo.atributo and atributo.atributo.ativo
+            }
+            totais = {
+                codigo: calcular_progressao(
+                    base, nivel_pokemon,
+                    regras_pokemon.get("progressao_pv" if codigo == "pv" else "progressao_atributos", []),
+                )
+                for codigo, base in bases.items()
+            }
+            if item.get("shiny"):
+                for codigo, bonus in (regras_pokemon.get("bonus_shiny") or {}).items():
+                    chave = codigo.replace("-", "_")
+                    if chave in bases:
+                        bases[chave] += int(bonus)
+                        totais[chave] = calcular_progressao(
+                            bases[chave], nivel_pokemon,
+                            regras_pokemon.get("progressao_pv" if chave == "pv" else "progressao_atributos", []),
+                        )
+            natureza = naturezas.get(str(item.get("natureza_id")))
+            golpe_ids_membro = item.get("golpes") if isinstance(item.get("golpes"), list) else []
+            golpes = []
+            for golpe_id in golpe_ids_membro[:4]:
+                golpe = golpes_catalogo.get(str(golpe_id))
+                if golpe and golpe.ativo:
+                    golpes.append({
+                        "id": str(golpe.id), "nome": golpe.nome,
+                        "tipo": golpe.tipo.nome if golpe.tipo else "—",
+                        "categoria": golpe.categoria.nome if golpe.categoria else "—",
+                        "dano": golpe.expressao_dano or "Estado",
+                        "precisao": str(golpe.precisao) if golpe.precisao is not None else "—",
+                    })
             equipe.append({
-                "id": str(forma.id), "nome": item.get("nome") or forma.nome,
+                "id": str(forma.id), "forma_id": str(forma.id),
+                "nome": item.get("nome") or forma.nome,
                 "especie": forma.nome, "imagem": (
                     (forma.imagem_shiny_url if item.get("shiny") else forma.imagem_url)
                     or forma.imagem_url or ""
@@ -216,7 +271,11 @@ def _cartoes_modelos(campanha, modelos):
                     rel.tipo.nome for rel in sorted(forma.tipos, key=lambda t: t.posicao)
                     if rel.tipo and rel.tipo.ativo
                 ],
-                "indice": len(equipe),
+                "indice": indice_real, "natureza": natureza.nome if natureza else item.get("natureza") or "Não definida",
+                "natureza_id": str(natureza.id) if natureza else "",
+                "genero": item.get("genero") or "Ø", "bases": bases, "totais": totais,
+                "golpes": golpes, "golpe_ids": [g["id"] for g in golpes],
+                "dados_defesa": f"{(totais.get('velocidade', 0) + 9) // 10}d6",
             })
         cartoes.append({
             "id": str(modelo.id), "nome": modelo.nome, "nivel": _nivel(modelo),
@@ -317,3 +376,106 @@ def ajustar_pv_npc(*, campanha_codigo, modelo_id, delta, usuario_id,
                depois={"pv": novo, "pokemon_indice": pokemon_indice})
     db.session.commit()
     return novo, maximo
+
+
+def opcoes_edicao_npc(*, campanha_codigo):
+    """Listas pequenas para o mestre; o catálogo de golpes usa autocomplete."""
+    campanha = _campanha(campanha_codigo, bloquear=False)
+    naturezas = db.session.scalars(
+        select(Natureza).where(Natureza.ativo.is_(True)).order_by(Natureza.nome)
+    ).all()
+    regras = carregar_regras_pokemon_db(campanha.id)
+    return {
+        "naturezas": [{"id": str(item.id), "nome": item.nome} for item in naturezas],
+        "generos": list(regras.get("generos") or ["Ø", "♂", "♀"]),
+    }
+
+
+def editar_pokemon_ficha(*, campanha_codigo, modelo_id, indice, dados, usuario_id):
+    """Edita o integrante salvo no NPC; nunca altera Pokémon dos jogadores."""
+    campanha = _campanha(campanha_codigo)
+    modelo = _modelo(campanha.id, modelo_id)
+    equipe = list(modelo.equipe or [])
+    idx = _numero(indice, minimo=0, maximo=5, nome="Posição")
+    if idx >= len(equipe):
+        raise ValueError("Pokémon não encontrado nesta equipe.")
+    anterior = dict(equipe[idx])
+    item = dict(anterior)
+    forma_antiga = _forma(item.get("forma_id"))
+    forma = _forma(dados.get("forma_id") or item["forma_id"])
+    if forma.categoria == "mega":
+        raise ValueError("A Mega Evolução é temporária; selecione a forma base do Pokémon.")
+    nome = str(dados.get("nome") or "").strip()
+    if len(nome) > 160:
+        raise ValueError("O apelido aceita até 160 caracteres.")
+    nid = str(dados.get("natureza_id") or "").strip()
+    if nid:
+        uid = _uuid(nid)
+        natureza = db.session.get(Natureza, uid) if uid else None
+        if natureza is None or not natureza.ativo:
+            raise ValueError("Selecione uma natureza válida do catálogo.")
+    else:
+        natureza = None
+    genero = str(dados.get("genero") or "Ø").strip()
+    permitidos = carregar_regras_pokemon_db(campanha.id).get("generos") or ["Ø", "♂", "♀"]
+    if genero not in permitidos:
+        raise ValueError("Gênero inválido para esta campanha.")
+    shiny = str(dados.get("shiny") or "") == "1"
+    regras = carregar_regras_pokemon_db(campanha.id)
+    nivel = _nivel(modelo)
+    pv_antigo = _pv_maximo(forma_antiga, nivel, regras)
+    pv_novo = _pv_maximo(forma, nivel, regras)
+    atual = int(item.get("pv_atual")) if item.get("pv_atual") is not None else pv_antigo
+    dano = max(0, pv_antigo - min(pv_antigo, atual))
+
+    nomes_golpes = dados.getlist("golpe_nome") if hasattr(dados, "getlist") else dados.get("golpe_nome", [])
+    if isinstance(nomes_golpes, str):
+        nomes_golpes = [nomes_golpes]
+    if len(nomes_golpes) > 4:
+        raise ValueError("A equipe permite até quatro golpes por Pokémon.")
+    selecionados, usados = [], set()
+    for nome_golpe in nomes_golpes:
+        nome_golpe = str(nome_golpe or "").strip()
+        if not nome_golpe:
+            continue
+        golpe = db.session.scalar(
+            select(Golpe).where(Golpe.ativo.is_(True), func.lower(Golpe.nome) == nome_golpe.lower())
+        )
+        if golpe is None:
+            raise ValueError(f"Golpe não cadastrado: {nome_golpe[:80]}.")
+        if golpe.id in usados:
+            raise ValueError("Um golpe não pode ocupar dois espaços da equipe.")
+        usados.add(golpe.id)
+        selecionados.append(str(golpe.id))
+
+    item.update(
+        forma_id=str(forma.id), nome=nome or forma.nome,
+        imagem=(forma.imagem_shiny_url if shiny else forma.imagem_url) or forma.imagem_url or "",
+        shiny=shiny, natureza_id=str(natureza.id) if natureza else None,
+        natureza=natureza.nome if natureza else "—", genero=genero, golpes=selecionados,
+        nivel=nivel,
+        pv_atual=max(0, min(pv_novo, pv_novo - dano)),
+    )
+    equipe[idx] = item
+    modelo.equipe = equipe
+    _historico(usuario_id, modelo.id, "editar_pokemon_npc",
+               antes={"indice": idx, "pokemon": anterior},
+               depois={"indice": idx, "pokemon": item})
+    db.session.commit()
+    return "Pokémon do NPC atualizado com sucesso."
+
+
+def mover_pokemon_ficha(*, campanha_codigo, modelo_id, indice, direcao, usuario_id):
+    campanha = _campanha(campanha_codigo)
+    modelo = _modelo(campanha.id, modelo_id)
+    equipe = list(modelo.equipe or [])
+    idx = _numero(indice, minimo=0, maximo=5, nome="Posição")
+    proximo = idx + (1 if direcao == "baixo" else -1 if direcao == "cima" else 999)
+    if idx >= len(equipe) or proximo < 0 or proximo >= len(equipe):
+        raise ValueError("Não é possível mover o Pokémon para essa posição.")
+    equipe[idx], equipe[proximo] = equipe[proximo], equipe[idx]
+    modelo.equipe = equipe
+    _historico(usuario_id, modelo.id, "reordenar_equipe_npc",
+               antes={"de": idx}, depois={"para": proximo})
+    db.session.commit()
+    return "Ordem da equipe atualizada."
