@@ -106,7 +106,7 @@
     padding: 14px;
     text-decoration: none;
 }
-.box-pokemon-principal:hover { background: #fbfcfd; }
+.box-pokemon-principal:hover { background: var(--superficie-suave); }
 
 .box-pokemon-imagem-wrap {
     position: relative;
