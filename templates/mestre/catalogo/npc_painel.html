@@ -3,22 +3,10 @@
 {% block titulo %}Painel de {{ npc.nome }} | Pokémon RPG{% endblock %}
 {% block estilos %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10e4-4-modal') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-5') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-painel.css', v='10d4-5') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-6') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/npc-painel.css', v='10d4-6') }}">
 {% endblock %}
 {% block conteudo %}
-<div class="npc-painel-cabecalho">
-  <div>
-    <p class="rotulo">Catálogo · Mestre · Painel do NPC</p>
-    <h1>{{ npc.nome }}</h1>
-    <p class="texto-suave">Equipe independente das fichas de jogadores. O Campo continua somente demonstrativo.</p>
-  </div>
-  <div class="npc-painel-cabecalho-acoes">
-    <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Todos os NPCs</a>
-    <a class="botao botao-primario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Editar ficha do NPC</a>
-  </div>
-</div>
-
 <div class="dashboard-jogador npc-painel">
   <aside class="coluna-treinador">
     <section class="cartao painel-identidade ui-card">
@@ -34,15 +22,8 @@
         <div class="linha-vida"><span>Pontos de Vida</span><strong>{{ npc.pv_atual }}/{{ npc.pv_maximo }}</strong></div>
         <progress value="{{ [npc.pv_atual, 0]|max }}" max="{{ [npc.pv_maximo, 1]|max }}"></progress>
       </div>
-      <form class="npc-painel-pv" method="post" action="{{ url_for('catalogo_admin.npc_pv', modelo_id=npc.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <input type="hidden" name="origem" value="painel">
-        <label>Alterar PV do treinador <input name="quantidade" type="number" value="10" min="1" max="9999" required></label>
-        <div class="npc-painel-acoes-linha">
-          <button type="submit" class="botao botao-secundario" name="operacao" value="menos">− Dano</button>
-          <button type="submit" class="botao botao-secundario" name="operacao" value="mais">+ Cura</button>
-        </div>
-      </form>
+      <button type="button" class="botao botao-secundario npc-painel-ajustar-treinador"
+              data-npc-dialog-open="npc-pv-treinador">Ajustar PV</button>
       <dl class="informacoes-treinador">
         <div><dt>Nível</dt><dd>{{ npc.nivel }}</dd></div>
         <div><dt>Classe</dt><dd>{{ npc.classe or '—' }}</dd></div>
@@ -66,6 +47,12 @@
       </details>
       {% endif %}
     </section>
+    <nav class="npc-painel-atalhos" aria-label="Ações do NPC">
+      <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.npcs') }}">Todos os NPCs</a>
+      <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Editar ficha</a>
+      {% if npc.quantidade < 6 %}<button type="button" class="botao botao-primario"
+        data-npc-dialog-open="npc-adicionar-pokemon">+ Adicionar Pokémon</button>{% endif %}
+    </nav>
   </aside>
 
   <main class="coluna-equipe">
@@ -129,6 +116,8 @@
             <div class="pokemon-dashboard-meta">
               <div><span>Natureza</span><strong>{{ pokemon.natureza }}</strong></div>
               <div><span>Gênero</span><strong>{{ pokemon.genero }}</strong></div>
+              <div><span>Status</span><strong>Nenhum</strong></div>
+              <div><span>Item</span><strong>Nenhum</strong></div>
               <div><span>Variação</span><strong>{{ 'Shiny' if pokemon.shiny else 'Normal' }}</strong></div>
               <div><span>Nível</span><strong>{{ pokemon.nivel }}</strong></div>
             </div>
@@ -149,10 +138,40 @@
               {% endfor %}
             </div>
           </section>
-          <section class="pokemon-dashboard-painel-detalhe npc-painel-edicao">
-            <div class="npc-painel-secao-titulo"><div><span class="rotulo">Gerenciar integrante</span>
-              <h4>Editar {{ pokemon.nome }}</h4></div>
-              <span class="texto-suave">Somente o mestre</span></div>
+          <div class="pokemon-dashboard-acoes-expandidas">
+            <span>Use “Recolher” ou pressione Esc para voltar à equipe completa.</span>
+            <div class="pokemon-dashboard-botoes-expandidos">
+              <button class="botao botao-secundario" type="button" data-dashboard-pokemon-collapse>Recolher</button>
+              <button class="botao botao-primario" type="button"
+                      data-npc-dialog-open="npc-editar-{{ pokemon.indice }}">Editar Pokémon</button>
+              <button class="botao botao-secundario" type="button"
+                      data-npc-dialog-open="npc-acoes-{{ pokemon.indice }}">Gerenciar</button>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+
+      {% for i in range(6 - npc.equipe|length) %}
+      <button class="cartao pokemon-dashboard-vazio" type="button"
+              data-npc-dialog-open="npc-adicionar-pokemon">
+        <span>+</span><strong>Espaço vazio</strong><small>Adicionar à equipe</small>
+      </button>
+      {% endfor %}
+    </section>
+
+
+  </main>
+</div>
+{% for pokemon in npc.equipe %}
+<dialog class="npc-painel-dialog npc-painel-dialog-editar" id="npc-editar-{{ pokemon.indice }}"
+        aria-labelledby="npc-editar-titulo-{{ pokemon.indice }}">
+  <div class="npc-painel-dialog-conteudo">
+    <div class="npc-painel-modal-topo">
+      <div><span class="rotulo">Gerenciar integrante</span>
+        <h2 id="npc-editar-titulo-{{ pokemon.indice }}">Editar {{ pokemon.nome }}</h2></div>
+      <button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar edição">×</button>
+    </div>
             <form class="npc-painel-form" method="post"
                   action="{{ url_for('catalogo_admin.npc_editar_pokemon', modelo_id=npc.id, indice=pokemon.indice) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -196,8 +215,17 @@
               </fieldset>
               <button class="botao botao-primario" type="submit">Salvar Pokémon</button>
             </form>
-          </section>
-          <section class="pokemon-dashboard-painel-detalhe npc-painel-controles">
+    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Cancelar</button>
+  </div>
+</dialog>
+<dialog class="npc-painel-dialog npc-painel-dialog-acoes" id="npc-acoes-{{ pokemon.indice }}"
+        aria-labelledby="npc-acoes-titulo-{{ pokemon.indice }}">
+  <div class="npc-painel-dialog-conteudo">
+    <div class="npc-painel-modal-topo">
+      <div><span class="rotulo">Gerenciar integrante</span>
+        <h2 id="npc-acoes-titulo-{{ pokemon.indice }}">Ações de {{ pokemon.nome }}</h2></div>
+      <button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar ações">×</button>
+    </div>
             <h4>Ações rápidas</h4>
             <form class="npc-painel-pv" method="post" action="{{ url_for('catalogo_admin.npc_pokemon_pv', modelo_id=npc.id, indice=pokemon.indice) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -229,28 +257,32 @@
                 <button class="botao botao-secundario" type="submit">Retirar da equipe</button>
               </form>
             </div>
-          </section>
-          <div class="pokemon-dashboard-acoes-expandidas">
-            <span>Use “Recolher” ou pressione Esc para voltar à equipe completa.</span>
-            <div class="pokemon-dashboard-botoes-expandidos">
-              <button class="botao botao-secundario" type="button" data-dashboard-pokemon-collapse>Recolher</button>
-              <a class="botao botao-secundario botao-link" href="{{ url_for('catalogo_admin.ficha_npc', modelo_id=npc.id) }}">Ficha do NPC</a>
-            </div>
-          </div>
+    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Fechar</button>
+  </div>
+</dialog>
+{% endfor %}
+<dialog class="npc-painel-dialog npc-painel-dialog-acoes" id="npc-pv-treinador" aria-labelledby="npc-treinador-titulo">
+  <div class="npc-painel-dialog-conteudo">
+    <div class="npc-painel-modal-topo">
+      <h2 id="npc-treinador-titulo">Ajustar PV de {{ npc.nome }}</h2>
+      <button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar ajuste de PV">×</button>
+    </div>
+      <form class="npc-painel-pv" method="post" action="{{ url_for('catalogo_admin.npc_pv', modelo_id=npc.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="origem" value="painel">
+        <label>Alterar PV do treinador <input name="quantidade" type="number" value="10" min="1" max="9999" required></label>
+        <div class="npc-painel-acoes-linha">
+          <button type="submit" class="botao botao-secundario" name="operacao" value="menos">− Dano</button>
+          <button type="submit" class="botao botao-secundario" name="operacao" value="mais">+ Cura</button>
         </div>
-      </article>
-      {% endfor %}
-
-      {% for i in range(6 - npc.equipe|length) %}
-      <a class="cartao pokemon-dashboard-vazio" href="#npc-adicionar-pokemon">
-        <span>+</span><strong>Espaço vazio</strong><small>Adicionar à equipe</small>
-      </a>
-      {% endfor %}
-    </section>
-
+      </form>
+    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Cancelar</button>
+  </div>
+</dialog>
     {% if npc.quantidade < 6 %}
-    <section class="cartao ui-card npc-painel-adicionar" id="npc-adicionar-pokemon">
-      <h2>Adicionar Pokémon à equipe</h2>
+    <dialog class="npc-painel-dialog npc-painel-dialog-adicionar" id="npc-adicionar-pokemon" aria-labelledby="npc-adicionar-titulo">
+  <div class="npc-painel-dialog-conteudo">
+      <div class="npc-painel-modal-topo"><h2 id="npc-adicionar-titulo">Adicionar Pokémon à equipe</h2><button type="button" class="npc-painel-fechar" data-npc-dialog-close aria-label="Fechar">×</button></div>
       <p class="texto-suave">O nível é compartilhado com o treinador NPC.</p>
       <form method="post" class="npc-adicionar-form"
             action="{{ url_for('catalogo_admin.npc_adicionar_pokemon', modelo_id=npc.id) }}">
@@ -264,10 +296,10 @@
         </label>
         <button class="botao botao-primario" type="submit">Adicionar</button>
       </form>
-    </section>
+    <button type="button" class="botao botao-secundario" data-npc-dialog-close>Cancelar</button>
+  </div>
+</dialog>
     {% endif %}
-  </main>
-</div>
 <dialog class="npc-painel-dialog" data-npc-confirm-dialog aria-labelledby="npc-confirm-title" aria-describedby="npc-confirm-text">
   <div class="npc-painel-dialog-conteudo">
     <h2 id="npc-confirm-title">Confirmar alteração</h2>
@@ -280,7 +312,7 @@
 </dialog>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4-5') }}" defer></script>
+<script src="{{ url_for('static', filename='js/autocomplete-catalogo.js', v='10d4-6') }}" defer></script>
 <script src="{{ url_for('static', filename='js/dashboard-pokemon.js', v='10e4-4-modal') }}" defer></script>
-<script src="{{ url_for('static', filename='js/npc-painel.js', v='10d4-5') }}" defer></script>
+<script src="{{ url_for('static', filename='js/npc-painel.js', v='10d4-6') }}" defer></script>
 {% endblock %}

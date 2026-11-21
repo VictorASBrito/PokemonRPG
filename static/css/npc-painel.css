@@ -1,59 +1,107 @@
-/* 10D.4.5 — Painel individual de NPCs com os mesmos cards do jogador. */
-.npc-painel-cabecalho {
-  display:flex; justify-content:space-between; align-items:flex-start;
-  flex-wrap:wrap; gap:14px; margin-bottom:18px;
-}
-.npc-painel-cabecalho h1 { margin:4px 0; font-size:clamp(1.55rem,3vw,2rem); }
-.npc-painel-cabecalho-acoes { display:flex; flex-wrap:wrap; gap:8px; }
-.npc-painel { min-width:0; }
-.npc-painel .painel-identidade .foto-treinador { object-fit:cover; }
-.npc-painel-sem-arte { font-size:3rem; color:var(--texto-suave); }
-.npc-painel .pokemon-dashboard-card { cursor:pointer; }
-.npc-painel .pokemon-dashboard-card.pokemon-dashboard-em-foco { cursor:default; }
-.npc-painel .pokemon-dashboard-card :is(input,select,textarea,button,a,label) { cursor:auto; }
-.npc-painel .pokemon-dashboard-card button,.npc-painel .pokemon-dashboard-card a { cursor:pointer; }
-.npc-painel .pokemon-dashboard-detalhes-expandidos { min-width:0; }
-.npc-painel-pv { display:grid; gap:8px; padding-top:12px; }
-.npc-painel-pv label { display:grid; gap:5px; font-size:.78rem; font-weight:700; }
-.npc-painel :is(input,select,textarea) {
-  min-width:0; width:100%; box-sizing:border-box; font:inherit;
-  padding:9px 10px; border:1px solid var(--borda);
-  border-radius:8px; background:var(--superficie-suave); color:var(--texto);
-}
-.npc-painel input[type="checkbox"] { width:auto; }
-.npc-painel-acoes-linha { display:flex; align-items:center; flex-wrap:wrap; gap:9px; }
-.npc-painel-acoes-linha > form { margin:0; }
-.npc-painel-anotacoes { margin-top:13px; border-top:1px solid var(--borda); padding-top:12px; }
-.npc-painel-anotacoes summary { cursor:pointer; font-weight:750; }
-.npc-painel-anotacoes p { font-size:.8rem; white-space:pre-wrap; overflow-wrap:anywhere; }
-.npc-painel-edicao { min-width:0; }
-.npc-painel-secao-titulo { display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:12px; }
-.npc-painel-secao-titulo h4 { margin:0; }
-.npc-painel-form { display:grid; gap:14px; }
-.npc-painel-form label { display:grid; gap:5px; font-size:.8rem; font-weight:700; min-width:0; }
-.npc-painel-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-.npc-painel-form .npc-painel-shiny { display:flex; flex-direction:row; align-items:center; gap:8px; }
-.npc-painel-golpes { border:1px solid var(--borda); border-radius:10px; padding:12px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:0; }
-.npc-painel-golpes legend { font-size:.8rem; font-weight:800; padding:0 6px; }
-.npc-painel-controles { display:grid; gap:10px; }
-.npc-painel-controles h4 { margin:0; }
-.npc-painel-adicionar { margin-top:18px; padding:18px; }
-.npc-painel-adicionar h2 { margin:0 0 5px; font-size:1.08rem; }
-.npc-painel-adicionar .npc-adicionar-form { margin-top:10px; }
-.npc-painel-adicionar .npc-adicionar-form input { width:100%; }
-.npc-painel .pokemon-dashboard-golpe-detalhado .pokemon-dashboard-golpe-resumo { min-width:0; }
+/* 10D.4.6 — O NPC usa a mesma grade e o mesmo painel expandido do jogador.
+   Edição e ações ficam em modais, fora da grade com altura fixa. */
+.npc-painel { min-width: 0; }
+.npc-painel .painel-identidade .foto-treinador { object-fit: cover; }
+.npc-painel-sem-arte { font-size: 3rem; color: var(--texto-suave); }
+.npc-painel .pokemon-dashboard-card { cursor: pointer; }
+.npc-painel .pokemon-dashboard-card.pokemon-dashboard-em-foco { cursor: default; }
+.npc-painel .pokemon-dashboard-detalhes-expandidos { min-width: 0; }
+.npc-painel .pokemon-dashboard-card button { cursor: pointer; }
+.npc-painel .pokemon-dashboard-golpe-detalhado .pokemon-dashboard-golpe-resumo { min-width: 0; }
+.npc-painel-ajustar-treinador { width: 100%; margin-top: 12px; }
+.npc-painel-atalhos { display: flex; flex-wrap: wrap; gap: 7px; }
+.npc-painel-atalhos > :is(a,button) { flex: 1 1 90px; min-width: 0; font-size: .75rem; text-align: center; }
+.npc-painel-anotacoes { margin-top: 13px; border-top: 1px solid var(--borda); padding-top: 12px; }
+.npc-painel-anotacoes summary { cursor: pointer; font-weight: 750; }
+.npc-painel-anotacoes p { font-size: .8rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Na ficha expandida devem existir só dois quadros superiores, golpes 2x2
+   e a faixa de botões. Não alterar as regras de grid compartilhadas. */
+.npc-painel .pokemon-dashboard-detalhes-expandidos .pokemon-dashboard-golpes-detalhados { grid-column: 1 / -1; }
+.npc-painel .pokemon-dashboard-acoes-expandidas { grid-column: 1 / -1; }
+.npc-painel .pokemon-dashboard-botoes-expandidos { flex-wrap: wrap; }
+.npc-painel .pokemon-dashboard-botoes-expandidos .botao { white-space: nowrap; }
+.npc-painel .pokemon-dashboard-vazio { cursor: pointer; font: inherit; color: var(--texto); }
+.npc-painel .pokemon-dashboard-vazio > span { font-size: 1.3rem; }
+
+/* Ferramentas do mestre: abertas sobre o painel, nunca dentro da área de golpes. */
 .npc-painel-dialog {
-  position:fixed; inset:0; margin:auto; width:min(440px,calc(100vw - 30px));
-  max-height:min(75vh,420px); padding:0; background:var(--superficie);
-  border:1px solid var(--borda); border-radius:15px; color:var(--texto);
-  box-shadow:0 24px 65px rgba(0,0,0,.4); z-index:9999;
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  width: min(500px, calc(100vw - 28px));
+  max-width: calc(100vw - 28px);
+  max-height: min(85dvh, 760px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 15px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .4);
+  z-index: 9999;
 }
-.npc-painel-dialog::backdrop { background:rgba(5,10,18,.72); backdrop-filter:blur(2px); }
-.npc-painel-dialog-conteudo { display:grid; gap:16px; padding:24px; }
-.npc-painel-dialog-conteudo :is(h2,p) { margin:0; }
-.npc-painel-dialog-conteudo .npc-painel-acoes-linha { justify-content:flex-end; }
-@media(max-width:760px) {
-  .npc-painel-campos,.npc-painel-golpes { grid-template-columns:1fr; }
-  .npc-painel-cabecalho-acoes { width:100%; }
-  .npc-painel .coluna-treinador { position:static; }
+.npc-painel-dialog-editar { width: min(720px, calc(100vw - 28px)); }
+.npc-painel-dialog::backdrop { background: rgba(5, 10, 18, .76); backdrop-filter: blur(3px); }
+.npc-painel-dialog:not([open]) { display: none; }
+.npc-painel-dialog-conteudo { display: grid; gap: 14px; padding: clamp(16px, 3vw, 24px); min-width: 0; }
+.npc-painel-dialog-conteudo :is(h2,h4,p) { margin: 0; }
+.npc-painel-modal-topo { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.npc-painel-modal-topo h2 { margin: 3px 0 0; font-size: clamp(1.13rem, 3vw, 1.4rem); }
+.npc-painel-fechar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  background: var(--superficie-suave);
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+.npc-painel-dialog :is(input,select,textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 39px;
+  padding: 9px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--superficie-suave);
+  color: var(--texto);
+}
+.npc-painel-dialog input[type="checkbox"] { width: auto; min-height: auto; }
+.npc-painel-dialog .npc-painel-form { display: grid; gap: 14px; min-width: 0; }
+.npc-painel-dialog .npc-painel-form label { display: grid; gap: 5px; font-size: .8rem; font-weight: 700; min-width: 0; }
+.npc-painel-dialog .npc-painel-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.npc-painel-dialog .npc-painel-shiny { display: flex !important; align-items: center; gap: 8px; }
+.npc-painel-dialog .npc-painel-golpes {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0; gap: 10px; padding: 12px;
+  border: 1px solid var(--borda); border-radius: 10px;
+}
+.npc-painel-dialog .npc-painel-golpes legend { padding: 0 6px; font-size: .8rem; font-weight: 800; }
+.npc-painel-dialog .npc-painel-pv { display: grid; gap: 10px; }
+.npc-painel-dialog .npc-painel-pv label { display: grid; gap: 6px; font-size: .82rem; font-weight: 700; }
+.npc-painel-dialog .npc-painel-acoes-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.npc-painel-dialog .npc-painel-acoes-linha form { margin: 0; }
+.npc-painel-dialog-adicionar .npc-adicionar-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; max-width: none; }
+.npc-painel-dialog-adicionar .npc-adicionar-form label { min-width: 0; }
+.npc-painel-dialog .seletor-visual { min-width: 0; }
+.npc-painel-dialog .seletor-visual-resultados { max-height: min(290px, 35dvh); overflow-y: auto; }
+/* O menu da pesquisa fica por cima dos outros campos do modal. */
+.npc-painel-dialog .seletor-visual-aberto { z-index: 20; position: relative; }
+
+@media (max-width: 760px) {
+  .npc-painel .coluna-treinador { position: static; }
+  .npc-painel-dialog .npc-painel-campos,
+  .npc-painel-dialog .npc-painel-golpes { grid-template-columns: 1fr; }
+  .npc-painel-dialog-adicionar .npc-adicionar-form { grid-template-columns: 1fr; }
+  .npc-painel-dialog .npc-painel-acoes-linha .botao { flex: 1 1 100px; }
 }
