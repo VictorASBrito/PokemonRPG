@@ -1,6 +1,6 @@
 # Arquitetura visual do Pokémon RPG
 
-**Padrão atual — 21/11/2026.** O objetivo é manter um único sistema de componentes que sirva a jogador, mestre e NPC sem alterar lógica de autorização, dados ou regras de Ankar.
+**Padrão atual — 21/11/2026 (ajuste 10F.1).** O objetivo é manter um único sistema de componentes que sirva a jogador, mestre e NPC sem alterar lógica de autorização, dados ou regras de Ankar.
 
 ## Responsabilidades de cada camada
 
@@ -14,6 +14,19 @@
 8. `padrao-visual-10d1.css`: apresentação dos títulos e menu de contexto.
 
 A folha legada `refinamento.css` foi absorvida por `sistema-ui.css`. Não reintroduzir seletores que escondem títulos para depois mostrá-los em outra folha.
+
+## Navegação responsiva — contrato 10F.1
+
+- O layout, a visibilidade e o posicionamento de `.topo`, `.marca`, `.navegacao-principal`, `.usuario-topo` e `.ui-mobile-nav-toggle` pertencem a `static/css/visual-global-10c5.css`. O CSS `geral.css` fornece apenas a base legada; `sistema-ui.css` não deve adicionar seletores `body.app-shell` para reorganizar esses elementos.
+- Até **1100px**, a navegação principal começa recolhida (`display: none`) e só aparece com `.topo[data-ui-nav-open="true"]`. O botão Menu permanece na primeira linha, as ações de conta na segunda e o menu aberto na terceira. Até **900px**, o nome do usuário não ocupa espaço no cabeçalho.
+- Acima de **1100px**, o menu fica visível em linha e o botão Menu permanece oculto. Cada link continua sendo decidido pelo template conforme o perfil e as permissões.
+- O script `static/js/visual-navegacao-10c5.js` mantém `aria-expanded`, `aria-label`, fechamento ao clicar fora e pela tecla Escape, além de recolher o menu ao cruzar o breakpoint. Não duplicar esse controle em outras folhas de estilo.
+- O template `base.html` deve atualizar a versão de cache de **ambas** as folhas CSS envolvidas em qualquer mudança na navegação.
+
+**Regressão estática:** `tests/test_navegacao_mobile_10f1.py` confere a separação de responsabilidade, os estados do menu, os breakpoints e os recursos do template/script. `tests/test_sistema_ui.py` preserva os demais contratos de componentes. Ambos integram o workflow `test-contrato-ui-repositorio.yml`.
+
+**Validação manual complementar:** conferir largura 320, 390, 768, 900, 901, 1100, 1101 e 1440px, em claro/escuro e com zoom de 200%. Testar mestre, jogador, prévia de mestre e URLs de ficha; abrir/fechar Menu, selecionar link, usar Escape, clicar fora, alternar tamanho da janela e conferir que ações de conta permanecem acessíveis. Essa inspeção real em navegador não é coberta pelos testes estáticos.
+
 
 ## Tokens compartilhados
 
@@ -63,6 +76,7 @@ As ações de Mega/forma pertencem aos services/rotas; CSS e JS só apresentam o
 ## Mapa de testes visuais
 
 - `tests/test_sistema_ui.py` — CSS de base e compilação de templates.
+- `tests/test_navegacao_mobile_10f1.py` — estados fechado/aberto e ausência de regras globais concorrentes.
 - `tests/test_visual_10c5.py` — navegação responsiva e rolagem.
 - `tests/test_padrao_visual_10d1.py` — contexto do catálogo.
 - `tests/test_refinamento_frontend.py` — modos claro/escuro, fichas e Painel.
