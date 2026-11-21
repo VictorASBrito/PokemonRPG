@@ -26,6 +26,27 @@ A aplicação local é servida em `http://127.0.0.1:5000`. O arquivo `servidor_t
 
 **Migrations:** conferir `flask --app app.py db current` e fazer backup antes de qualquer `db upgrade`. Scripts de instalação antigos por cópia de arquivos não devem ser executados sobre a `main` atual.
 
+## Testes visuais reais com Playwright (10F.6)
+
+A suíte `tests/visual/` utiliza **Chromium** com um servidor Flask local temporário, banco **SQLite isolado** e dados fictícios do jogador/Pokémon. **Não** acessa o túnel Cloudflare nem o PostgreSQL da campanha. Ao contrário dos contratos CSS estáticos, mede posições e dimensões que o navegador realmente calculou.
+
+Instale as dependências de desenvolvimento e o navegador:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m playwright install chromium
+```
+
+Execute os testes de forma automática (headless):
+
+```bash
+python -m pytest -q tests/visual --browser chromium --tracing retain-on-failure --screenshot only-on-failure --output test-results
+```
+
+Para observar o navegador na sua máquina, acrescente `--headed`. Os casos cobrem a página inicial nas resoluções 390×844 e 1366×768, o sprite que abre a ficha, a altura dos atributos ao expandir/recolher um Pokémon e as categorias da Bag em 390px. Prints das telas fictícias são gerados em `test-results/screenshots/`, ignorado pelo Git. A variável opcional `POKEMON_RPG_TEST_URL` só modifica o destino do **smoke público**; os testes autenticados sempre usam o Flask temporário com SQLite e não precisam de credenciais reais.
+
+O workflow `.github/workflows/test-playwright-ui-10f6.yml` instala Chromium no GitHub Actions, executa essa suíte em PRs para `main` e publica screenshots/traces como artefatos da execução. A automação é independente do ChatGPT Work e do TinyFish. Falhas visuais exigem inspeção das evidências antes de qualquer merge.
+
 ## Mapa do repositório
 
 | Diretório | Responsabilidade |
