@@ -6,6 +6,20 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.7 — Auditoria Playwright de telas e correção desktop da Bag (21/11/2026)
+
+**Pedido:** revisar o projeto por completo procurando erros visuais, corrigindo e documentando. O alcance prático foi definido como auditoria **ampla, reproduzível e não destrutiva** das principais páginas de jogador e mestre, com dados falsos no SQLite e Chromium real; não afirmar revisão exaustiva do banco de produção ou de todos os estados de NPC.
+
+**Branch/PR:** `audit/playwright-full-ui-10f7`, PR #38 contra `main`, **sem merge automático**, iniciada após a mesclagem do PR #37.
+
+**Teste novo:** `tests/visual/test_auditoria_telas_10f7.py` visita as telas primárias de jogador/mestre em 390×844/1366×768, telas dinâmicas (ficha, equipe, edição de Pokémon, forma, golpe, item, prévia), menu mobile e alguns casos 320/768px. Registra exceções JavaScript, status, redirects, overflow global e screenshots por tela. Login de teste apenas no SQLite; nenhum POST de gameplay.
+
+**Primeira execução CI Playwright:** [GitHub Actions #44879022964](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879022964), **53 passed, 3 failed em 89,75s**. Achado real: `/jogador/inventario` no desktop 1366px tinha largura de documento 1458px, excesso de **92px**. `static/css/visual-inventario-10c5.css` permite `overflow:visible !important` no desktop; o pseudoelemento `.inventario-nds-bag::after` saía 120px para a direita (a contenção 10F.3 era apenas mobile). **Correção:** tornar contenção `right:0; width:min(380px,100%)` global na camada visual e atualizar `v=` de cache em `templates/jogador/inventario.html`; atualizar teste CSS 10F.3. Sem mudar o overflow da Bag, o autocomplete ou o JS.
+
+**Falhas não referentes a layout:** duas tentativas de abrir `/regiao/ankar` como jogador terminavam em `/login`. Inspeção da rota comprovou `@perfil_obrigatorio("mestre")`. Corrigimos o **teste**, não a autorização, e adicionamos uma verificação negativa explícita.
+
+**Status:** correções e ampliação para telas dinâmicas implementadas. Aguardar a nova CI antes de alegar resultado final. As páginas de NPC cadastrado não são garantidas pela fixture mínima e serão auditadas em etapa específica quando houver dados artificiais representativos. Nenhum dado real, migration, rota ou regra da campanha alterado.
+
 ## Etapa 10F.6 — Playwright com navegador real e SQLite isolado (21/11/2026)
 
 **Motivo:** usuário instalou e validou localmente Playwright, colocou `tests/visual/test_smoke.py` no GitHub e pediu adicionar dependências e **executar os testes agora**. A `main` ainda não continha `pytest-playwright` em `requirements-dev.txt` nem workflow de navegador.
