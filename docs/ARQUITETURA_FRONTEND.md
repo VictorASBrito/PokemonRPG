@@ -98,6 +98,8 @@ As etiquetas comuns em `tipos.css` usam altura automática, mínimo de 24px gera
 
 A folha `inventario-acoes-11b.css` é carregada após as camadas históricas da Bag. Linhas não contêm mais botões de consumo/equipamento: usam a mesma grade em cada viewport e selecionam com `aria-pressed`, borda e barra interna sem brilho. A faixa de características é separada do cabeçalho e sempre presente, com quebra responsiva. O JS `inventario-uso-10c4.js` preserva a elegibilidade terapêutica e concentra a escolha do alvo em dialog nativo. Formulários de mutação com `data-confirmacao` só submetem com autorização após confirmação; o modal de equipamento é a própria confirmação. O servidor continua sendo a autoridade sobre propriedade, quantidade, efeitos e permissões. Não reexecutar instaladores legados para sobrescrever esse fluxo. Playwright usa itens heterogêneos e operações no SQLite fictício, nunca banco real.
 
+**Validação e correção mobile:** a auditoria anterior à alteração (run 44939818990) passou com 109 testes; a primeira implementação (run 44940028611) obteve 114 aprovados e uma falha, exclusivamente na estabilidade do cabeçalho do mestre a 320×700, tema claro (60–63,0625px; tolerância 1px). Contrato visual 44940028624: 64 aprovados. Corrigido mínimo de altura mobile para 76px, com ícone de 48px e quantidade compacta abaixo de 361px; nomes continuam livres para quebrar sem corte e sem altura fixa. Cache CSS `11b-2`. Ampliado teste para jogador 320px em tema escuro e verificação de contenção de todos os filhos do cabeçalho. Tolerância de 1px preservada. Nova CI pendente.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
