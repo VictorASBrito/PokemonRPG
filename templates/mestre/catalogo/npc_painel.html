@@ -166,6 +166,7 @@
                   <input name="forma_nome" type="search" value="{{ pokemon.especie }}"
                          data-autocomplete-url="{{ url_for('pokemons.autocomplete_formas') }}"
                          data-seletor-visual="pokemon" data-seletor-alvo="npc-forma-{{ pokemon.indice }}"
+                         data-seletor-inicial="{{ pokemon.especie }}"
                          autocomplete="off" required>
                   <input type="hidden" id="npc-forma-{{ pokemon.indice }}" name="forma_id" value="{{ pokemon.forma_id }}">
                 </label>
