@@ -4,7 +4,7 @@
 {% block titulo %}{{ pokemon.get('apelido') or especie.get('nome') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css', v='ui2-20261121') }}">
 {% endblock %}
 
 {% block conteudo %}
