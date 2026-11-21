@@ -28,6 +28,8 @@ Copie este modelo ao concluir uma mudança:
 - **Testes:** auditoria Playwright transversal, 3 novos cenários de ordenação, migration e autorização no SQLite fictício; CI pendente. Sem merge automático.
 
 
+**Revisão da CI 11C:** execução [44942294216](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44942294216): 114 aprovados, 5 falhas. Quatro falhas em tema escuro (painel mestre e catálogo Pokémon em 390/1366px) por halos radiais das classes `.painel-pokemon-imagem` e `.forma-admin-imagem`. Corrigidos na camada fosca, incluindo `.box-pokemon-imagem-wrap` preventivamente. Uma falha de arraste touch a 390px (nenhuma resposta do POST): a regra global `body.app-shell :is(button, .botao, [role=button])` tinha especificidade superior à alça e aplicava `touch-action: manipulation`. Corrigida a especificidade da alça para `none`, preservando rolagem normal fora dela. O teste habilita toque antes da navegação, verifica estilo computado, hit-test, coordenadas e indicador de destino antes de soltar, mantendo resposta POST e persistência obrigatórias. Cache CSS `11c-2`. Contratos 66 aprovados e catálogo 29 aprovados na primeira execução; nova CI pendente.
+
 ### 2026-11-21 — Etapa 11B-UI: Bag uniforme e confirmações
 - **Pedido:** remover brilho da seleção, mover ações ao painel lateral, padronizar tags e confirmar operações.
 - **Branch/PR:** `fix/inventario-acoes-confirmacao-11b-ui`, PR #42.
