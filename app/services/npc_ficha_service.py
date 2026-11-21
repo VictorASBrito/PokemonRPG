@@ -9,11 +9,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
-from app.models.db import FormaPokemon, FormaPokemonTipo, Golpe, Natureza, NPCModelo
+from app.models.db import FormaPokemon, FormaPokemonTipo, Golpe, Natureza, NaturezaModificador, NPCModelo
 from app.services.campo_npc_service import _campanha, _forma, _historico, _numero, _pv_maximo, _uuid
 from app.services.personagem_service import carregar_regras_personagem
 from app.services.pokemon_db_service import carregar_regras_pokemon_db
-from app.services.calculo_atributos import calcular_progressao
+from app.services.calculo_atributos import calcular_progressao, aplicar_aumento, aplicar_diminuicao
 
 
 def regras_npc(campanha_id):
@@ -204,6 +204,7 @@ def _cartoes_modelos(campanha, modelos):
     naturezas = {
         str(item.id): item for item in db.session.scalars(
             select(Natureza).where(Natureza.id.in_(natureza_ids))
+            .options(selectinload(Natureza.modificadores).selectinload(NaturezaModificador.atributo))
         )
     } if natureza_ids else {}
     golpes_catalogo = {
@@ -246,6 +247,21 @@ def _cartoes_modelos(campanha, modelos):
                             regras_pokemon.get("progressao_pv" if chave == "pv" else "progressao_atributos", []),
                         )
             natureza = naturezas.get(str(item.get("natureza_id")))
+            if natureza:
+                for modificador in natureza.modificadores:
+                    if not modificador.atributo:
+                        continue
+                    codigo = modificador.atributo.codigo.replace("-", "_")
+                    if codigo not in totais:
+                        continue
+                    valor = float(modificador.valor)
+                    if modificador.tipo_modificador == "percentual":
+                        totais[codigo] = (
+                            aplicar_aumento(totais[codigo], valor) if valor >= 0
+                            else aplicar_diminuicao(totais[codigo], -valor)
+                        )
+                    else:
+                        totais[codigo] = max(0, totais[codigo] + int(valor))
             golpe_ids_membro = item.get("golpes") if isinstance(item.get("golpes"), list) else []
             golpes = []
             for golpe_id in golpe_ids_membro[:4]:
