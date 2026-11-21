@@ -96,10 +96,26 @@ def test_retrato_e_codigo_de_foco_preservam_npc_e_cache():
     assert ".dashboard-jogador:not(.npc-painel) .foto-treinador-sprite" in css
     assert ".dashboard-jogador:not(.npc-painel) .foto-treinador-link:focus-visible" in css
     assert "image-rendering: pixelated" in css
-    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r2'" in jogador
-    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r2'" in npc
+    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r3'" in jogador
+    assert "filename='css/dashboard.css', v='10f9-tipos-atributos-r3'" in npc
     assert "filename='js/dashboard-pokemon.js', v='10f5-atributos-altura'" in jogador
     assert "filename='js/dashboard-pokemon.js', v='10f5-atributos-altura'" in npc
     assert not [
         token for token in tinycss2.parse_stylesheet(css) if token.type == "error"
     ]
+
+
+def test_golpes_compactos_reutilizam_etiquetas_de_tipo():
+    jogador = JOGADOR.read_text(encoding="utf-8")
+    npc = MESTRE.read_text(encoding="utf-8")
+    css = CSS.read_text(encoding="utf-8")
+    for template, macro in (
+        (jogador, "{{ selo_tipo(golpe.get('tipo', '—')) }}"),
+        (npc, "{{ selo_tipo(golpe.tipo) }}"),
+    ):
+        compacto = template.split('class="golpe-dashboard-meta"', 1)[1].split("</div>", 1)[0]
+        assert macro in compacto
+        assert "golpe-dashboard-dano" in compacto
+        assert "golpe-dashboard-tipo" not in compacto
+    assert ".golpe-dashboard-meta .etiqueta-tipo" in css
+    assert "repeat(4, minmax(40px, 1fr))" in css
