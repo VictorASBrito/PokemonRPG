@@ -23,13 +23,16 @@ Copie este modelo ao concluir uma mudança:
 
 ### 2026-11-21 — Etapa 10F.7: auditoria Chromium de telas e largura da Bag
 - **Objetivo:** percorrer as principais interfaces do site em navegador real, detectar problemas reproduzíveis e corrigir com evidências e regressões.
-- **Status:** IMPLEMENTADO NA BRANCH; PRIMEIRA RODADA AUDITADA; REEXECUÇÃO EM CI PENDENTE.
+- **Status:** IMPLEMENTADO NA BRANCH; DUAS RODADAS AUDITADAS, TESTES/ARTES CORRIGIDOS; CI FINAL PENDENTE.
 - **Branch/PR:** `audit/playwright-full-ui-10f7`, PR #38, base `main` depois do PR #37.
 - **Escopo:** `tests/visual/test_auditoria_telas_10f7.py` cobre painéis, Equipe, Boxes, Inventário, Capturáveis, Região (mestre), Campo, catálogo, novos registros, edição de Pokémon/formas/golpes/itens, prévia e ficha do mestre. Viewports 320/390/768/1366px; HTTP, redirects, overflow horizontal, pageerrors JS, screenshots, menu mobile. Não executa comandos POST de gameplay.
 - **Primeira CI:** [run #44879022964](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879022964), Chromium + SQLite fictício: **53 testes aprovados e 3 falhas em 89,75 segundos**. Screenshots e traces disponíveis no artefato da execução.
 - **Bug confirmado:** página de inventário em 1366px apresentava documento de 1458px (+92px). Origem: decoração `.inventario-nds-bag::after` fora da Bag quando `overflow:visible!important` é usado no desktop.
 - **Correção:** `static/css/visual-inventario-10c5.css` limita a decoração globalmente a `right:0; width:min(380px,100%)`; `templates/jogador/inventario.html` recebe versão de cache 10F.7; `tests/test_inventario_largura_10f3.py` valida a regra global.
 - **Duas falhas de matriz corrigidas:** `/regiao/ankar` é exclusiva de mestre; autenticação de jogador redireciona para login corretamente. Removido o falso positivo e adicionada checagem explícita de autorização no Playwright. Não alteradas permissões.
+- **Segunda CI:** [run #44879376337](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44879376337), **88 passed, 2 failed em 158,65s**. As falhas eram de rota de criação mestre: GET exige `destino=box:box-unica`; acesso sem esse parâmetro redireciona propositalmente para a Box. Ajustada matriz Playwright, sem enfraquecer proteção.
+- **Inspeção de imagens:** contato visual dos screenshots 390/1366px de jogador, mestre e formulários; a imagem do Pokémon do SQLite tinha link de demonstração `https://img/...` e aparecia quebrada. Fixture visual agora usa `/static/img/pokemon-hd/bulbasaur.png`, e o teste da Bag valida `naturalWidth > 0`.
+- **Expansão da cobertura:** 13 telas dinâmicas em dois viewports, 9 cenários de 320/768px e 12 cenários em tema escuro. Novas execuções de CI deverão provar o resultado final.
 - **Migrations/dados:** nenhuma migration nem operação na campanha real. Fixture Flask+SQLite.
 - **Pendências:** nova rodada da CI (incluindo formulários dinâmicos e 320/768px), inspeção dos artefatos, revisão manual de estados NPCs reais, zoom, Firefox/WebKit e dados de produção; não declarar cobertura total.
 - **Próxima ação:** conferir todos os logs, corrigir falhas reais de apresentação detectadas na matriz ampliada e aprovar PR somente após revisão.
