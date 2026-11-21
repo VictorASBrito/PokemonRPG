@@ -37,6 +37,17 @@ A folha legada `refinamento.css` foi absorvida por `sistema-ui.css`. Não reintr
 
 **Regressão:** `tests/test_inventario_mobile_10f2.py` examina a cascata global, o contrato CSS responsivo, a seleção da aba e a versão de cache. O workflow de contrato visual executa esses testes sem banco. Conferir manualmente em Android/Chrome, 320–430px, retrato/paisagem, zoom 200%, equipe com 1–6 Pokémon e bolsas com itens em categorias à direita.
 
+## Inventário mobile — complemento 10F.3
+
+O print do celular mostrou uma faixa escura extra à direita, mesmo após 10F.2. O CSS tinha uma arte decorativa absoluta (`.inventario-nds-bag::after`) com `right: -120px`, enquanto a camada responsiva deixava `.inventario-nds-bag` com `overflow: visible` para preservar controles flutuantes. Portanto, o desenho podia ampliar a área horizontal rolável da página.
+
+- Até **1199px**, manter a decoração dentro do painel com `right: 0` e `width: min(380px, 100%)`. Não trocar o overflow do painel para `hidden`, pois isso pode cortar o autocomplete do mestre.
+- Até **540px**, exibir as cinco abas em **grade de duas colunas**, com texto quebrável e botões completos; não depender de rolagem horizontal para encontrar Item-chave. De 541px a 1199px, preservar a faixa horizontal já existente; acima disso, manter o layout desktop.
+- O JavaScript `inventario.js` continua gerenciando seleção/teclado e só rola abas quando a faixa de fato ultrapassa sua largura. Não alterar regras de itens.
+- Atualizar a versão do CSS específico do inventário no template ao alterar esses breakpoints.
+
+**Teste estático:** `tests/test_inventario_largura_10f3.py`, integrado ao workflow de contrato visual. **Verificação manual obrigatória:** confirmar em Android Chrome a largura do cabeçalho e da Bag, ausência de faixa vazia à direita e cinco categorias visíveis em 320px e 390px. Validar também o autocomplete do mestre e a rolagem da equipe; CI estática não substitui inspeção de layout no navegador.
+
 ## Tokens compartilhados
 
 - **Cores:** `--fundo`, `--superficie`, `--superficie-suave`, `--texto`, `--texto-suave`, `--borda`, `--primaria`; a variante escura vem de `tema.css`.
