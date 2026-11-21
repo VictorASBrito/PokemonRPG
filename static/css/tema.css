@@ -1,21 +1,4 @@
-:root[data-theme="dark"] {
-    color-scheme: dark;
-    --fundo: #0f141c;
-    --superficie: #171d27;
-    --superficie-suave: #202734;
-    --texto: #eef2f7;
-    --texto-suave: #aab4c3;
-    --borda: #343e4d;
-    --primaria: #ef4444;
-    --primaria-escura: #dc2626;
-    --primaria-suave: #3a1d22;
-    --destaque: #f5c84c;
-    --sucesso: #163225;
-    --erro: #3a1c20;
-    --aviso: #372d17;
-    --sombra: 0 12px 30px rgba(0, 0, 0, .28);
-    --sombra-suave: 0 4px 14px rgba(0, 0, 0, .22);
-}
+/* Variáveis definitivas do tema escuro estão na seção de contraste abaixo. */
 
 :root[data-theme="dark"] body { background: var(--fundo); color: var(--texto); }
 :root[data-theme="dark"] img { color-scheme: normal; }
