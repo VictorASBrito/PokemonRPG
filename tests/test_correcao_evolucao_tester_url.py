@@ -49,7 +49,7 @@ def _montar_evolucao(app):
         p = Pokemon(
             personagem=personagem, forma_pokemon_id=ch.id,
             apelido="Foguinho", genero="Macho",
-            localizacao="box", posicao=1, pv_atual=1, ativo=True,
+            localizacao="equipe", posicao=1, pv_atual=1, ativo=True,
         )
         db.session.add_all([r, p])
         db.session.flush()
