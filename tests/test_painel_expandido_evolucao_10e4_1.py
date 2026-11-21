@@ -176,7 +176,7 @@ def test_mega_trainer_menu_tres_pontos_sem_pedra_e_fluxo_expandido(app_db, clien
             campanha_id=_ids(app_db)["campanha"], pokemon_id=p.id, time_numero=1,
         ))
         db.session.commit()
-        pid, fid, dono_id = p.id, formas["charizard-mega-x"].id, p.personagem_id
+        pid, fid, dono_id, origem_id = p.id, formas["charizard-mega-x"].id, p.personagem_id, formas["charizard"].id
     _login(client_db, mestre=True)
     mestre_html = client_db.get("/mestre/dashboard").get_data(as_text=True)
     assert 'data-menu-opcoes' in mestre_html
@@ -210,7 +210,7 @@ def test_mega_trainer_menu_tres_pontos_sem_pedra_e_fluxo_expandido(app_db, clien
     with app_db.app_context():
         pokemon = db.session.get(Pokemon, pid)
         assert pokemon.forma_temporaria_id == fid
-        assert pokemon.forma_pokemon_id == formas["charizard"].id
+        assert pokemon.forma_pokemon_id == origem_id
 
 
 def test_preview_mestre_nao_recebe_botoes_de_evolucao_do_jogador(app_db, client_db):
