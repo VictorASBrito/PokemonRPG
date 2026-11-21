@@ -6,6 +6,18 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 10F.3 — Largura do inventário e abas completas no celular (21/11/2026)
+
+**Origem:** usuário relatou que a Bag continuava visualmente cortada depois da etapa 10F.2 (PR #33 já mesclado). Inspeção do CSS revelou outro transbordamento potencial: `inventario.css` coloca `.inventario-nds-bag::after` 120px para fora do painel, e `visual-inventario-10c5.css` permite `overflow: visible` até 1199px. A faixa circular que aparece no espaço escuro à direita do print é compatível com esse elemento decorativo. O teste no celular ainda deve confirmar a correção.
+
+**Branch:** `fix/inventario-mobile-largura-abas-20261121`, baseada em `main`. Nova PR de correção incremental, sem merge automático.
+
+**Alterações:** no `static/css/visual-inventario-10c5.css`, limitar o pseudoelemento decorativo ao painel até 1199px; até 540px, substituir o carrossel de abas por grade 2 colunas que exibe as cinco categorias inteiras e quebra nomes longos. `templates/jogador/inventario.html` recebe nova versão de cache. `tests/test_inventario_largura_10f3.py` cobre contratos CSS e do template, incluído no workflow de CI visual. Atualizar documentação e diário.
+
+**Preservações:** nenhuma mudança no JS, regras de itens, banco, migrations, permissões, ações ou dados. O carrossel de Pokémon continua rolável horizontalmente; o painel de mestre mantém `overflow: visible` para o autocomplete.
+
+**Status:** patch preparado; resultados de CI e validação visual real devem ser registrados após execução. A correção deve ser conferida no mesmo Android/Chrome em 320/390/430px e 200% de zoom, observando a faixa escura à direita, cabeçalho, categorias e painel mestre.
+
 ## Etapa 10F.2 — Correção da Bag/Inventário em celular (21/11/2026)
 
 **Motivo:** captura de tela de Android/Chrome enviada pelo usuário mostrou cards da equipe cortados lateralmente e a aba Item-chave ativa sem aparecer por completo. A inspeção do código confirmou o conflito: `sistema-ui.css` forçava `overflow-x: hidden` com seletor mais específico que o `overflow-x: auto` planejado por `visual-inventario-10c5.css`. O JS selecionava a primeira bolsa não vazia, mas não a posicionava na faixa horizontal.
