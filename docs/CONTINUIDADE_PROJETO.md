@@ -10,11 +10,13 @@
 
 **Motivo:** captura de tela de Android/Chrome enviada pelo usuário mostrou cards da equipe cortados lateralmente e a aba Item-chave ativa sem aparecer por completo. A inspeção do código confirmou o conflito: `sistema-ui.css` forçava `overflow-x: hidden` com seletor mais específico que o `overflow-x: auto` planejado por `visual-inventario-10c5.css`. O JS selecionava a primeira bolsa não vazia, mas não a posicionava na faixa horizontal.
 
-**Branch:** `fix/inventario-mobile-rolagem-20261121`, iniciada em `main` depois que o PR #32 da etapa 10F.1 foi mesclado. **Status:** alterações e regressões adicionadas, CI e teste no aparelho do usuário a confirmar. Nova PR para revisão, sem merge.
+**Branch:** `fix/inventario-mobile-rolagem-20261121`, iniciada em `main` depois que o PR #32 da etapa 10F.1 foi mesclado. **Status:** alterações e regressões adicionadas; contrato visual e sintaxe JS aprovados no GitHub Actions (45 testes, 21/11/2026); teste no aparelho do usuário pendente. Nova PR para revisão, sem merge.
 
 **Mudanças:** remover apenas os overrides globais de `overflow-x` e tamanhos de cards/fotos no tablet/celular, preservando valores de desktop em `@media (min-width: 1200px)`; fazer `static/js/inventario.js` rolar **a faixa de abas**, sem rolar a página; atualizar cache em `templates/base.html` e `templates/jogador/inventario.html`; atualizar `tests/test_sistema_ui.py` e adicionar `tests/test_inventario_mobile_10f2.py` ao workflow de contrato visual.
 
 **Escopo:** somente frontend, nenhuma alteração de PostgreSQL, migration, rotas, autorizações, troca de personagem, transferência de itens ou lógica de uso/equipamento. A captura mostra também espaço à direita da área do site: o código corrigido não comprova sozinho a causa dessa aparência externa; solicitar revisão visual no dispositivo após deploy antes de considerar toda a questão encerrada.
+
+**Validação CI:** a primeira execução teve 1 falha em 45 cenários devido a um teste de navegação que exigia o identificador de cache CSS antigo; foi ajustado `tests/test_navegacao_mobile_10f1.py` para verificar a existência de versionamento sem fixar um sufixo específico. A execução seguinte do workflow `Contrato visual e organização do repositório` passou: `45 passed in 1.43s`, com `node --check static/js/inventario.js` aprovado. [Execução aprovada](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44867035422).
 
 **Validação necessária:** conferir rolagem por toque da equipe (mais de um Pokémon), abertura direta em Item-chave, troca e navegação por teclado entre abas, zoom, largura total no Chrome do celular, painel mestre e jogador. Próxima etapa: revisão visual localizada da interface conforme novos achados, após aprovação deste patch.
 
