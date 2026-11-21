@@ -1,0 +1,108 @@
+{# NPC 10D.4.7: mesmos ícones/seletores do painel do jogador, só as rotas são do mestre. #}
+{% set acoes = pokemon.acoes %}
+{% set alternativas = acoes.alternativas if acoes.tipo != 'mega' else [] %}
+{% set megas = acoes.megas %}
+{% set reverter = acoes.pode_reverter %}
+{% set total = alternativas|length + megas|length + (1 if reverter else 0) %}
+{% set apenas_mega = megas and not alternativas and not reverter %}
+{% set mega_disponivel = acoes.pode_transformar and not acoes.tipo and not acoes.outra_mega_ativa %}
+{% set rota_acao = url_for('catalogo_admin.npc_transformar_pokemon', modelo_id=npc.id, indice=pokemon.indice) %}
+{% if total %}
+<div class="pokemon-dashboard-indicadores" aria-label="Formas de {{ pokemon.nome }}">
+  <div class="pokemon-dashboard-acao-posicao indicador-direita">
+    {% if total == 1 and (reverter or (alternativas and acoes.pode_transformar) or (apenas_mega and mega_disponivel)) %}
+      {% if reverter %}
+        {% set acao_tipo = 'reverter' %}
+        {% set destino = none %}
+        {% set rotulo = 'Reverter forma' %}
+        {% set icone = url_for('static', filename='img/mudanca-forma.svg') %}
+        {% set confirmacao = 'Reverter ' ~ pokemon.nome ~ ' para a forma original?' %}
+      {% elif alternativas %}
+        {% set acao_tipo = 'alternativa' %}
+        {% set destino = alternativas[0] %}
+        {% set rotulo = destino.nome %}
+        {% set icone = destino.imagem or url_for('static', filename='img/mudanca-forma.svg') %}
+        {% set confirmacao = 'Mudar ' ~ pokemon.nome ~ ' para ' ~ destino.nome ~ '?' %}
+      {% else %}
+        {% set acao_tipo = 'mega' %}
+        {% set destino = megas[0] %}
+        {% set rotulo = 'Mega Evoluir' %}
+        {% set icone = url_for('static', filename='img/inventory/itens/keystone.png') %}
+        {% set confirmacao = 'Mega Evoluir ' ~ pokemon.nome ~ ' para ' ~ destino.nome ~ '?' %}
+      {% endif %}
+      <form class="pokemon-dashboard-acao-direta" method="post" action="{{ rota_acao }}" data-confirmacao="{{ confirmacao }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="origem" value="painel">
+        <input type="hidden" name="foco" value="{{ pokemon.indice }}">
+        <input type="hidden" name="tipo" value="{{ acao_tipo }}">
+        {% if destino %}<input type="hidden" name="destino_id" value="{{ destino.id }}">{% endif %}
+        <button class="pokemon-dashboard-indicador indicador-formas" data-pokemon-abrir="formas"
+                type="submit" title="{{ rotulo }}" aria-label="{{ rotulo }}: {{ pokemon.nome }}">
+          <img src="{{ icone }}" alt="">
+          <span class="pokemon-dashboard-acao-rotulo">{{ rotulo }}</span>
+        </button>
+      </form>
+    {% else %}
+      <details class="pokemon-dashboard-seletor" data-pokemon-painel="formas">
+        <summary class="pokemon-dashboard-indicador indicador-formas" data-pokemon-abrir="formas"
+                 aria-label="Escolher forma de {{ pokemon.nome }}">
+          <img src="{{ url_for('static', filename='img/inventory/itens/keystone.png' if apenas_mega else 'img/mudanca-forma.svg') }}" alt="">
+          <span class="pokemon-dashboard-acao-rotulo">{{ 'Mega Evoluir' if apenas_mega else 'Trocar de forma' }}</span>
+        </summary>
+        <div class="pokemon-dashboard-lista-opcoes" role="group" aria-label="Formas disponíveis">
+          {% if alternativas %}
+            <strong class="dashboard-acao-grupo-titulo">Trocar de forma</strong>
+            {% for forma in alternativas %}
+              <form method="post" action="{{ rota_acao }}" data-confirmacao="Mudar {{ pokemon.nome }} para {{ forma.nome }}?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="foco" value="{{ pokemon.indice }}">
+                <input type="hidden" name="origem" value="painel">
+                <input type="hidden" name="tipo" value="alternativa">
+                <input type="hidden" name="destino_id" value="{{ forma.id }}">
+                <button class="dashboard-acao-opcao" type="submit" {% if not acoes.pode_transformar %}disabled{% endif %}>
+                  <img src="{{ forma.imagem or url_for('static', filename='img/mudanca-forma.svg') }}" alt="">
+                  <span><strong>{{ forma.nome }}</strong></span>
+                </button>
+              </form>
+            {% endfor %}
+          {% endif %}
+          {% if megas %}
+            <strong class="dashboard-acao-grupo-titulo">Mega Evolução</strong>
+            {% if acoes.outra_mega_ativa %}<small class="dashboard-acao-aviso">Já existe outra Mega ativa neste NPC.</small>
+            {% elif acoes.tipo %}<small class="dashboard-acao-aviso">Reverta a forma atual antes de Mega Evoluir.</small>
+            {% elif not acoes.pode_transformar %}<small class="dashboard-acao-aviso">Pokémon desmaiado não pode Mega Evoluir.</small>{% endif %}
+            {% for mega in megas %}
+              <form method="post" action="{{ rota_acao }}" data-confirmacao="Mega Evoluir {{ pokemon.nome }} para {{ mega.nome }}?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="foco" value="{{ pokemon.indice }}">
+                <input type="hidden" name="origem" value="painel">
+                <input type="hidden" name="tipo" value="mega">
+                <input type="hidden" name="destino_id" value="{{ mega.id }}">
+                <button class="dashboard-acao-opcao" type="submit" {% if not mega_disponivel %}disabled{% endif %}>
+                  <img src="{{ mega.imagem or url_for('static', filename='img/inventory/itens/keystone.png') }}" alt="">
+                  <span><strong>{{ mega.nome }}</strong></span>
+                </button>
+              </form>
+            {% endfor %}
+          {% endif %}
+          {% if reverter %}
+            <form method="post" action="{{ rota_acao }}" data-confirmacao="Reverter {{ pokemon.nome }} para a forma original?">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="foco" value="{{ pokemon.indice }}">
+              <input type="hidden" name="origem" value="painel">
+              <input type="hidden" name="tipo" value="reverter">
+              <button class="dashboard-acao-opcao" type="submit">
+                <img src="{{ url_for('static', filename='img/mudanca-forma.svg') }}" alt="">
+                <span><strong>Reverter forma</strong></span>
+              </button>
+            </form>
+          {% endif %}
+          {% if not acoes.pode_transformar and alternativas %}
+            <small class="dashboard-acao-aviso">Pokémon desmaiado não pode mudar de forma.</small>
+          {% endif %}
+        </div>
+      </details>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
