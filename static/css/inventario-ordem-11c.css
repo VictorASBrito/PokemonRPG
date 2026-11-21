@@ -46,8 +46,12 @@
   padding: 0;
   font-size: 1.25rem;
   cursor: grab;
-  touch-action: none;
   user-select: none;
+}
+/* O sistema-ui.css usa body.app-shell :is(button, .botao, [role=button]).
+   A alça precisa vencer essa regra, sem bloquear a rolagem no resto da Bag. */
+body.app-shell .inventario-nds .inventario-ordem-alca {
+  touch-action: none;
 }
 .inventario-nds .inventario-ordem-alca[hidden] { display: none !important; }
 .inventario-nds .inventario-ordem-arrastando { opacity: .65; }
