@@ -43,6 +43,7 @@ def test_css_globais_sao_validos_e_ordem_preservada():
     csss = [
         "geral.css", "tema.css", "sistema-ui.css",
         "visual-global-10c5.css", "padrao-visual-10d1.css",
+        "ficha.css", "pokemon.css", "boxes.css", "catalogo-admin.css",
     ]
     for nome in csss:
         css = _texto(f"static/css/{nome}")
