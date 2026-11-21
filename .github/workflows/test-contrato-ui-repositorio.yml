@@ -32,6 +32,7 @@ jobs:
             tests/test_sistema_ui.py \
             tests/test_navegacao_mobile_10f1.py \
             tests/test_inventario_mobile_10f2.py \
+            tests/test_inventario_largura_10f3.py \
             tests/test_refinamento_frontend.py \
             tests/test_visual_10c5.py \
             tests/test_padrao_visual_10d1.py \
