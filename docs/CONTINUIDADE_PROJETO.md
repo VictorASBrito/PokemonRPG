@@ -16,7 +16,7 @@
 
 **Preservações:** nenhuma mudança no JS, regras de itens, banco, migrations, permissões, ações ou dados. O carrossel de Pokémon continua rolável horizontalmente; o painel de mestre mantém `overflow: visible` para o autocomplete.
 
-**Status:** patch preparado; resultados de CI e validação visual real devem ser registrados após execução. A correção deve ser conferida no mesmo Android/Chrome em 320/390/430px e 200% de zoom, observando a faixa escura à direita, cabeçalho, categorias e painel mestre.
+**Status:** patch preparado e CI inicial aprovada: 49 testes passaram em 1,96s no [workflow visual](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44869536228), incluindo a nova regressão; sintaxe do JavaScript aprovada. Em teste isolado com Chromium a largura do documento passou de 430→320px (viewport 320), 500→390px (viewport 390) e 540→430px (viewport 430), com todas as abas contidas no painel. **Ainda falta verificar o site completo no mesmo Android/Chrome depois de publicar a alteração** (320/390/430px, zoom 200%, cabeçalho, categorias e autocomplete mestre).
 
 ## Etapa 10F.2 — Correção da Bag/Inventário em celular (21/11/2026)
 
