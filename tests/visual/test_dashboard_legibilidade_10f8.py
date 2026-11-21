@@ -89,7 +89,15 @@ def test_painel_legivel_e_golpes_compactos(
     expect(card.locator(".golpe-dashboard-preenchido")).to_have_count(2)
     expect(card.locator(".golpe-dashboard-vazio")).to_have_count(2)
     expect(card.locator(".golpe-dashboard-dano").first).to_be_visible()
-    expect(card.locator(".golpe-dashboard-tipo").first).to_be_visible()
+    tags_compactas = card.locator(".golpe-dashboard-meta .etiqueta-tipo")
+    _verificar_tipos(tags_compactas, 2, 10, 16)
+    expect(tags_compactas).to_have_text(["Grama", "Fogo"])
+    assert tags_compactas.evaluate_all("""tags => tags.every(tag => {
+      const box = tag.getBoundingClientRect();
+      const slot = tag.closest('.golpe-dashboard-preenchido').getBoundingClientRect();
+      return box.left >= slot.left - 1 && box.right <= slot.right + 1 &&
+        box.top >= slot.top - 1 && box.bottom <= slot.bottom + 1;
+    })"""), "Etiquetas compactas devem caber nos slots"
     assert card.evaluate("""el => {
       const card = el.getBoundingClientRect();
       return [...el.querySelectorAll('.golpes-pokemon-dashboard > div')].every(
