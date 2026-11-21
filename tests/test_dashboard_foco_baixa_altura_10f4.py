@@ -8,7 +8,8 @@ import tinycss2
 
 ROOT = Path(__file__).resolve().parents[1]
 CSS = ROOT / "static/css/dashboard.css"
-MEDIA_CURTA = "(min-width: 901px) and (max-height: 760px)"
+MEDIA_CURTA = ("(min-width: 901px) and (max-height: 820px), "
+               "(min-width: 901px) and (max-width: 1450px)")
 MEDIA_DESKTOP = "(min-width: 901px)"
 
 
@@ -88,7 +89,7 @@ def test_companheiros_npc_jogador_e_menus_continuam_no_fluxo():
 
     jogador = (ROOT / "templates/jogador/dashboard.html").read_text(encoding="utf-8")
     npc = (ROOT / "templates/mestre/catalogo/npc_painel.html").read_text(encoding="utf-8")
-    versao = "filename='css/dashboard.css', v='10f8-combate-legibilidade'"
+    versao = "filename='css/dashboard.css', v='10f9-tipos-atributos-r2'"
     assert versao in jogador and versao in npc
     assert "data-dashboard-pokemon-grid" in jogador and "data-dashboard-pokemon-grid" in npc
     assert "data-dashboard-pokemon-collapse" in jogador and "data-dashboard-pokemon-collapse" in npc

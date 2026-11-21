@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block titulo %}Painel de {{ npc.nome }} | Pokémon RPG{% endblock %}
 {% block estilos %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f8-combate-legibilidade') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='10f9-tipos-atributos-r2') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/npc-fichas-10d4.css', v='10d4-6') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/npc-painel.css', v='10d4-6') }}">
 {% endblock %}
@@ -82,10 +82,10 @@
         </div>
         <div class="conteudo-pokemon-dashboard">
           <section class="bloco-pokemon-dashboard">
-            <h4>Atributos base</h4>
+            <h4>Atributos</h4>
             <div class="atributos-base-pokemon">
               {% for codigo, titulo in [('pv','PV'),('ataque','ATQ'),('defesa','DEF'),('ataque_especial','ATQ.E'),('defesa_especial','DEF.E'),('velocidade','VEL')] %}
-              <div><span>{{ titulo }}</span><strong>{{ pokemon.bases.get(codigo, 0) }}</strong></div>
+              <div><span>{{ titulo }}</span><strong>{{ pokemon.totais.get(codigo, 0) }}</strong><small>Base {{ pokemon.bases.get(codigo, 0) }}</small></div>
               {% endfor %}
             </div>
           </section>
