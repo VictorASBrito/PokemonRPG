@@ -14,7 +14,7 @@
 
 **Escopo:** testes e infraestrutura de desenvolvimento; nenhum modelo, regra do RPG, dado real, upload, sessão de usuário, segredo, migration ou rota modificados. O teste de smoke pode inspecionar outra URL explicitamente fornecida via variável de ambiente, mas os fluxos autenticados usam exclusivamente o app de testes. PR para revisão, não mesclar automaticamente.
 
-**Status:** arquivos de implementação preparados; resultados do GitHub Actions devem ser registrados após execução. É possível que os testes revelem falhas reais de CSS: nesses casos, registrar diagnóstico e corrigir separadamente em vez de flexibilizar assertions sem evidência.
+**Status:** [GitHub Actions — Playwright real, Chromium e SQLite isolado](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44878523109) **aprovado: 5 testes passaram em 9,94s**, incluindo smoke 390/1366px, sprite/ficha, altura de atributos no foco e Bag mobile. Screenshots e traces foram tratados pelo workflow; a validação externa do túnel e do PostgreSQL real não faz parte deste teste. Se novos cenários revelarem erros visuais, registrar diagnóstico e corrigir separadamente.
 
 ## Etapa 10F.5 — Sprite do personagem, ficha pelo retrato e altura dos atributos (21/11/2026)
 
