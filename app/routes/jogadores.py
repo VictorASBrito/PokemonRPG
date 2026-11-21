@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import secrets
+
 from flask import (
     Blueprint,
     current_app,
@@ -18,6 +20,7 @@ from app.services.personagem_service import (
     atualizar_ficha_personagem,
     carregar_contexto_ficha,
 )
+from app.services.painel_acoes_pokemon_service import carregar_acoes_equipe_dashboard
 from app.services.pokemon_db_service import (
     carregar_contexto_pokemon,
     equipe_detalhada_db,
@@ -52,7 +55,9 @@ def dashboard():
             flash("Sua ficha não foi encontrada no PostgreSQL.", "erro")
             session.clear()
             return redirect(url_for("auth.login"))
-        equipe = equipe_detalhada_db(contexto_pokemon)
+        equipe = carregar_acoes_equipe_dashboard(
+            contexto_pokemon, equipe_detalhada_db(contexto_pokemon)
+        )
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao carregar o dashboard no PostgreSQL.")
@@ -78,6 +83,7 @@ def dashboard():
         equipe=equipe,
         limite_equipe=int(contexto_pokemon.regras["limites"]["tamanho_equipe"]),
         fonte_ficha="PostgreSQL",
+        csrf_acao_evolucao=session.setdefault("csrf_acao_evolucao", secrets.token_urlsafe(32)),
     )
 
 

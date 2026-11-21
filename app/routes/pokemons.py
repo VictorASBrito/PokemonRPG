@@ -393,11 +393,15 @@ def evoluir_jogador(pokemon_id: str, relacao_id: str):
     if pokemon is None:
         return ("Pokémon não pertence ao treinador autenticado.", 404)
     retorno = "boxes" if request.form.get("retorno") == "boxes" else "equipe"
-    destino = url_for(
-        "pokemons.editar_jogador",
-        pokemon_id=pokemon_id,
-        retorno=retorno,
-        _anchor="consulta-evolucao",
+    destino = (
+        url_for("jogadores.dashboard", foco=pokemon_id)
+        if request.form.get("origem") == "painel"
+        else url_for(
+            "pokemons.editar_jogador",
+            pokemon_id=pokemon_id,
+            retorno=retorno,
+            _anchor="consulta-evolucao",
+        )
     )
     try:
         resultado = evoluir_pokemon(
@@ -457,11 +461,15 @@ def transformar_jogador(pokemon_id: str):
     if pokemon is None:
         return ("Pokémon não pertence ao treinador autenticado.", 404)
     retorno = "boxes" if request.form.get("retorno") == "boxes" else "equipe"
-    destino = url_for(
-        "pokemons.editar_jogador",
-        pokemon_id=pokemon_id,
-        retorno=retorno,
-        _anchor="transformacoes-temporarias",
+    destino = (
+        url_for("jogadores.dashboard", foco=pokemon_id)
+        if request.form.get("origem") == "painel"
+        else url_for(
+            "pokemons.editar_jogador",
+            pokemon_id=pokemon_id,
+            retorno=retorno,
+            _anchor="transformacoes-temporarias",
+        )
     )
     try:
         mensagem = transformar_pokemon(

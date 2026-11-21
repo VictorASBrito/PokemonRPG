@@ -49,7 +49,7 @@ def _montar_evolucao(app):
         p = Pokemon(
             personagem=personagem, forma_pokemon_id=ch.id,
             apelido="Foguinho", genero="Macho",
-            localizacao="box", posicao=1, pv_atual=1, ativo=True,
+            localizacao="equipe", posicao=1, pv_atual=1, ativo=True,
         )
         db.session.add_all([r, p])
         db.session.flush()
@@ -65,7 +65,8 @@ def _csrf_do_pokemon(client, url):
     with client.session_transaction() as sessao:
         token = sessao["csrf_acao_evolucao"]
     assert token
-    assert "Evoluir para Charmeleon" in resposta.get_data(as_text=True)
+    assert "Evoluir" in resposta.get_data(as_text=True)
+    assert "Charmeleon" in resposta.get_data(as_text=True)
     return token
 
 
@@ -79,7 +80,7 @@ def test_tester_pode_evoluir_o_proprio_pokemon_pelo_formulario(app_db, client_db
     assert client_db.post("/login", data={
         "login": "bartz-db", "senha": "abc123",
     }).status_code == 302
-    token = _csrf_do_pokemon(client_db, f"/jogador/pokemon/{pid}")
+    token = _csrf_do_pokemon(client_db, "/jogador/dashboard")
     resposta = client_db.post(
         f"/jogador/pokemon/{pid}/evolucoes/{rid}/evoluir",
         data={"csrf_token": token, "retorno": "boxes"},
@@ -110,7 +111,7 @@ def test_entrada_por_url_de_jogador_permite_evolucao_sem_trocar_conta_mestre(
     }).status_code == 302
     assert client_db.get("/mestre/dashboard").status_code == 200
 
-    ficha = f"/p/bartz-db/jogador/pokemon/{pid}"
+    ficha = "/p/bartz-db/jogador/dashboard"
     pagina = client_db.get(ficha)
     assert pagina.status_code == 200
     assert f"/p/bartz-db/jogador/pokemon/{pid}/evolucoes/{rid}/evoluir" in pagina.get_data(as_text=True)

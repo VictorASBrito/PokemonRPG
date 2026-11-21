@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Mega Pedra">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#74e2fc"/><stop offset=".48" stop-color="#6389f2"/><stop offset="1" stop-color="#8a62e1"/></linearGradient></defs>
+  <path d="M32 3 55 17 61 39 45 59 20 59 3 41 9 17Z" fill="url(#g)" stroke="#d3ecff" stroke-width="2.3"/>
+  <path d="M32 7 38 22 55 17 43 33 57 40 39 42 43 55 30 46 19 55 21 40 8 39 21 30 12 18 26 22Z" fill="#d9f7ff" opacity=".56"/>
+  <circle cx="32" cy="33" r="15" fill="none" stroke="#15348b" stroke-width="3"/>
+  <path d="M18 38 25 25 32 37 39 25 46 38" fill="none" stroke="#163784" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="32" cy="33" r="4" fill="#fff"/>
+</svg>

@@ -222,18 +222,20 @@ def test_rotas_campo_mestre_e_jogador_e_retirada_reverte_mega(app_db, client_db)
         db.session.commit()
         pid, destino_id, dono_id = p.id, formas["charizard-mega-x"].id, p.personagem_id
     assert client_db.post("/login", data={"login": "mestre-db", "senha": "senha-db"}).status_code == 302
-    pagina = client_db.get("/campo")
+    pagina = client_db.get("/mestre/dashboard")
     assert pagina.status_code == 200
-    assert "Liberar Mega" in pagina.get_data(as_text=True)
+    assert "Permitir Mega Evolução" in pagina.get_data(as_text=True)
     with client_db.session_transaction() as sess:
-        csrf = sess["campo_csrf"]
-    url = f"/campo/treinadores/{dono_id}/mega"
+        csrf = sess["perfil_csrf"]
+    url = f"/mestre/painel/jogadores/{dono_id}/mega"
     assert client_db.post(url, data={"csrf_token": csrf, "habilitar": "1"}).status_code == 302
     client_db.post("/logout")
     assert client_db.post("/login", data={"login": "bartz-db", "senha": "abc123"}).status_code == 302
-    pagina = client_db.get("/campo")
+    pagina = client_db.get("/jogador/dashboard")
     assert pagina.status_code == 200
     assert "Mega Evoluir" in pagina.get_data(as_text=True)
+    # O POST antigo do Campo segue aceito; seu token é criado ao visitar o Campo.
+    assert client_db.get("/campo").status_code == 200
     with client_db.session_transaction() as sess:
         csrf = sess["campo_csrf"]
     action = f"/campo/pokemons/{pid}/transformar"
@@ -366,8 +368,8 @@ def test_alternativa_na_ficha_jogador_com_requisicao_e_csrf(app_db, client_db):
         db.session.commit()
         pid, destino_id = p.id, formas["morpeko-faminto"].id
     assert client_db.post("/login", data={"login": "bartz-db", "senha": "abc123"}).status_code == 302
-    html = client_db.get(f"/jogador/pokemon/{pid}").get_data(as_text=True)
-    assert "Formas alternativas" in html and "Mudar forma" in html
+    html = client_db.get("/jogador/dashboard").get_data(as_text=True)
+    assert "Morpeko-faminto" in html and "pokemon-dashboard-acao-direta" in html
     with client_db.session_transaction() as sess:
         csrf = sess["csrf_acao_evolucao"]
     url = f"/jogador/pokemon/{pid}/transformar"

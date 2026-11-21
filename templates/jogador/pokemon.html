@@ -268,15 +268,7 @@
                         </form>
                         {% endif %}
                         {% if not modo_mestre and opcao.pode_evoluir %}
-                        <form class="evolucao-form-confirmacao" method="post"
-                              action="{{ url_for('pokemons.evoluir_jogador', pokemon_id=pokemon.get('id'), relacao_id=opcao.relacao_id) }}"
-                              data-confirmacao="Confirma evoluir {{ nome_exibicao }} para {{ opcao.destino_nome }}? A evolução não poderá ser desfeita nesta tela{% if opcao.pedra %} e uma unidade de {{ opcao.pedra }} será consumida{% endif %}.">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_acao_evolucao }}">
-                            <input type="hidden" name="retorno" value="{{ retorno }}">
-                            <button class="botao botao-primario" type="submit">
-                                Evoluir para {{ opcao.destino_nome }}
-                            </button>
-                        </form>
+                        <p class="texto-suave">Evolução pronta. Abra o Pokémon no painel expandido da equipe para evoluir.</p>
                         {% elif not modo_mestre and opcao.bloqueio_execucao %}
                         <p class="evolucao-bloqueio"><strong>Ainda não pode evoluir:</strong> {{ opcao.bloqueio_execucao }}</p>
                         {% endif %}
@@ -296,64 +288,12 @@
     {% endif %}
 </section>
 
-<section class="cartao secao-pokemon ui-card" id="transformacoes-temporarias" aria-labelledby="titulo-formas-temporarias">
-    <div class="titulo-secao-pokemon">
-        <div>
-            <p class="rotulo">Etapa 10E.4 · Transformações reversíveis</p>
-            <h2 id="titulo-formas-temporarias">Mega Evolução e formas alternativas</h2>
-            <p class="texto-suave">A forma original {{ especie.nome }} permanece salva. Essas mudanças não consomem pedras nem substituem a evolução permanente.</p>
-        </div>
-    </div>
-    {% if tipo_transformacao %}
-      <p class="transformacao-ativa"><strong>Forma ativa:</strong> {{ forma_visivel.nome }} ({{ 'Mega Evolução' if tipo_transformacao == 'mega' else 'Alternativa' }}).</p>
-      {% if not modo_mestre %}
-      <form method="post" action="{{ url_for('pokemons.transformar_jogador', pokemon_id=pokemon.get('id')) }}"
-            class="form-transformacao-pokemon">
-        <input type="hidden" name="csrf_token" value="{{ csrf_acao_evolucao }}">
-        <input type="hidden" name="retorno" value="{{ retorno }}">
-        <input type="hidden" name="tipo" value="reverter">
-        <button type="submit" class="botao botao-secundario">Voltar à forma original</button>
-      </form>
-      {% endif %}
-    {% endif %}
-    {% if formas_temporarias.alternativas %}
-      <h3>Formas alternativas</h3>
-      <p class="texto-suave">O próprio treinador escolhe. Para espécies como Morpeko, a mudança é manual, pois o Campo não controla turnos ou habilidades automaticamente.</p>
-      {% if not modo_mestre and tipo_transformacao != 'mega' %}
-      <form method="post" action="{{ url_for('pokemons.transformar_jogador', pokemon_id=pokemon.get('id')) }}"
-            class="form-transformacao-pokemon" data-confirmacao="Confirmar mudança de forma temporária?">
-        <input type="hidden" name="csrf_token" value="{{ csrf_acao_evolucao }}">
-        <input type="hidden" name="retorno" value="{{ retorno }}">
-        <input type="hidden" name="tipo" value="alternativa">
-        <label>Nova forma
-          <select name="destino_id" required>
-            {% for forma in formas_temporarias.alternativas %}
-            <option value="{{ forma.id }}">{{ forma.nome }}</option>
-            {% endfor %}
-          </select>
-        </label>
-        <button class="botao botao-primario" type="submit">Mudar forma</button>
-      </form>
-      {% endif %}
-    {% endif %}
-    {% if formas_temporarias.mega %}
-      <h3>Mega Evolução</h3>
-      <p class="texto-suave">
-        {% if mega_permitida %}
-          Seu treinador possui autorização Mega. Coloque o Pokémon no Campo para ativar a Megaforma.
-        {% else %}
-          O mestre precisa habilitar Mega Evolução para este treinador no painel Campo.
-        {% endif %}
-        Nenhuma Pedra Chave ou Mega Pedra é exigida em Ankar.
-      </p>
-      <div class="transformacao-lista">
-        {% for forma in formas_temporarias.mega %}
-        <span>{{ forma.nome }}</span>
-        {% endfor %}
-      </div>
-    {% endif %}
-    {% if not formas_temporarias.mega and not formas_temporarias.alternativas and not tipo_transformacao %}
-      <p class="texto-suave">Esta forma não possui transformação temporária habilitada no catálogo.</p>
+<section class="cartao secao-pokemon ui-card" id="transformacoes-temporarias" aria-label="Transformações do Pokémon">
+    <h2>Formas e Mega Evolução</h2>
+    <p class="texto-suave">As mudanças de forma e a Mega Evolução agora são realizadas diretamente no Pokémon expandido no painel da equipe.
+    {% if tipo_transformacao %}Forma atual: <strong>{{ forma_visivel.nome }}</strong>.{% endif %}</p>
+    {% if not modo_mestre %}
+    <a class="botao botao-secundario botao-link" href="{{ url_for('jogadores.dashboard', foco=pokemon.get('id')) }}">Abrir no painel da equipe</a>
     {% endif %}
 </section>
 
