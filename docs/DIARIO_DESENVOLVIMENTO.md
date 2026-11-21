@@ -21,6 +21,17 @@ Copie este modelo ao concluir uma mudança:
 
 ## Histórico recente
 
+### 2026-11-21 — Etapa 10F.8: legibilidade do painel e golpes compactos
+- **Objetivo:** melhorar leitura dos atributos e ataques a partir das capturas de painel normal/expandido enviadas pelo usuário.
+- **Status:** implementado na branch; CI pendente de verificação.
+- **Branch:** `feat/dashboard-combate-legibilidade-10f8`, baseada na main após merge do PR #38.
+- **Arquivos:** CSS compartilhado dashboard, templates jogador/NPC, contratos estáticos de cache e proporções, teste visual de equipe completa e documentação.
+- **Decisões:** hierarquia de valores base/atuais, nome e metadados dos golpes em duas linhas no normal, altura intrínseca no expandido com rolagem dos detalhes se necessário, nomes laterais quebráveis e empilhamento em celular.
+- **Migrations:** nenhuma. Não altera regras nem banco real.
+- **Testes:** três novos cenários Playwright e regressões existentes; resultados aguardando CI. Validação específica de NPC cadastrado e produção ainda pendentes.
+- **Próxima ação:** conferir CI e capturas e revisar PR antes de merge.
+
+
 ### 2026-11-21 — Etapa 10F.7: auditoria Chromium de telas e largura da Bag
 - **Objetivo:** percorrer as principais interfaces do site em navegador real, detectar problemas reproduzíveis e corrigir com evidências e regressões.
 - **Status:** IMPLEMENTADO NA BRANCH; PLAYWRIGHT 102/102 E CONTRATO VISUAL 59/59 APROVADOS; PR #38 SEM MERGE.
