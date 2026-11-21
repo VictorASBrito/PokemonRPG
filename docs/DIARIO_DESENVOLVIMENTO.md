@@ -31,6 +31,8 @@ Copie este modelo ao concluir uma mudança:
 - **Próxima ação:** verificar relatórios e capturas, corrigir problemas reais se aparecerem e revisar antes de merge.
 
 
+**Validação e correção mobile:** a auditoria anterior à alteração (run 44939818990) passou com 109 testes; a primeira implementação (run 44940028611) obteve 114 aprovados e uma falha, exclusivamente na estabilidade do cabeçalho do mestre a 320×700, tema claro (60–63,0625px; tolerância 1px). Contrato visual 44940028624: 64 aprovados. Corrigido mínimo de altura mobile para 76px, com ícone de 48px e quantidade compacta abaixo de 361px; nomes continuam livres para quebrar sem corte e sem altura fixa. Cache CSS `11b-2`. Ampliado teste para jogador 320px em tema escuro e verificação de contenção de todos os filhos do cabeçalho. Tolerância de 1px preservada. Nova CI pendente.
+
 ### 2026-11-21 — Etapa 11A: acervo visual e primeiro lote de itens
 - **Objetivo:** expandir catálogo de itens com fontes do manual 2.5 e ícones locais/PokéAPI; preparar implantação incremental no PostgreSQL.
 - **Branch:** `feat/catalogo-itens-acervo-11a`, após merge PR #40.
