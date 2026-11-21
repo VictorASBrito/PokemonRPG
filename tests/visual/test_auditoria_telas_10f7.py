@@ -172,7 +172,7 @@ def test_regiao_ankar_e_exclusiva_do_mestre(
         ("mestre", "preview-jogador", "/mestre/jogadores/{personagem}/preview"),
         ("mestre", "ficha-jogador", "/mestre/jogadores/{personagem}/ficha"),
         ("mestre", "equipe-jogador", "/mestre/jogadores/{personagem}/equipe"),
-        ("mestre", "novo-pokemon", "/mestre/jogadores/{personagem}/equipe/novo"),
+        ("mestre", "novo-pokemon", "/mestre/jogadores/{personagem}/equipe/novo?destino=box:box-unica"),
         ("mestre", "editar-pokemon-jogador", "/mestre/jogadores/{personagem}/pokemon/{pokemon}"),
         ("mestre", "boxes-jogador", "/mestre/jogadores/{personagem}/boxes"),
         ("mestre", "inventario-jogador", "/mestre/jogadores/{personagem}/inventario"),
