@@ -6,6 +6,12 @@
 > **Escopo desta versão:** validação da correção anterior confirmada pelo usuário (9 testes passaram em 10,86 s); implantação de auditoria detalhada de catálogo **somente leitura**, com novos testes e documentação. A leitura do PostgreSQL real ainda depende da execução local.
 
 
+## Etapa 12A — Aparência individual (21/11/2026)
+
+Primeiro incremento após merge do PR #43. Cinco paletas gerais (Clássico, Ankar, Eclipse, Expedição, Horizonte), cada uma clara/escura, e modo automático via preferências do sistema. Botão Tema abre diálogo com amostras e prévia de toda a tela; Cancelar/Escape restauram a aparência salva. Salvar persiste por personagem e por conta do mestre, com autorização por sessão e CSRF, sem aceitar identificadores arbitrários. Preferências anteriores no localStorage são fallback para modo ainda não configurado. O modo automático responde à mudança do sistema. A paleta Meu personagem deriva o matiz dominante de sprite local da configuração de nove slots (Pillow, ignora transparência/neutros e reduz tons de pele); se o sprite não estiver disponível ou não tiver cor suficiente, não oferece a opção. Não usa HTTP externo. Luminâncias separadas para legibilidade. As cores dos tipos, PV, condições e shiny não são personalizadas. CSS compartilhado e adaptação inicial da Bag. Testes de contraste, isolamento, cancelamento e persistência e tema derivado. Revisão por personagem e auditoria completa de todas as paletas, personalização manual e prévia do mestre como jogador permanecem próximas etapas.
+
+**Atualização obrigatória:** backup; `pip install -r requirements.txt` (Pillow); `flask --app app.py db upgrade` antes de servir a nova aplicação. Migration `d12a00000001` adiciona dois campos anuláveis em personagens e usuarios. Não altera gameplay ou inventários. CI pendente. Sem acesso ao PostgreSQL real.
+
 ## Etapa 11C-UI — Acabamento fosco e organização da Bag (21/11/2026)
 
 **Escopo:** após merge do PR #42, revisão das 32 folhas de estilo da interface; separar destaque funcional de brilho, preservando tema, sprites, cores de tipos/status, barra de PV, identificação shiny e foco de teclado.

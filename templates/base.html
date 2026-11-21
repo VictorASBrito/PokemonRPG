@@ -4,15 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block titulo %}Pokémon RPG{% endblock %}</title>
+    <script type="application/json" id="aparencia-config">{{ aparencia|default({})|tojson }}</script>
     <script>
         (() => {
-            const chave = 'pokemon-rpg-tema';
+            const config = JSON.parse(document.getElementById('aparencia-config').textContent);
             let salvo = null;
-            try { salvo = localStorage.getItem(chave); } catch (_erro) { salvo = null; }
-            const tema = salvo === 'dark' || salvo === 'light'
-                ? salvo
-                : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.dataset.theme = tema;
+            try { salvo = localStorage.getItem('pokemon-rpg-tema'); } catch (_erro) {}
+            const modo = config.modo || (['light','dark'].includes(salvo) ? salvo : 'auto');
+            const tema = modo === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : modo;
+            const raiz = document.documentElement;
+            raiz.dataset.theme = tema;
+            raiz.dataset.palette = config.paleta || 'classico';
+            raiz.style.colorScheme = tema;
+            const cores = config.opcoes?.[raiz.dataset.palette]?.[tema];
+            if (cores) config.tokens.forEach((token,i) => raiz.style.setProperty('--' + token, cores[i]));
         })();
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/geral.css', v='ui2-20261121') }}">
@@ -31,6 +36,7 @@
     {# ANKAR_PADRAO_VISUAL_10D1: menu contextual e hierarquia consistente. #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/padrao-visual-10d1.css', v='ui2-20261121') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-fosco-11c.css', v='11c-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aparencia-12a.css', v='12a-1') }}">
 </head>
 <body class="app-shell" data-pagina="{{ (((request.endpoint or '') if request is defined else ''))|replace('.', '-') }}">
     <a class="skip-content" href="#conteudo-principal">Ir para o conteúdo</a>
@@ -77,7 +83,7 @@
                 {% if request.environ.get('ANKAR_FICHA_LOGIN') %}
                     <a class="botao botao-secundario botao-link" href="{{ request.environ.get('ANKAR_SCRIPT_ROOT_ORIGINAL', '') }}/selecionar">Trocar personagem</a>
                 {% endif %}
-                <button class="tema-toggle" id="tema-toggle" type="button" aria-label="Alternar entre modo claro e escuro" title="Alternar tema">
+                <button class="tema-toggle" id="tema-toggle" type="button" aria-label="Personalizar aparência" title="Personalizar aparência" aria-haspopup="dialog">
                     <span class="tema-toggle-icone" aria-hidden="true">◐</span>
                     <span class="tema-toggle-texto">Tema</span>
                 </button>
@@ -128,7 +134,40 @@
         {% endwith %}
     </section>
 
-    <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
+    {% if aparencia is defined and aparencia.autenticado %}
+    <dialog id="aparencia-dialogo" class="aparencia-dialogo" aria-labelledby="aparencia-titulo" data-aparencia-url="{{ url_for('aparencia.salvar') }}">
+        <h2 id="aparencia-titulo">Personalizar aparência</h2>
+        <p class="texto-suave">Sua preferência acompanha a ficha ou conta do mestre.</p>
+        <form data-aparencia-form>
+            <fieldset>
+                <legend>Modo de exibição</legend>
+                <div class="aparencia-modos">
+                    {% for codigo, nome in [('light','Claro'),('dark','Escuro'),('auto','Automático')] %}
+                    <label><input type="radio" name="modo" value="{{ codigo }}"> {{ nome }}</label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Paleta de cores</legend>
+                <div class="aparencia-paletas">
+                    {% for codigo, paleta in aparencia.opcoes.items() %}
+                    <label class="aparencia-opcao">
+                        <input type="radio" name="paleta" value="{{ codigo }}">
+                        <span>{{ paleta.nome }}</span>
+                        <span class="aparencia-amostras" data-amostras="{{ codigo }}" aria-hidden="true"></span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <p class="texto-suave" data-aparencia-status role="status" aria-live="polite"></p>
+            <div class="aparencia-acoes">
+                <button type="button" class="botao botao-secundario" data-aparencia-cancelar>Cancelar</button>
+                <button type="submit" class="botao botao-primario">Salvar aparência</button>
+            </div>
+        </form>
+    </dialog>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/tema.js', v='12a-1') }}"></script>
     <script src="{{ url_for('static', filename='js/avisos-toast-10c4-1.js', v='10c4-2') }}" defer></script>
     <script src="{{ url_for('static', filename='js/visual-navegacao-10c5.js', v='10c5-1') }}" defer></script>
     {% block scripts %}{% endblock %}

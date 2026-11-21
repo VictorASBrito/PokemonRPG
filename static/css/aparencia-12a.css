@@ -1,0 +1,115 @@
+/* 12A — os tokens de aparência são compartilhados pelo app inteiro.
+   Cores semânticas (PV, condições, tipos, shiny, perigo) permanecem independentes. */
+html[data-palette] body.app-shell :is(.topo,.barra-salvar,.barra-acoes-catalogo,.barra-flutuante) {
+    background: var(--superficie); border-color: var(--borda); color: var(--texto);
+}
+html[data-palette] body.app-shell .topo .navegacao-principal a { color: var(--texto-suave); }
+html[data-palette] body.app-shell .topo .navegacao-principal a:hover,
+html[data-palette] body.app-shell .topo .navegacao-principal a[aria-current="page"] {
+    color: var(--primaria); background: var(--primaria-suave);
+}
+html[data-palette] body.app-shell :is(.tema-toggle,.botao-secundario,.controle-pv-rapido button,.painel-ordem-controle button) {
+    color: var(--texto); background: var(--superficie-suave); border-color: var(--borda);
+}
+html[data-palette] body.app-shell :is(.tema-toggle,.botao-secundario):hover {
+    background: var(--primaria-suave); border-color: var(--primaria);
+}
+html[data-palette] body.app-shell .botao-primario { background: var(--primaria); color: var(--texto-primaria,#fff); }
+html[data-palette] body.app-shell .botao-primario:hover { background: var(--primaria-escura); }
+html[data-palette] body.app-shell :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+    color: var(--texto); background: var(--superficie); border-color: var(--borda);
+}
+html[data-palette] body.app-shell :is(input,textarea)::placeholder { color: var(--texto-suave); }
+html[data-palette] body.app-shell :is(input,select,textarea):focus { border-color: var(--primaria); outline-color: var(--primaria); }
+html[data-palette] body.app-shell :is(.slot-box-vazio,.pokemon-vazio,.pokemon-dashboard-vazio,
+.pokemon-dashboard-atributos-totais>div,.pokemon-dashboard-meta>div,.pokemon-dashboard-golpe-detalhado,
+.pokemon-dashboard-defesa,.seletor-visual-resultados,.preview-jogador-mestre,.painel-mestre-ordem-ajuda) {
+    color: var(--texto); background: var(--superficie); border-color: var(--borda);
+}
+html[data-palette] body.app-shell :is(.slot-box-vazio,.pokemon-vazio,.pokemon-dashboard-vazio):hover {
+    color: var(--primaria); background: var(--primaria-suave); border-color: var(--primaria);
+}
+html[data-palette] body.app-shell :is(.pokemon-dashboard-vazio strong,.barra-salvar span) {color:var(--texto);}
+html[data-palette] body.app-shell :is(.retrato-pokemon,.retrato-pokemon-dashboard,.box-pokemon-imagem-wrap,
+.pokemon-imagem-wrap,.preview-imagem,.forma-admin-imagem,.painel-pokemon-imagem,.item-admin-imagem,
+.preview-imagem-item,.atributo-cartao,.informacoes-treinador div:not(.informacao-destaque),
+.seletor-visual-opcao:hover,.seletor-visual-opcao:focus-visible) {
+    background: var(--superficie-suave); border-color: var(--borda);
+}
+/* Bag: cores de apresentação compartilhadas; nenhum ajuste geométrico. */
+html[data-palette] body.app-shell .inventario-nds {
+    --inv-bg: var(--fundo); --inv-surface: var(--superficie);
+    --inv-surface-soft: var(--superficie-suave); --inv-stroke: var(--borda);
+    --inv-text: var(--texto); --inv-muted: var(--texto-suave);
+    --inv-accent: var(--primaria); --inv-accent-2: var(--primaria);
+    --inv-shadow:none; --bag-glow:transparent;
+}
+html[data-palette] body.app-shell .inventario-nds-bag {background:var(--fundo); --bag-line:var(--primaria);}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-equipe,.inventario-nds-card,
+.inventario-nds-area-mestre,.inventario-nds-resumo-bolsa,.inventario-nds-toolbar-counter) {
+    background:var(--superficie); border-color:var(--borda);
+}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-logo-bags,.inventario-nds-treinador-pokemon,
+.inventario-nds-treinador-foto,.inventario-nds-equipe-vazia,.inventario-nds-equipados,
+.inventario-nds-equipados form,.inventario-nds-equipados button,.inventario-nds-aba,.inventario-nds-voltar,
+.inventario-nds-linha-botao,.inventario-nds-linha-foto,.inventario-nds-linha-quantidade,
+.inventario-nds-sem-itens,.inventario-nds-item-imagem,.inventario-nds-item-quantidade,
+.inventario-nds-etiquetas span,.inventario-nds-item-descricao,.inventario-nds-efeitos,.inventario-nds-form,
+.inventario-nds-placeholder-icone,.inventario-nds-aba-icone,.inventario-ordem-toggle,.inventario-ordem-alca) {
+    background:var(--superficie-suave); border-color:var(--borda); color:var(--texto);
+}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-busca,.inventario-nds-form input,
+.inventario-nds-form select,.inventario-nds-area-mestre input,.inventario-nds-area-mestre select) {
+    background:var(--superficie)!important; color:var(--texto)!important; border-color:var(--borda)!important;
+}
+html[data-palette] body.app-shell .inventario-nds .inventario-nds-busca::placeholder {color:var(--texto-suave)!important;}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-aba[aria-pressed="true"],
+.inventario-nds-linha-botao[aria-pressed="true"],.inventario-ordem-toggle[aria-pressed="true"]) {
+    background:var(--primaria-suave); border-color:var(--primaria); color:var(--texto);
+}
+html[data-palette] body.app-shell .inventario-nds .inventario-nds-aba[aria-pressed="true"] .inventario-nds-aba-icone {
+    background:var(--primaria-suave);
+}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-acao,.inventario-uso-acao) {
+    color:var(--texto-primaria,#fff); background:var(--primaria); border-color:var(--primaria);
+}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-acao,.inventario-uso-acao):hover {background:var(--primaria-escura);}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-acao-sec,.inventario-uso-acao-equipar) {
+    background:var(--superficie-suave);color:var(--texto);border-color:var(--borda);
+}
+html[data-palette] body.app-shell .inventario-nds :is(.inventario-nds-acao-sec,.inventario-uso-acao-equipar):hover {
+    background:var(--primaria-suave);color:var(--texto);
+}
+html[data-palette] body.app-shell .inventario-nds .inventario-nds-treinador-barra {background:var(--borda);}
+html[data-palette] body.app-shell .inventario-nds .inventario-nds-efeitos pre {color:var(--texto);}
+html[data-palette] body.app-shell .inventario-nds .inventario-nds-bag::after {opacity:.06;}
+/* Modal de aparência: acessível, responsivo, sem sombra. */
+.aparencia-dialogo {
+    width:min(540px,calc(100vw - 24px)); max-height:calc(100dvh - 24px);
+    overflow:auto; margin:auto; padding:20px; border:1px solid var(--borda);
+    border-radius:16px; color:var(--texto); background:var(--superficie);
+}
+.aparencia-dialogo::backdrop {background:rgba(0,0,0,.38);}
+.aparencia-dialogo h2 {margin:0 0 6px;font-size:1.25rem;}
+.aparencia-dialogo p {margin:0 0 12px;line-height:1.45;}
+.aparencia-dialogo fieldset {min-width:0;border:0;padding:0;margin:0 0 16px;}
+.aparencia-dialogo legend {font-weight:750;padding:0;margin-bottom:8px;}
+.aparencia-modos,.aparencia-paletas {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.aparencia-paletas {grid-template-columns:repeat(2,minmax(0,1fr));}
+.aparencia-dialogo label {
+    display:flex;flex-wrap:wrap;align-items:center;gap:7px;min-height:44px;
+    border:1px solid var(--borda);padding:9px;border-radius:9px;
+    background:var(--superficie-suave);cursor:pointer;font-size:.85rem;
+}
+.aparencia-dialogo label:has(input:checked) {border-color:var(--primaria);background:var(--primaria-suave);}
+.aparencia-dialogo input[type="radio"] {width:16px;height:16px;min-height:0;margin:0;accent-color:var(--primaria);}
+.aparencia-amostras {display:flex;width:100%;gap:2px;}
+.aparencia-amostras span {height:14px;flex:1;border:1px solid var(--borda);border-radius:3px;}
+.aparencia-acoes {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;}
+.aparencia-dialogo [data-aparencia-status]:empty {display:none;}
+@media(max-width:360px) {
+    .aparencia-dialogo {padding:12px;}
+    .aparencia-modos {grid-template-columns:1fr;}
+    .aparencia-paletas {gap:6px;}
+    .aparencia-acoes button {flex:1 1 auto;}
+}
