@@ -216,3 +216,22 @@ def test_confirmar_uso_transferencia_e_equipamento(page: Page, live_site_url,
         confirm.click()
     assert len(posts) == 5 and posts[-1].endswith("/desequipar")
     assert quantidade(app_visual, ids, "visual-amuleto") == 3
+
+
+def test_mestre_confirma_ajuste_de_quantidade(page: Page, live_site_url,
+                                            inventario_visual, app_visual):
+    ids = inventario_visual
+    abrir(page, live_site_url, ids, "mestre", 1366, 768)
+    ajuste = page.locator("form[data-confirmacao='ajustar']")
+    ajuste.locator("xpath=..").locator("summary").click()
+    ajuste.locator("select").select_option(ids["visual-isca"])
+    ajuste.locator("input[name='quantidade']").fill("0")
+    ajuste.get_by_role("button", name="Ajustar").click()
+    modal = page.locator("#inventario-confirmacao-11b")
+    expect(modal).to_contain_text("O item será removido da mochila.")
+    modal.locator("[data-uso-cancelar]").click()
+    assert quantidade(app_visual, ids, "visual-isca") == 3
+    ajuste.get_by_role("button", name="Ajustar").click()
+    with page.expect_navigation():
+        modal.locator("[data-confirmar-operacao]").click()
+    assert quantidade(app_visual, ids, "visual-isca") == 0
