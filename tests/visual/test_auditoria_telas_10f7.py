@@ -253,3 +253,39 @@ def test_breakpoints_intermediarios_e_pequenos(
     assert resposta is not None and resposta.status == 200
     real = page.evaluate("document.documentElement.scrollWidth")
     assert real <= largura + 1, f"{perfil}/{nome} {largura}px: overflow {real}px"
+
+
+@pytest.mark.parametrize(
+    "perfil,nome,rota",
+    [
+        ("jogador", "dashboard", "/jogador/dashboard"),
+        ("jogador", "inventario", "/jogador/inventario"),
+        ("jogador", "equipe", "/jogador/equipe"),
+        ("mestre", "dashboard", "/mestre/dashboard"),
+        ("mestre", "catalogo-itens", "/mestre/catalogo/itens"),
+        ("mestre", "catalogo-pokemons", "/mestre/catalogo/pokemons"),
+    ],
+)
+@pytest.mark.parametrize("largura,altura", RESOLUCOES)
+def test_tema_escuro_navegavel_sem_transbordar(
+    page: Page, live_site_url: str,
+    perfil: str, nome: str, rota: str, largura: int, altura: int,
+) -> None:
+    """A auditoria inicial capturava só tema claro; incluir os dois tamanhos."""
+    page.set_viewport_size({"width": largura, "height": altura})
+    page.add_init_script(
+        "try { localStorage.setItem('pokemon-rpg-tema', 'dark'); } catch (_e) {}"
+    )
+    entrar(page, live_site_url, perfil)
+    resposta = page.goto(f"{live_site_url}{rota}", wait_until="domcontentloaded")
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    EVIDENCIAS.mkdir(parents=True, exist_ok=True)
+    page.screenshot(
+        path=str(EVIDENCIAS / f"escuro-{perfil}-{nome}-{largura}.png"),
+        animations="disabled",
+    )
+    assert resposta is not None and resposta.status == 200
+    real = page.evaluate("document.documentElement.scrollWidth")
+    assert real <= largura + 1, (
+        f"Tema escuro {perfil}/{nome}, {largura}px: largura {real}px"
+    )
