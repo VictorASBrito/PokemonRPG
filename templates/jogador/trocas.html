@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% from "componentes/tipos.html" import selo_tipo %}
+{% block titulo %}Trocas Pokémon | Pokémon RPG{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trocas.css', v='13a-1') }}">
+{% endblock %}
+
+{% macro pokemon_card(p) %}
+    <div class="troca-pokemon">
+        {% if p %}
+        {% set f = p.forma_pokemon %}
+        {% set img = (f.imagem_shiny_url or f.imagem_url) if p.shiny else f.imagem_url %}
+        {% if img %}<img src="{{ img }}" alt="" loading="lazy">{% endif %}
+        <div>
+            <strong>{{ p.apelido or f.nome }}</strong>
+            <small>{{ f.nome }}{% if p.shiny %} · Shiny{% endif %} · {{ p.genero or 'Ø' }}</small>
+            <div class="troca-tipos">{% for rel in f.tipos %}{% if rel.tipo.ativo %}{{ selo_tipo(rel.tipo.nome) }}{% endif %}{% endfor %}</div>
+            <small>Natureza: {{ p.natureza.nome if p.natureza else '—' }} · PV: {{ p.pv_atual }}</small>
+        </div>
+        {% else %}<span class="texto-suave">Pokémon indisponível</span>{% endif %}
+    </div>
+{% endmacro %}
+{% macro campos() %}
+<input type="hidden" name="csrf_token" value="{{ csrf }}">
+<input type="hidden" name="revisao" value="{{ troca.revisao }}">
+{% endmacro %}
+{% block conteudo %}
+<section class="cabecalho-pagina cabecalho-com-acoes">
+    <div><p class="rotulo">Armazenamento Pokémon</p><h1>Central de Trocas</h1>
+        <p class="texto-suave">Até três Pokémon por jogador. A transferência exige duas confirmações.</p></div>
+    <div class="grupo-acoes">
+        <a class="botao botao-secundario botao-link" href="{{ url_for('boxes.boxes_jogador') }}">Voltar à Box</a>
+        {% if troca is defined %}<a class="botao botao-secundario botao-link" href="{{ url_for('trocas.central') }}">Todos os convites</a>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('trocas.detalhe', troca_id=troca.id) }}">Atualizar negociação</a>
+        {% else %}<a class="botao botao-secundario botao-link" href="{{ url_for('trocas.central') }}">Atualizar convites</a>{% endif %}
+    </div>
+</section>
+{% set estados = {'pendente':'Aguardando aceite','negociacao':'Em negociação','concluida':'Concluída','recusada':'Recusada','cancelada':'Cancelada'} %}
+{% if troca is not defined %}
+<section class="cartao troca-secao">
+    <h2>Iniciar uma troca</h2>
+    <form method="post" action="{{ url_for('trocas.nova') }}" class="troca-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf }}">
+        <label for="destinatario">Com quem deseja trocar?</label>
+        <select name="destinatario" id="destinatario" required>
+            <option value="">Selecione um jogador</option>
+            {% for p in jogadores %}<option value="{{ p.id }}">{{ p.nome }} ({{ p.usuario.nome }})</option>{% endfor %}
+        </select>
+        <button class="botao botao-primario" type="submit" {% if not jogadores %}disabled{% endif %}>Enviar convite</button>
+    </form>
+</section>
+<section class="cartao troca-secao">
+    <h2>Convites e histórico</h2>
+    {% for t in trocas %}
+    {% set enviada = t.proponente_id == autor.id %}
+    <div class="troca-lista-linha">
+        <div><strong>{{ nomes.get(t.destinatario_id if enviada else t.proponente_id, 'Jogador indisponível') }}</strong>
+        <small>{{ 'Enviado' if enviada else 'Recebido' }} · {{ estados[t.estado] }}</small></div>
+        <a class="botao botao-secundario botao-link" href="{{ url_for('trocas.detalhe', troca_id=t.id) }}">{{ 'Abrir convite' if t.estado == 'pendente' and not enviada else 'Ver troca' }}</a>
+    </div>
+    {% else %}<p class="texto-suave">Nenhuma troca registrada.</p>{% endfor %}
+</section>
+{% else %}
+<section class="cartao troca-secao">
+    <h2>{{ autor.nome }} ↔ {{ outro.nome }}</h2>
+    <p role="status"><strong>{{ estados[troca.estado] }}</strong></p>
+    {% if troca.estado == 'pendente' %}
+        <p>{{ 'Seu convite foi enviado. Aguarde o aceite.' if a else 'Você recebeu um convite. Aceitar abre a negociação, mas não transfere Pokémon.' }}</p>
+        <form class="troca-acoes" method="post" action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
+            {% if not a %}<button class="botao botao-primario" name="acao" value="aceitar">Aceitar convite</button>
+            <button class="botao botao-secundario" name="acao" value="recusar">Recusar</button>{% else %}
+            <button class="botao botao-secundario" name="acao" value="cancelar">Cancelar convite</button>{% endif %}
+        </form>
+    {% else %}
+    <div class="troca-colunas">
+        <section class="troca-lado"><h3>Sua oferta · {{ minha_oferta|length }}/3</h3>
+            <p class="texto-suave">{{ 'Confirmada' if confirmei else 'Não confirmada' }}</p>
+            {% for id in minha_oferta %}{{ pokemon_card(oferecidos.get(id)) }}{% else %}<p>Nenhum Pokémon oferecido.</p>{% endfor %}
+        </section>
+        <section class="troca-lado"><h3>Oferta de {{ outro.nome }} · {{ oferta_outro|length }}/3</h3>
+            <p class="texto-suave">{{ 'Confirmada' if outro_confirmou else 'Não confirmada' }}</p>
+            {% for id in oferta_outro %}{{ pokemon_card(oferecidos.get(id)) }}{% else %}<p>Nenhum Pokémon oferecido.</p>{% endfor %}
+        </section>
+    </div>
+    {% if troca.estado == 'negociacao' %}
+    <p class="texto-suave">Uma oferta pode ficar vazia. Alterações nas ofertas anulam as confirmações anteriores. Atualize a negociação para ver as alterações do outro jogador.</p>
+    <form class="troca-acoes" method="post" action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
+        {% if confirmei %}<button class="botao botao-secundario" name="acao" value="desconfirmar">Retirar confirmação</button>{% else %}
+        <button class="botao botao-primario" name="acao" value="confirmar" {% if not minha_oferta and not oferta_outro %}disabled{% endif %}>Confirmar troca</button>{% endif %}
+        <button class="botao botao-secundario" name="acao" value="cancelar">Cancelar troca</button>
+    </form>
+    {% endif %}
+    {% endif %}
+</section>
+{% if troca.estado == 'negociacao' %}
+<section class="cartao troca-secao">
+    <h2>Editar sua oferta</h2>
+    <p class="texto-suave">Selecione até três Pokémon da sua Box. Retire itens equipados e desfaça transformações antes de negociar. Pokémon da equipe devem ser guardados primeiro.</p>
+    <form method="post" action="{{ url_for('trocas.agir', troca_id=troca.id) }}">{{ campos() }}
+        <div class="troca-escolhas">
+        {% for p in disponiveis %}
+        <label class="troca-escolha">
+            <input type="checkbox" name="pokemon_id" value="{{ p.id }}" {% if p.id|string in minha_oferta %}checked{% endif %}>
+            {{ pokemon_card(p) }}
+        </label>
+        {% else %}<p class="texto-suave">Nenhum Pokémon disponível para oferecer.</p>{% endfor %}
+        </div>
+        <button class="botao botao-primario" name="acao" value="ofertar">Salvar oferta</button>
+    </form>
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}
