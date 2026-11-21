@@ -1019,6 +1019,25 @@ def npcs():
     return render_template("mestre/catalogo/npcs.html", modelos=modelos, csrf_token=token)
 
 
+# Painel do NPC: visão do mestre, sem criar Usuario/Personagem fictício.
+@catalogo_admin_bp.get("/npcs/<modelo_id>/painel")
+@perfil_obrigatorio("mestre")
+def painel_npc(modelo_id):
+    from app.services.npc_ficha_service import ficha_card_npc, opcoes_edicao_npc
+    try:
+        card = ficha_card_npc(campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id)
+        opcoes = opcoes_edicao_npc(campanha_codigo=_npc_ficha_codigo())
+    except ValueError:
+        return ("NPC não encontrado nesta campanha.", 404)
+    except SQLAlchemyError:
+        _erro_banco("Falha ao carregar Painel do NPC.")
+        return redirect(url_for("catalogo_admin.npcs"))
+    return render_template(
+        "mestre/catalogo/npc_painel.html", npc=card, opcoes=opcoes,
+        csrf_token=_npc_ficha_token(),
+    )
+
+
 # --- ETAPA 10D.4.4: fichas permanentes dos NPCs, apenas para o mestre ---
 def _npc_ficha_token():
     import secrets
@@ -1116,12 +1135,16 @@ def _npc_ficha_acao(funcao, modelo_id, *, origem=None):
         flash(str(exc), "erro")
     except SQLAlchemyError:
         _erro_banco("Falha ao alterar NPC.")
+    origem_real = origem or request.form.get("origem")
+    if origem_real == "painel":
+        indice = str(request.form.get("foco") or "")
+        foco = indice if indice.isascii() and indice.isdecimal() and 0 <= int(indice) < 6 else None
+        return redirect(url_for("catalogo_admin.painel_npc", modelo_id=modelo_id, **({"foco": foco} if foco else {})))
     destino = (
-        "catalogo_admin.ficha_npc"
-        if (origem == "ficha" or request.form.get("origem") == "ficha")
+        "catalogo_admin.ficha_npc" if origem_real == "ficha"
         else "catalogo_admin.npcs"
     )
-    return redirect(url_for(destino, **({"modelo_id": modelo_id} if destino.endswith("ficha_npc") else {})))
+    return redirect(url_for(destino, **({"modelo_id": modelo_id} if origem_real == "ficha" else {})))
 
 
 @catalogo_admin_bp.post("/npcs/<modelo_id>/pv")
@@ -1170,7 +1193,7 @@ def npc_adicionar_pokemon(modelo_id):
             campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
             forma_id=request.form.get("forma_id"),
             usuario_id=session.get("usuario_id"),
-        ), modelo_id, origem="ficha",
+        ), modelo_id, origem=(request.form.get("origem") or "ficha"),
     )
 
 
@@ -1182,5 +1205,30 @@ def npc_retirar_pokemon(modelo_id, indice):
         lambda: remover_pokemon_ficha(
             campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
             indice=indice, usuario_id=session.get("usuario_id"),
-        ), modelo_id, origem="ficha",
+        ), modelo_id, origem=(request.form.get("origem") or "ficha"),
+    )
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/editar")
+@perfil_obrigatorio("mestre")
+def npc_editar_pokemon(modelo_id, indice):
+    from app.services.npc_ficha_service import editar_pokemon_ficha
+    return _npc_ficha_acao(
+        lambda: editar_pokemon_ficha(
+            campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+            indice=indice, dados=request.form, usuario_id=session.get("usuario_id"),
+        ), modelo_id, origem="painel",
+    )
+
+
+@catalogo_admin_bp.post("/npcs/<modelo_id>/equipe/<int:indice>/mover")
+@perfil_obrigatorio("mestre")
+def npc_mover_pokemon(modelo_id, indice):
+    from app.services.npc_ficha_service import mover_pokemon_ficha
+    return _npc_ficha_acao(
+        lambda: mover_pokemon_ficha(
+            campanha_codigo=_npc_ficha_codigo(), modelo_id=modelo_id,
+            indice=indice, direcao=request.form.get("direcao"),
+            usuario_id=session.get("usuario_id"),
+        ), modelo_id, origem="painel",
     )

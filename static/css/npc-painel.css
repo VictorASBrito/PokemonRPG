@@ -1,0 +1,59 @@
+/* 10D.4.5 — Painel individual de NPCs com os mesmos cards do jogador. */
+.npc-painel-cabecalho {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  flex-wrap:wrap; gap:14px; margin-bottom:18px;
+}
+.npc-painel-cabecalho h1 { margin:4px 0; font-size:clamp(1.55rem,3vw,2rem); }
+.npc-painel-cabecalho-acoes { display:flex; flex-wrap:wrap; gap:8px; }
+.npc-painel { min-width:0; }
+.npc-painel .painel-identidade .foto-treinador { object-fit:cover; }
+.npc-painel-sem-arte { font-size:3rem; color:var(--texto-suave); }
+.npc-painel .pokemon-dashboard-card { cursor:pointer; }
+.npc-painel .pokemon-dashboard-card.pokemon-dashboard-em-foco { cursor:default; }
+.npc-painel .pokemon-dashboard-card :is(input,select,textarea,button,a,label) { cursor:auto; }
+.npc-painel .pokemon-dashboard-card button,.npc-painel .pokemon-dashboard-card a { cursor:pointer; }
+.npc-painel .pokemon-dashboard-detalhes-expandidos { min-width:0; }
+.npc-painel-pv { display:grid; gap:8px; padding-top:12px; }
+.npc-painel-pv label { display:grid; gap:5px; font-size:.78rem; font-weight:700; }
+.npc-painel :is(input,select,textarea) {
+  min-width:0; width:100%; box-sizing:border-box; font:inherit;
+  padding:9px 10px; border:1px solid var(--borda);
+  border-radius:8px; background:var(--superficie-suave); color:var(--texto);
+}
+.npc-painel input[type="checkbox"] { width:auto; }
+.npc-painel-acoes-linha { display:flex; align-items:center; flex-wrap:wrap; gap:9px; }
+.npc-painel-acoes-linha > form { margin:0; }
+.npc-painel-anotacoes { margin-top:13px; border-top:1px solid var(--borda); padding-top:12px; }
+.npc-painel-anotacoes summary { cursor:pointer; font-weight:750; }
+.npc-painel-anotacoes p { font-size:.8rem; white-space:pre-wrap; overflow-wrap:anywhere; }
+.npc-painel-edicao { min-width:0; }
+.npc-painel-secao-titulo { display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:12px; }
+.npc-painel-secao-titulo h4 { margin:0; }
+.npc-painel-form { display:grid; gap:14px; }
+.npc-painel-form label { display:grid; gap:5px; font-size:.8rem; font-weight:700; min-width:0; }
+.npc-painel-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.npc-painel-form .npc-painel-shiny { display:flex; flex-direction:row; align-items:center; gap:8px; }
+.npc-painel-golpes { border:1px solid var(--borda); border-radius:10px; padding:12px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:0; }
+.npc-painel-golpes legend { font-size:.8rem; font-weight:800; padding:0 6px; }
+.npc-painel-controles { display:grid; gap:10px; }
+.npc-painel-controles h4 { margin:0; }
+.npc-painel-adicionar { margin-top:18px; padding:18px; }
+.npc-painel-adicionar h2 { margin:0 0 5px; font-size:1.08rem; }
+.npc-painel-adicionar .npc-adicionar-form { margin-top:10px; }
+.npc-painel-adicionar .npc-adicionar-form input { width:100%; }
+.npc-painel .pokemon-dashboard-golpe-detalhado .pokemon-dashboard-golpe-resumo { min-width:0; }
+.npc-painel-dialog {
+  position:fixed; inset:0; margin:auto; width:min(440px,calc(100vw - 30px));
+  max-height:min(75vh,420px); padding:0; background:var(--superficie);
+  border:1px solid var(--borda); border-radius:15px; color:var(--texto);
+  box-shadow:0 24px 65px rgba(0,0,0,.4); z-index:9999;
+}
+.npc-painel-dialog::backdrop { background:rgba(5,10,18,.72); backdrop-filter:blur(2px); }
+.npc-painel-dialog-conteudo { display:grid; gap:16px; padding:24px; }
+.npc-painel-dialog-conteudo :is(h2,p) { margin:0; }
+.npc-painel-dialog-conteudo .npc-painel-acoes-linha { justify-content:flex-end; }
+@media(max-width:760px) {
+  .npc-painel-campos,.npc-painel-golpes { grid-template-columns:1fr; }
+  .npc-painel-cabecalho-acoes { width:100%; }
+  .npc-painel .coluna-treinador { position:static; }
+}
