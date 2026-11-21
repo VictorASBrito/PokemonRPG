@@ -1,0 +1,23 @@
+/* Central de Trocas: usa tokens da aparência, sem alterar outras telas. */
+.troca-secao { margin-block: 14px; padding: 16px; min-width: 0; }
+.troca-secao h2, .troca-secao h3 { margin: 0 0 10px; }
+.troca-form, .troca-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.troca-form select { flex: 1 1 220px; min-width: 0; }
+.troca-lista-linha, .troca-pokemon { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.troca-lista-linha { justify-content: space-between; border-top: 1px solid var(--borda); padding: 10px 0; flex-wrap: wrap; }
+.troca-pokemon { padding: 9px; border: 1px solid var(--borda); background: var(--superficie-suave); border-radius: 8px; }
+.troca-pokemon > div { min-width: 0; overflow-wrap: anywhere; }
+.troca-pokemon img { width: 64px; height: 64px; object-fit: contain; flex: 0 0 64px; }
+.troca-pokemon small, .troca-lista-linha small { display: block; color: var(--texto-suave); }
+.troca-tipos { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.troca-colunas, .troca-escolhas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 12px; }
+.troca-lado { border: 1px solid var(--borda); border-radius: 10px; padding: 12px; min-width: 0; }
+.troca-lado .troca-pokemon + .troca-pokemon { margin-top: 6px; }
+.troca-escolha { display: flex; align-items: center; gap: 8px; min-width: 0; cursor: pointer; }
+.troca-escolha input { accent-color: var(--primaria); flex: 0 0 auto; }
+.troca-escolha .troca-pokemon { flex: 1; }
+.troca-escolha:has(input:checked) .troca-pokemon { outline: 2px solid var(--primaria); }
+@media (max-width: 680px) {
+    .troca-colunas, .troca-escolhas { grid-template-columns: minmax(0, 1fr); }
+    .troca-secao { padding: 12px; }
+}
