@@ -8,7 +8,7 @@
 
 ## Etapa 10F.1 — Navegação mobile e conflito entre CSS globais (21/11/2026)
 
-**Status:** IMPLEMENTADO NA BRANCH; CI E VALIDAÇÃO VISUAL REAL A CONFERIR. Branch: `fix/mobile-nav-global-css-20261121`, baseada em `main`. PR proposto contra `main`, sem merge automático.
+**Status:** IMPLEMENTADO NA BRANCH; CI DO CONTRATO VISUAL APROVADA (40 testes, 21/11/2026); VALIDAÇÃO VISUAL REAL PENDENTE. Branch: `fix/mobile-nav-global-css-20261121`, baseada em `main`. PR proposto contra `main`, sem merge automático.
 
 **Diagnóstico:** `sistema-ui.css` possuía regras de cabeçalho e um `@media (max-width: 900px)` com seletores mais específicos (`body.app-shell .navegacao-principal`, `body.app-shell .topo`, `body.app-shell .marca` e `body.app-shell .usuario-topo`). Elas competiam com `visual-global-10c5.css`, impedindo o estado `display: none` do menu móvel e misturando `grid-template-areas` com as linhas/colunas móveis.
 
@@ -16,7 +16,7 @@
 
 **Escopo seguro:** sem mudanças em rotas, JavaScript da navegação, autenticação, permissões, modelos, dados, sprites, migrações ou regras de Ankar. Os testes estáticos verificam contratos CSS/template, **não** a renderização no navegador ou acessos reais.
 
-**Validação planejada:** CI da PR executa o contrato visual; conferir também a navegação de mestre/jogador/prévia em 320, 390, 768, 900, 901, 1100, 1101 e 1440px, com modo claro/escuro, zoom 200%, clique fora, Escape e troca de breakpoint. Próxima etapa recomendada depois disso: revisão localizada do dashboard do jogador e do painel de NPCs, sem redesenho massivo.
+**Validação automatizada efetiva:** workflow [Contrato visual e organização do repositório](https://github.com/VictorASBrito/PokemonRPG/actions/runs/44865434964) executou `python -m pytest -q` com **40 passed in 2.97s** na PR #32, incluindo `tests/test_navegacao_mobile_10f1.py`. **Validação manual pendente:** conferir também a navegação de mestre/jogador/prévia em 320, 390, 768, 900, 901, 1100, 1101 e 1440px, com modo claro/escuro, zoom 200%, clique fora, Escape e troca de breakpoint. Próxima etapa recomendada depois disso: revisão localizada do dashboard do jogador e do painel de NPCs, sem redesenho massivo.
 
 ## Atualização de arquitetura visual e limpeza de repositório — 21/11/2026
 
