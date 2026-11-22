@@ -55,7 +55,7 @@
                 {% for tipo in especie.get('tipos', []) %}{{ selo_tipo(tipo) }}{% endfor %}
             </div>
             <strong class="ficha-pokemon-retrato-nome">{{ nome_exibicao }}</strong>
-            {% if pokemon.get('shiny') %}<span class="ficha-pokemon-variacao">Shiny</span>{% endif %}
+            <span class="ficha-pokemon-variacao" id="ficha-selo-shiny" {% if not pokemon.get('shiny') %}hidden{% endif %}>Shiny</span>
             {% if especie.get('ordem_catalogo') is not none %}<span class="texto-suave texto-centralizado">Catálogo #{{ especie.get('ordem_catalogo') }}</span>{% endif %}
         </div>
 
@@ -144,7 +144,7 @@
         </div>
         <div class="saude-pokemon-destaque">
             <div class="ficha-pv-cabecalho">
-                <label for="pv_atual">Pontos de vida</label>
+                <label for="pv_atual">PV atual</label>
                 <div><input id="pv_atual" name="pv_atual" type="number" min="0" max="{{ calculos.totais.pv }}" value="{{ pokemon.get('pv_atual', calculos.totais.pv) }}"><strong>/ {{ calculos.totais.pv }}</strong></div>
             </div>
             <progress class="ficha-pv-barra" id="ficha-pv-barra" aria-label="Pontos de vida" max="{{ [calculos.totais.pv, 1]|max }}" value="{{ pokemon.get('pv_atual', calculos.totais.pv) }}"></progress>
