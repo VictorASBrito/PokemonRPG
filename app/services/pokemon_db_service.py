@@ -1065,10 +1065,17 @@ def remover_pokemon_db(
     contexto: ContextoPokemon,
     pokemon_id: str,
     usuario_responsavel_id: str | uuid.UUID | None,
+    nome_confirmacao: str | None = None,
 ) -> bool:
     pokemon = _buscar_pokemon_contexto(contexto.personagem.id, pokemon_id, bloquear=True)
     if pokemon is None:
         return False
+    # A rota de exclusão sempre fornece o texto, inclusive quando ausente.
+    # Verificar após bloquear e reler o registro evita aceitar nome obsoleto.
+    if nome_confirmacao is not None:
+        esperado = (pokemon.apelido or "").strip() or pokemon.forma_pokemon.nome.strip()
+        if not esperado or nome_confirmacao.strip() != esperado:
+            raise ValueError("Digite exatamente o nome atual do Pokémon para removê-lo.")
     localizacao = pokemon.localizacao
     antes = _snapshot(pokemon)
     pokemon.ativo = False
