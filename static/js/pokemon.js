@@ -7,6 +7,8 @@
         if (!shiny || !imagem) return;
         const destino = shiny.checked ? imagem.dataset.shiny : imagem.dataset.normal;
         if (destino) imagem.src = destino;
+        const selo = document.querySelector("#ficha-selo-shiny");
+        if (selo) selo.hidden = !shiny.checked;
     };
     shiny?.addEventListener("change", atualizarImagem);
 
@@ -64,6 +66,17 @@
             enviando = true;
             confirmar.disabled = true;
         });
+    }
+
+    const pv = document.querySelector("#pv_atual");
+    const barraPv = document.querySelector("#ficha-pv-barra");
+    if (pv && barraPv) {
+        const atualizarPv = () => {
+            const valor = Number(pv.value);
+            barraPv.value = Number.isFinite(valor) ? Math.max(0, Math.min(valor, barraPv.max)) : 0;
+        };
+        pv.addEventListener("input", atualizarPv);
+        atualizarPv();
     }
 
     const formulario = document.querySelector("#form-pokemon");

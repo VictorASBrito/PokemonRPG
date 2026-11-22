@@ -1,0 +1,175 @@
+/* 13C — Página de edição: só afeta o wrapper da ficha, sem mudar equipe/Box. */
+.ficha-pokemon-13c {
+    max-width: 1600px;
+    min-width: 0;
+    margin-inline: auto;
+    --ficha-gap: 14px;
+}
+.ficha-pokemon-13c :is(section[id], #bonus-pokemon) { scroll-margin-top: 88px; }
+.ficha-pokemon-13c .ficha-pokemon-cabecalho { margin-bottom: 12px; align-items: center; }
+.ficha-pokemon-13c .ficha-pokemon-cabecalho h1 { font-size: clamp(1.55rem, 3vw, 2rem); margin: 3px 0; overflow-wrap: anywhere; }
+.ficha-pokemon-acoes-topo { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.ficha-pokemon-indice {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    margin-bottom: var(--ficha-gap); padding: 6px; border: 1px solid var(--borda);
+    background: var(--superficie); border-radius: 10px;
+}
+.ficha-pokemon-indice a {
+    display: inline-flex; align-items: center; min-height: 36px; padding: 6px 10px;
+    color: var(--texto-suave); text-decoration: none; font-weight: 700; font-size: .85rem;
+    border-radius: 7px;
+}
+.ficha-pokemon-indice a:hover, .ficha-pokemon-indice a:focus-visible {
+    color: var(--primaria); background: var(--primaria-suave);
+}
+.ficha-pokemon-resumo {
+    display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
+    gap: var(--ficha-gap); align-items: start; min-width: 0;
+}
+.ficha-pokemon-combate { display: grid; gap: var(--ficha-gap); min-width: 0; }
+body.app-shell .ficha-pokemon-13c :is(.painel-pokemon, .secao-pokemon) {
+    min-width: 0; padding: 18px; margin-top: var(--ficha-gap);
+    background: var(--superficie); border: 1px solid var(--borda);
+    border-radius: 12px; box-shadow: none;
+}
+body.app-shell .ficha-pokemon-resumo :is(.painel-pokemon, .secao-pokemon) { margin-top: 0; }
+.ficha-pokemon-13c .painel-pokemon { display: block; }
+.ficha-pokemon-titulo, .ficha-pokemon-13c .titulo-secao-pokemon {
+    display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;
+    gap: 10px; margin: 0 0 14px;
+}
+.ficha-pokemon-13c :is(.titulo-secao-pokemon, .ficha-pokemon-titulo) h2 {
+    font-size: 1.15rem; margin: 0 0 4px;
+}
+.ficha-pokemon-13c :is(.titulo-secao-pokemon, .ficha-pokemon-titulo) .rotulo {
+    font-size: .7rem; margin: 0 0 4px;
+}
+.ficha-pokemon-13c :is(.titulo-secao-pokemon, .ficha-pokemon-titulo) .texto-suave { font-size: .84rem; line-height: 1.45; }
+.ficha-pokemon-identidade {
+    display: grid; grid-template-columns: minmax(130px, .62fr) minmax(0, 1.5fr);
+    align-items: start; gap: 14px;
+}
+body.app-shell .ficha-pokemon-13c .retrato-pokemon {
+    min-height: 0; padding: 12px; gap: 8px;
+    background: var(--superficie-suave); border-color: var(--borda); border-radius: 10px;
+}
+.ficha-pokemon-13c .retrato-pokemon img {
+    width: 100%; height: auto; aspect-ratio: 1 / 1; max-width: 220px; object-fit: contain; filter: none;
+}
+.ficha-pokemon-13c .retrato-pokemon .chips { flex-wrap: wrap; gap: 4px; }
+.ficha-pokemon-retrato-nome { text-align: center; overflow-wrap: anywhere; }
+.ficha-pokemon-variacao {
+    font-size: .75rem; font-weight: 750; color: var(--texto);
+    border: 1px solid var(--borda); padding: 3px 8px; border-radius: 999px;
+}
+.ficha-pokemon-13c .dados-principais-pokemon { min-width: 0; }
+body.app-shell .ficha-pokemon-13c .dados-principais-pokemon .grade-formulario {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; align-items: start;
+}
+.ficha-pokemon-13c .campo-duas-colunas { grid-column: 1 / -1; }
+.ficha-pokemon-13c .campo { min-width: 0; gap: 5px; }
+.ficha-pokemon-13c .campo label { font-size: .82rem; color: var(--texto-suave); }
+.ficha-pokemon-13c .campo small { font-size: .74rem; overflow-wrap: anywhere; }
+.ficha-pokemon-13c .campo-checkbox { justify-content: flex-start; }
+body.app-shell .ficha-pokemon-13c .campo-calculado {
+    box-sizing: border-box; min-height: 42px; min-width: 0;
+    display: flex; align-items: center; padding: 9px 11px; gap: 8px;
+    background: var(--superficie-suave); border: 1px solid var(--borda);
+    border-radius: 8px; overflow-wrap: anywhere;
+}
+.ficha-pokemon-13c .campo-calculado strong { min-width: 0; font-size: .9rem; }
+.ficha-pokemon-13c .campo-item-carregado { flex-wrap: wrap; justify-content: space-between; }
+.ficha-pokemon-13c .campo-item-carregado .botao { min-height: 34px; font-size: .78rem; white-space: normal; }
+.ficha-pokemon-13c .alternador { min-height: 42px; font-size: .8rem; }
+.ficha-pokemon-13c .alternador input[type="checkbox"] {
+    flex: 0 0 18px; width: 18px; height: 18px; min-height: 0; padding: 0; margin: 0;
+}
+.ficha-pokemon-13c .saude-pokemon-destaque {
+    min-width: 0; width: 100%; padding: 10px; margin-bottom: 10px;
+    background: var(--superficie-suave); border: 1px solid var(--borda); border-radius: 9px;
+}
+.ficha-pokemon-13c .saude-pokemon-destaque label { margin: 0; color: var(--texto-suave); }
+.ficha-pokemon-13c .ficha-pv-cabecalho { justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.ficha-pokemon-13c .saude-pokemon-destaque input { width: 82px; min-height: 36px; padding: 6px 8px; }
+.ficha-pokemon-13c .ficha-pv-barra { height: 9px; background: var(--borda); }
+.ficha-pokemon-13c .ficha-pv-barra::-webkit-progress-bar { background: var(--borda); }
+body.app-shell .ficha-pokemon-13c :is(.grade-atributos-pokemon, .grade-bonus-pokemon) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+}
+body.app-shell .ficha-pokemon-13c .atributo-pokemon-card {
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+    padding: 9px 5px; background: var(--superficie-suave); border: 1px solid var(--borda); border-radius: 9px;
+}
+.ficha-pokemon-13c .atributo-pokemon-card span { min-height: 0; font-size: .75rem; overflow-wrap: anywhere; }
+.ficha-pokemon-13c .atributo-pokemon-card strong { margin: 0; font-size: 1.45rem; line-height: 1.2; }
+.ficha-pokemon-13c .atributo-pokemon-card em { font-size: .72rem; }
+body.app-shell .ficha-pokemon-13c .metricas-calculo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+body.app-shell .ficha-pokemon-13c .metricas-calculo div {
+    min-width: 0; padding: 8px 10px; background: var(--superficie-suave);
+    border: 1px solid var(--borda); border-radius: 8px;
+}
+.ficha-pokemon-13c .grade-bonus-pokemon label { min-height: 0; font-size: .75rem; }
+.ficha-pokemon-13c .grade-bonus-pokemon input { min-height: 38px; padding: 7px 9px; }
+.ficha-pokemon-13c .ficha-golpes-grade {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    border: 0; background: transparent; overflow: visible;
+}
+.ficha-pokemon-13c .ficha-golpe-slot {
+    display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
+    gap: 10px; min-width: 0; min-height: 0; padding: 12px;
+    background: var(--superficie-suave); border: 1px solid var(--borda); border-radius: 10px;
+}
+.ficha-pokemon-13c .ficha-golpe-cabecalho { display: grid; gap: 5px; min-width: 0; }
+.ficha-pokemon-13c :is(.ficha-golpe-numero, .ficha-golpe-rotulo) {
+    font-size: .72rem; color: var(--texto-suave); font-weight: 750;
+}
+.ficha-pokemon-13c .ficha-golpe-metricas {
+    display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, .8fr)); gap: 7px;
+}
+.ficha-pokemon-13c .ficha-golpe-metricas > div {
+    display: flex; flex-direction: column; gap: 5px; align-items: flex-start;
+    min-width: 0; padding: 7px; border: 1px solid var(--borda);
+    background: var(--superficie); border-radius: 8px; overflow-wrap: anywhere;
+}
+.ficha-pokemon-13c .ficha-golpe-metricas .golpe-meta { width: 100%; }
+.ficha-pokemon-13c .ficha-golpe-metricas .etiqueta-tipo { max-width: 100%; white-space: normal; }
+.ficha-pokemon-13c .ficha-golpe-metricas .golpe-valor { font-size: 1rem; }
+.ficha-pokemon-13c .efeito-golpe-card {
+    min-height: 0; flex: 1 1 auto; border: 0; border-top: 1px solid var(--borda);
+    border-radius: 0; background: transparent; padding: 9px 0 0;
+}
+.ficha-pokemon-13c .efeito-golpe-card-topo { flex-wrap: wrap; gap: 4px 8px; }
+.ficha-pokemon-13c .efeito-golpe-card-topo small { flex-shrink: 1; }
+.ficha-pokemon-13c #anotacoes { min-height: 120px; }
+body.app-shell .ficha-pokemon-13c .barra-salvar-pokemon {
+    position: static; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+    margin-top: 12px; padding: 12px; background: var(--superficie);
+    border: 1px solid var(--borda); border-radius: 10px; box-shadow: none;
+}
+.ficha-pokemon-13c .barra-salvar-pokemon > .texto-suave { margin-right: auto; font-size: .8rem; }
+.ficha-pokemon-13c .evolucao-opcao { background: var(--superficie-suave); border-color: var(--borda); }
+.ficha-pokemon-13c .evolucao-detalhes { max-width: 550px; }
+.ficha-pokemon-13c .ficha-pokemon-perigo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ficha-pokemon-13c .ficha-pokemon-perigo h2 { font-size: 1.1rem; margin: 0 0 5px; }
+.ficha-pokemon-13c .ficha-pokemon-perigo p { margin: 0 0 4px; }
+.ficha-pokemon-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1100px) {
+    .ficha-pokemon-resumo { grid-template-columns: minmax(0, 1fr); }
+    .ficha-pokemon-combate { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+    .ficha-pokemon-identidade { grid-template-columns: minmax(160px, .5fr) minmax(0, 1.5fr); }
+}
+@media (max-width: 760px) {
+    .ficha-pokemon-combate, .ficha-pokemon-13c .ficha-golpes-grade { grid-template-columns: minmax(0, 1fr); }
+    .ficha-pokemon-identidade { grid-template-columns: minmax(0, 1fr); }
+    .ficha-pokemon-13c .retrato-pokemon img { max-width: 160px; }
+    .ficha-pokemon-13c .ficha-pokemon-cabecalho { align-items: stretch; }
+    .ficha-pokemon-acoes-topo > .botao { flex: 1 1 140px; width: auto; }
+    body.app-shell .ficha-pokemon-13c :is(.painel-pokemon, .secao-pokemon) { padding: 12px; }
+}
+@media (max-width: 420px) {
+    body.app-shell .ficha-pokemon-13c .dados-principais-pokemon .grade-formulario { grid-template-columns: minmax(0, 1fr); }
+    body.app-shell .ficha-pokemon-13c :is(.grade-atributos-pokemon, .grade-bonus-pokemon) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ficha-pokemon-indice a { padding-inline: 7px; }
+    .ficha-pokemon-13c .ficha-golpe-slot { padding: 9px; }
+    .ficha-pokemon-13c .ficha-golpe-metricas > div { padding: 5px; }
+}
