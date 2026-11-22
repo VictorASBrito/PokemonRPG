@@ -7,6 +7,8 @@
         if (!shiny || !imagem) return;
         const destino = shiny.checked ? imagem.dataset.shiny : imagem.dataset.normal;
         if (destino) imagem.src = destino;
+        const selo = document.querySelector("#ficha-selo-shiny");
+        if (selo) selo.hidden = !shiny.checked;
     };
     shiny?.addEventListener("change", atualizarImagem);
 
