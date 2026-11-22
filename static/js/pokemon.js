@@ -10,11 +10,61 @@
     };
     shiny?.addEventListener("change", atualizarImagem);
 
+    const modalExcluir = document.querySelector("#modal-excluir-pokemon");
+    const abrirExcluir = document.querySelector("[data-abrir-exclusao]");
     const formularioExcluir = document.querySelector("#form-excluir-pokemon");
-    formularioExcluir?.addEventListener("submit", (evento) => {
-        const mensagem = formularioExcluir.dataset.confirmacao || "Confirmar remoção?";
-        if (!window.confirm(mensagem)) evento.preventDefault();
-    });
+    if (modalExcluir && abrirExcluir && formularioExcluir) {
+        const primeira = modalExcluir.querySelector('[data-exclusao-etapa="1"]');
+        const campo = formularioExcluir.querySelector('[name="nome_confirmacao"]');
+        const alvo = modalExcluir.querySelector("#exclusao-nome-alvo").textContent.trim();
+        const confirmar = modalExcluir.querySelector("[data-confirmar-exclusao]");
+        const feedback = modalExcluir.querySelector("[data-exclusao-feedback]");
+        const avancar = modalExcluir.querySelector("[data-avancar-exclusao]");
+        let enviando = false;
+        const valido = () => Boolean(alvo) && campo.value.trim() === alvo;
+        const atualizar = () => {
+            confirmar.disabled = !valido() || enviando;
+            feedback.textContent = valido() ? "Nome correto. Você pode confirmar a exclusão." :
+                "O nome deve corresponder exatamente ao indicado.";
+        };
+        const reiniciar = () => {
+            enviando = false;
+            primeira.hidden = false;
+            formularioExcluir.hidden = true;
+            campo.value = "";
+            atualizar();
+        };
+        abrirExcluir.addEventListener("click", () => {
+            reiniciar();
+            modalExcluir.showModal();
+            primeira.querySelector("[data-cancelar-exclusao]").focus();
+        });
+        avancar.addEventListener("click", () => {
+            primeira.hidden = true;
+            formularioExcluir.hidden = false;
+            campo.focus();
+        });
+        modalExcluir.querySelector("[data-voltar-exclusao]").addEventListener("click", () => {
+            reiniciar();
+            avancar.focus();
+        });
+        modalExcluir.querySelectorAll("[data-cancelar-exclusao]").forEach(botao => {
+            botao.addEventListener("click", () => modalExcluir.close());
+        });
+        modalExcluir.addEventListener("close", () => {
+            reiniciar();
+            abrirExcluir.focus();
+        });
+        campo.addEventListener("input", atualizar);
+        formularioExcluir.addEventListener("submit", (evento) => {
+            if (!modalExcluir.open || formularioExcluir.hidden || !valido() || enviando) {
+                evento.preventDefault();
+                return;
+            }
+            enviando = true;
+            confirmar.disabled = true;
+        });
+    }
 
     const formulario = document.querySelector("#form-pokemon");
     const camposRecalculo = formulario?.querySelectorAll(
