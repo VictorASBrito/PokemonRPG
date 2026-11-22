@@ -1073,6 +1073,7 @@ def remover_pokemon_db(
     # A rota de exclusão sempre fornece o texto, inclusive quando ausente.
     # Verificar após bloquear e reler o registro evita aceitar nome obsoleto.
     if nome_confirmacao is not None:
+        db.session.refresh(pokemon)
         esperado = (pokemon.apelido or "").strip() or pokemon.forma_pokemon.nome.strip()
         if not esperado or nome_confirmacao.strip() != esperado:
             raise ValueError("Digite exatamente o nome atual do Pokémon para removê-lo.")
