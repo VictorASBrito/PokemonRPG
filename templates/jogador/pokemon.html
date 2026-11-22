@@ -6,23 +6,43 @@
 {% block estilos %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/exclusao-pokemon.css', v='13b-1') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css', v='ui2-20261121') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ficha-pokemon-13c.css', v='13c-1') }}">
 {% endblock %}
 
 {% block conteudo %}
+<div class="ficha-pokemon-13c">
 {% set nome_exibicao = pokemon.get('apelido') or especie.get('nome') %}
 {% set bonus = pokemon.get('bonus', {}) %}
-<section class="cabecalho-pagina cabecalho-com-acoes">
+<section class="cabecalho-pagina cabecalho-com-acoes ficha-pokemon-cabecalho">
     <div>
         <p class="rotulo">{% if modo_mestre %}Edição pelo mestre{% else %}Ficha do Pokémon{% endif %}</p>
         <h1>{{ nome_exibicao }}</h1>
         <p class="texto-suave">{{ especie.get('nome') }} · Nível {{ calculos.nivel }} · {{ especie.get('tipos', [])|join(' / ') }}</p>
     </div>
-    <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">{% if retorno == 'boxes' %}Voltar aos Boxes{% else %}Voltar à equipe{% endif %}</a>
+    <div class="ficha-pokemon-acoes-topo">
+        <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">{% if retorno == 'boxes' %}Voltar aos Boxes{% else %}Voltar à equipe{% endif %}</a>
+        <button class="botao botao-primario" type="submit" form="form-pokemon">Salvar Pokémon</button>
+    </div>
 </section>
+<nav class="ficha-pokemon-indice" aria-label="Seções da ficha Pokémon">
+    <a href="#identidade-pokemon">Identidade</a>
+    <a href="#atributos-pokemon">Atributos</a>
+    <a href="#golpes-pokemon">Golpes</a>
+    <a href="#bonus-pokemon">Bônus</a>
+    <a href="#anotacoes-pokemon">Anotações</a>
+    <a href="#consulta-evolucao">Evoluções</a>
+    <a href="#transformacoes-temporarias">Formas</a>
+</nav>
 
 <form method="post" action="{{ salvar_url }}" id="form-pokemon">
     <input type="hidden" name="retorno" value="{{ retorno }}">
-    <section class="cartao painel-pokemon ui-card">
+    <div class="ficha-pokemon-resumo">
+    <section class="cartao painel-pokemon ui-card" id="identidade-pokemon" aria-labelledby="titulo-identidade">
+        <header class="ficha-pokemon-titulo">
+            <div><p class="rotulo">Dados do Pokémon</p><h2 id="titulo-identidade">Identidade</h2></div>
+            <span class="nivel-pokemon">Nv. {{ calculos.nivel }}</span>
+        </header>
+        <div class="ficha-pokemon-identidade">
         <div class="retrato-pokemon">
             <img
                 id="imagem-pokemon"
@@ -34,7 +54,9 @@
             <div class="chips chips-centralizados">
                 {% for tipo in especie.get('tipos', []) %}{{ selo_tipo(tipo) }}{% endfor %}
             </div>
-            <span class="texto-suave texto-centralizado">Catálogo #{{ especie.get('ordem_catalogo') }}</span>
+            <strong class="ficha-pokemon-retrato-nome">{{ nome_exibicao }}</strong>
+            {% if pokemon.get('shiny') %}<span class="ficha-pokemon-variacao">Shiny</span>{% endif %}
+            {% if especie.get('ordem_catalogo') is not none %}<span class="texto-suave texto-centralizado">Catálogo #{{ especie.get('ordem_catalogo') }}</span>{% endif %}
         </div>
 
         <div class="dados-principais-pokemon">
@@ -105,22 +127,27 @@
                 </div>
             </div>
         </div>
+        </div>
     </section>
 
     {% if pode_editar_identidade %}<datalist id="catalogo-especies"></datalist>{% endif %}
     <datalist id="catalogo-golpes"></datalist>
 
-    <section class="cartao secao-pokemon ui-card">
+    <div class="ficha-pokemon-combate">
+    <section class="cartao secao-pokemon ui-card" id="atributos-pokemon" aria-labelledby="titulo-atributos">
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Cálculo automático</p>
-                <h2>Atributos</h2>
-                <p class="texto-suave">Cálculo no nível {{ calculos.nivel }}. Estilo aplicado: {{ estilo_combate or 'nenhum' }}. Aumentos arredondam para cima e reduções para baixo.</p>
+                <h2 id="titulo-atributos">Atributos</h2>
+                <p class="texto-suave">Nível {{ calculos.nivel }} · Estilo: {{ estilo_combate or 'nenhum' }}</p>
             </div>
-            <div class="saude-pokemon-destaque">
-                <label for="pv_atual">PV atual</label>
+        </div>
+        <div class="saude-pokemon-destaque">
+            <div class="ficha-pv-cabecalho">
+                <label for="pv_atual">Pontos de vida</label>
                 <div><input id="pv_atual" name="pv_atual" type="number" min="0" max="{{ calculos.totais.pv }}" value="{{ pokemon.get('pv_atual', calculos.totais.pv) }}"><strong>/ {{ calculos.totais.pv }}</strong></div>
             </div>
+            <progress class="ficha-pv-barra" id="ficha-pv-barra" aria-label="Pontos de vida" max="{{ [calculos.totais.pv, 1]|max }}" value="{{ pokemon.get('pv_atual', calculos.totais.pv) }}"></progress>
         </div>
 
         <div class="grade-atributos-pokemon ui-grade">
@@ -140,11 +167,11 @@
         </div>
     </section>
 
-    <section class="cartao secao-pokemon ui-card">
+    <section class="cartao secao-pokemon ui-card" id="bonus-pokemon" aria-labelledby="titulo-bonus">
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Ajustes particulares</p>
-                <h2>Bônus manuais</h2>
+                <h2 id="titulo-bonus">Bônus manuais</h2>
                 <p class="texto-suave">Use estes campos para itens, vantagens narrativas ou regras próprias da campanha. Podem receber valores negativos.</p>
             </div>
         </div>
@@ -157,31 +184,36 @@
             {% endfor %}
         </div>
     </section>
+    </div>
+    </div>
 
-    <section class="cartao secao-pokemon secao-movimentos ui-card">
+    <section class="cartao secao-pokemon secao-movimentos ui-card" id="golpes-pokemon" aria-labelledby="titulo-golpes">
         {% set limite_golpes = regras.get('limites', {}).get('golpes_por_pokemon', 4)|int %}
         <div class="titulo-secao-pokemon">
             <div>
                 <p class="rotulo">Movimentos</p>
-                <h2>Golpes</h2>
+                <h2 id="titulo-golpes">Golpes</h2>
                 <p class="texto-suave">As informações são exibidas ao selecionar o golpe. Use Salvar Pokémon para confirmar a alteração.</p>
             </div>
             <span class="contador-golpes" id="contador-golpes" aria-live="polite">{{ pokemon.get('golpes', [])|length }}/{{ limite_golpes }}</span>
         </div>
 
-        <div class="tabela-golpes tabela-golpes-simples" id="bloco-golpes-edicao">
-            <div class="linha-golpe cabecalho-golpes">
-                <span>Golpe</span><span>Tipo / categoria</span><span>Dano</span><span>Precisão</span>
-            </div>
+        <div id="efeitos-golpes-edicao" aria-label="Edição e prévia de golpes">
+            <div class="tabela-golpes tabela-golpes-simples ficha-golpes-grade" id="bloco-golpes-edicao">
             {% for indice in range(limite_golpes) %}
                 {% set golpe = golpes_selecionados[indice] if indice < golpes_selecionados|length else {} %}
                 {% set definido = golpe.get('nome') %}
-                <div class="linha-golpe linha-golpe-editavel" data-golpe-slot data-slot-index="{{ indice }}">
+                <article class="linha-golpe linha-golpe-editavel ficha-golpe-slot" data-golpe-slot data-slot-index="{{ indice }}">
+                    <div class="ficha-golpe-cabecalho">
+                        <span class="ficha-golpe-numero">Golpe {{ indice + 1 }}</span>
                     <input name="golpe_nome" list="catalogo-golpes"
                         data-autocomplete-url="{{ url_for('pokemons.autocomplete_golpes') }}"
                         data-seletor-visual="golpe" data-golpe-input
                         value="{{ golpe.get('nome', '') }}" placeholder="Selecione um golpe"
                         aria-label="Golpe {{ indice + 1 }}" autocomplete="off">
+                    </div>
+                    <div class="ficha-golpe-metricas">
+                        <div><span class="ficha-golpe-rotulo">Tipo / categoria</span>
                     <div class="golpe-meta">
                         <div class="golpe-meta-tipo" data-golpe-tipo>
                             {% if definido and golpe.get('tipo') %}
@@ -192,45 +224,42 @@
                         </div>
                         <span class="golpe-meta-categoria" data-golpe-categoria>{{ golpe.get('categoria', '—') if definido else '—' }}</span>
                     </div>
-                    <span class="golpe-valor" data-golpe-dano>{{ golpe.get('dano') or '—' if definido else '—' }}</span>
-                    <span class="golpe-valor" data-golpe-precisao>{{ golpe.get('precisao_texto') or '—' if definido else '—' }}</span>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="efeitos-golpes efeitos-golpes-grade" id="efeitos-golpes-edicao" aria-label="Prévia de golpes">
-            {% for indice in range(limite_golpes) %}
-                {% set golpe = golpes_selecionados[indice] if indice < golpes_selecionados|length else {} %}
-                {% set definido = golpe.get('nome') %}
-                <article class="efeito-golpe-card{{ ' efeito-golpe-card-vazio' if not definido else '' }}"
+                        </div>
+                        <div><span class="ficha-golpe-rotulo">Dano</span><span class="golpe-valor" data-golpe-dano>{{ golpe.get('dano') or '—' if definido else '—' }}</span></div>
+                        <div><span class="ficha-golpe-rotulo">Precisão</span><span class="golpe-valor" data-golpe-precisao>{{ golpe.get('precisao_texto') or '—' if definido else '—' }}</span></div>
+                    </div>
+                <div class="efeito-golpe-card{{ ' efeito-golpe-card-vazio' if not definido else '' }}"
                          data-golpe-efeito-card data-slot-index="{{ indice }}">
                     <div class="efeito-golpe-card-topo">
                         <strong data-golpe-efeito-nome>{{ golpe.get('nome') if definido else 'Sem golpe definido' }}</strong>
                         <small data-golpe-efeito-precisao>{{ 'Precisão ' ~ (golpe.get('precisao_texto') or '—') if definido else 'Slot ' ~ (indice + 1) }}</small>
                     </div>
                     <p data-golpe-efeito-texto>{{ golpe.get('efeito') or 'Sem descrição cadastrada.' if definido else 'Selecione um golpe para visualizar os detalhes.' }}</p>
+                </div>
                 </article>
             {% endfor %}
+            </div>
         </div>
     </section>
 
-    <section class="cartao secao-pokemon ui-card">
+    <section class="cartao secao-pokemon ui-card" id="anotacoes-pokemon" aria-labelledby="titulo-anotacoes">
+        <div class="titulo-secao-pokemon"><div><p class="rotulo">História e observações</p><h2 id="titulo-anotacoes">Anotações</h2></div></div>
         <div class="campo">
-            <label for="anotacoes">Anotações</label>
+            <label class="ficha-pokemon-sr" for="anotacoes">Anotações</label>
             <textarea id="anotacoes" name="anotacoes" rows="5" placeholder="Personalidade, habilidades especiais, história ou observações da campanha...">{{ pokemon.get('anotacoes', '') }}</textarea>
         </div>
     </section>
 
     <div class="barra-salvar-pokemon">
+        <span class="texto-suave">Salve as alterações de identidade, atributos, golpes e anotações.</span>
         <button class="botao botao-primario" type="submit">Salvar Pokémon</button>
-        <button class="botao botao-perigo" type="button" data-abrir-exclusao aria-haspopup="dialog" aria-controls="modal-excluir-pokemon">Remover da ficha</button>
     </div>
 </form>
 
 <section class="cartao secao-pokemon ui-card" id="consulta-evolucao" aria-labelledby="titulo-evolucoes">
     <div class="titulo-secao-pokemon">
         <div>
-            <p class="rotulo">Evolução de Pokémon · 10E.3.3/4</p>
+            <p class="rotulo">Progressão do Pokémon</p>
             <h2 id="titulo-evolucoes">Evoluções de {{ especie.get('nome') }}</h2>
             <p class="texto-suave">Opções calculadas com o nível do treinador ({{ consulta_evolucao.nivel_treinador }}), os vínculos ativos do catálogo e as pedras na mochila deste personagem.</p>
         </div>
@@ -298,6 +327,12 @@
     {% endif %}
 </section>
 
+<section class="cartao secao-pokemon ui-card ficha-pokemon-perigo" aria-labelledby="titulo-perigo">
+    <div><p class="rotulo">Ação permanente</p><h2 id="titulo-perigo">Remover da ficha</h2>
+        <p class="texto-suave">A remoção exige confirmação em duas etapas e não pode ser desfeita pela interface.</p></div>
+    <button class="botao botao-perigo" type="button" data-abrir-exclusao aria-haspopup="dialog" aria-controls="modal-excluir-pokemon">Remover da ficha</button>
+</section>
+
 <dialog id="modal-excluir-pokemon" class="modal-excluir-pokemon" aria-labelledby="exclusao-titulo" aria-describedby="exclusao-aviso">
     <h2 id="exclusao-titulo">Remover Pokémon da ficha?</h2>
     <p id="exclusao-aviso">Você está prestes a remover <strong>{{ nome_exclusao }}</strong>. Esta ação não pode ser desfeita pela interface.</p>
@@ -324,9 +359,10 @@
         </div>
     </form>
 </dialog>
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/pokemon.js', v='13b-1') }}"></script>
+<script src="{{ url_for('static', filename='js/pokemon.js', v='13c-1') }}"></script>
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 {% endblock %}
