@@ -39,6 +39,22 @@ def test_ficha_responsiva_e_campos_preservados(
     expect(page.locator("html")).to_have_attribute("data-theme", tema)
     expect(page.locator(".ficha-pokemon-13c")).to_be_visible()
     expect(page.locator("#identidade-pokemon")).to_be_visible()
+    # Retrato compacto: não deve esticar com os campos da identidade.
+    retrato = page.locator("#identidade-pokemon .retrato-pokemon")
+    expect(retrato).to_be_visible()
+    assert retrato.evaluate("""el => {
+        const r = el.getBoundingClientRect();
+        const img = el.querySelector('img').getBoundingClientRect();
+        const nome = el.querySelector('.ficha-pokemon-retrato-nome').getBoundingClientRect();
+        const tipos = el.querySelector('.chips').getBoundingClientRect();
+        const dados = el.parentElement.querySelector('.dados-principais-pokemon').getBoundingClientRect();
+        const lado = innerWidth > 760;
+        return r.width <= 221 && img.width <= 171 &&
+            nome.bottom <= r.bottom + 1 && tipos.top >= img.bottom - 1 &&
+            nome.top >= tipos.bottom - 1 &&
+            (lado ? r.right <= dados.left + 1 && Math.abs(r.top - dados.top) <= 2
+                  : r.bottom <= dados.top + 1);
+    }"""), "Retrato deve ficar compacto e separado dos campos de identidade"
     expect(page.locator(".atributo-pokemon-card")).to_have_count(6)
     expect(page.locator('[name^="bonus_"]')).to_have_count(6)
     slots = page.locator("[data-golpe-slot]")
