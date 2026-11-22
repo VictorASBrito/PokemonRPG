@@ -40,6 +40,7 @@ jobs:
             tests/test_inventario_mobile_10f2.py \
             tests/test_inventario_uso_10c4.py \
             tests/test_inventario_ordem_11c.py \
+            tests/test_trocas_13a.py \
             tests/test_aparencia_12a.py \
             tests/test_fichas_por_url_10b3_flask.py \
             tests/test_inventario_largura_10f3.py \

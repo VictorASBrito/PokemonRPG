@@ -97,6 +97,7 @@
     <div class="grupo-acoes">
         <a class="botao botao-secundario botao-link" href="{{ voltar_url }}">Voltar</a>
         <a class="botao botao-primario botao-link" href="{{ equipe_url }}">Abrir equipe</a>
+        {% if pode_trocar %}<a class="botao botao-primario botao-link" href="{{ url_for('trocas.central') }}">Trocas Pokémon{% if convites_troca %} ({{ convites_troca }} convite{{ 's' if convites_troca != 1 else '' }}){% endif %}</a>{% endif %}
     </div>
 </section>
 
