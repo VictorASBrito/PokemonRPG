@@ -6,18 +6,46 @@
 .troca-lista-linha, .troca-pokemon { display: flex; gap: 10px; align-items: center; min-width: 0; }
 .troca-lista-linha { justify-content: space-between; border-top: 1px solid var(--borda); padding: 10px 0; flex-wrap: wrap; }
 .troca-pokemon { padding: 9px; border: 1px solid var(--borda); background: var(--superficie-suave); border-radius: 8px; }
-.troca-pokemon > div { min-width: 0; overflow-wrap: anywhere; }
+.troca-pokemon > div { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
 .troca-pokemon img { width: 64px; height: 64px; object-fit: contain; flex: 0 0 64px; }
 .troca-pokemon small, .troca-lista-linha small { display: block; color: var(--texto-suave); }
 .troca-tipos { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
 .troca-colunas, .troca-escolhas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 12px; }
 .troca-lado { border: 1px solid var(--borda); border-radius: 10px; padding: 12px; min-width: 0; }
 .troca-lado .troca-pokemon + .troca-pokemon { margin-top: 6px; }
-.troca-escolha { display: flex; align-items: center; gap: 8px; min-width: 0; cursor: pointer; }
-.troca-escolha input { accent-color: var(--primaria); flex: 0 0 auto; }
-.troca-escolha .troca-pokemon { flex: 1; }
+/* O reset global de inputs usa largura de 100%. O checkbox não é um
+   campo de texto: mantenha uma coluna própria e nunca comprima o cartão. */
+.troca-escolha {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    cursor: pointer;
+}
+.troca-escolha > input[type="checkbox"] {
+    box-sizing: border-box;
+    width: 20px;
+    height: 20px;
+    min-width: 0;
+    min-height: 0;
+    max-width: 20px;
+    max-height: 20px;
+    padding: 0;
+    margin: 0;
+    accent-color: var(--primaria);
+}
+.troca-escolha > .troca-pokemon {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+.troca-tipos .etiqueta-tipo { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.troca-escolha:has(input:disabled) { cursor: not-allowed; }
 .troca-escolha:has(input:checked) .troca-pokemon { outline: 2px solid var(--primaria); }
 @media (max-width: 680px) {
     .troca-colunas, .troca-escolhas { grid-template-columns: minmax(0, 1fr); }
     .troca-secao { padding: 12px; }
+    .troca-pokemon img { width: 48px; height: 48px; flex-basis: 48px; }
 }
