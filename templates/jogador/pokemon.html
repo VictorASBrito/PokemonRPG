@@ -4,6 +4,7 @@
 {% block titulo %}{{ pokemon.get('apelido') or especie.get('nome') }} | Pokémon RPG{% endblock %}
 
 {% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/exclusao-pokemon.css', v='13b-1') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pokemon.css', v='ui2-20261121') }}">
 {% endblock %}
 
@@ -222,7 +223,7 @@
 
     <div class="barra-salvar-pokemon">
         <button class="botao botao-primario" type="submit">Salvar Pokémon</button>
-        <button class="botao botao-perigo" type="submit" form="form-excluir-pokemon">Remover da ficha</button>
+        <button class="botao botao-perigo" type="button" data-abrir-exclusao aria-haspopup="dialog" aria-controls="modal-excluir-pokemon">Remover da ficha</button>
     </div>
 </form>
 
@@ -297,12 +298,35 @@
     {% endif %}
 </section>
 
-<form id="form-excluir-pokemon" method="post" action="{{ excluir_url }}" data-confirmacao="Tem certeza que deseja remover {{ nome_exibicao }} da ficha? Esta ação não pode ser desfeita.">
-    <input type="hidden" name="retorno" value="{{ retorno }}">
-</form>
+<dialog id="modal-excluir-pokemon" class="modal-excluir-pokemon" aria-labelledby="exclusao-titulo" aria-describedby="exclusao-aviso">
+    <h2 id="exclusao-titulo">Remover Pokémon da ficha?</h2>
+    <p id="exclusao-aviso">Você está prestes a remover <strong>{{ nome_exclusao }}</strong>. Esta ação não pode ser desfeita pela interface.</p>
+    <div data-exclusao-etapa="1">
+        <p>Tem certeza de que deseja continuar?</p>
+        <div class="exclusao-acoes">
+            <button type="button" class="botao botao-secundario" data-cancelar-exclusao autofocus>Cancelar</button>
+            <button type="button" class="botao botao-perigo" data-avancar-exclusao>Sim, continuar</button>
+        </div>
+    </div>
+    <form id="form-excluir-pokemon" method="post" action="{{ excluir_url }}" data-exclusao-etapa="2" hidden>
+        <input type="hidden" name="retorno" value="{{ retorno }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_exclusao }}">
+        <p>Para confirmar a remoção, digite exatamente <strong id="exclusao-nome-alvo">{{ nome_exclusao }}</strong>.</p>
+        <div class="campo">
+            <label for="nome_confirmacao">Nome do Pokémon</label>
+            <input id="nome_confirmacao" name="nome_confirmacao" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="160">
+        </div>
+        <p class="texto-suave" data-exclusao-feedback aria-live="polite">O nome deve corresponder exatamente ao indicado.</p>
+        <div class="exclusao-acoes">
+            <button type="button" class="botao botao-secundario" data-cancelar-exclusao>Cancelar</button>
+            <button type="button" class="botao botao-secundario" data-voltar-exclusao>Voltar</button>
+            <button type="submit" class="botao botao-perigo" data-confirmar-exclusao disabled>Excluir Pokémon</button>
+        </div>
+    </form>
+</dialog>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/pokemon.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pokemon.js', v='13b-1') }}"></script>
 <script src="{{ url_for('static', filename='js/autocomplete-catalogo.js') }}"></script>
 {% endblock %}
