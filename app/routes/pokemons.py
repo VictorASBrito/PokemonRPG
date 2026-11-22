@@ -5,6 +5,7 @@ import secrets
 
 from flask import (
     Blueprint,
+    abort,
     current_app,
     flash,
     jsonify,
@@ -267,6 +268,8 @@ def _editar(contexto, pokemon_id: str, *, modo_mestre: bool):
             "pokemons.editar_mestre" if modo_mestre else "pokemons.editar_jogador",
             **parametros_acao,
         ),
+        csrf_exclusao=session.setdefault("csrf_exclusao_pokemon", secrets.token_urlsafe(32)),
+        nome_exclusao=(pokemon_model.apelido or "").strip() or pokemon_model.forma_pokemon.nome.strip(),
         excluir_url=url_for(
             "pokemons.excluir_mestre" if modo_mestre else "pokemons.excluir_jogador",
             **parametros_acao,
@@ -284,12 +287,27 @@ def _excluir(contexto, pokemon_id: str, *, modo_mestre: bool):
     jogador_id = str(contexto.personagem.id)
     retorno = str(request.form.get("retorno", request.args.get("retorno", "equipe")))
     retorno = "boxes" if retorno == "boxes" else "equipe"
+    token = session.get("csrf_exclusao_pokemon")
+    recebido = request.form.get("csrf_token", "")
+    if not token or not hmac.compare_digest(token.encode("utf-8"), recebido.encode("utf-8")):
+        abort(403)
     try:
         removido = remover_pokemon_db(
             contexto=contexto,
             pokemon_id=pokemon_id,
             usuario_responsavel_id=session.get("usuario_id"),
+            nome_confirmacao=request.form.get("nome_confirmacao", ""),
         )
+    except ValueError as erro:
+        db.session.rollback()
+        flash(str(erro), "erro")
+        parametros = {"pokemon_id": pokemon_id, "retorno": retorno}
+        if modo_mestre:
+            parametros["jogador_id"] = jogador_id
+        return redirect(url_for(
+            "pokemons.editar_mestre" if modo_mestre else "pokemons.editar_jogador",
+            **parametros,
+        ), code=303)
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Falha ao remover Pokémon do PostgreSQL.")
