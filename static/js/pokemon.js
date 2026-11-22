@@ -66,6 +66,17 @@
         });
     }
 
+    const pv = document.querySelector("#pv_atual");
+    const barraPv = document.querySelector("#ficha-pv-barra");
+    if (pv && barraPv) {
+        const atualizarPv = () => {
+            const valor = Number(pv.value);
+            barraPv.value = Number.isFinite(valor) ? Math.max(0, Math.min(valor, barraPv.max)) : 0;
+        };
+        pv.addEventListener("input", atualizarPv);
+        atualizarPv();
+    }
+
     const formulario = document.querySelector("#form-pokemon");
     const camposRecalculo = formulario?.querySelectorAll(
         "#especie_nome, #natureza, #status, #shiny, [name^='bonus_'], [name='golpe_nome']"
