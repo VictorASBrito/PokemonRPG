@@ -1,0 +1,22 @@
+/* Modal de confirmação de remoção, isolado dos demais formulários. */
+.modal-excluir-pokemon {
+    box-sizing: border-box;
+    width: min(480px, calc(100% - 24px));
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+    padding: 22px;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    color: var(--texto);
+    background: var(--superficie);
+}
+.modal-excluir-pokemon::backdrop { background: rgba(0, 0, 0, .66); }
+.modal-excluir-pokemon h2 { margin: 0 0 12px; font-size: 1.25rem; }
+.modal-excluir-pokemon p { margin: 0 0 14px; overflow-wrap: anywhere; }
+.modal-excluir-pokemon [hidden] { display: none !important; }
+.modal-excluir-pokemon .campo { margin-bottom: 10px; }
+.modal-excluir-pokemon .exclusao-acoes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+@media (max-width: 420px) {
+    .modal-excluir-pokemon { padding: 16px; }
+    .modal-excluir-pokemon .exclusao-acoes > button { flex: 1 1 auto; }
+}

@@ -29,6 +29,7 @@ jobs:
           node --check static/js/inventario-uso-10c4.js
           node --check static/js/inventario-ordem-11c.js
           node --check static/js/tema.js
+          node --check static/js/pokemon.js
       - name: Validar sintaxe JavaScript do dashboard
         run: node --check static/js/dashboard-pokemon.js
       - name: Validar design system, templates, navegação e organização
@@ -41,6 +42,7 @@ jobs:
             tests/test_inventario_uso_10c4.py \
             tests/test_inventario_ordem_11c.py \
             tests/test_trocas_13a.py \
+            tests/test_exclusao_pokemon_13b.py \
             tests/test_aparencia_12a.py \
             tests/test_fichas_por_url_10b3_flask.py \
             tests/test_inventario_largura_10f3.py \
